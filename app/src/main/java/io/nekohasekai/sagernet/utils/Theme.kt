@@ -25,7 +25,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.isExpert
 
 object Theme {
 
@@ -62,11 +61,11 @@ object Theme {
     }
 
     fun getTheme(): Int {
-        return getTheme(if (isExpert) DataStore.appTheme else defaultTheme())
+        return getTheme(DataStore.appTheme)
     }
 
     fun getDialogTheme(): Int {
-        return getDialogTheme(if (isExpert) DataStore.appTheme else defaultTheme())
+        return getDialogTheme(DataStore.appTheme)
     }
 
     fun getTheme(theme: Int): Int {
