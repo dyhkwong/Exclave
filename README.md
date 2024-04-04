@@ -39,7 +39,6 @@ ALIAS_PASS=your_alias_pass
 - APK files will be in `app/build/outputs/apk`.
 - Build plugin:
 ```
-./run plugin [plugin_name]
 ./gradlew :plugin:[plugin_name]:assembleOssRelease
 ```
 - Plugin files will be in `plugin/[plugin_name]/build/outputs/apk`.
