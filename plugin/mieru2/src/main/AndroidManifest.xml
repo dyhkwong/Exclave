@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round">
         <provider
             android:name="io.nekohasekai.sagernet.plugin.mieru2.BinaryProvider"
-            android:authorities="io.nekohasekai.sagernet.plugin.mieru2.BinaryProvider"
+            android:authorities="com.github.dyhkwong.plugin.mieru2.BinaryProvider"
             android:directBootAware="true"
             android:exported="true"
             tools:ignore="ExportedContentProvider">
@@ -29,7 +29,7 @@
             <intent-filter>
                 <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
                 <data
-                    android:host="io.nekohasekai.sagernet"
+                    android:host="com.github.dyhkwong.sagernet"
                     android:path="/mieru2-plugin"
                     android:scheme="plugin" />
             </intent-filter>

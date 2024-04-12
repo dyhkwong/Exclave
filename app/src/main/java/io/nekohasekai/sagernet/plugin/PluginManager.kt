@@ -63,16 +63,10 @@ object PluginManager {
         cachedPlugins!!
     }
 
-    private fun buildUri(id: String) = Uri.Builder()
+    private fun buildUri(id: String, authority: String) = Uri.Builder()
         .scheme(PluginContract.SCHEME)
-        .authority(PluginContract.AUTHORITY)
+        .authority(authority)
         .path("/$id")
-        .build()
-
-    private fun buildNaiveUri() = Uri.Builder()
-        .scheme("plugin")
-        .authority("moe.matsuri.lite")
-        .path("/naive-plugin")
         .build()
 
     data class InitResult(
@@ -101,11 +95,16 @@ object PluginManager {
                 flags or PackageManager.MATCH_DIRECT_BOOT_UNAWARE or PackageManager.MATCH_DIRECT_BOOT_AWARE
         }
         var providers = SagerNet.application.packageManager.queryIntentContentProviders(
-            Intent(PluginContract.ACTION_NATIVE_PLUGIN, buildUri(pluginId)), flags)
+            Intent(PluginContract.ACTION_NATIVE_PLUGIN, buildUri(pluginId, PluginContract.AUTHORITY)), flags)
             .filter { it.providerInfo.exported }
+        if (providers.isEmpty()) {
+            providers = SagerNet.application.packageManager.queryIntentContentProviders(
+            Intent(PluginContract.ACTION_NATIVE_PLUGIN, buildUri(pluginId, "io.nekohasekai.sagernet")), flags)
+            .filter { it.providerInfo.exported }
+        }
         if (providers.isEmpty() && pluginId == "naive-plugin") {
             providers = SagerNet.application.packageManager.queryIntentContentProviders(
-            Intent(PluginContract.ACTION_NATIVE_PLUGIN, buildNaiveUri()), flags)
+            Intent(PluginContract.ACTION_NATIVE_PLUGIN, buildUri(pluginId, "moe.matsuri.lite")), flags)
             .filter { it.providerInfo.exported }
         }
         if (providers.isEmpty()) return null

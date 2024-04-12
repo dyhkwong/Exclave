@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round">
         <provider
             android:name=".BinaryProvider"
-            android:authorities="io.nekohasekai.sagernet.plugin.shadowtls.BinaryProvider"
+            android:authorities="com.github.dyhkwong.plugin.shadowtls.BinaryProvider"
             android:directBootAware="true"
             android:exported="true"
             tools:ignore="ExportedContentProvider">
@@ -21,7 +21,7 @@
             <intent-filter>
                 <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
                 <data
-                    android:host="io.nekohasekai.sagernet"
+                    android:host="com.github.dyhkwong.sagernet"
                     android:path="/shadowtls-plugin"
                     android:scheme="plugin" />
             </intent-filter>

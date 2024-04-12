@@ -30,5 +30,5 @@ object PluginContract {
     const val COLUMN_PATH = "path"
     const val COLUMN_MODE = "mode"
     const val SCHEME = "plugin"
-    const val AUTHORITY = "com.github.dyhkwong.sagernet"
+    const val AUTHORITY = "io.nekohasekai.sagernet"
 }

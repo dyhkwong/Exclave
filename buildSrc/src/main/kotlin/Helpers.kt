@@ -279,8 +279,6 @@ fun Project.setupPlugin(projectName: String) {
     val verName = requireMetadata().getProperty("${propPrefix}_VERSION_NAME").trim()
     val verCode = requireMetadata().getProperty("${propPrefix}_VERSION").trim().toInt() * 5
     androidApp.defaultConfig {
-        applicationId = "io.nekohasekai.sagernet.plugin.$projName"
-
         versionName = verName
         versionCode = verCode
     }
@@ -372,7 +370,9 @@ fun Project.setupPlugin(projectName: String) {
         }
     }
 
-    dependencies.add("implementation", project(":plugin:api"))
+    if (projName != "naive") {
+        dependencies.add("implementation", project(":plugin:api"))
+    }
 
 }
 
