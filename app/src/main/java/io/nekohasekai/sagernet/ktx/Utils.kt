@@ -308,7 +308,7 @@ fun Context.getColorAttr(@AttrRes resId: Int): Int {
 }
 
 const val isDefaultFlavor = BuildConfig.FLAVOR == "oss"
-const val isExpert = BuildConfig.FLAVOR == "expert"
+const val isExpert = true
 
 val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()
 
