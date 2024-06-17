@@ -431,22 +431,23 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
         updateTle(security.value)
 
-        val isTcp = network == "tcp"
-        val isQuic = network == "quic"
-        val isWs = network == "ws"
+        val isTCP = network == "tcp"
+        val isQUIC = network == "quic"
+        val isWS = network == "ws"
         val isHTTP = network == "http"
         val isMeek = network == "meek"
-        val isHttpUpgrade = network == "httpupgrade"
+        val isHTTPUpgrade = network == "httpupgrade"
         val isGRPC = network == "grpc"
+        val isSplitHTTP = network == "splithttp"
         val isHysteria2 = network == "hysteria2"
         hy2UpMbps.isVisible = isHysteria2
         hy2DownMbps.isVisible = isHysteria2
         hy2Password.isVisible = isHysteria2
         hy2ObfsPassword.isVisible = isHysteria2
-        quicSecurity.isVisible = isQuic
-        utlsFingerprint.isVisible = security.value == "tls" && (isTcp || isWs || isHTTP || isMeek || isHttpUpgrade || isGRPC)
+        quicSecurity.isVisible = isQUIC
+        utlsFingerprint.isVisible = security.value == "tls" && (isTCP || isWS || isHTTP || isMeek || isHTTPUpgrade || isGRPC || isSplitHTTP)
         realityFingerprint.isVisible = security.value == "reality"
-        if (isQuic) {
+        if (isQUIC) {
             if (DataStore.serverQuicSecurity !in quicSecurityValue) {
                 quicSecurity.value = quicSecurityValue[0]
             } else {
@@ -454,7 +455,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             }
         }
 
-        wsCategory.isVisible = isWs
+        wsCategory.isVisible = isWS
 
         when (network) {
             "tcp" -> {
@@ -483,7 +484,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
                 header.isVisible = true
             }
-            "http", "httpupgrade" -> {
+            "http", "httpupgrade", "splithttp" -> {
                 requestHost.setTitle(R.string.http_host)
                 path.setTitle(R.string.http_path)
 
@@ -567,7 +568,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         realityPublicKey.isVisible = isReality
         realityShortId.isVisible = isReality
         realitySpiderX.isVisible = isReality
-        utlsFingerprint.isVisible = isTLS && (network.value == "tcp" || network.value == "ws" || network.value == "http" || network.value == "meek" || network.value == "httpupgrade" || network.value == "grpc")
+        utlsFingerprint.isVisible = isTLS && (network.value == "tcp" || network.value == "ws"
+                || network.value == "http" || network.value == "meek" || network.value == "httpupgrade"
+                || network.value == "grpc" || network.value == "splithttp")
         realityFingerprint.isVisible = isReality
     }
 

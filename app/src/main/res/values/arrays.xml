@@ -403,6 +403,7 @@
         <item>GRPC</item>
         <item>Meek</item>
         <item>HTTPUpgrade</item>
+        <item>SplitHTTP</item>
         <item>Hysteria2</item>
     </string-array>
 
@@ -415,6 +416,7 @@
         <item>grpc</item>
         <item>meek</item>
         <item>httpupgrade</item>
+        <item>splithttp</item>
         <item>hysteria2</item>
     </string-array>
 

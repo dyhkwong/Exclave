@@ -818,6 +818,16 @@ fun buildV2RayConfig(
                                                 }
                                             }
                                         }
+                                        "splithttp" -> {
+                                            splithttpSettings = SplitHTTPObject().apply {
+                                                if (bean.host.isNotBlank()) {
+                                                    host = bean.host
+                                                }
+                                                if (bean.path.isNotBlank()) {
+                                                    path = bean.path
+                                                }
+                                            }
+                                        }
                                         "hysteria2" -> {
                                             hysteria2Settings = Hysteria2Object().apply {
                                                 if (bean.hy2Password.isNotBlank()) {

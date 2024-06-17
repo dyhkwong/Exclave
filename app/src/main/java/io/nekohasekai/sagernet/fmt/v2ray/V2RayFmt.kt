@@ -213,7 +213,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     bean.mKcpSeed = it
                 }
             }
-            "http", "httpupgrade" -> {
+            "http", "httpupgrade", "splithttp" -> {
                 url.queryParameter("host")?.let {
                     bean.host = it
                 }
@@ -396,17 +396,17 @@ fun VMessBean.toV2rayN(): String {
         it["id"] = this.uuidOrGenerate()
         it["aid"] = alterId
         it["net"] = when (type) {
-            "tcp", "kcp", "ws", "httpupgrade", "quic", "grpc" -> type
+            "tcp", "kcp", "ws", "httpupgrade", "quic", "grpc", "splithttp" -> type
             "http" -> "h2"
             else -> error("V2rayN format does not support $type")
         }
         it["host"] = when (type) {
-            "tcp", "ws", "httpupgrade", "http" -> host
+            "tcp", "ws", "httpupgrade", "http", "splithttp" -> host
             "quic" -> quicSecurity
             else -> ""
         }
         it["path"] = when (type) {
-            "ws", "httpupgrade", "http" -> path
+            "ws", "httpupgrade", "http", "splithttp" -> path
             "quic" -> quicKey
             "kcp" -> mKcpSeed
             "grpc" -> grpcServiceName
@@ -474,7 +474,7 @@ fun StandardV2RayBean.toUri(): String {
                 builder.addQueryParameter("seed", mKcpSeed)
             }
         }
-        "ws", "http", "httpupgrade" -> {
+        "ws", "http", "httpupgrade", "splithttp" -> {
             if (host.isNotBlank()) {
                 builder.addQueryParameter("host", host)
             }

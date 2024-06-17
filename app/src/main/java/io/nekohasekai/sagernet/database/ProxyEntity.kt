@@ -484,7 +484,7 @@ data class ProxyEntity(
     fun isV2RayNetworkTcp(): Boolean {
         val bean = requireBean() as StandardV2RayBean
         return when (bean.type) {
-            "tcp", "ws", "http", "grpc", "httpupgrade", "meek" -> true
+            "tcp", "ws", "http", "grpc", "httpupgrade", "meek", "splithttp" -> true
             else -> false
         }
     }

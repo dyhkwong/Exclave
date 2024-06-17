@@ -222,7 +222,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(17);
+        output.writeInt(18);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -249,7 +249,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(earlyDataHeaderName);
                 break;
             }
-            case "http", "httpupgrade": {
+            case "http", "httpupgrade", "splithttp": {
                 output.writeString(host);
                 output.writeString(path);
                 break;
@@ -388,6 +388,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 }
                 if (version >= 15) {
                     hy2Password = input.readString();
+                }
+                break;
+            }
+            case "splithttp": {
+                if (version >= 18) {
+                    host = input.readString();
+                    path = input.readString();
                 }
                 break;
             }

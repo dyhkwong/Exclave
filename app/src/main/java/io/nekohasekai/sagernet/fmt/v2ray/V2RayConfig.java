@@ -920,6 +920,7 @@ public class V2RayConfig {
         public MeekObject meekSettings;
         public HTTPUpgradeObject httpupgradeSettings;
         public Hysteria2Object hysteria2Settings;
+        public SplitHTTPObject splithttpSettings;
 
     }
 
@@ -940,6 +941,7 @@ public class V2RayConfig {
         public MeekObject meekSettings;
         public HTTPUpgradeObject httpupgradeSettings;
         public Hysteria2Object hysteria2Settings;
+        public SplitHTTPObject splithttpSettings;
         public SockoptObject sockopt;
 
         public static class SockoptObject {
@@ -1136,6 +1138,7 @@ public class V2RayConfig {
 
         public String host;
         public String path;
+        public Map<String, String> headers;
 
     }
 
@@ -1157,6 +1160,16 @@ public class V2RayConfig {
             public String type;
             public String password;
         }
+
+    }
+
+    public static class SplitHTTPObject {
+
+        public String host;
+        public String path;
+        public Map<String, String> headers;
+        public String maxConcurrentUploads;
+        public String maxUploadSize;
 
     }
 
