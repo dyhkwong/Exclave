@@ -19,7 +19,7 @@ fun parseJuicity(url: String): JuicityBean {
             sni = it
         }
         link.queryParameter("allow_insecure")?.also {
-            allowInsecure = it == "1"
+            allowInsecure = (it == "1" || it == "true")
         }
         link.queryParameter("congestion_control")?.also {
             congestionControl = it
