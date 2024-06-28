@@ -24,6 +24,9 @@ fun parseJuicity(url: String): JuicityBean {
         link.queryParameter("congestion_control")?.also {
             congestionControl = it
         }
+        link.queryParameter("pinned_certchain_sha256")?.also {
+            pinnedCertChainSha256 = it
+        }
     }
 }
 
@@ -41,6 +44,9 @@ fun JuicityBean.toUri(): String {
     }
     if (sni.isNotBlank()) {
         builder.addQueryParameter("sni", sni)
+    }
+    if (pinnedCertChainSha256.isNotBlank()) {
+        builder.addQueryParameter("pinned_certchain_sha256", pinnedCertChainSha256)
     }
     if (name.isNotBlank()) {
         builder.setRawFragment(name.urlSafe())
@@ -62,6 +68,9 @@ fun JuicityBean.buildJuicityConfig(port: Int): String {
         }
         if (allowInsecure) {
             it["allow_insecure"] = allowInsecure
+        }
+        if (pinnedCertChainSha256.isNotBlank()) {
+            it["pinned_certchain_sha256"] = pinnedCertChainSha256
         }
         if (DataStore.enableLog) {
             it["log_level"] = "debug"
