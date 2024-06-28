@@ -17,6 +17,7 @@ public class JuicityBean extends AbstractBean {
     public String sni;
     public Boolean allowInsecure;
     public String congestionControl; // https://github.com/daeuniverse/softwind/blob/6daa40f6b7a5cb9a0c44ea252e86fcb3440a7a0e/protocol/tuic/common/congestion.go#L15
+    public String pinnedCertChainSha256;
 
     @Override
     public void initializeDefaultValues() {
@@ -26,6 +27,7 @@ public class JuicityBean extends AbstractBean {
         if (sni == null) sni = "";
         if (allowInsecure == null) allowInsecure = false;
         if (congestionControl == null) congestionControl = "bbr";
+        if (pinnedCertChainSha256 == null) pinnedCertChainSha256 = "";
     }
 
     @Override
@@ -37,6 +39,7 @@ public class JuicityBean extends AbstractBean {
         output.writeString(sni);
         output.writeBoolean(allowInsecure);
         output.writeString(congestionControl);
+        output.writeString(pinnedCertChainSha256);
     }
 
     @Override
@@ -48,6 +51,7 @@ public class JuicityBean extends AbstractBean {
         sni = input.readString();
         allowInsecure = input.readBoolean();
         congestionControl = input.readString();
+        pinnedCertChainSha256 = input.readString();
     }
 
     @Override
