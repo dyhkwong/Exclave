@@ -22,7 +22,7 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         DataStore.serverSNI = sni
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverJuicityCongestionControl = congestionControl
-        DataStore.pinnedCertChainSha256 = pinnedCertChainSha256
+        DataStore.serverPinnedCertificateChain = pinnedCertChainSha256
     }
 
     override fun JuicityBean.serialize() {
@@ -34,7 +34,7 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         sni = DataStore.serverSNI
         allowInsecure = DataStore.serverAllowInsecure
         congestionControl = DataStore.serverJuicityCongestionControl
-        pinnedCertChainSha256 = DataStore.pinnedCertChainSha256
+        pinnedCertChainSha256 = DataStore.serverPinnedCertificateChain
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
