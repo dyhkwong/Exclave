@@ -58,8 +58,6 @@
     <string name="security_settings">Security settings</string>
     <string name="allow_insecure">Allow insecure</string>
     <string name="allow_insecure_sum">Disable certificate validation. When enabled the security of this configuration is equivalent to cleartext.</string>
-    <string name="pinned_certchain_sha256">Pinned cert chain SHA256</string>
-    <string name="pinned_certchain_sha256_sum">Use a self-signed certificate without trusting it in the system.</string>
     <string name="traffic" translatable="false">%1$s↑ %2$s↓</string>
     <string name="speed_detail">Proxy: %1$s↑ %2$s↓
 \nDirect: %3$s↑ %4$s↓</string>
