@@ -46,7 +46,7 @@
             app:summary="@string/allow_insecure_sum"
             app:title="@string/allow_insecure" />
         <EditTextPreference
-            app:icon="@drawable/ic_baseline_push_pin_24.xml"
+            app:icon="@drawable/ic_baseline_push_pin"
             app:key="pinnedCertChainSha256"
             app:title="@string/pinned_certchain_sha256"
             app:useSimpleSummaryProvider="true" />
