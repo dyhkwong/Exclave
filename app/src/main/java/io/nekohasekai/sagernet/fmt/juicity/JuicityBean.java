@@ -32,7 +32,7 @@ public class JuicityBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(password);
@@ -51,7 +51,9 @@ public class JuicityBean extends AbstractBean {
         sni = input.readString();
         allowInsecure = input.readBoolean();
         congestionControl = input.readString();
-        pinnedCertChainSha256 = input.readString();
+        if (version >= 2) {
+            pinnedCertChainSha256 = input.readString();
+        }
     }
 
     @Override
