@@ -227,6 +227,30 @@ class ConfigurationFragment @JvmOverloads constructor(
 
         }
 
+        toolbar.setOnLongClickListener {
+            val selectedProxy = selectedItem
+                ?: SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
+                ?: return@setOnLongClickListener true
+            val groupIndex = adapter.groupList.indexOfFirst {
+                it.id == selectedProxy.groupId
+            }
+            if (groupIndex < 0) return@setOnLongClickListener true
+            DataStore.selectedGroup = selectedProxy.groupId
+            groupPager.currentItem = groupIndex
+
+            val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
+            if (fragment != null) {
+                val selectedProfileIndex = fragment.adapter.configurationIdList.indexOfFirst {
+                    it == selectedProxy.id
+                }
+                if (selectedProfileIndex > 0) {
+                    fragment.configurationListView.scrollTo(selectedProfileIndex, true)
+                }
+            }
+
+            true
+        }
+
         (requireActivity() as? MainActivity)?.callback?.isEnabled = false
     }
 
