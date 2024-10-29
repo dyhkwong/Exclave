@@ -877,8 +877,10 @@ object RawUpdater : GroupUpdater() {
                                     }
                                 }
                             }
-                            "splithttp" -> {
-                                splithttpSettings?.apply {
+                            "splithttp", "xhttp" -> {
+                                v2rayBean.type = "splithttp"
+                                val settings = splithttpSettings ?: xhttpSettings
+                                settings?.apply {
                                     host?.also {
                                         v2rayBean.host = it
                                     }

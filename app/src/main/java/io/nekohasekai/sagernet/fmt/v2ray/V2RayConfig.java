@@ -922,7 +922,7 @@ public class V2RayConfig {
         public TLSObject tlsSettings;
         public UTLSObject utlsSettings;
         public RealityObject realitySettings;
-        public TcpObject rawSettings;
+        public TcpObject rawSettings; // xray alias
         public TcpObject tcpSettings;
         public KcpObject kcpSettings;
         public WebSocketObject wsSettings;
@@ -935,6 +935,7 @@ public class V2RayConfig {
         public HTTPUpgradeObject httpupgradeSettings;
         public Hysteria2Object hy2Settings;
         public SplitHTTPObject splithttpSettings;
+        public SplitHTTPObject xhttpSettings; // xray alias
         public MekyaObject mekyaSettings;
         public DTLSObject dtlsSettings;
         public RequestObject requestSettings;
@@ -1023,14 +1024,11 @@ public class V2RayConfig {
 
         public Boolean show;
         public String dest; // String or Integer
-        public String target; // String or Integer
+        public String target; // String or Integer, alias of dest
         public String type;
         public Integer xver;
         public List<String> serverNames;
         public String privateKey;
-        public String minClientVer;
-        public String maxClientVer;
-        public Integer maxTimeDiff;
         public List<String> shortIds;
         public String serverName;
         public String publicKey;

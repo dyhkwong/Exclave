@@ -529,7 +529,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         }
 
         wsCategory.isVisible = isWS
-        splithttpCategory.isVisible = isSplitHTTP
+        splithttpCategory.isVisible = security.value == "tls" && isSplitHTTP
 
         when (network) {
             "tcp" -> {
@@ -669,6 +669,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         utlsFingerprint.isVisible = isTLS && (network.value == "tcp" || network.value == "ws"
                 || network.value == "http" || network.value == "meek" || network.value == "httpupgrade"
                 || network.value == "grpc" || network.value == "splithttp" || network.value == "mekya")
+        splithttpCategory.isVisible = isTLS && network.value == "splithttp"
         echConfig.isVisible = isTLS
         echDohServer.isVisible = isTLS
         realityFingerprint.isVisible = isReality

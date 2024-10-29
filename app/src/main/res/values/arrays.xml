@@ -186,7 +186,6 @@
         <item>BF-CFB</item>
         <item>CAST5-CFB</item>
         <item>DES-CFB</item>
-        <item>IDEA-CFB</item>
         <item>RC2-CFB</item>
         <item>SEED-CFB</item>
         <item>CAMELLIA-128-CFB</item>
@@ -230,7 +229,6 @@
         <item>bf-cfb</item>
         <item>cast5-cfb</item>
         <item>des-cfb</item>
-        <item>idea-cfb</item>
         <item>rc2-cfb</item>
         <item>seed-cfb</item>
         <item>camellia-128-cfb</item>
@@ -266,7 +264,6 @@
         <item>BF-CFB</item>
         <item>CAST5-CFB</item>
         <item>DES-CFB</item>
-        <item>IDEA-CFB</item>
         <item>RC2-CFB</item>
         <item>SEED-CFB</item>
         <item>CAMELLIA-128-CFB</item>
@@ -302,7 +299,6 @@
         <item>bf-cfb</item>
         <item>cast5-cfb</item>
         <item>des-cfb</item>
-        <item>idea-cfb</item>
         <item>rc2-cfb</item>
         <item>seed-cfb</item>
         <item>camellia-128-cfb</item>
