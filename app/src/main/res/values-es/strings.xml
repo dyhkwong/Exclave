@@ -438,4 +438,23 @@
     <string name="tuic_disable_sni">Deshabilitar SNI</string>
     <string name="tuic_reduce_rtt">Reducir RTT</string>
     <string name="flow">algoritmo de control de flujo</string>
+    <string name="ws_max_early_data">Datos iniciales máximos</string>
+    <string name="hijack_dns">Secuestrar DNS</string>
+    <string name="reality_public_key">Clave pública REALITY</string>
+    <string name="tuic_zero_rtt_handshake">Protocolo de enlace 0-RTT</string>
+    <string name="hijack_dns_message">Interceptar DNS en TUN en lugar de utilizar un rastreador de DNS</string>
+    <string name="hysteria_init_stream_receive_window">Ventana de recepción de secuencia de inicio QUIC</string>
+    <string name="hysteria_max_stream_receive_window">Ventana de recepción de flujo máximo QUIC</string>
+    <string name="hysteria_init_conn_receive_window">Ventana de recepción de conexión de inicio QUIC</string>
+    <string name="alter_id">Modificar ID</string>
+    <string name="url">URL</string>
+    <string name="connection_test_url_test">Probar url</string>
+    <string name="ooc_subscription_token">Token de API OOCv1</string>
+    <string name="hysteria_max_conn_receive_window">Ventana de recepción de conexión máxima QUIC</string>
+    <string name="utls_fingerprint">Huella digital uTLS</string>
+    <string name="route_need_location_enabled">La regla de enrutamiento ` %s ` requiere acceso a su **SSID de WiFi**, pero esto requiere **ubicación habilitada**</string>
+    <string name="route_need_background_location">La regla de enrutamiento ` %s ` requiere acceso a su **SSID de WiFi**, pero esto requiere **permiso de ubicación en segundo plano**</string>
+    <string name="route_need_fine_location">La regla de enrutamiento ` %s ` requiere acceso a su **SSID de WiFi**, pero esto requiere **permiso de ubicación precisa**</string>
+    <string name="route_need_coarse_location">La regla de enrutamiento ` %s ` requiere acceso a su **SSID de WiFi**, pero esto requiere **permiso de ubicación general**</string>
+    <string name="reality_short_id">REALITY iD corto</string>
 </resources>
