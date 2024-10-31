@@ -468,18 +468,15 @@
     <string name="backup_import_summary">Importing will overwrite existing data.</string>
     <string name="backup_importing">Importing…</string>
     <string name="use_local_dns_as_direct_dns">Use system DNS as direct DNS</string>
-
     <string name="tasker_settings">Tasker settings</string>
     <string name="tasker_action">Action</string>
     <string name="tasker_action_start_service">Start service</string>
     <string name="tasker_action_stop_service">Stop service</string>
     <string name="tasker_start_current_profile">Current profile</string>
     <string name="tasker_blurb_start_profile">Start profile %s</string>
-
     <string name="root_ca_provider">Root CA provider</string>
     <string name="root_ca_mozilla">Mozilla</string>
     <string name="root_ca_system">System</string>
-
     <string name="packet_encoding">Packet encoding</string>
     <string name="mtu">MTU</string>
     <string name="experimental_reduced_iv_head_entropy">This is GFWReport\'s proposal for a countermeasure for the random stream like protocol blocking behavior observed on GFW.
@@ -557,5 +554,4 @@
     <string name="cag_splithttp">SplitHTTP settings</string>
     <string name="ech_config">ECH Config</string>
     <string name="ech_doh_server">ECH DoH server</string>
-
 </resources>
