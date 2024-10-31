@@ -212,7 +212,7 @@
     <string name="clear_profiles">清空</string>
     <string name="file_manager_missing">您的设备缺少 Android 标准文件选择器，请安装一个，如质感文件。</string>
     <string name="restart">重载代理服务以应用修改</string>
-    <string name="theme">主题颜色</string>
+    <string name="theme">主题</string>
     <string name="donate">捐款</string>
     <string name="donate_info">世界很可爱 请给世界钱</string>
     <string name="extra_headers">附加头</string>
@@ -289,7 +289,7 @@
     <string name="subscription_type">订阅类型</string>
     <string name="delete_group_prompt">您确定要删除该分组吗？</string>
     <string name="force_resolve">强制解析</string>
-    <string name="force_resolve_sum">更新时解析所有域名到 IP 地址。如果可能，主机与服务器名称指示将被自动覆盖。</string>
+    <string name="force_resolve_sum">更新时解析所有域名到 IP 地址。如果可能，主机与 SNI 将被自动附加。</string>
     <string name="deduplication_sum">更新时移除重复配置</string>
     <string name="raw">原始</string>
     <string name="update_settings">更新设置</string>
@@ -529,5 +529,4 @@
     <string name="cag_splithttp">SplitHTTP 设置</string>
     <string name="ech_config">ECH 配置</string>
     <string name="ech_doh_server">ECH DoH 服务器</string>
-
 </resources>
