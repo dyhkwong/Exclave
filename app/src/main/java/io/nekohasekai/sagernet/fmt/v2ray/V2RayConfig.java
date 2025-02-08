@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import cn.hutool.json.JSONObject;
 import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
 import io.nekohasekai.sagernet.fmt.gson.JsonOr;
 
@@ -168,8 +169,19 @@ public class V2RayConfig {
 
                 public static class strategyConfig {
 
-                    public String observerTag;
-                    public Boolean aliveOnly;
+                    public String observerTag; // random, leastPing, leastLoad, fallback
+                    public Boolean aliveOnly; // random
+                    public Float tolerance; // leastLoad
+                    public String maxRTT; // leastLoad
+                    public Integer expected; // leastLoad
+                    public List<String> baselines; // leastLoad
+                    public List<CostObject> costs; // leastLoad
+
+                    public static class CostObject {
+                        public Boolean regexp;
+                        public String match;
+                        public Float value;
+                    }
 
                 }
 
@@ -944,10 +956,7 @@ public class V2RayConfig {
         public String congestionControl;
         public String udpRelayMode;
         public Boolean zeroRTTHandshake;
-        public String serverName;
-        public List<String> alpn;
-        public List<String> certificate;
-        public Boolean allowInsecure;
+        public TLSObject tlsSettings;
         public Boolean disableSNI;
 
     }
@@ -1228,6 +1237,7 @@ public class V2RayConfig {
         public Boolean ignore_client_bandwidth;
         public Boolean use_udp_extension;
         public OBFSObject obfs;
+        public List<String> passwords;
         public String hopPorts;
         public Integer hopInterval;
 
@@ -1395,10 +1405,13 @@ public class V2RayConfig {
     public ObservatoryObject observatory;
 
     public static class ObservatoryObject {
+
         public Set<String> subjectSelector;
-        public String probeUrl;
+        public String probeURL;
         public String probeInterval;
-        public Boolean enableConcurrency;
+        public Boolean persistentProbeResult;
+        public Boolean enableConcurrency; // SagerNet private
+
     }
 
     public MultiObservatoryObject multiObservatory;
@@ -1410,8 +1423,36 @@ public class V2RayConfig {
         public static class MultiObservatoryItem {
             public String type;
             public String tag;
-            public ObservatoryObject settings;
+            public JSONObject settings; // ObservatoryObject or BurstObservatoryObject, WTF
         }
+
+    }
+
+    public BurstObservatoryObject burstObservatory;
+
+    public static class BurstObservatoryObject {
+
+        public Set<String> subjectSelector;
+        public PingConfigObject pingConfig;
+
+        public static class PingConfigObject {
+            public String destination;
+            public String connectivity;
+            public String interval;
+            public Integer sampling;
+            public String timeout;
+        }
+
+    }
+
+    public FileSystemStorageObject fileSystemStorage;
+
+    public static class FileSystemStorageObject {
+
+        public String stateStorageRoot;
+        public String instanceName;
+        public String protoJSON;
+
     }
 
     public void init() {

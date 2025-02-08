@@ -1114,13 +1114,28 @@ fun buildV2RayConfig(
                                         congestionControl = bean.congestionControl
                                         udpRelayMode = bean.udpRelayMode
                                         if (bean.zeroRTTHandshake) zeroRTTHandshake = bean.zeroRTTHandshake
-                                        if (bean.sni.isNotEmpty()) serverName = bean.sni
-                                        if (bean.alpn.isNotEmpty())  alpn = bean.alpn.listByLineOrComma()
-                                        if (bean.caText.isNotEmpty()) {
-                                            certificate = bean.caText.split("\n").filter { it.isNotEmpty() }
-                                        }
                                         if (bean.disableSNI) disableSNI = bean.disableSNI
-                                        if (bean.allowInsecure) allowInsecure = bean.allowInsecure
+                                        tlsSettings = TLSObject().apply {
+                                            if (bean.sni.isNotEmpty()) {
+                                                serverName = bean.sni
+                                            }
+                                            if (bean.alpn.isNotEmpty()) {
+                                                alpn = bean.alpn.listByLineOrComma()
+                                            }
+                                            if (bean.caText.isNotEmpty()) {
+                                                disableSystemRoot = true
+                                                certificates = listOf(TLSObject.CertificateObject()
+                                                    .apply {
+                                                        usage = "verify"
+                                                        certificate = bean.caText.split(
+                                                            "\n"
+                                                        ).filter { it.isNotEmpty() }
+                                                    })
+                                            }
+                                            if (bean.allowInsecure) {
+                                                allowInsecure = true
+                                            }
+                                        }
                                     }
                                 )
                             } else if (bean is Http3Bean) {
@@ -1281,7 +1296,7 @@ fun buildV2RayConfig(
             if (isBalancer) {
                 val balancerBean = balancer()!!
                 val observatory = ObservatoryObject().apply {
-                    probeUrl = balancerBean.probeUrl.ifEmpty {
+                    probeURL = balancerBean.probeUrl.ifEmpty {
                         DataStore.connectionTestURL
                     }
                     if (balancerBean.probeInterval > 0) {
@@ -1292,7 +1307,7 @@ fun buildV2RayConfig(
                 }
                 val observatoryItem = MultiObservatoryObject.MultiObservatoryItem().apply {
                     tag = "observer-$tagOutbound"
-                    settings = observatory
+                    settings = JSONObject(observatory)
                 }
                 if (multiObservatory == null) multiObservatory = MultiObservatoryObject().apply {
                     observers = mutableListOf()
@@ -1326,7 +1341,7 @@ fun buildV2RayConfig(
                     }
                 })
                 if (tagOutbound == TAG_AGENT) {
-                    if (observatoryItem.settings.probeUrl == DataStore.connectionTestURL) {
+                    if (observatoryItem.settings["probeURL"] == DataStore.connectionTestURL) {
                         rootObserver = observatoryItem
                     }
                     // if all outbounds of a balancer are dead, the first (default) outbound will be used
@@ -1814,6 +1829,7 @@ fun buildV2RayConfig(
 
         if (trafficStatistics) stats = emptyMap()
 
+        @Suppress("UNCHECKED_CAST")
         result = V2rayBuildResult(
             gson.toJson(this),
             indexMap,
@@ -1826,7 +1842,7 @@ fun buildV2RayConfig(
             outboundTagsAll,
             TAG_BYPASS,
             rootObserver?.tag ?: "",
-            rootObserver?.settings?.subjectSelector ?: HashSet(),
+            rootObserver?.settings?.get("subjectSelector") as? Set<String> ?: HashSet(),
             dumpUid,
             alerts
         )

@@ -1129,14 +1129,18 @@ object RawUpdater : GroupUpdater() {
                     settings.getBoolean("zeroRTTHandshake")?.also {
                         tuic5Bean.zeroRTTHandshake = it
                     }
-                    settings.getString("serverName")?.also {
-                        tuic5Bean.sni = it
-                    }
-                    (settings.getAny("alpn") as? List<String>)?.also {
-                        tuic5Bean.alpn = it.joinToString("\n")
-                    }
-                    settings.getBoolean("allowInsecure")?.also {
-                        tuic5Bean.allowInsecure = it
+                    settings.getObject("tlsSettings")?.also { tlsSettings ->
+                        tlsSettings.getString("serverName")?.also {
+                            tuic5Bean.sni = it
+                        }
+                        tlsSettings.getBoolean("allowInsecure")?.also {
+                            tuic5Bean.allowInsecure = it
+                        }
+                        (tlsSettings.getAny("alpn") as? List<String>)?.also {
+                            tuic5Bean.alpn = it.joinToString("\n")
+                        } ?: tlsSettings.getString("alpn")?.also {
+                            tuic5Bean.alpn = it.split(",").joinToString("\n")
+                        }
                     }
                     settings.getBoolean("disableSNI")?.also {
                         tuic5Bean.disableSNI = it
