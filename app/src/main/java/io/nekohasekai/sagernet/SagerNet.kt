@@ -37,7 +37,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
-import android.os.PowerManager
 import android.os.StrictMode
 import android.os.UserManager
 import androidx.annotation.RequiresApi
@@ -198,7 +197,6 @@ class SagerNet : Application(),
         val notification by lazy { application.getSystemService<NotificationManager>()!! }
         val user by lazy { application.getSystemService<UserManager>()!! }
         val uiMode by lazy { application.getSystemService<UiModeManager>()!! }
-        val power by lazy { application.getSystemService<PowerManager>()!! }
         val wifi by lazy { application.getSystemService<WifiManager>()!! }
         val location by lazy { application.getSystemService<LocationManager>()!! }
 

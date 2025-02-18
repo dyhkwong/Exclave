@@ -131,7 +131,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var pprofServer by configurationStore.string(Key.PPROF_SERVER)
     var enablePcap by configurationStore.boolean(Key.ENABLE_PCAP)
     var allowAppsBypassVpn by configurationStore.boolean(Key.ALLOW_APPS_BYPASS_VPN)
-    var acquireWakeLock by configurationStore.boolean(Key.ACQUIRE_WAKE_LOCK)
 
     var enableFragment by configurationStore.boolean(Key.ENABLE_FRAGMENT)
     var enableFragmentForDirect by configurationStore.boolean(Key.ENABLE_FRAGMENT_FOR_DIRECT)

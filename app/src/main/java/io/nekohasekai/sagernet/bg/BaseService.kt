@@ -449,20 +449,6 @@ class BaseService {
 
         suspend fun preInit() {}
 
-        var wakeLock: PowerManager.WakeLock?
-        fun acquireWakeLock()
-
-        suspend fun lateInit() {
-            wakeLock?.apply {
-                release()
-                wakeLock = null
-            }
-
-            if (DataStore.acquireWakeLock) {
-                acquireWakeLock()
-            }
-        }
-
         fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
             val data = data

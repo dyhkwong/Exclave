@@ -376,10 +376,6 @@
             app:key="allowAppsBypassVpn"
             app:summary="@string/allow_apps_bypass_vpn_sum"
             app:title="@string/allow_apps_bypass_vpn" />
-        <SwitchPreference
-            app:icon="@drawable/baseline_developer_board_24"
-            app:key="acquireWakeLock"
-            app:title="@string/acquire_wake_lock" />
     </PreferenceCategory>
 
 
