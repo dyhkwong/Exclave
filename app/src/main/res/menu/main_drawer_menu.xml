@@ -25,6 +25,7 @@
 
     <group
         android:id="@+id/misc"
+        android:visible="false"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_logcat"
@@ -42,6 +43,7 @@
 
     <group
         android:id="@+id/about"
+        android:visible="false"
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_about"
