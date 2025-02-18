@@ -107,7 +107,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
     var bypassLanInCoreOnly by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE_ONLY)
 
-    var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
+    var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS){ true }
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
     var remoteDns by configurationStore.stringNotBlack(Key.REMOTE_DNS) { "https://1.1.1.1/dns-query" }
@@ -118,7 +118,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS) { true }
     var hijackDns by configurationStore.boolean(Key.HIJACK_DNS)
     var hosts by configurationStore.string(Key.DNS_HOSTS)
-    var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { true }
+    var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { false }
     var remoteDnsQueryStrategy by configurationStore.string(Key.REMOTE_DNS_QUERY_STRATEGY) { "UseIPv4" }
     var directDnsQueryStrategy by configurationStore.string(Key.DIRECT_DNS_QUERY_STRATEGY) { "UseIPv4" }
     var ednsClientIp by configurationStore.string(Key.EDNS_CLIENT_IP)
