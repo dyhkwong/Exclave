@@ -34,7 +34,7 @@
             app:title="@string/service_mode"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
+            app:defaultValue="1"
             app:entries="@array/tun_implementation"
             app:entryValues="@array/int_array_2"
             app:icon="@drawable/ic_baseline_flip_camera_android_24"
@@ -81,6 +81,7 @@
             app:key="showGroupName"
             app:title="@string/show_group_name_in_notification" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_center_focus_weak_24"
             app:key="alwaysShowAddress"
             app:summary="@string/always_show_address_sum"
@@ -91,6 +92,7 @@
             app:summary="@string/metered_summary"
             app:title="@string/metered" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_nat_24"
             app:key="allowAccess"
             app:summary="@string/allow_access_sum"
@@ -117,6 +119,7 @@
             app:summary="@string/proxied_apps_summary"
             app:title="@string/proxied_apps" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_legend_toggle_24"
             app:key="bypassLan"
             app:title="@string/route_opt_bypass_lan" />
@@ -134,7 +137,7 @@
             app:title="@string/domain_strategy"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="trafficSniffing"
             app:title="@string/traffic_sniffing" />
@@ -230,7 +233,7 @@
 
     <PreferenceCategory app:title="@string/cag_dns">
         <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
-            app:defaultValue="tcp://1.1.1.1"
+            app:defaultValue="https://1.1.1.1/dns-query"
             app:icon="@drawable/ic_action_dns"
             app:key="remoteDns"
             app:title="@string/remote_dns"
@@ -254,7 +257,7 @@
             app:key="useLocalDnsAsDirectDns"
             app:title="@string/use_local_dns_as_direct_dns" />
         <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
-            app:defaultValue="tcp://223.5.5.5"
+            app:defaultValue="https://223.5.5.5/dns-query"
             app:icon="@drawable/ic_action_dns"
             app:key="directDns"
             app:title="@string/direct_dns"
@@ -268,6 +271,7 @@
             app:title="@string/direct_dns_query_strategy"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_home_24"
             app:key="useLocalDnsAsBootstrapDns"
             app:title="@string/use_local_dns_as_bootstrap_dns" />
@@ -283,12 +287,13 @@
             app:title="@string/dns_hosts"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:icon="@drawable/ic_baseline_camera_24"
             app:key="enableDnsRouting"
             app:summary="@string/dns_routing_message"
             app:title="@string/enable_dns_routing" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_action_lock"
             app:key="enableFakeDns"
             app:summary="@string/fakedns_message"
@@ -347,7 +352,7 @@
 
     <PreferenceCategory app:title="@string/cag_misc">
         <io.nekohasekai.sagernet.widget.LinkPreference
-            app:defaultValue="https://www.google.com/generate_204"
+            app:defaultValue="http://cp.cloudflare.com/"
             app:icon="@drawable/ic_baseline_cast_connected_24"
             app:key="connectionTestURL"
             app:title="@string/connection_test_url"
