@@ -99,23 +99,23 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serviceMode by configurationStore.string(Key.SERVICE_MODE) { Key.MODE_VPN }
 
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
-    var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
+    var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { false }
     var destinationOverride by configurationStore.boolean(Key.DESTINATION_OVERRIDE)
     var resolveDestination by configurationStore.boolean(Key.RESOLVE_DESTINATION)
     var resolveDestinationForDirect by configurationStore.boolean(Key.RESOLVE_DESTINATION_FOR_DIRECT)
 
-    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
+    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
     var bypassLanInCoreOnly by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE_ONLY)
 
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
 
-    var remoteDns by configurationStore.stringNotBlack(Key.REMOTE_DNS) { "tcp://1.1.1.1" }
-    var directDns by configurationStore.stringNotBlack(Key.DIRECT_DNS) { "tcp://223.5.5.5" }
+    var remoteDns by configurationStore.stringNotBlack(Key.REMOTE_DNS) { "https://1.1.1.1/dns-query" }
+    var directDns by configurationStore.stringNotBlack(Key.DIRECT_DNS) { "https://223.5.5.5/dns-query" }
     var bootstrapDns by configurationStore.stringNotBlack(Key.BOOTSTRAP_DNS)
     var useLocalDnsAsDirectDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_DIRECT_DNS)
     var useLocalDnsAsBootstrapDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_BOOTSTRAP_DNS)
-    var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS)
+    var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS) { true }
     var hijackDns by configurationStore.boolean(Key.HIJACK_DNS)
     var hosts by configurationStore.string(Key.DNS_HOSTS)
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { true }
@@ -208,10 +208,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
-    var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
+    var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS) { true }
     var showGroupName by configurationStore.boolean(Key.SHOW_GROUP_NAME)
 
-    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.GVISOR }
+    var tunImplementation by configurationStore.stringToInt(Key.TUN_IMPLEMENTATION) { TunImplementation.SYSTEM }
 
     var mtu by configurationStore.stringToInt(Key.MTU) { VpnService.DEFAULT_MTU }
 
