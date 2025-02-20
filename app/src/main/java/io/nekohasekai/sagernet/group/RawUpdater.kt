@@ -1455,7 +1455,17 @@ object RawUpdater : GroupUpdater() {
                     } ?: return proxies
                     outbound.getInteger("server_port")?.also {
                         serverPorts = it.toString()
+                    } ?: (outbound.getAny("server_ports") as? List<String>)?.also {
+                        serverPorts = it.joinToString(",").replace(":", "-")
+                    } ?: (outbound.getAny("server_ports") as? String)?.also {
+                        serverPorts = it.replace(":", "-")
                     } ?: return proxies
+                    outbound.getString("hop_interval")?.also {
+                        try {
+                            val duration = Duration.parse(it)
+                            hopInterval = duration.toInt(DurationUnit.SECONDS)
+                        } catch (_: Exception) {}
+                    }
                     if (outbound.getString("auth")?.isNotEmpty() == true) {
                         authPayloadType = HysteriaBean.TYPE_BASE64
                         outbound.getString("auth")?.also {
