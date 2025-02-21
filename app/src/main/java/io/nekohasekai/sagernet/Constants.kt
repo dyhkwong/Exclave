@@ -105,6 +105,7 @@ object Key {
     const val MTU = "mtu"
     const val ALLOW_APPS_BYPASS_VPN = "allowAppsBypassVpn"
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
+    const val STUN_SERVERS = "stunServers"
 
     const val ENABLE_FRAGMENT = "enableFragment"
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"

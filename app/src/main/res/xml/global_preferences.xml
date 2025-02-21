@@ -380,6 +380,11 @@
             app:icon="@drawable/baseline_developer_board_24"
             app:key="acquireWakeLock"
             app:title="@string/acquire_wake_lock" />
+        <EditTextPreference
+            app:dialogMessage="@string/one_per_line"
+            app:icon="@drawable/ic_hardware_router"
+            app:key="stunServers"
+            app:title="@string/nat_stun_server_hint" />
     </PreferenceCategory>
 
 

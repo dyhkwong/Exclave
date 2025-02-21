@@ -20,7 +20,9 @@ package io.nekohasekai.sagernet.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -30,10 +32,13 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutStunBinding
+import io.nekohasekai.sagernet.ktx.PUBLIC_STUN_SERVERS
+import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.noties.markwon.Markwon
 import libcore.Libcore
+
 
 class StunActivity : ThemedActivity() {
 
@@ -78,6 +83,27 @@ class StunActivity : ThemedActivity() {
             setTitle(R.string.stun_test)
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
+        }
+
+
+        val list = if (DataStore.stunServers.isEmpty()) {
+            PUBLIC_STUN_SERVERS
+        } else {
+            DataStore.stunServers.listByLineOrComma().toTypedArray()
+        }
+
+        binding.natStunServer.setText(if (DataStore.stunServers.isEmpty()) list.random() else list[0])
+        binding.natStunServer.setOnClickListener {
+            val listPopupWindow = ListPopupWindow(this)
+            listPopupWindow.setAdapter(
+                ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
+            )
+            listPopupWindow.setOnItemClickListener { _, _, i, _ ->
+                binding.natStunServer.setText(list[i])
+                listPopupWindow.dismiss()
+            }
+            listPopupWindow.anchorView = binding.natStunServer
+            listPopupWindow.show()
         }
         binding.stunTest.setOnClickListener {
             doTest()

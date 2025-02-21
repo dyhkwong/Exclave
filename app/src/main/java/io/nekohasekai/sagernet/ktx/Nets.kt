@@ -257,3 +257,11 @@ fun String.toMegaBits(): Int? {
 }
 
 const val USER_AGENT = "Exclave/${BuildConfig.VERSION_NAME}"
+
+// Taken from https://gitlab.torproject.org/tpo/anti-censorship/pluggable-transports/snowflake/-/blob/main/client/torrc with unsupported servers removed.
+val PUBLIC_STUN_SERVERS = arrayOf(
+    "stun.epygi.com:3478",
+    "stun.uls.co.za:3478",
+    "stun.voipgate.com:3478",
+    "stun.mixvoip.com:3478"
+)
