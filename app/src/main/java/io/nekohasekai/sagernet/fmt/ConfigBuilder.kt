@@ -40,6 +40,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult.IndexEntity
+import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
@@ -1182,6 +1183,84 @@ fun buildV2RayConfig(
                                         }
                                     }
                                 )
+                            } else if (bean is AnyTLSBean) {
+                                protocol = "anytls"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    V2RayConfig.AnyTLSOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        if (bean.password.isNotEmpty()) password = bean.password
+                                    }
+                                )
+                                streamSettings = StreamSettingsObject().apply {
+                                    if (bean.security.isNotEmpty()) {
+                                        security = bean.security
+                                    }
+                                    when (security) {
+                                        "tls" -> {
+                                            tlsSettings = TLSObject().apply {
+                                                if (bean.sni.isNotEmpty()) {
+                                                    serverName = bean.sni
+                                                }
+                                                if (bean.alpn.isNotEmpty()) {
+                                                    alpn = bean.alpn.listByLineOrComma()
+                                                }
+                                                if (bean.certificates.isNotEmpty()) {
+                                                    disableSystemRoot = true
+                                                    certificates = listOf(TLSObject.CertificateObject()
+                                                        .apply {
+                                                            usage = "verify"
+                                                            certificate = bean.certificates.split(
+                                                                "\n"
+                                                            ).filter { it.isNotEmpty() }
+                                                        })
+                                                }
+                                                if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
+                                                    pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
+                                                }
+                                                if (bean.allowInsecure) {
+                                                    allowInsecure = true
+                                                }
+                                                if (bean.utlsFingerprint.isNotEmpty()) {
+                                                    fingerprint = bean.utlsFingerprint
+                                                }
+                                                if (bean.echConfig.isNotEmpty()) {
+                                                    echConfig = bean.echConfig
+                                                }
+                                                if (bean.echDohServer.isNotEmpty()) {
+                                                    echDohServer = bean.echDohServer
+                                                }
+                                            }
+                                        }
+                                        "reality" -> {
+                                            realitySettings = RealityObject().apply {
+                                                if (bean.sni.isNotEmpty()) {
+                                                    serverName = bean.sni
+                                                }
+                                                if (bean.realityPublicKey.isNotEmpty()) {
+                                                    publicKey = bean.realityPublicKey
+                                                }
+                                                if (bean.realityShortId.isNotEmpty()) {
+                                                    shortId = bean.realityShortId
+                                                }
+                                                if (bean.realityFingerprint.isNotEmpty()) {
+                                                    fingerprint = bean.realityFingerprint
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (DataStore.enableFragment) {
+                                        sockopt = StreamSettingsObject.SockoptObject().apply {
+                                            if (DataStore.enableFragment) {
+                                                fragment = StreamSettingsObject.SockoptObject.FragmentObject().apply {
+                                                    packets = "tlshello"
+                                                    length = DataStore.fragmentLength
+                                                    interval = DataStore.fragmentInterval
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             if (bean is StandardV2RayBean && bean.mux) {
                                 mux = OutboundObject.MuxObject().apply {

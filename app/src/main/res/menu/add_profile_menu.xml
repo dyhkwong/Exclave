@@ -51,6 +51,9 @@
                         android:id="@+id/action_new_http3"
                         android:title="@string/action_http3" />
                     <item
+                        android:id="@+id/action_new_anytls"
+                        android:title="@string/action_anytls" />
+                    <item
                         android:id="@+id/action_new_ssh"
                         android:title="@string/action_ssh" />
                     <item

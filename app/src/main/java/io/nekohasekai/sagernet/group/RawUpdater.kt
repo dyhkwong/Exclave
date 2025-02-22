@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
@@ -1183,6 +1184,70 @@ object RawUpdater : GroupUpdater() {
                     proxies.add(http3Bean)
                 }
             }
+            "anytls" -> {
+                val anytlsBean = AnyTLSBean().applyDefaultValues()
+                outbound.getObject("settings")?.also { settings ->
+                    outbound.getString("tag")?.also {
+                        anytlsBean.name = it
+                    }
+                    settings.getString("address")?.also {
+                        anytlsBean.serverAddress = it
+                    }
+                    settings.getIntFromStringOrInt("port")?.also {
+                        anytlsBean.serverPort = it
+                    }
+                    settings.getString("password")?.also {
+                        anytlsBean.password = it
+                    }
+                }
+                outbound.getObject("streamSettings")?.also { streamSettings ->
+                    when (val security = streamSettings.getString("security")?.lowercase()) {
+                        "tls", "utls" -> {
+                            anytlsBean.security = "tls"
+                            var tlsConfig = streamSettings.getObject("tlsSettings")
+                            if (security == "utls") {
+                                streamSettings.getObject("utlsSettings")?.also {
+                                    tlsConfig = it.getObject("tlsConfig")
+                                }
+                            }
+                            tlsConfig?.also { tlsSettings ->
+                                tlsSettings.getString("serverName")?.also {
+                                    anytlsBean.sni = it
+                                }
+                                (tlsSettings.getAny("alpn") as? List<String>)?.also {
+                                    anytlsBean.alpn = it.joinToString("\n")
+                                } ?: tlsSettings.getString("alpn")?.also {
+                                    anytlsBean.alpn = it.split(",").joinToString("\n")
+                                }
+                                tlsSettings.getBoolean("allowInsecure")?.also {
+                                    anytlsBean.allowInsecure = it
+                                }
+                                (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                                    anytlsBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                        anytlsBean.allowInsecure = allowInsecure
+                                    }
+                                }
+                            }
+                        }
+                        "reality" -> {
+                            anytlsBean.security = "reality"
+                            streamSettings.getObject("realitySettings")?.also { realitySettings ->
+                                realitySettings.getString("serverName")?.also {
+                                    anytlsBean.sni = it
+                                }
+                                realitySettings.getString("publicKey")?.also {
+                                    anytlsBean.realityPublicKey = it
+                                }
+                                realitySettings.getString("shortId")?.also {
+                                    anytlsBean.realityShortId = it
+                                }
+                            }
+                        }
+                    }
+                }
+                proxies.add(anytlsBean)
+            }
         }
         return proxies
     }
@@ -1682,6 +1747,51 @@ object RawUpdater : GroupUpdater() {
                         }
                     })
                 }
+            }
+            "anytls" -> {
+                val anytlsBean = AnyTLSBean().applyDefaultValues().apply {
+                    outbound["tag"]?.toString()?.also {
+                        name = it
+                    }
+                    outbound.getString("server")?.also {
+                        serverAddress = it
+                    } ?: return proxies
+                    outbound.getInteger("server_port")?.also {
+                        serverPort = it
+                    } ?: return proxies
+                    outbound.getObject("tls")?.also { tls ->
+                        (tls.getBoolean("enabled"))?.also { enabled ->
+                            if (enabled) {
+                                security = "tls"
+                                tls.getString("server_name")?.also {
+                                    sni = it
+                                }
+                                tls.getBoolean("insecure")?.also {
+                                    allowInsecure = it
+                                }
+                                (tls.getAny("alpn") as? (List<String>))?.also {
+                                    alpn = it.joinToString("\n")
+                                } ?: tls.getString("alpn")?.also {
+                                    alpn = it
+                                }
+                                tls.getObject("reality")?.also { reality ->
+                                    reality.getBoolean("enabled")?.also { enabled ->
+                                        if (enabled) {
+                                            security = "reality"
+                                            reality.getString("public_key")?.also {
+                                                realityPublicKey = it
+                                            }
+                                            reality.getString("short_id")?.also {
+                                                realityShortId = it
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                proxies.add(anytlsBean)
             }
         }
         return proxies
@@ -2453,6 +2563,23 @@ object RawUpdater : GroupUpdater() {
                             "MULTIPLEXING_MIDDLE" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_MIDDLE
                             "MULTIPLEXING_HIGH" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_HIGH
                         }
+                    }
+                }
+                proxies.add(bean)
+            }
+            "anytls" -> {
+                val bean = AnyTLSBean().apply {
+                    serverAddress = proxy["server"] as? String ?: return proxies
+                    serverPort = proxy["port"] as? Int ?: return proxies
+                    security = "tls"
+                }
+                for (opt in proxy) {
+                    when (opt.key) {
+                        "name" -> bean.name = opt.value as? String
+                        "password" -> bean.password = opt.value as? String
+                        "sni" -> bean.sni = opt.value as? String
+                        "skip-cert-verify" -> bean.allowInsecure = opt.value as? Boolean
+                        "alpn" -> bean.alpn = (opt.value as? List<String>)?.joinToString("\n")
                     }
                 }
                 proxies.add(bean)

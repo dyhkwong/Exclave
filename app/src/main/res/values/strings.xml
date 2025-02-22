@@ -200,6 +200,7 @@
     <string name="action_tuic5" translatable="false">TUIC v5</string>
     <string name="action_shadowtls" translatable="false">ShadowTLS</string>
     <string name="action_http3" translatable="false">HTTP3</string>
+    <string name="action_anytls" translatable="false">AnyTLS</string>
     <string name="proxy_chain">Proxy chain</string>
     <string name="custom_config">Custom config</string>
     <string name="balancer">Balancer</string>
