@@ -2091,7 +2091,6 @@ object RawUpdater : GroupUpdater() {
                     password = proxy["password"] as? String
                     if (proxy["tls"] as? Boolean == true) {
                         security = "tls"
-                        sni = proxy["sni"] as? String
                         if (proxy["skip-cert-verify"] as? Boolean == true) {
                             allowInsecure = true
                         }
@@ -2194,6 +2193,7 @@ object RawUpdater : GroupUpdater() {
                         }
                         "servername" -> if (bean is VMessBean || bean is VLESSBean) bean.sni = opt.value as? String
                         "sni" -> if (bean is TrojanBean) bean.sni = opt.value as? String
+                        "alpn" -> bean.alpn = (opt.value as? List<String>)?.joinToString("\n")
                         "skip-cert-verify" -> bean.allowInsecure = opt.value as? Boolean == true
                         "reality-opts" -> (opt.value as? Map<String, Any>)?.also {
                             for (realityOpt in it) {
@@ -2331,6 +2331,7 @@ object RawUpdater : GroupUpdater() {
                     uploadMbps = (proxy["up"] as? String)?.toMegaBitsPerSecond()
                     downloadMbps = (proxy["down"] as? String)?.toMegaBitsPerSecond()
                     sni = proxy["sni"] as? String
+                    alpn = (proxy["alpn"] as? List<String>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                     obfuscation = proxy["obfs"] as? String
                     hopInterval = proxy["hop-interval"] as? Int
@@ -2345,6 +2346,7 @@ object RawUpdater : GroupUpdater() {
                     uploadMbps = (proxy["up"] as? String)?.toMegaBitsPerSecond()
                     downloadMbps = (proxy["down"] as? String)?.toMegaBitsPerSecond()
                     sni = proxy["sni"] as? String
+                    // alpn = (proxy["alpn"] as? List<String>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                     obfs = if (proxy["obfs"] as? String == "salamander") proxy["obfs-password"] as? String else ""
                     hopInterval = proxy["hop-interval"] as? Int
@@ -2363,6 +2365,7 @@ object RawUpdater : GroupUpdater() {
                         reduceRTT = proxy["reduce-rtt"] as? Boolean == true
                         // allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                         sni = proxy["sni"] as? String
+                        alpn = (proxy["alpn"] as? List<String>)?.joinToString("\n")
                         name = proxy["name"] as? String
                     })
                 } else {
