@@ -26,12 +26,14 @@
         <EditTextPreference
             app:icon="@drawable/ic_baseline_domain_24"
             app:key="routeDomain"
-            app:title="domain"
+            app:title="domains"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_add_road_24"
             app:key="routeIP"
             app:title="ip"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             android:layout_width="match_parent"
@@ -39,11 +41,13 @@
             app:icon="@drawable/ic_maps_directions_boat"
             app:key="routePort"
             app:title="port"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_home_24"
             app:key="routeSourcePort"
             app:title="sourcePort"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/route_protocol_entry"
@@ -51,16 +55,19 @@
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="routeNetwork"
             app:title="network"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_local_bar_24"
             app:key="routeSource"
             app:title="source"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_layers_24"
             app:key="routeProtocol"
             app:title="protocol"
+            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <!--EditTextPreference
             app:icon="@drawable/ic_baseline_manage_search_24"

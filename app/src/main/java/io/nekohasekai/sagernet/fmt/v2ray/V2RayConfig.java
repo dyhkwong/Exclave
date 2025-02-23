@@ -132,6 +132,7 @@ public class V2RayConfig {
 
             public String type;
             public List<String> domain;
+            public List<String> domains;
             public List<String> ip;
             public String port;
             public String sourcePort;

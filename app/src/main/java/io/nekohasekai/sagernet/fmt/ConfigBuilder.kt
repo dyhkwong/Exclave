@@ -418,7 +418,7 @@ fun buildV2RayConfig(
                                 }
                             }
                             bean.host.isNotEmpty() -> {
-                                domain = listOf(bean.host)
+                                domains = listOf(bean.host)
                             }
                             bean.serverAddress.isIpAddress() -> {
                                 ip = listOf(bean.serverAddress)
@@ -426,7 +426,7 @@ fun buildV2RayConfig(
                                     skipDomain = true
                                 }
                             }
-                            else -> domain = listOf(bean.serverAddress)
+                            else -> domains = listOf(bean.serverAddress)
                         }
                     }
                     wsRules[bean.host.takeIf { !it.isNullOrEmpty() } ?: bean.serverAddress] = route
@@ -1431,7 +1431,7 @@ fun buildV2RayConfig(
                 }
 
                 if (rule.domains.isNotEmpty()) {
-                    domain = rule.domains.listByLineOrComma()
+                    domains = rule.domains.listByLineOrComma()
                 }
                 if (rule.ip.isNotEmpty()) {
                     ip = rule.ip.listByLineOrComma()
