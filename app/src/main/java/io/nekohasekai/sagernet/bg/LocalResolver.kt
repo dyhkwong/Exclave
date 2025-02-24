@@ -48,11 +48,10 @@ interface LocalResolver : LocalResolver {
                 suspendCoroutine { continuation ->
                     val signal = CancellationSignal()
                     val callback = object : DnsResolver.Callback<Collection<InetAddress>> {
-                        @Suppress("ThrowableNotThrown")
                         override fun onAnswer(answer: Collection<InetAddress>, rcode: Int) {
                             when {
                                 answer.isNotEmpty() -> {
-                                    continuation.tryResume(answer.mapNotNull { it.hostAddress }
+                                    continuation.tryResume((answer as Collection<InetAddress?>).mapNotNull { it?.hostAddress }
                                         .joinToString(","))
                                 }
                                 rcode == 0 -> {
