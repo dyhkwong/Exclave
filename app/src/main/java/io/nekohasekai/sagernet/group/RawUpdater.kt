@@ -1405,7 +1405,7 @@ object RawUpdater : GroupUpdater() {
                     "shadowsocks" -> {
                         v2rayBean as ShadowsocksBean
                         outbound.getString("method")?.also {
-                            v2rayBean.method = it.lowercase()
+                            v2rayBean.method = it
                         }
                         outbound.getString("password")?.also {
                             v2rayBean.password = it
@@ -1660,6 +1660,12 @@ object RawUpdater : GroupUpdater() {
                     outbound.getInteger("server_port")?.also {
                         serverPort = it
                     } ?: return proxies
+                    outbound.getString("method")?.also {
+                        method = it
+                    }
+                    outbound.getString("password")?.also {
+                        password = it
+                    }
                     outbound.getString("obfs")?.also {
                         obfs = it
                     }
@@ -2195,33 +2201,33 @@ object RawUpdater : GroupUpdater() {
         when (proxy["type"]) {
             "socks5" -> {
                 proxies.add(SOCKSBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
-                    username = proxy["username"] as? String
-                    password = proxy["password"] as? String
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
+                    username = proxy["username"]?.toString()
+                    password = proxy["password"]?.toString()
                     if (proxy["tls"] as? Boolean == true) {
                         security = "tls"
                         if (proxy["skip-cert-verify"] as? Boolean == true) {
                             allowInsecure = true
                         }
                     }
-                    name = proxy["name"] as? String
+                    name = proxy["name"]?.toString()
                 })
             }
             "http" -> {
                 proxies.add(HttpBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
-                    username = proxy["username"] as? String
-                    password = proxy["password"] as? String
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
+                    username = proxy["username"]?.toString()
+                    password = proxy["password"]?.toString()
                     if (proxy["tls"] as? Boolean == true) {
                         security = "tls"
-                        sni = proxy["sni"] as? String
+                        sni = proxy["sni"]?.toString()
                         if (proxy["skip-cert-verify"] as? Boolean == true) {
                             allowInsecure = true
                         }
                     }
-                    name = proxy["name"] as? String
+                    name = proxy["name"]?.toString()
                 })
             }
             "ss" -> {
@@ -2256,15 +2262,15 @@ object RawUpdater : GroupUpdater() {
                     pluginStr = pluginOpts.toString(false)
                 }
                 proxies.add(ShadowsocksBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
-                    password = proxy["password"] as? String
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
+                    password = proxy["password"]?.toString()
                     method = when (proxy["cipher"]) {
                         "dummy" -> "none"
-                        else -> (proxy["cipher"] as? String)?.lowercase()
+                        else -> (proxy["cipher"] as? String)
                     }
                     plugin = pluginStr
-                    name = proxy["name"] as? String
+                    name = proxy["name"]?.toString()
                     fixInvalidParams()
                 })
             }
@@ -2275,8 +2281,8 @@ object RawUpdater : GroupUpdater() {
                     "trojan" -> TrojanBean()
                     else -> error("impossible")
                 }.apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                 }
                 if (bean is TrojanBean) {
                     bean.security = "tls"
@@ -2284,15 +2290,15 @@ object RawUpdater : GroupUpdater() {
                 for (opt in proxy) {
                     when (opt.key) {
                         "name" -> bean.name = opt.value?.toString()
-                        "password" -> if (bean is TrojanBean) bean.password = opt.value as? String
-                        "uuid" -> if (bean is VMessBean || bean is VLESSBean) bean.uuid = opt.value as? String
-                        "alterId" -> if (bean is VMessBean) bean.alterId = opt.value as? Int
-                        "cipher" -> if (bean is VMessBean) bean.encryption = (opt.value as? String)?.lowercase()
-                        "flow" -> if (bean is VLESSBean) bean.flow = (opt.value as? String)?.lowercase()?.let {
-                            if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else it
+                        "password" -> if (bean is TrojanBean) bean.password = opt.value?.toString()
+                        "uuid" -> if (bean is VMessBean || bean is VLESSBean) bean.uuid = opt.value?.toString()
+                        "alterId" -> if (bean is VMessBean) bean.alterId = opt.value?.toString()?.toIntOrNull()
+                        "cipher" -> if (bean is VMessBean) bean.encryption = (opt.value as? String)
+                        "flow" -> if (bean is VLESSBean) bean.flow = (opt.value as? String)?.let {
+                            if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else null
                         }
                         "packet-encoding" -> if (bean is VMessBean || bean is VLESSBean) {
-                            bean.packetEncoding = when ((opt.value as? String)?.lowercase()) {
+                            bean.packetEncoding = when ((opt.value as? String)) {
                                 "packetaddr" -> "packet"
                                 "xudp" -> "xudp"
                                 else -> "none"
@@ -2301,16 +2307,16 @@ object RawUpdater : GroupUpdater() {
                         "tls" -> if (bean is VMessBean || bean is VLESSBean) {
                             bean.security = if (opt.value as? Boolean == true) "tls" else ""
                         }
-                        "servername" -> if (bean is VMessBean || bean is VLESSBean) bean.sni = opt.value as? String
-                        "sni" -> if (bean is TrojanBean) bean.sni = opt.value as? String
-                        "alpn" -> bean.alpn = (opt.value as? List<String>)?.joinToString("\n")
+                        "servername" -> if (bean is VMessBean || bean is VLESSBean) bean.sni = opt.value?.toString()
+                        "sni" -> if (bean is TrojanBean) bean.sni = opt.value?.toString()
+                        "alpn" -> bean.alpn = (opt.value as? List<Any>)?.joinToString("\n")
                         "skip-cert-verify" -> bean.allowInsecure = opt.value as? Boolean == true
-                        "reality-opts" -> (opt.value as? Map<String, Any>)?.also {
+                        "reality-opts" -> (opt.value as? Map<String, Any?>)?.also {
                             for (realityOpt in it) {
                                 bean.security = "reality"
                                 when (realityOpt.key) {
-                                    "public-key" -> bean.realityPublicKey = realityOpt.value as? String
-                                    "short-id" -> bean.realityShortId = realityOpt.value as? String
+                                    "public-key" -> bean.realityPublicKey = realityOpt.value?.toString()
+                                    "short-id" -> bean.realityShortId = realityOpt.value?.toString()
                                 }
                             }
                         }
@@ -2324,24 +2330,24 @@ object RawUpdater : GroupUpdater() {
                                 "ws", "grpc" -> bean.type = opt.value as String
                             }
                         }
-                        "ws-opts" -> (opt.value as? Map<String, Any>)?.also {
+                        "ws-opts" -> (opt.value as? Map<String, Any?>)?.also {
                             for (wsOpt in it) {
                                 when (wsOpt.key) {
-                                    "headers" -> (wsOpt.value as? Map<String, String>)?.forEach { (key, value) ->
-                                        when (key.lowercase()) {
+                                    "headers" -> (wsOpt.value as? Map<Any, Any?>)?.forEach { (key, value) ->
+                                        when (key.toString().lowercase()) {
                                             "host" -> {
-                                                bean.host = value
+                                                bean.host = value?.toString()
                                             }
                                         }
                                     }
                                     "path" -> {
-                                        bean.path = wsOpt.value as? String
+                                        bean.path = wsOpt.value?.toString()
                                     }
                                     "max-early-data" -> {
-                                        bean.maxEarlyData = wsOpt.value as? Int
+                                        bean.maxEarlyData = wsOpt.value?.toString()?.toIntOrNull()
                                     }
                                     "early-data-header-name" -> {
-                                        bean.earlyDataHeaderName = wsOpt.value as? String
+                                        bean.earlyDataHeaderName = wsOpt.value?.toString()
                                     }
                                     "v2ray-http-upgrade" -> {
                                         if (wsOpt.value as? Boolean == true) {
@@ -2351,21 +2357,21 @@ object RawUpdater : GroupUpdater() {
                                 }
                             }
                         }
-                        "h2-opts" -> (opt.value as? Map<String, Any>)?.also {
+                        "h2-opts" -> (opt.value as? Map<String, Any?>)?.also {
                             for (h2Opt in it) {
                                 when (h2Opt.key) {
-                                    "host" -> bean.host = (h2Opt.value as? List<String>)?.joinToString("\n")
-                                    "path" -> bean.path = h2Opt.value as? String
+                                    "host" -> bean.host = (h2Opt.value as? List<Any>)?.joinToString("\n")
+                                    "path" -> bean.path = h2Opt.value?.toString()
                                 }
                             }
                         }
-                        "http-opts" -> (opt.value as? Map<String, Any>)?.also {
+                        "http-opts" -> (opt.value as? Map<String, Any?>)?.also {
                             for (httpOpt in it) {
                                 when (httpOpt.key) {
-                                    "path" -> bean.path = (httpOpt.value as? List<String>)?.joinToString("\n")
+                                    "path" -> bean.path = (httpOpt.value as? List<Any>)?.joinToString("\n")
                                     "headers" -> {
-                                        (httpOpt.value as? Map<String, List<String>>)?.forEach { (key, value) ->
-                                            when (key.lowercase()) {
+                                        (httpOpt.value as? Map<Any, List<Any>>)?.forEach { (key, value) ->
+                                            when (key.toString().lowercase()) {
                                                 "host" -> {
                                                     bean.host = value.joinToString("\n")
                                                 }
@@ -2375,10 +2381,10 @@ object RawUpdater : GroupUpdater() {
                                 }
                             }
                         }
-                        "grpc-opts" -> (opt.value as? Map<String, Any>)?.also {
+                        "grpc-opts" -> (opt.value as? Map<String, Any?>)?.also {
                             for (grpcOpt in it) {
                                 when (grpcOpt.key) {
-                                    "grpc-service-name" -> bean.grpcServiceName = grpcOpt.value as? String
+                                    "grpc-service-name" -> bean.grpcServiceName = grpcOpt.value?.toString()
                                 }
                             }
                         }
@@ -2388,39 +2394,39 @@ object RawUpdater : GroupUpdater() {
             }
             "ssr" -> {
                 proxies.add(ShadowsocksRBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                     method = when (proxy["cipher"]) {
                         "dummy" -> "none"
-                        else -> (proxy["cipher"] as? String)?.lowercase()
+                        else -> (proxy["cipher"] as? String)
                     }
-                    password = proxy["password"] as? String
+                    password = proxy["password"]?.toString()
                     obfs = proxy["obfs"] as? String
-                    obfsParam = proxy["obfs-param"] as? String
+                    obfsParam = proxy["obfs-param"]?.toString()
                     protocol = proxy["protocol"] as? String
-                    protocolParam = proxy["protocol-param"] as? String
-                    name = proxy["name"] as? String
+                    protocolParam = proxy["protocol-param"]?.toString()
+                    name = proxy["name"]?.toString()
                 })
             }
             "ssh" -> {
                 val bean = SSHBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                 }
                 for (opt in proxy) {
                     when (opt.key) {
-                        "name" -> bean.name = opt.value as? String
-                        "username" -> bean.username = opt.value as? String
+                        "name" -> bean.name = opt.value?.toString()
+                        "username" -> bean.username = opt.value?.toString()
                         "password" -> {
-                            bean.password = opt.value as? String
+                            bean.password = opt.value?.toString()
                             bean.authType = SSHBean.AUTH_TYPE_PASSWORD
                         }
                         "private-key" -> {
-                            bean.privateKey = opt.value as? String
+                            bean.privateKey = opt.value?.toString()
                             bean.authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
                         }
-                        "private-key-passphrase" -> bean.privateKeyPassphrase = opt.value as? String
-                        "host-key" -> (opt.value as? List<String>)?.also {
+                        "private-key-passphrase" -> bean.privateKeyPassphrase = opt.value?.toString()
+                        "host-key" -> (opt.value as? List<Any>)?.also {
                             bean.publicKey = it.joinToString("\n")
                         }
                     }
@@ -2429,101 +2435,108 @@ object RawUpdater : GroupUpdater() {
             }
             "hysteria" -> {
                 proxies.add(HysteriaBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPorts = proxy["ports"] as? String ?: (proxy["port"] as? Int)?.toString() ?: return proxies
-                    protocol = when (proxy["protocol"] as? String) {
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPorts = proxy["ports"]?.toString() ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
+                    protocol = when (proxy["protocol"] as? String ?: proxy["obfs-protocol"] as? String) {
                         "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
                         "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
-                        else -> HysteriaBean.PROTOCOL_UDP
+                        "udp" -> HysteriaBean.PROTOCOL_UDP
+                        else -> return proxies
                     }
-                    authPayloadType = HysteriaBean.TYPE_STRING
-                    authPayload = proxy["auth-str"] as? String
-                    uploadMbps = (proxy["up"] as? String)?.toMegaBitsPerSecond()
-                    downloadMbps = (proxy["down"] as? String)?.toMegaBitsPerSecond()
-                    sni = proxy["sni"] as? String
-                    alpn = (proxy["alpn"] as? List<String>)?.joinToString("\n")
+                    proxy["auth-str"]?.also {
+                        authPayloadType = HysteriaBean.TYPE_STRING
+                        authPayload = it.toString()
+                    }
+                    proxy["auth"]?.toString()?.takeIf { it.isNotEmpty() }?.also {
+                        authPayloadType = HysteriaBean.TYPE_BASE64
+                        authPayload = it
+                    }
+                    uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond() ?: proxy["up-speed"]?.toString()?.toIntOrNull()
+                    downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond() ?: proxy["down-speed"]?.toString()?.toIntOrNull()
+                    sni = proxy["sni"]?.toString()
+                    alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                    obfuscation = proxy["obfs"] as? String
-                    hopInterval = proxy["hop-interval"] as? Int
-                    name = proxy["name"] as? String
+                    obfuscation = proxy["obfs"]?.toString()?.takeIf { it.isNotEmpty() }
+                    hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
+                    name = proxy["name"]?.toString()
                 })
             }
             "hysteria2" -> {
                 proxies.add(Hysteria2Bean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPorts = proxy["ports"] as? String ?: (proxy["port"] as? Int)?.toString() ?: return proxies
-                    auth = proxy["password"] as? String
-                    uploadMbps = (proxy["up"] as? String)?.toMegaBitsPerSecond()
-                    downloadMbps = (proxy["down"] as? String)?.toMegaBitsPerSecond()
-                    sni = proxy["sni"] as? String
-                    // alpn = (proxy["alpn"] as? List<String>)?.joinToString("\n")
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPorts = proxy["ports"]?.toString() ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
+                    auth = proxy["password"]?.toString()
+                    uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond()
+                    downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond()
+                    sni = proxy["sni"]?.toString()
+                    // alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                    obfs = if (proxy["obfs"] as? String == "salamander") proxy["obfs-password"] as? String else ""
-                    hopInterval = proxy["hop-interval"] as? Int
-                    name = proxy["name"] as? String
+                    obfs = if (proxy["obfs"] as? String == "salamander") proxy["obfs-password"]?.toString() else null
+                    hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
+                    name = proxy["name"]?.toString()
                 })
             }
             "tuic" -> {
-                if (proxy["token"] as? String != null) {
+                if (proxy["token"] != null) {
                     proxies.add(TuicBean().apply {
-                        serverAddress = proxy["server"] as? String ?: return proxies
-                        serverPort = proxy["port"] as? Int ?: return proxies
-                        token = proxy["token"] as? String
+                        serverAddress = proxy["server"]?.toString() ?: return proxies
+                        serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
+                        token = proxy["token"]?.toString()
                         udpRelayMode = proxy["udp-relay-mode"] as? String
                         congestionController = proxy["congestion-controller"] as? String
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         reduceRTT = proxy["reduce-rtt"] as? Boolean == true
                         // allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                        sni = proxy["sni"] as? String
-                        alpn = (proxy["alpn"] as? List<String>)?.joinToString("\n")
-                        name = proxy["name"] as? String
+                        sni = proxy["sni"]?.toString()
+                        alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
+                        name = proxy["name"]?.toString()
                     })
                 } else {
                     proxies.add(Tuic5Bean().apply {
-                        serverAddress = proxy["server"] as? String ?: return proxies
-                        serverPort = proxy["port"] as? Int ?: return proxies
+                        serverAddress = proxy["server"]?.toString() ?: return proxies
+                        serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         uuid = proxy["uuid"] as? String
-                        password = proxy["password"] as? String
+                        password = proxy["password"]?.toString()
                         udpRelayMode = proxy["udp-relay-mode"] as? String
                         congestionControl = proxy["congestion-controller"] as? String
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         zeroRTTHandshake = proxy["reduce-rtt"] as? Boolean == true
                         allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                        sni = proxy["sni"] as? String
-                        name = proxy["name"] as? String
+                        sni = proxy["sni"]?.toString()
+                        name = proxy["name"]?.toString()
                     })
                 }
             }
             "wireguard" -> {
                 val wireGuardBean = WireGuardBean().apply {
-                    serverAddress = proxy["server"] as? String
-                    serverPort = proxy["port"] as? Int
+                    serverAddress = proxy["server"]?.toString()
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull()
                     privateKey = proxy["private-key"] as? String
                     peerPublicKey = proxy["public-key"] as? String
                     peerPreSharedKey = proxy["pre-shared-key"] as? String ?: proxy["preshared-key"] as? String
-                    mtu = (proxy["mtu"] as? Int)?.takeIf { it > 0 } ?: 1408
+                    mtu = (proxy["mtu"]?.toString()?.toIntOrNull())?.takeIf { it > 0 } ?: 1408
                     localAddress = listOfNotNull(proxy["ip"] as? String, proxy["ipv6"] as? String).joinToString("\n")
-                    name = proxy["name"] as? String
+                    name = proxy["name"]?.toString()
                     (proxy["reserved"] as? List<Map<String, Any>>)?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
                     } ?: {
-                        Base64.decode(proxy["reserved"] as? String)?.also {
+                        Base64.decode(proxy["reserved"]?.toString())?.also {
                             if (it.size == 3) {
                                 reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
                             }
                         }
                     }
                 }
-                if (proxy["server"] as? String != null && proxy["port"] as? Int != null) {
+                if (proxy["server"] != null && proxy["port"] != null) {
                     proxies.add(wireGuardBean)
                 }
                 (proxy["peers"] as? List<Map<String, Any>>)?.forEach {
-                    if (it["server"] as? String != null && it["port"] as? Int != null) {
+                    if (it["server"] != null && it["port"] != null) {
                         proxies.add(wireGuardBean.clone().apply {
-                            serverAddress = it["server"] as? String
-                            serverPort = it["port"] as? Int
+                            serverAddress = it["server"]?.toString()
+                            serverPort = it["port"]?.toString()?.toIntOrNull()
                             peerPublicKey = it["public-key"] as? String
                             peerPreSharedKey = it["pre-shared-key"] as? String
                             (it["reserved"] as? List<Map<String, Any>>)?.also {
@@ -2531,7 +2544,7 @@ object RawUpdater : GroupUpdater() {
                                     reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                                 }
                             } ?: {
-                                Base64.decode(it["reserved"] as? String)?.also {
+                                Base64.decode(it["reserved"]?.toString())?.also {
                                     if (it.size == 3) {
                                         reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
                                     }
@@ -2543,15 +2556,15 @@ object RawUpdater : GroupUpdater() {
             }
             "mieru" -> {
                 val bean = MieruBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
                     // Why yet another protocol containing port-range? Let us use the first port only for now.
-                    serverPort = proxy["port"] as? Int ?: (proxy["port-range"] as? String)?.substringBefore("-")?.toInt() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: (proxy["port-range"]?.toString())?.substringBefore("-")?.toIntOrNull() ?: return proxies
                 }
                 for (opt in proxy) {
                     when (opt.key) {
-                        "name" -> bean.name = opt.value as? String
-                        "username" -> bean.username = opt.value as? String
-                        "password" -> bean.password = opt.value as? String
+                        "name" -> bean.name = opt.value?.toString()
+                        "username" -> bean.username = opt.value?.toString()
+                        "password" -> bean.password = opt.value?.toString()
                         "transport" -> when (opt.value) {
                             "TCP" -> bean.protocol = MieruBean.PROTOCOL_TCP
                             "UDP" -> bean.protocol = MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
@@ -2569,17 +2582,17 @@ object RawUpdater : GroupUpdater() {
             }
             "anytls" -> {
                 val bean = AnyTLSBean().apply {
-                    serverAddress = proxy["server"] as? String ?: return proxies
-                    serverPort = proxy["port"] as? Int ?: return proxies
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                     security = "tls"
                 }
                 for (opt in proxy) {
                     when (opt.key) {
-                        "name" -> bean.name = opt.value as? String
-                        "password" -> bean.password = opt.value as? String
-                        "sni" -> bean.sni = opt.value as? String
+                        "name" -> bean.name = opt.value?.toString()
+                        "password" -> bean.password = opt.value?.toString()
+                        "sni" -> bean.sni = opt.value?.toString()
                         "skip-cert-verify" -> bean.allowInsecure = opt.value as? Boolean
-                        "alpn" -> bean.alpn = (opt.value as? List<String>)?.joinToString("\n")
+                        "alpn" -> bean.alpn = (opt.value as? List<Any>)?.joinToString("\n")
                     }
                 }
                 proxies.add(bean)
