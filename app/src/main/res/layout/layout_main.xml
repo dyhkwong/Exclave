@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:nextFocusUp="@+id/fab"
-            app:backgroundTint="?colorMaterial300"
+            app:backgroundTint="?colorPrimary"
             app:contentInsetStart="0dp"
             app:fabAlignmentMode="end"
             app:fabCradleMargin="0dp"
