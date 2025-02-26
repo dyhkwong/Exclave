@@ -116,6 +116,11 @@ class MainActivity : ThemedActivity(),
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            // https://stackoverflow.com/questions/79319740/edge-to-edge-doesnt-work-when-activity-recreated-or-appcompatdelegate-setdefaul
+            // Baklava should have fixed this
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
         if (resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL) {
             ViewCompat.setOnApplyWindowInsetsListener(navigation) { v, insets ->
                 val bars = insets.getInsets(

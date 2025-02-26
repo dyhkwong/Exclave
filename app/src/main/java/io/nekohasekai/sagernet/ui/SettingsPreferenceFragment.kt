@@ -23,6 +23,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -82,9 +83,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             val theme = Theme.getTheme(newTheme as Int)
             app.setTheme(theme)
             requireActivity().apply {
-                // FIXME
-                this.finish()
-                startActivity(intent)
+                ActivityCompat.recreate(this)
             }
             true
         }
@@ -93,9 +92,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             Theme.currentNightMode = (newTheme as String).toInt()
             Theme.applyNightTheme()
             requireActivity().apply {
-                // FIXME
-                this.finish()
-                startActivity(intent)
+                ActivityCompat.recreate(this)
             }
             true
         }
