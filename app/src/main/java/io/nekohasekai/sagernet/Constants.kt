@@ -106,6 +106,7 @@ object Key {
     const val ALLOW_APPS_BYPASS_VPN = "allowAppsBypassVpn"
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
     const val STUN_SERVERS = "stunServers"
+    const val FAB_STYLE = "fabStyle"
 
     const val ENABLE_FRAGMENT = "enableFragment"
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"
@@ -354,4 +355,9 @@ object LogLevel {
     const val WARNING = 2
     const val INFO = 3
     const val DEBUG = 4
+}
+
+object FabStyle {
+    const val SagerNet = 0
+    const val Shadowsocks = 1
 }

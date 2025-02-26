@@ -385,6 +385,14 @@
             app:icon="@drawable/ic_hardware_router"
             app:key="stunServers"
             app:title="@string/nat_stun_server_hint" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/fab_style_entry"
+            app:entryValues="@array/int_array_2"
+            app:icon="@drawable/baseline_flight_takeoff_24"
+            app:key="fabStyle"
+            app:title="@string/fab_style"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 

@@ -43,6 +43,8 @@ import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
 import cn.hutool.core.codec.Base64Decoder
 import cn.hutool.core.util.ZipUtil
+import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
+import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_END
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -84,6 +86,21 @@ class MainActivity : ThemedActivity(),
         }
 
         binding = LayoutMainBinding.inflate(layoutInflater)
+        when (DataStore.fabStyle) {
+            FabStyle.SagerNet -> {
+                binding.stats.fabAlignmentMode = FAB_ALIGNMENT_MODE_END
+                binding.stats.fabCradleMargin = 0F
+                binding.stats.fabCradleRoundedCornerRadius = 0F
+                binding.stats.cradleVerticalOffset = dp2px(8).toFloat()
+            }
+            FabStyle.Shadowsocks -> {
+                binding.stats.fabAlignmentMode = FAB_ALIGNMENT_MODE_CENTER
+                binding.stats.fabCradleMargin = dp2px(6).toFloat()
+                binding.stats.fabCradleRoundedCornerRadius = dp2px(6).toFloat()
+                binding.stats.cradleVerticalOffset = 0F
+            }
+        }
+
         binding.fab.initProgress(binding.fabProgress)
         if (themeResId !in intArrayOf(
                 R.style.Theme_SagerNet_Black, R.style.Theme_SagerNet_LightBlack

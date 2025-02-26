@@ -1101,4 +1101,8 @@
         <item>0</item>
     </string-array>
 
+    <string-array name="fab_style_entry">
+        <item>SagerNet</item>
+        <item>Shadowsocks</item>
+    </string-array>
 </resources>

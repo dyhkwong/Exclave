@@ -286,6 +286,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
 
+        val fabStyle = findPreference<SimpleMenuPreference>(Key.FAB_STYLE)!!
+        fabStyle.setOnPreferenceChangeListener { _, _ ->
+            requireActivity().apply {
+                this.finish()
+                startActivity(intent)
+            }
+            true
+        }
         val enableFragment = findPreference<SwitchPreference>(Key.ENABLE_FRAGMENT)!!
         val enableFragmentForDirect = findPreference<SwitchPreference>(Key.ENABLE_FRAGMENT_FOR_DIRECT)!!
         val fragmentLength = findPreference<EditTextPreference>(Key.FRAGMENT_LENGTH)!!

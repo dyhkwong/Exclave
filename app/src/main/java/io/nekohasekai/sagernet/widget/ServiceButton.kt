@@ -38,8 +38,10 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.progressindicator.BaseProgressIndicator
 import com.google.android.material.progressindicator.DeterminateDrawable
+import io.nekohasekai.sagernet.FabStyle
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.bg.BaseService
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.getColorAttr
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -84,7 +86,9 @@ class ServiceButton @JvmOverloads constructor(
             setImageDrawable(icon)
             setColorFilter(context.getColorAttr(R.attr.whiteOrTextPrimary))
             icon.start()
-            progress.onStart()
+            if (DataStore.fabStyle == FabStyle.SagerNet) {
+                progress.onStart()
+            }
         }
 
         fun stop() = icon.stop()
