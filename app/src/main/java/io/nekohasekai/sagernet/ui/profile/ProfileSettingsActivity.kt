@@ -26,7 +26,7 @@ import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -73,6 +73,14 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             setNegativeButton(android.R.string.cancel) { _, _ ->
                 requireActivity().finish()
             }
+        }
+    }
+
+    val callback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            UnsavedChangesDialogFragment().apply {
+                key()
+            }.show(supportFragmentManager, null)
         }
     }
 
@@ -171,14 +179,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
         }
 
-        onBackPressedDispatcher.addCallback {
-            if (DataStore.dirty) UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
-            else {
-                finish()
-            }
-        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     open suspend fun saveAndExit() {
@@ -244,6 +245,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             DataStore.dirty = true
+            callback.isEnabled = true
         }
     }
 

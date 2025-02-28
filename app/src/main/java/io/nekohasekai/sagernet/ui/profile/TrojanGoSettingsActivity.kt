@@ -222,6 +222,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
                 PluginConfiguration(pluginConfiguration.pluginsOptions, override ?: selected.id)
             DataStore.serverPlugin = pluginConfiguration.toString()
             DataStore.dirty = true
+            callback.isEnabled = true
             plugin.value = pluginConfiguration.selected
             pluginConfigure.isEnabled = selected !is NoPlugin
             pluginConfigure.text = pluginConfiguration.getOptions().toString()
@@ -266,6 +267,7 @@ class TrojanGoSettingsActivity : ProfileSettingsActivity<TrojanGoBean>(),
         )
         DataStore.serverPlugin = pluginConfiguration.toString()
         DataStore.dirty = true
+        callback.isEnabled = true
         true
     } catch (exc: RuntimeException) {
         Snackbar.make(child.requireView(), exc.readableMessage, Snackbar.LENGTH_LONG).show()

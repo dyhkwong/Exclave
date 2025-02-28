@@ -27,7 +27,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,6 +62,14 @@ class GroupSettingsActivity(
     @LayoutRes resId: Int = R.layout.layout_config_settings,
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
+
+    val callback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            UnsavedChangesDialogFragment().apply {
+                key()
+            }.show(supportFragmentManager, null)
+        }
+    }
 
     private lateinit var frontProxyPreference: SimpleMenuPreference
     private lateinit var landingProxyPreference: SimpleMenuPreference
@@ -114,7 +122,9 @@ class GroupSettingsActivity(
     }
 
     fun needSave(): Boolean {
-        if (!DataStore.dirty) return false
+        if (!DataStore.dirty) {
+            return false
+        }
         return true
     }
 
@@ -310,15 +320,7 @@ class GroupSettingsActivity(
                 }
             }
 
-            onBackPressedDispatcher.addCallback {
-                if (needSave()) {
-                    UnsavedChangesDialogFragment().apply {
-                        key()
-                    }.show(supportFragmentManager, null)
-                } else {
-                    finish()
-                }
-            }
+            onBackPressedDispatcher.addCallback(this, callback)
         }
 
     }
@@ -381,6 +383,7 @@ class GroupSettingsActivity(
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             DataStore.dirty = true
+            callback.isEnabled = true
         }
     }
 

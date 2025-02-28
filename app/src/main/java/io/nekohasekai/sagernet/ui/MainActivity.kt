@@ -33,8 +33,8 @@ import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
-import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -75,6 +75,12 @@ class MainActivity : ThemedActivity(),
     lateinit var navigation: NavigationView
 
     val userInterface by lazy { GroupInterfaceAdapter(this) }
+
+    val callback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            displayFragmentWithId(R.id.nav_configuration)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,6 +154,8 @@ class MainActivity : ThemedActivity(),
                 WindowInsetsCompat.CONSUMED
             }
         }
+
+        onBackPressedDispatcher.addCallback(this, callback)
 
         if (savedInstanceState == null) {
             displayFragmentWithId(R.id.nav_configuration)
@@ -583,23 +591,6 @@ class MainActivity : ThemedActivity(),
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 if (binding.drawerLayout.isOpen) {
                     binding.drawerLayout.close()
-                    return true
-                }
-            }
-            KeyEvent.KEYCODE_BACK -> {
-                if (binding.drawerLayout.isOpen) {
-                    binding.drawerLayout.close()
-                    return true
-                }
-                val configurationFragment = supportFragmentManager.findFragmentById(R.id.fragment_holder) as? ConfigurationFragment
-                if (configurationFragment == null) {
-                    displayFragmentWithId(R.id.nav_configuration)
-                    return true
-                }
-                val toolbarFragment = supportFragmentManager.findFragmentById(R.id.fragment_holder) as? ToolbarFragment
-                val searchView = toolbarFragment?.toolbar?.findViewById<SearchView>(R.id.action_search)
-                if (searchView?.isIconified == false) {
-                    searchView.isIconified = true
                     return true
                 }
             }

@@ -85,6 +85,8 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             .replace(R.id.about_fragment_holder, AboutContent())
             .commitAllowingStateLoss()
 
+        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+
         runOnDefaultDispatcher {
             val license = view.context.assets.open("LICENSE").bufferedReader().readText()
             onMainDispatcher {

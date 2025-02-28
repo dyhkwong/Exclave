@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -36,6 +36,14 @@ class AssetEditActivity(
     @LayoutRes resId: Int = R.layout.layout_config_settings,
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
+
+    val callback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            UnsavedChangesDialogFragment().apply {
+                key()
+            }.show(supportFragmentManager, null)
+        }
+    }
 
     fun AssetEntity.init() {
         DataStore.assetName = name
@@ -183,14 +191,7 @@ class AssetEditActivity(
 
         }
 
-        onBackPressedDispatcher.addCallback {
-            if (DataStore.dirty) UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
-            else {
-                finish()
-            }
-        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     suspend fun saveAndExit() {
@@ -261,6 +262,7 @@ class AssetEditActivity(
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             DataStore.dirty = true
+            callback.isEnabled = true
         }
     }
 

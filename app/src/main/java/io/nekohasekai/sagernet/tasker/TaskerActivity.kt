@@ -24,7 +24,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
@@ -49,6 +49,12 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
     OnPreferenceDataStoreChangeListener {
 
     val settings by lazy { TaskerBundle.fromIntent(intent) }
+
+    val callback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            saveAndExit()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,9 +99,7 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
         DataStore.dirty = false
         DataStore.profileCacheStore.registerChangeListener(this)
 
-        onBackPressedDispatcher.addCallback {
-            if (needSave()) saveAndExit() else finish()
-        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     lateinit var profile: TaskerProfilePreference
@@ -121,6 +125,7 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             DataStore.dirty = true
+            callback.isEnabled = true
         }
         when (key) {
             Key.TASKER_ACTION -> {
@@ -148,11 +153,6 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
                 DataStore.taskerProfileId = profileId
             }
         }
-    }
-
-    fun needSave(): Boolean {
-        if (!DataStore.dirty) return false
-        return true
     }
 
     fun saveAndExit() {

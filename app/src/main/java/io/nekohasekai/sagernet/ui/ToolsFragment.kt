@@ -84,6 +84,8 @@ class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
                 true
             }
         }.attach()
+
+        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
     }
 
     inner class ToolsAdapter(val tools: List<Fragment>) : FragmentStateAdapter(this) {

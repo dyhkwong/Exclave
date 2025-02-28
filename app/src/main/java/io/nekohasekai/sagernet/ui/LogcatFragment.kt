@@ -111,6 +111,8 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         reloadSession()
 
         registerForContextMenu(terminalView)
+
+        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

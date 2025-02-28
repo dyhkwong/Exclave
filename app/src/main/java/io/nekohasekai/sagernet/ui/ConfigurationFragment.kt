@@ -172,6 +172,15 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (searchView != null) {
             searchView.setOnQueryTextListener(this)
             searchView.maxWidth = Int.MAX_VALUE
+            searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    searchView.onActionViewCollapsed()
+                    searchView.clearFocus()
+                    (requireActivity() as? MainActivity)?.callback?.isEnabled = false
+                } else {
+                    (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+                }
+            }
         }
 
         groupPager = view.findViewById(R.id.group_pager)
@@ -217,6 +226,8 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
         }
+
+        (requireActivity() as? MainActivity)?.callback?.isEnabled = false
     }
 
     override fun onDestroy() {

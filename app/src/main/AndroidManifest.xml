@@ -73,7 +73,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SagerNet.Start"
-        android:localeConfig="@xml/locales_config">
+        android:localeConfig="@xml/locales_config"
+        android:enableOnBackInvokedCallback="true">
         <meta-data
             android:name="android.app.shortcuts"
             android:resource="@xml/shortcuts" />

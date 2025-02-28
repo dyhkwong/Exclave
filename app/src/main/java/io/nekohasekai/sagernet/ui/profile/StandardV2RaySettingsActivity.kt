@@ -705,6 +705,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             )
             DataStore.serverPlugin = pluginConfiguration.toString()
             DataStore.dirty = true
+            callback.isEnabled = true
             plugin.value = pluginConfiguration.selected
             pluginConfigure.isEnabled = selected !is NoPlugin
             pluginConfigure.text = pluginConfiguration.getOptions().toString()
@@ -740,7 +741,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         }.showAllowingStateLoss(supportFragmentManager, Key.SERVER_PLUGIN_CONFIGURE)
     }
 
-     override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean = try {
+    override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean = try {
         val selected = pluginConfiguration.selected
         pluginConfiguration = PluginConfiguration(
             (pluginConfiguration.pluginsOptions + (pluginConfiguration.selected to PluginOptions(
@@ -749,6 +750,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         )
         DataStore.serverPlugin = pluginConfiguration.toString()
         DataStore.dirty = true
+        callback.isEnabled = true
         true
     } catch (exc: RuntimeException) {
         Snackbar.make(child.requireView(), exc.readableMessage, Snackbar.LENGTH_LONG).show()

@@ -48,6 +48,8 @@ class SettingsFragment : ToolbarFragment(R.layout.layout_config_settings) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.settings, SettingsPreferenceFragment())
             .commitAllowingStateLoss()
+
+        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
     }
 
 }

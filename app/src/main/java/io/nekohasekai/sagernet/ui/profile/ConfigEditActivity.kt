@@ -26,7 +26,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -53,6 +53,14 @@ class ConfigEditActivity : ThemedActivity() {
 
     var config = ""
     var dirty = false
+
+    val callback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            UnsavedChangesDialogFragment().apply {
+                key()
+            }.show(supportFragmentManager, null)
+        }
+    }
 
     class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
         override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
@@ -115,6 +123,7 @@ class ConfigEditActivity : ThemedActivity() {
             if (!dirty) {
                 dirty = true
                 DataStore.dirty = true
+                callback.isEnabled = true
             }
         }
         binding.editor.setHorizontallyScrolling(true)
@@ -127,14 +136,7 @@ class ConfigEditActivity : ThemedActivity() {
             }
         }
 
-        onBackPressedDispatcher.addCallback {
-            if (dirty) UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
-            else {
-                finish()
-            }
-        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     fun saveAndExit() {

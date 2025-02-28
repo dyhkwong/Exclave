@@ -134,6 +134,8 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                 ruleAdapter.commitMove()
             }
         }).attachToRecyclerView(ruleListView)
+
+        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
     }
 
     override fun onDestroy() {
