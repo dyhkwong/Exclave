@@ -141,6 +141,7 @@
                 <data android:scheme="wireguard" />
                 <data android:scheme="mierus" />
                 <data android:scheme="quic" />
+                <data android:scheme="anytls" />
 
             </intent-filter>
 

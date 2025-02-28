@@ -31,6 +31,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
+import io.nekohasekai.sagernet.fmt.anytls.toUri
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.toUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
@@ -324,7 +325,7 @@ data class ProxyEntity(
 
     fun hasShareLink(): Boolean {
         return when (type) {
-            TYPE_SSH, TYPE_WG, TYPE_SHADOWTLS, TYPE_ANYTLS -> false
+            TYPE_SSH, TYPE_WG, TYPE_SHADOWTLS -> false
             TYPE_CONFIG, TYPE_CHAIN, TYPE_BALANCER -> false
             else -> true
         }
@@ -349,6 +350,7 @@ data class ProxyEntity(
             is Tuic5Bean -> toUri()
             is MieruBean -> toUri()
             is Http3Bean -> toUri()
+            is AnyTLSBean -> toUri()
             else -> null
         }
     }

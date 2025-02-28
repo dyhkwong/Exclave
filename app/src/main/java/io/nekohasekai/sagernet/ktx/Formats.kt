@@ -23,6 +23,7 @@ import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.Serializable
+import io.nekohasekai.sagernet.fmt.anytls.parseAnyTLS
 import io.nekohasekai.sagernet.fmt.brook.parseBrook
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
@@ -175,6 +176,13 @@ fun parseProxies(text: String): List<AbstractBean> {
             Logs.d("Try parse http3 link: $this")
             runCatching {
                 entities.add(parseHttp3(this))
+            }.onFailure {
+                Logs.w(it)
+            }
+        } else if (startsWith("anytls://")) {
+            Logs.d("Try parse anytls link: $this")
+            runCatching {
+                entities.add(parseAnyTLS(this))
             }.onFailure {
                 Logs.w(it)
             }
