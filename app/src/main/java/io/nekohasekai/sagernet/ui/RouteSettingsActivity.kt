@@ -256,7 +256,6 @@ class RouteSettingsActivity(
             setNegativeButton(android.R.string.cancel) { _, _ ->
                 requireActivity().finish()
             }
-            setNeutralButton(android.R.string.cancel, null)
         }
     }
 
