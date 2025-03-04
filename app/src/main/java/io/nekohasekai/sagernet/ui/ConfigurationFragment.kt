@@ -1001,6 +1001,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             testJobs.forEach { it.cancel() }
             runOnDefaultDispatcher {
                 ProfileManager.updateProfile(test.results.filter { it.status != 0 })
+                GroupManager.postReload(DataStore.currentGroupId())
             }
         }
     }
