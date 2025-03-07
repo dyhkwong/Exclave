@@ -288,8 +288,8 @@
     <string name="early_data_header_name">Заголовок запроса ранних данных</string>
     <string name="pinned_peer_certificate_chain_sha256">Хэш цепочки закрепленного сертификата</string>
     <string name="certificates">Сертификаты</string>
-    <string name="alpn">Согласование протокола прикладного уровня (ALPN)</string>
-    <string name="sni">Индикация имени сервера (SNI)</string>
+    <string name="alpn">ALPN (согласование протокола прикладного уровня)</string>
+    <string name="sni">SNI (индикация имени сервера)</string>
     <string name="grpc_service_name">Имя службы gRPC</string>
     <string name="kcp_seed">mKCP Seed</string>
     <string name="quic_key">Ключ QUIC</string>
@@ -523,4 +523,6 @@
     <string name="more">Другие</string>
     <string name="acquire_wake_lock">Включить WakeLock</string>
     <string name="log_level">Тип журнала</string>
+    <string name="fab_style">Стиль нижней панели</string>
+    <string name="core">ядро</string>
 </resources>
