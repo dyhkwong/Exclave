@@ -27,7 +27,9 @@ fun AnyTLSBean.toUri(): String? {
     val builder = Libcore.newURL("anytls")
     builder.host = serverAddress
     builder.port = serverPort
-    builder.username = password
+    if (password.isNotEmpty()) {
+        builder.username = password
+    }
     builder.rawPath = "/"
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)

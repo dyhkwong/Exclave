@@ -1116,6 +1116,7 @@ public class V2RayConfig {
         public String type;
         public Integer xver;
         public List<String> serverNames;
+        public String password; // alias of privateKey
         public String privateKey;
         public List<String> shortIds;
         public String serverName;
