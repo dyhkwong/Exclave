@@ -20,7 +20,13 @@ A fork of SagerNet, the universal proxy toolchain for Android written in Kotlin.
 
 ## Report issues
 
-Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not report issues to upstream because the core used is heavily modified. Encrypt with [this GPG public key](https://github.com/dyhkwong.gpg) before posting if the issue contains sensitive information.
+Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not report issues to upstream because the core used is heavily modified.
+
+- Encrypt with [this GPG public key](https://github.com/dyhkwong.gpg) before posting if the issue contains sensitive information.
+
+- For crashes, log file is required. Switch to "debug" level before logging.
+
+- For memory leak and high system resource usage, pprof profile is required. Long press "about" and restart the app to trigger pprof settings.
 
 ## FAQs and explanation of terms
 
