@@ -18,7 +18,9 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.os.Build
 import android.os.Bundle
+import androidx.core.view.WindowCompat
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
@@ -33,6 +35,10 @@ class SwitchActivity : ThemedActivity(R.layout.layout_empty),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
 
         supportFragmentManager.beginTransaction().replace(
             R.id.fragment_holder, ConfigurationFragment(true, null, R.string.action_switch)
