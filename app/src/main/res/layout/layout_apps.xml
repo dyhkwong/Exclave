@@ -54,7 +54,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             app:selectionRequired="true"
-                            app:singleLine="true"
                             app:singleSelection="true">
 
                             <com.google.android.material.chip.Chip
