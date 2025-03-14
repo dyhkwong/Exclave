@@ -407,6 +407,10 @@ class BaseService {
 
         fun killProcesses() {
             data.proxy?.close()
+            wakeLock?.apply {
+                release()
+                wakeLock = null
+            }
         }
 
         fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = true) {
@@ -526,6 +530,7 @@ class BaseService {
                             it.routeAlert(type, routeName)
                         }
                     }
+                    lateInit()
                 } catch (_: CancellationException) { // if the job was cancelled, it is canceller's responsibility to call stopRunner
                 } catch (_: UnknownHostException) {
                     stopRunner(false, getString(R.string.invalid_server))
