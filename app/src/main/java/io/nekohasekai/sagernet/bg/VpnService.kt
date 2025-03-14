@@ -297,9 +297,6 @@ class VpnService : BaseVpnService(),
             dumpUID = data.proxy!!.config.dumpUid
             trafficStats = DataStore.appTrafficStatistics
             pCap = DataStore.enablePcap
-            errorHandler = ErrorHandler {
-                stopRunner(false, it)
-            }
             protector = this@VpnService
             localResolver = this@VpnService
         }
