@@ -18,6 +18,7 @@
 
 package io.nekohasekai.sagernet.fmt.tuic5
 
+import cn.hutool.core.lang.UUID
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
@@ -34,7 +35,12 @@ import java.io.File
 import libcore.Libcore
 
 fun parseTuic(server: String): AbstractBean {
-    val link = Libcore.parseURL(server)
+    val link = if (server.length > 46 && UUID.fromString(server.substring(7, 43)) != null && server.substring(43, 46) == "%3A" && !server.contains("version=")) {
+        // v2rayN broken format
+        Libcore.parseURL(server.substring(0, 43) + ":" + server.substring(46, server.length))
+    } else {
+        Libcore.parseURL(server)
+    }
     link.queryParameter("version")?.let { version ->
         if (version == "4" || link.password.isEmpty()) {
             return TuicBean().apply {
