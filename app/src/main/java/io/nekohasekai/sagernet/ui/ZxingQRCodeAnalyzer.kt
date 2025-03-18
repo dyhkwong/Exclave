@@ -59,8 +59,7 @@ class ZxingQRCodeAnalyzer(
             }
             Logs.d("ZxingQRCodeAnalyzer: barcode decode success: ${result.text}")
             onSuccess(result.text)
-        } catch (e: Exception) {
-            onFailure(e)
+        } catch (_: Exception) {
         } finally {
             image.close()
         }
