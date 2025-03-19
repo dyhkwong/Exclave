@@ -6,7 +6,6 @@ import com.android.build.gradle.internal.api.BaseVariantOutputImpl
 import org.apache.tools.ant.filters.StringInputStream
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.tasks.Exec
 import org.gradle.kotlin.dsl.*
 import java.util.*
 
@@ -29,12 +28,8 @@ fun Project.requireFlavor(): String {
                 flavor = taskName.substringAfter("assemble")
                 return flavor
             }
-            taskName.contains("install") -> {
-                flavor = taskName.substringAfter("install")
-                return flavor
-            }
-            taskName.contains("publish") -> {
-                flavor = taskName.substringAfter("publish").substringBefore("Bundle")
+            taskName.contains("bundle") -> {
+                flavor = taskName.substringAfter("bundle")
                 return flavor
             }
         }
@@ -222,16 +217,18 @@ fun Project.setupPlugin(projectName: String) {
 
         this as AbstractAppExtension
 
-        splits.abi {
-            isEnable = true
-            isUniversalApk = false
+        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames[0]?.contains("assemble") == true) {
+            splits.abi {
+                isEnable = true
+                isUniversalApk = false
 
-            if (targetAbi.isNotBlank()) {
-                reset()
-                include(targetAbi)
-            } else {
-                reset()
-                include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+                if (targetAbi.isNotBlank()) {
+                    reset()
+                    include(targetAbi)
+                } else {
+                    reset()
+                    include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+                }
             }
         }
 
@@ -282,16 +279,17 @@ fun Project.setupApp() {
             }
         }
 
-        splits.abi {
-            isEnable = true
-            isUniversalApk = false
-
-            if (targetAbi.isNotBlank()) {
-                reset()
-                include(targetAbi)
-            } else {
-                reset()
-                include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames[0]?.contains("assemble") == true) {
+            splits.abi {
+                isEnable = true
+                isUniversalApk = false
+                if (targetAbi.isNotBlank()) {
+                    reset()
+                    include(targetAbi)
+                } else {
+                    reset()
+                    include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+                }
             }
         }
 
