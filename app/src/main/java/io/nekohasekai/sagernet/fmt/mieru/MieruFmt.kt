@@ -107,6 +107,11 @@ fun MieruBean.toUri(): String {
 
 fun MieruBean.buildMieruConfig(port: Int): String {
     return JSONObject().also {
+        // Enable this means giving up the support for mieru < 3.13, mieru version 2 and mieru version 1.
+        // I don't know if it is possible to do a version number check.
+        /*it["advancedSettings"] = JSONObject().also {
+            it["noCheckUpdate"] = true
+        }*/
         it["activeProfile"] = "default"
         it["socks5Port"] = port
         it["loggingLevel"] = when (DataStore.logLevel) {
