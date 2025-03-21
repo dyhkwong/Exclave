@@ -356,6 +356,7 @@ object RawUpdater : GroupUpdater() {
             peerBean.serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
             peerBean.peerPublicKey = peer["PublicKey"] ?: continue
             peerBean.peerPreSharedKey = peer["PreSharedKey"]
+            peerBean.keepaliveInterval = peer["PersistentKeepalive"]?.toIntOrNull()?.takeIf { it > 0 }
             beans.add(peerBean.applyDefaultValues())
         }
         if (beans.isEmpty()) error("Empty available peer list")
@@ -1068,6 +1069,9 @@ object RawUpdater : GroupUpdater() {
                             (peer as? JSONObject)?.getString("preSharedKey")?.also {
                                 peerPreSharedKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
                             }
+                            (peer as? JSONObject)?.getInt("keepAlive")?.takeIf { it > 0 }?.also {
+                                keepaliveInterval = it
+                            }
                         })
                     }
                 }
@@ -1742,6 +1746,9 @@ object RawUpdater : GroupUpdater() {
                         peer?.getString("pre_shared_key")?.also {
                             peerPreSharedKey = it
                         }
+                        peer?.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
+                            keepaliveInterval = it
+                        }
                         (peer?.getAny("reserved") as? (List<Int>))?.also {
                             if (it.size == 3) {
                                 reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
@@ -1843,6 +1850,9 @@ object RawUpdater : GroupUpdater() {
                         }
                         peer?.getString("pre_shared_key")?.also {
                             peerPreSharedKey = it
+                        }
+                        peer?.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
+                            keepaliveInterval = it
                         }
                         (peer?.getAny("reserved") as? (List<Int>))?.also {
                             if (it.size == 3) {
@@ -2516,6 +2526,7 @@ object RawUpdater : GroupUpdater() {
                     peerPreSharedKey = proxy["pre-shared-key"] as? String ?: proxy["preshared-key"] as? String
                     mtu = (proxy["mtu"]?.toString()?.toIntOrNull())?.takeIf { it > 0 } ?: 1408
                     localAddress = listOfNotNull(proxy["ip"] as? String, proxy["ipv6"] as? String).joinToString("\n")
+                    keepaliveInterval = proxy["persistent-keepalive"]?.toString()?.toIntOrNull()?.takeIf { it > 0 }
                     name = proxy["name"]?.toString()
                     (proxy["reserved"] as? List<Map<String, Any>>)?.also {
                         if (it.size == 3) {

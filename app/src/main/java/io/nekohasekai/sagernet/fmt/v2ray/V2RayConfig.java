@@ -926,7 +926,7 @@ public class V2RayConfig {
             public String publicKey;
             public String preSharedKey;
             public String endpoint;
-            public Boolean keepAlive;
+            public Integer keepAlive;
             public List<String> allowedIPs;
 
         }

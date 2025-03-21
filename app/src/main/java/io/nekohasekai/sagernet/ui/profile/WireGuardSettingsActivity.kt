@@ -46,6 +46,7 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
 
         DataStore.serverMTU = mtu
         DataStore.serverWireGuardReserved = reserved
+        DataStore.serverWireGuardKeepaliveInterval = keepaliveInterval
     }
 
     override fun WireGuardBean.serialize() {
@@ -62,6 +63,7 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
 
         mtu = DataStore.serverMTU
         reserved = DataStore.serverWireGuardReserved
+        keepaliveInterval = DataStore.serverWireGuardKeepaliveInterval
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -80,6 +82,9 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
         }
         findPreference<EditTextPreference>(Key.SERVER_MTU)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_WIREGUARD_KEEPALIVE_INTERVAL)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
     }
 

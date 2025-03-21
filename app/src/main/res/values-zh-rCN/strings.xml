@@ -534,4 +534,5 @@
     <string name="acquire_wake_lock">获取唤醒锁</string>
     <string name="log_level">日志级别</string>
     <string name="fab_style">悬浮操作按钮样式</string>
+    <string name="wireguard_keepalive_interval">连接保活间隔</string>
 </resources>

@@ -52,6 +52,9 @@ fun WireGuardBean.toConf(): String {
     if (peerPreSharedKey.isNotEmpty()) {
         ini.add("Peer", "PreSharedKey", peerPreSharedKey)
     }
+    if (keepaliveInterval > 0) {
+        ini.add("Peer", "PersistentKeepalive", keepaliveInterval)
+    }
     val conf = StringWriter()
     ini.store(conf)
     return conf.toString()

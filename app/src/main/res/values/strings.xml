@@ -565,4 +565,5 @@
     <string name="acquire_wake_lock">Acquire WakeLock</string>
     <string name="log_level">Log level</string>
     <string name="fab_style">Floating action button style</string>
+    <string name="wireguard_keepalive_interval">Persistent keepalive</string>
 </resources>

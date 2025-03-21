@@ -1038,6 +1038,9 @@ fun buildV2RayConfig(
                                             if (bean.peerPreSharedKey.isNotEmpty()) {
                                                 preSharedKey = bean.peerPreSharedKey
                                             }
+                                            if (bean.keepaliveInterval > 0) {
+                                                keepAlive = bean.keepaliveInterval
+                                            }
                                             endpoint = joinHostPort(bean.serverAddress, bean.serverPort)
                                         })
                                     })

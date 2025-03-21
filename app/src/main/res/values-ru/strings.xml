@@ -525,4 +525,5 @@
     <string name="log_level">Тип журнала</string>
     <string name="fab_style">Стиль нижней панели</string>
     <string name="core">ядро</string>
+    <string name="wireguard_keepalive_interval">Постоянное соединение</string>
 </resources>

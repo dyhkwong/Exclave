@@ -43,6 +43,11 @@
             app:title="@string/mtu"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
+            app:icon="@drawable/ic_baseline_cached"
+            app:key="serverWireGuardKeepaliveInterval"
+            app:title="@string/wireguard_keepalive_interval"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
             app:icon="@drawable/ic_baseline_fingerprint_24"
             app:key="serverWireGuardReserved"
             app:title="@string/wireguard_reserved"
