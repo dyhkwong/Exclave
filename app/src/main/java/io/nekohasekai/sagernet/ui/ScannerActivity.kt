@@ -24,7 +24,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ShortcutManager
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -56,6 +55,9 @@ import io.nekohasekai.sagernet.group.RawUpdater
 import io.nekohasekai.sagernet.ktx.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import androidx.core.net.toUri
+import cn.hutool.core.lang.Validator.isUrl
+import libcore.Libcore
 
 
 class ScannerActivity : ThemedActivity() {
@@ -182,7 +184,18 @@ class ScannerActivity : ThemedActivity() {
             try {
                 val results = RawUpdater.parseRaw(value)
                 if (results.isNullOrEmpty()) {
-                    fatalError(null)
+                    if (isUrl(value)) {
+                        val builder = Libcore.newURL("exclave").apply {
+                            host = "subscription"
+                        }
+                        builder.addQueryParameter("url", value)
+                        startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                            action = Intent.ACTION_VIEW
+                            data = builder.string.toUri()
+                        })
+                    } else {
+                        fatalError(null)
+                    }
                 } else {
                     val currentGroupId = DataStore.selectedGroupForImport()
                     if (DataStore.selectedGroup != currentGroupId) {
@@ -196,7 +209,7 @@ class ScannerActivity : ThemedActivity() {
             } catch (e: SubscriptionFoundException) {
                 startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
                     action = Intent.ACTION_VIEW
-                    data = Uri.parse(e.link)
+                    data = e.link.toUri()
                 })
             } catch (e: Exception) {
                 fatalError(e)
@@ -267,24 +280,30 @@ class ScannerActivity : ThemedActivity() {
                                     }
                                 }
                             } else {
-                                Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
-                                    .show()
+                                if (isUrl(result.text)) {
+                                    val builder = Libcore.newURL("exclave").apply {
+                                        host = "subscription"
+                                    }
+                                    builder.addQueryParameter("url", result.text)
+                                    startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                                        action = Intent.ACTION_VIEW
+                                        data = builder.string.toUri()
+                                    })
+                                    finish()
+                                } else {
+                                    Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT).show()
+                                }
                             }
                         } catch (e: SubscriptionFoundException) {
-                            startActivity(
-                                Intent(
-                                    this@ScannerActivity,
-                                    MainActivity::class.java
-                                ).apply {
-                                    action = Intent.ACTION_VIEW
-                                    data = Uri.parse(e.link)
-                                })
+                            startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                                action = Intent.ACTION_VIEW
+                                data = e.link.toUri()
+                            })
                             finish()
                         } catch (e: Throwable) {
                             Logs.w(e)
                             onMainDispatcher {
-                                Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT)
-                                    .show()
+                                Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
