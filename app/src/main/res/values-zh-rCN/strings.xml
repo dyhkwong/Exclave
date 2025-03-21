@@ -535,4 +535,6 @@
     <string name="log_level">日志级别</string>
     <string name="fab_style">悬浮操作按钮样式</string>
     <string name="wireguard_keepalive_interval">连接保活间隔</string>
+    <string name="language">语言</string>
+    <string name="language_system_default">系统默认设置</string>
 </resources>

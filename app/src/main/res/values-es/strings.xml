@@ -499,4 +499,6 @@
     <string name="backup_all_profiles">Copia de seguridad de todos los perfiles</string>
     <string name="acquire_wake_lock">Adquirir WakeLock</string>
     <string name="log_level">Nivel de registro</string>
+    <string name="language">Idioma</string>
+    <string name="language_system_default">Predeterminado del sistema</string>
 </resources>

@@ -26,6 +26,13 @@
             app:title="@string/night_mode"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue=""
+            app:entries="@array/language_entry"
+            app:entryValues="@array/language_value"
+            app:icon="@drawable/baseline_translate_24"
+            app:key="appLanguage"
+            app:title="@string/language" />
+        <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="vpn"
             app:entries="@array/service_modes"
             app:entryValues="@array/service_mode_values"

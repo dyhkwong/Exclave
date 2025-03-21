@@ -430,4 +430,6 @@
     <string name="update_all_subscriptions">به‌روزرسانی تمام اشتراک ها</string>
     <string name="acquire_wake_lock">به‌دست آوردن WakeLock</string>
     <string name="log_level">سطح گزارش</string>
+    <string name="language">زبان</string>
+    <string name="language_system_default">پیش‌فرض سیستم</string>
 </resources>

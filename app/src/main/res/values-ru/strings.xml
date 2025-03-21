@@ -526,4 +526,6 @@
     <string name="fab_style">Стиль нижней панели</string>
     <string name="core">ядро</string>
     <string name="wireguard_keepalive_interval">Постоянное соединение</string>
+    <string name="language">Язык</string>
+    <string name="language_system_default">Системные настройки по умолчанию</string>
 </resources>

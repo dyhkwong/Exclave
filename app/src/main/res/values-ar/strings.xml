@@ -367,4 +367,6 @@
     <string name="wireguard_public_key">المفتاح العام للأقران</string>
     <string name="wireguard_psk">مفتاح الأقران المشترك مسبقا</string>
     <string name="group_filter_owners_nf">لا يوجد مالكون في هذا الاشتراك</string>
+    <string name="language">اللغة</string>
+    <string name="language_system_default">الإعداد التلقائي للنظام</string>
 </resources>

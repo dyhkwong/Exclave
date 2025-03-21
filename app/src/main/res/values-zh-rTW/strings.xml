@@ -436,4 +436,6 @@
     <string name="action_open">打開</string>
     <string name="acquire_wake_lock">取得喚醒鎖定</string>
     <string name="log_level">日誌等級</string>
+    <string name="language">語言</string>
+    <string name="language_system_default">系統預設</string>
 </resources>

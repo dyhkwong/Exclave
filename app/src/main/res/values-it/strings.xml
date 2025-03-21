@@ -341,4 +341,6 @@
     <string name="traffic_active">Attivato</string>
     <string name="traffic_holder">Apri la VPN per registrare le statistiche del traffico</string>
     <string name="open_app">Apri l\'App</string>
+    <string name="language">Lingua</string>
+    <string name="language_system_default">Predefinita di sistema</string>
 </resources>

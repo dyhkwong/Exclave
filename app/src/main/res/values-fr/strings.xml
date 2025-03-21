@@ -290,4 +290,6 @@
     <string name="backup_import_summary">L\'importation écrasera les données existantes.</string>
     <string name="tools_network">Réseaux</string>
     <string name="backup_importing">Importation…</string>
+    <string name="language">Langue</string>
+    <string name="language_system_default">Paramètre système par défaut</string>
 </resources>

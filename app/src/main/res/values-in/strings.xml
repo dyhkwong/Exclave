@@ -416,4 +416,6 @@
 \n
 \nJika Anda harus menggunakan ini, coba N = 2 terlebih dahulu untuk melihat apakah itu menyelesaikan masalah Anda. Sangat menyarankan untuk tidak menggunakan lebih dari 4 koneksi di sini.</string>
     <string name="acquire_wake_lock">Mengakuisisi WakeLock</string>
+    <string name="language">Bahasa</string>
+    <string name="language_system_default">Default sistem</string>
 </resources>

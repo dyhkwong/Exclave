@@ -348,4 +348,6 @@
     <string name="copy_package_name">Kopier pakkenavn</string>
     <string name="copy_label">Kopier navn</string>
     <string name="udp_connections">%d UDP-tilkoblinger</string>
+    <string name="language">Språk</string>
+    <string name="language_system_default">Systemstandard</string>
 </resources>
