@@ -450,7 +450,6 @@
     <string name="reality_short_id">REALITY Short ID</string>
     <string name="reality_spider_x">REALITY SpiderX</string>
     <string name="reality_fingerprint">REALITY uTLS 指纹</string>
-    <string name="shadowtls_v3">ShadowTLS v3</string>
     <string name="wireguard_reserved">保留字段</string>
     <string name="shadowsocks_2022_implementation">Shadowsocks 2022 实现</string>
     <string name="action_open">打开</string>

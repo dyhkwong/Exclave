@@ -500,26 +500,16 @@ fun buildV2RayConfig(
                     if (proxyEntity.needExternal()) {
                         val localPort = mkPort()
                         chainMap[localPort] = proxyEntity
-                        if (bean is ShadowTLSBean) {
-                            currentOutbound.apply {
-                                protocol = "freedom"
-                                settings = LazyOutboundConfigurationObject(this,
-                                    FreedomOutboundConfigurationObject().apply {
-                                        redirect = joinHostPort(LOCALHOST, localPort)
-                                    })
-                            }
-                        } else {
-                            currentOutbound.apply {
-                                protocol = "socks"
-                                settings = LazyOutboundConfigurationObject(this,
-                                    SocksOutboundConfigurationObject().apply {
-                                        servers = listOf(SocksOutboundConfigurationObject.ServerObject()
-                                            .apply {
-                                                address = LOCALHOST
-                                                port = localPort
-                                            })
-                                    })
-                            }
+                        currentOutbound.apply {
+                            protocol = "socks"
+                            settings = LazyOutboundConfigurationObject(this,
+                                SocksOutboundConfigurationObject().apply {
+                                    servers = listOf(SocksOutboundConfigurationObject.ServerObject()
+                                        .apply {
+                                            address = LOCALHOST
+                                            port = localPort
+                                        })
+                                })
                         }
                     } else {
                         currentOutbound.apply {
@@ -1182,6 +1172,34 @@ fun buildV2RayConfig(
                                             }
                                             if (bean.echDohServer.isNotEmpty()) {
                                                 echDohServer = bean.echDohServer
+                                            }
+                                        }
+                                    }
+                                )
+                            } else if (bean is ShadowTLSBean) {
+                                protocol = "shadowtls"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    V2RayConfig.ShadowTLSOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        if (bean.password.isNotEmpty()) password = bean.password
+                                        version = bean.protocolVersion
+                                        tlsSettings = TLSObject().apply {
+                                            if (bean.sni.isNotEmpty()) {
+                                                serverName = bean.sni
+                                            }
+                                            if (bean.alpn.isNotEmpty()) {
+                                                alpn = bean.alpn.listByLineOrComma()
+                                            }
+                                            if (bean.allowInsecure) {
+                                                allowInsecure = true
+                                            }
+                                            if (bean.certificates.isNotEmpty()) {
+                                                disableSystemRoot = true
+                                                certificates = listOf(TLSObject.CertificateObject().apply {
+                                                    usage = "verify"
+                                                    certificate = bean.certificates.split("\n").filter { it.isNotEmpty() }
+                                                })
                                             }
                                         }
                                     }

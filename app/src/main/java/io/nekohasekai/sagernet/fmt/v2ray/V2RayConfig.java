@@ -688,6 +688,8 @@ public class V2RayConfig {
                     return TUICOutboundConfigurationObject.class;
                 case "http3":
                     return HTTP3OutboundConfigurationObject.class;
+                case "shadowtls":
+                    return ShadowTLSOutboundConfigurationObject.class;
                 case "anytls":
                     return AnyTLSOutboundConfigurationObject.class;
             }
@@ -973,6 +975,18 @@ public class V2RayConfig {
         public Boolean zeroRTTHandshake;
         public TLSObject tlsSettings;
         public Boolean disableSNI;
+
+    }
+
+
+    public static class ShadowTLSOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String password;
+        public Integer version;
+        public Integer idleSessionTimeout;
+        public TLSObject tlsSettings;
 
     }
 

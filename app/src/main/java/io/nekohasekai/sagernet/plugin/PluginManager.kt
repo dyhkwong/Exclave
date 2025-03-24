@@ -179,7 +179,6 @@ object PluginManager {
             "juicity-plugin" -> "libjuicity.so"
             "mieru-plugin" -> "libmieru.so"
             "naive-plugin" -> "libnaive.so"
-            "shadowtls-plugin" -> "libshadowtls.so"
             "trojan-go-plugin" -> "libtrojan-go.so"
             "tuic-plugin" -> "libtuic.so"
             "tuic5-plugin" -> "libtuic5.so"

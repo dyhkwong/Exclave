@@ -29,10 +29,16 @@ import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class ShadowTLSBean extends AbstractBean {
 
+    public static final int PROTOCOL_VERSION_1 = 1;
+    public static final int PROTOCOL_VERSION_2 = 2;
+    public static final int PROTOCOL_VERSION_3 = 3;
+
     public String sni;
     public String password;
     public String alpn;
-    public Boolean v3;
+    public Boolean allowInsecure;
+    public String certificates;
+    public Integer protocolVersion;
 
     @Override
     public void initializeDefaultValues() {
@@ -40,17 +46,21 @@ public class ShadowTLSBean extends AbstractBean {
         if (sni == null) sni = "";
         if (password == null) password = "";
         if (alpn == null) alpn = "";
-        if (v3 == null) v3 = false;
+        if (allowInsecure == null) allowInsecure = false;
+        if (certificates == null) certificates = "";
+        if (protocolVersion == null) protocolVersion = PROTOCOL_VERSION_1;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(sni);
         output.writeString(password);
         output.writeString(alpn);
-        output.writeBoolean(v3);
+        output.writeBoolean(allowInsecure);
+        output.writeString(certificates);
+        output.writeInt(protocolVersion);
     }
 
     @Override
@@ -60,7 +70,18 @@ public class ShadowTLSBean extends AbstractBean {
         sni = input.readString();
         password = input.readString();
         alpn = input.readString();
-        v3 = input.readBoolean();
+        if (version == 0) {
+            if (input.readBoolean()) {
+                protocolVersion = PROTOCOL_VERSION_3;
+            } else {
+                protocolVersion = PROTOCOL_VERSION_2;
+            }
+        }
+        if (version >= 1) {
+            allowInsecure = input.readBoolean();
+            certificates = input.readString();
+            protocolVersion = input.readInt();
+        }
     }
 
     @Override

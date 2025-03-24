@@ -140,7 +140,6 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
             "libtuic5:D",
             "libtuic:D",
             "libtrojan-go:D",
-            "libshadowtls:D",
             "libjuicity:D",
             "*:S",
         )

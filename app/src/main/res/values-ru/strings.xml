@@ -426,7 +426,6 @@
     <string name="reality_short_id">REALITY Short ID</string>
     <string name="reality_spider_x">REALITY SpiderX</string>
     <string name="reality_fingerprint">REALITY uTLS fingerprint</string>
-    <string name="shadowtls_v3">ShadowTLS v3</string>
     <string name="wireguard_reserved">Резервный</string>
     <string name="brook_udp_over_stream">UDP через поток</string>
     <string name="stun_legacy_test">Тест определения типа NAT</string>

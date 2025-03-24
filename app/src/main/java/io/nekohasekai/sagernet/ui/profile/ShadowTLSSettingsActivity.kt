@@ -42,7 +42,9 @@ class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
         DataStore.serverPassword = password
         DataStore.serverALPN = alpn
         DataStore.serverSNI = sni
-        DataStore.serverV3 = v3
+        DataStore.serverAllowInsecure = allowInsecure
+        DataStore.serverCertificates = certificates
+        DataStore.serverShadowTLSProtocolVersion = protocolVersion
 
     }
 
@@ -53,7 +55,9 @@ class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
         password = DataStore.serverPassword
         alpn = DataStore.serverALPN
         sni = DataStore.serverSNI
-        v3 = DataStore.serverV3
+        allowInsecure = DataStore.serverAllowInsecure
+        certificates = DataStore.serverCertificates
+        protocolVersion = DataStore.serverShadowTLSProtocolVersion
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

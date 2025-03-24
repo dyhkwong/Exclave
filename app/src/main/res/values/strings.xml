@@ -476,7 +476,6 @@
     <string name="reality_short_id">REALITY Short ID</string>
     <string name="reality_spider_x">REALITY SpiderX</string>
     <string name="reality_fingerprint">REALITY uTLS fingerprint</string>
-    <string name="shadowtls_v3">ShadowTLS v3</string>
     <string name="wireguard_reserved">Reserved</string>
     <string name="shadowsocks_2022_implementation">Shadowsocks 2022 implementation</string>
     <string name="action_open">Open</string>

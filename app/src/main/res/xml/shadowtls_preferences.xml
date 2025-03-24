@@ -23,10 +23,18 @@
             app:key="serverPassword"
             app:title="@string/password"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="1"
+            app:entries="@array/shadowtls_protocol_version_value"
+            app:entryValues="@array/shadowtls_protocol_version_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="serverV3"
-            app:title="@string/shadowtls_v3"
+            app:key="serverShadowTLSProtocolVersion"
+            app:title="@string/app_version"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_action_copyright"
+            app:key="serverSNI"
+            app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:dialogMessage="@string/one_per_line"
@@ -35,10 +43,15 @@
             app:title="@string/alpn"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:icon="@drawable/ic_action_copyright"
-            app:key="serverSNI"
-            app:title="@string/sni"
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="serverCertificates"
+            app:title="@string/certificates"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_notification_enhanced_encryption"
+            app:key="serverAllowInsecure"
+            app:summary="@string/allow_insecure_sum"
+            app:title="@string/allow_insecure" />
     </PreferenceCategory>
 
 </PreferenceScreen>

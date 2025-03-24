@@ -1857,7 +1857,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                             }
                         }
 
-                        if (proxyEntity.brookBean != null || proxyEntity.shadowtlsBean != null) {
+                        if (proxyEntity.brookBean != null) {
                             popup.menu.removeItem(R.id.action_export_configuration)
                         }
 

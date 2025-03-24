@@ -220,7 +220,7 @@ object Key {
     const val SERVER_DISABLE_SNI = "serverDisableSNI"
     const val SERVER_REDUCE_RTT= "serverReduceRTT"
 
-    const val SERVER_V3 = "serverV3"
+    const val SERVER_SHADOWTLS_PROTOCOL_VERSION = "serverShadowTLSProtocolVersion"
     const val SERVER_MIERU_MUX_LEVEL = "serverMieruMuxLevel"
     const val SERVER_WIREGUARD_RESERVED = "serverWireGuardReserved"
     const val SERVER_WIREGUARD_KEEPALIVE_INTERVAL = "serverWireGuardKeepaliveInterval"
