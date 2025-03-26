@@ -217,7 +217,7 @@ fun Project.setupPlugin(projectName: String) {
 
         this as AbstractAppExtension
 
-        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames[0]?.contains("assemble") == true) {
+        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames.any { it.lowercase().contains("assemble") }) {
             splits.abi {
                 isEnable = true
                 isUniversalApk = false
@@ -279,7 +279,7 @@ fun Project.setupApp() {
             }
         }
 
-        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames[0]?.contains("assemble") == true) {
+        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames.any { it.lowercase().contains("assemble") }) {
             splits.abi {
                 isEnable = true
                 isUniversalApk = false
