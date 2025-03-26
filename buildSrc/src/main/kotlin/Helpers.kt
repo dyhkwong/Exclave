@@ -17,27 +17,6 @@ private val Project.androidApp get() = android as ApplicationExtension
 
 private lateinit var metadata: Properties
 private lateinit var localProperties: Properties
-private lateinit var flavor: String
-
-fun Project.requireFlavor(): String {
-    if (::flavor.isInitialized) return flavor
-    if (gradle.startParameter.taskNames.isNotEmpty()) {
-        val taskName = gradle.startParameter.taskNames[0]
-        when {
-            taskName.contains("assemble") -> {
-                flavor = taskName.substringAfter("assemble")
-                return flavor
-            }
-            taskName.contains("bundle") -> {
-                flavor = taskName.substringAfter("bundle")
-                return flavor
-            }
-        }
-    }
-
-    flavor = ""
-    return flavor
-}
 
 fun Project.requireMetadata(): Properties {
     if (!::metadata.isInitialized) {
@@ -63,22 +42,6 @@ fun Project.requireLocalProperties(): Properties {
     return localProperties
 }
 
-fun Project.requireTargetAbi(): String {
-    var targetAbi = ""
-    if (gradle.startParameter.taskNames.isNotEmpty()) {
-        if (gradle.startParameter.taskNames.size == 1) {
-            val targetTask = gradle.startParameter.taskNames[0].lowercase(Locale.ROOT).trim()
-            when {
-                targetTask.contains("arm64") -> targetAbi = "arm64-v8a"
-                targetTask.contains("arm") -> targetAbi = "armeabi-v7a"
-                targetTask.contains("x64") -> targetAbi = "x86_64"
-                targetTask.contains("x86") -> targetAbi = "x86"
-            }
-        }
-    }
-    return targetAbi
-}
-
 fun Project.setupCommon() {
     setupCommon("")
 }
@@ -93,6 +56,7 @@ fun Project.setupCommon(projectName: String) {
         buildTypes {
             getByName("release") {
                 isMinifyEnabled = true
+                @Suppress("UnstableApiUsage")
                 vcsInfo.include = false
             }
         }
@@ -175,8 +139,6 @@ fun Project.setupAppCommon(projectName: String) {
                     enableV3Signing = true
                 }
             }
-        } else if (requireFlavor().contains("OssRelease")) {
-            return
         }
         dependenciesInfo {
             includeInApk = false
@@ -185,10 +147,7 @@ fun Project.setupAppCommon(projectName: String) {
         buildTypes {
             val key = signingConfigs.findByName("release")
             if (key != null) {
-                if (requireTargetAbi().isBlank()) {
-                    getByName("release").signingConfig = key
-                }
-                getByName("debug").signingConfig = key
+                getByName("release").signingConfig = key
             }
         }
     }
@@ -207,8 +166,6 @@ fun Project.setupPlugin(projectName: String) {
 
     setupAppCommon(projectName)
 
-    val targetAbi = requireTargetAbi()
-
     androidApp.apply {
         dependenciesInfo {
             includeInApk = false
@@ -222,13 +179,8 @@ fun Project.setupPlugin(projectName: String) {
                 isEnable = true
                 isUniversalApk = false
 
-                if (targetAbi.isNotBlank()) {
-                    reset()
-                    include(targetAbi)
-                } else {
-                    reset()
-                    include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-                }
+                reset()
+                include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
             }
         }
 
@@ -265,8 +217,6 @@ fun Project.setupApp() {
     }
     setupAppCommon()
 
-    val targetAbi = requireTargetAbi()
-
     androidApp.apply {
         this as AbstractAppExtension
 
@@ -283,13 +233,8 @@ fun Project.setupApp() {
             splits.abi {
                 isEnable = true
                 isUniversalApk = false
-                if (targetAbi.isNotBlank()) {
-                    reset()
-                    include(targetAbi)
-                } else {
-                    reset()
-                    include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-                }
+                reset()
+                include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
             }
         }
 
@@ -318,18 +263,12 @@ fun Project.setupApp() {
         }
 
         tasks.register("downloadAssets") {
-            outputs.upToDateWhen {
-                requireFlavor().endsWith("Debug")
-            }
             doLast {
                 downloadAssets(false)
             }
         }
 
         tasks.register("updateAssets") {
-            outputs.upToDateWhen {
-                requireFlavor().endsWith("Debug")
-            }
             doLast {
                 downloadRootCAList()
                 downloadAssets(true)
