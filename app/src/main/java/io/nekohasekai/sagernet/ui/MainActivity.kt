@@ -24,6 +24,7 @@ package io.nekohasekai.sagernet.ui
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.Manifest
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -79,6 +80,22 @@ class MainActivity : ThemedActivity(),
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             displayFragmentWithId(R.id.nav_configuration)
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // FIXME: on uiMode/navigation changed
+        when {
+            navigation.menu.findItem(R.id.nav_tools).isChecked || navigation.menu.findItem(R.id.nav_about).isChecked -> {
+                binding.stats.allowShow = false
+                binding.stats.performHide()
+                binding.fab.hide()
+            }
+            else -> {
+                binding.stats.allowShow = true
+                binding.fab.show()
+            }
         }
     }
 
@@ -333,7 +350,6 @@ class MainActivity : ThemedActivity(),
 
     fun displayFragment(fragment: ToolbarFragment) {
         if (fragment is ToolsFragment || fragment is AboutFragment) {
-            // FIXME: statsBar and fab on ToolsFragment/AboutFragment
             binding.stats.allowShow = false
             binding.stats.performHide()
             binding.fab.hide()
