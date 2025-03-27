@@ -84,6 +84,7 @@
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
@@ -158,65 +159,95 @@
             android:excludeFromRecents="true"
             android:taskAffinity="" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.SocksSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.HttpSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.ShadowsocksRSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.VMessSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.VMessSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.VLESSSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.VLESSSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.BrookSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.BrookSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.Hysteria2SettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.Hysteria2SettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.SSHSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.SSHSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.WireGuardSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.WireGuardSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.MieruSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.MieruSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TuicSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.TuicSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.Tuic5SettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.Tuic5SettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ShadowTLSSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.ShadowTLSSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.JuicitySettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.JuicitySettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.Http3SettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.Http3SettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.AnyTLSSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.AnyTLSSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ConfigEditActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.ConfigEditActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.ChainSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.BalancerSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.profile.BalancerSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.GroupSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.GroupSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.RouteSettingsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.AssetsActivity" />
+            android:name="io.nekohasekai.sagernet.ui.AssetsActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.AssetEditActivity" />
+            android:name="io.nekohasekai.sagernet.ui.AssetEditActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.AppListActivity" />
+            android:name="io.nekohasekai.sagernet.ui.AppListActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout" />
         <activity
             android:name=".QuickToggleShortcut"
             android:excludeFromRecents="true"
@@ -232,36 +263,43 @@
         </activity>
         <activity
             android:name="io.nekohasekai.sagernet.ui.AppManagerActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:label="@string/proxied_apps"
             android:launchMode="singleTask"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.ScannerActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:label="@string/add_profile_methods_scan_qr_code"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.ProfileSelectActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:label="@string/select_profile"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.StunActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.StunLegacyActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.ProbeCertActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.SwitchActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.SagerNet.Dialog" />
@@ -363,6 +401,7 @@
 
         <activity
             android:name="io.nekohasekai.sagernet.tasker.TaskerActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:excludeFromRecents="true"
             android:exported="true">
             <intent-filter>
