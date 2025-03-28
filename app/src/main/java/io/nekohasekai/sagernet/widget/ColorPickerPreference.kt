@@ -1,117 +1,179 @@
+/******************************************************************************
+ *                                                                            *
+ * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
+ *                                                                            *
+ * This program is free software: you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by       *
+ * the Free Software Foundation, either version 3 of the License, or          *
+ *  (at your option) any later version.                                       *
+ *                                                                            *
+ * This program is distributed in the hope that it will be useful,            *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
+ * GNU General Public License for more details.                               *
+ *                                                                            *
+ * You should have received a copy of the GNU General Public License          *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
+ *                                                                            *
+ ******************************************************************************/
+
 package io.nekohasekai.sagernet.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.drawable.Drawable
+import android.os.Parcel
+import android.os.Parcelable
+import android.os.Parcelable.Creator
 import android.util.AttributeSet
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.widget.GridLayout
 import android.widget.ImageView
-import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.res.TypedArrayUtils
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.view.setPadding
-import androidx.preference.Preference
+import androidx.preference.DialogPreference
 import androidx.preference.PreferenceViewHolder
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.takisoft.colorpicker.ColorPickerDialog
+import com.takisoft.colorpicker.ColorStateDrawable
+import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ktx.getColorAttr
-import kotlin.math.roundToInt
+import io.nekohasekai.sagernet.ktx.app
 
-class ColorPickerPreference
-@JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyle: Int = TypedArrayUtils.getAttr(
-        context,
-        androidx.preference.R.attr.editTextPreferenceStyle,
-        android.R.attr.editTextPreferenceStyle
+class ColorPickerPreference @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet?,
+    defStyleAttr: Int,
+    defStyleRes: Int = 0
+) : DialogPreference(context, attrs, defStyleAttr, defStyleRes) {
+    companion object {
+        init {
+            PreferenceFragmentCompat.registerPreferenceFragment(
+                ColorPickerPreference::class.java,
+                ColorPickerPreferenceDialogFragmentCompat::class.java
+            )
+        }
+    }
+
+    init {
+        widgetLayoutResource = com.takisoft.preferencex.colorpicker.R.layout.preference_widget_color_swatch
+    }
+
+    val colors = app.resources.getIntArray(R.array.material_colors)
+    lateinit var colorDescriptions: Array<CharSequence>
+    private var colorIndex = 0
+    var columns = 0
+
+    @get:ColorPickerDialog.Size
+    var size = 0
+    var isSortColors = false
+    private var colorWidget: ImageView? = null
+
+    @SuppressLint("RestrictedApi")
+    constructor(context: Context, attrs: AttributeSet?) : this(
+        context, attrs, TypedArrayUtils.getAttr(
+            context, androidx.preference.R.attr.dialogPreferenceStyle,
+            android.R.attr.dialogPreferenceStyle
+        )
     )
-) : Preference(
-    context, attrs, defStyle
-) {
 
-    var inited = false
+    constructor(context: Context) : this(context, null)
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
+        colorWidget = holder.findViewById(com.takisoft.preferencex.colorpicker.R.id.color_picker_widget) as ImageView
+        setColorOnWidget(colors[colorIndex])
+    }
 
-        val widgetFrame = holder.findViewById(android.R.id.widget_frame) as LinearLayout
-
-        if (!inited) {
-            inited = true
-
-            var color = context.getColorAttr(android.R.attr.colorPrimary)
-            if (color == ContextCompat.getColor(context, R.color.white)) {
-                color = ContextCompat.getColor(context, R.color.material_light_black)
-            }
-
-            widgetFrame.addView(
-                getImageViewAtColor(
-                    color,
-                    36,
-                    0
-                )
+    private fun setColorOnWidget(color: Int) {
+        if (colorWidget == null) {
+            return
+        }
+        val colorDrawable = arrayOf(
+            ContextCompat.getDrawable(
+                context, com.takisoft.preferencex.colorpicker.R.drawable.colorpickerpreference_pref_swatch
             )
-            widgetFrame.visibility = View.VISIBLE
+        )
+        colorWidget!!.setImageDrawable(ColorStateDrawable(colorDrawable, color))
+    }
+
+    /**
+     * Returns the current color.
+     *
+     * @return The current color.
+     */
+    fun getColor(): Int {
+        return colorIndex
+    }
+
+    fun setColor(colorIndex: Int) {
+        setInternalColor(colors.indexOfFirst { it == colorIndex }, false)
+    }
+
+    private fun setInternalColor(colorIndexToSet: Int, force: Boolean) {
+        val colorIndex = if (colorIndexToSet >= colors.size || colorIndexToSet < 0) 1 else colorIndexToSet
+        val oldColor = getPersistedInt(2) - 1
+        val changed = oldColor != colorIndex
+        if (changed || force) {
+            this.colorIndex = colorIndex
+            persistInt(colorIndex + 1)
+            setColorOnWidget(colors[colorIndex])
+            notifyChanged()
         }
     }
 
-    fun getImageViewAtColor(color: Int, sizeDp: Int, paddingDp: Int): ImageView {
-        // dp to pixel
-        val factor = context.resources.displayMetrics.density
-        val size = (sizeDp * factor).roundToInt()
-        val paddingSize = (paddingDp * factor).roundToInt()
+    override fun onSetInitialValue(defaultValueObj: Any?) {
+        setInternalColor(
+            getPersistedInt(
+                2
+            ) - 1, true
+        )
+    }
 
-        return ImageView(context).apply {
-            layoutParams = ViewGroup.LayoutParams(size, size)
-            setPadding(paddingSize)
-            setImageDrawable(getColor(resources, color))
+    override fun onSaveInstanceState(): Parcelable? {
+        val superState = super.onSaveInstanceState()
+        if (isPersistent) {
+            // No need to save instance state since it's persistent
+            return superState
         }
+        val myState = SavedState(superState)
+        myState.color = colorIndex
+        return myState
     }
 
-    fun getColor(res: Resources, color: Int): Drawable {
-        val drawable = ResourcesCompat.getDrawable(
-            res,
-            R.drawable.ic_baseline_fiber_manual_record_24,
-            null
-        )!!
-        DrawableCompat.setTint(drawable.mutate(), color)
-        return drawable
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state?.javaClass != SavedState::class.java) {
+            // Didn't save state for us in onSaveInstanceState
+            super.onRestoreInstanceState(state)
+            return
+        }
+        val myState = state as SavedState
+        super.onRestoreInstanceState(myState.superState)
+        colorIndex = myState.color
     }
 
-    override fun onClick() {
-        super.onClick()
+    private class SavedState : BaseSavedState {
+        var color = 0
 
-        lateinit var dialog: AlertDialog
+        constructor(source: Parcel) : super(source) {
+            color = source.readInt()
+        }
 
-        val grid = GridLayout(context).apply {
-            columnCount = 4
-            val colors = context.resources.getIntArray(R.array.material_colors)
-            for ((i, color) in colors.withIndex()) {
-                val view = getImageViewAtColor(color, 64, 0).apply {
-                    setOnClickListener {
-                        persistInt(i + 1)
-                        dialog.dismiss()
-                        callChangeListener(i + 1)
-                    }
+        constructor(superState: Parcelable?) : super(superState) {}
+
+        override fun writeToParcel(dest: Parcel, flags: Int) {
+            super.writeToParcel(dest, flags)
+            dest.writeInt(color)
+        }
+
+        companion object {
+            @JvmField
+            val CREATOR: Creator<SavedState> = object : Creator<SavedState> {
+                override fun createFromParcel(`in`: Parcel): SavedState {
+                    return SavedState(`in`)
                 }
-                addView(view)
+
+                override fun newArray(size: Int): Array<SavedState?> {
+                    return arrayOfNulls(size)
+                }
             }
         }
-
-        dialog = MaterialAlertDialogBuilder(context).setTitle(title)
-            .setView(LinearLayout(context).apply {
-                gravity = Gravity.CENTER
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                addView(grid)
-            })
-            .setNegativeButton(android.R.string.cancel, null)
-            .show()
     }
+
 }
