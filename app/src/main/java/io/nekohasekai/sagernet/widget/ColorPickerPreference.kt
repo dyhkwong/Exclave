@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -89,21 +88,19 @@ class ColorPickerPreference
 
         lateinit var dialog: AlertDialog
 
-        val grid = ScrollView(context).apply {
-            addView(GridLayout(context).apply {
-                columnCount = 4
-                val colors = context.resources.getIntArray(R.array.material_colors)
-                for ((i, color) in colors.withIndex()) {
-                    val view = getImageViewAtColor(color, 64, 0).apply {
-                        setOnClickListener {
-                            persistInt(i + 1)
-                            dialog.dismiss()
-                            callChangeListener(i + 1)
-                        }
+        val grid = GridLayout(context).apply {
+            columnCount = 4
+            val colors = context.resources.getIntArray(R.array.material_colors)
+            for ((i, color) in colors.withIndex()) {
+                val view = getImageViewAtColor(color, 64, 0).apply {
+                    setOnClickListener {
+                        persistInt(i + 1)
+                        dialog.dismiss()
+                        callChangeListener(i + 1)
                     }
-                    addView(view)
                 }
-            })
+                addView(view)
+            }
         }
 
         dialog = MaterialAlertDialogBuilder(context).setTitle(title)
