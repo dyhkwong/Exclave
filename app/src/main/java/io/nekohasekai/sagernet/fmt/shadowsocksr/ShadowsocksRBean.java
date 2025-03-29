@@ -53,7 +53,7 @@ public class ShadowsocksRBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(password);
         output.writeString(method);
@@ -73,7 +73,12 @@ public class ShadowsocksRBean extends AbstractBean {
         protocolParam = input.readString();
         obfs = input.readString();
         obfsParam = input.readString();
-
+        if (version == 0 && obfs.equals("tls_simple")) {
+            obfs = "plain"; // tls_simple is not implemented at all, mistakenly added by SagerNet
+        }
+        if (version == 0 && obfs.equals("tls1.2_ticket_fastauth")) {
+            obfs = "tls1.2_ticket_auth";
+        }
     }
 
     @NotNull

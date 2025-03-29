@@ -1671,7 +1671,10 @@ object RawUpdater : GroupUpdater() {
                         password = it
                     }
                     outbound.getString("obfs")?.also {
-                        obfs = it
+                        obfs = when (it) {
+                            "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
+                            else -> it
+                        }
                     }
                     outbound.getString("obfs_param")?.also {
                         obfsParam = it
@@ -2411,7 +2414,10 @@ object RawUpdater : GroupUpdater() {
                         else -> (proxy["cipher"] as? String)
                     }
                     password = proxy["password"]?.toString()
-                    obfs = proxy["obfs"] as? String
+                    obfs = when (val it = proxy["obfs"]) {
+                        "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
+                        else -> it as? String
+                    }
                     obfsParam = proxy["obfs-param"]?.toString()
                     protocol = proxy["protocol"] as? String
                     protocolParam = proxy["protocol-param"]?.toString()

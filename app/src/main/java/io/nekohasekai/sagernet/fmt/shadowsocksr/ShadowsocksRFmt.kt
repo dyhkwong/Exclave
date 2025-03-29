@@ -34,7 +34,10 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
         serverPort = params[1].toInt()
         protocol = params[2]
         method = params[3]
-        obfs = params[4]
+        obfs = when (val it = params[4]) {
+            "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
+            else -> it
+        }
         password = params[5].substringBefore("/").decodeBase64UrlSafe()
     }
 

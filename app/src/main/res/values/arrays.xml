@@ -374,9 +374,7 @@
         <item>PLAIN</item>
         <item>HTTP_SIMPLE</item>
         <item>HTTP_POST</item>
-        <item>TLS_SIMPLE</item>
         <item>TLS1.2_TICKET_AUTH</item>
-        <item>TLS1.2_TICKET_FASTAUTH</item>
         <item>RANDOM_HEAD</item>
     </string-array>
 
@@ -384,9 +382,7 @@
         <item>plain</item>
         <item>http_simple</item>
         <item>http_post</item>
-        <item>tls_simple</item>
         <item>tls1.2_ticket_auth</item>
-        <item>tls1.2_ticket_fastauth</item>
         <item>random_head</item>
     </string-array>
 
