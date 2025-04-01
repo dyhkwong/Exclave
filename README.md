@@ -38,6 +38,8 @@ Is Exclave not in your language, or the translation is incorrect or incomplete? 
 
 ## License
 
+This program is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
 ```
 Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
 
@@ -55,6 +57,12 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 ```
 
+However, this program incorporates optional code (all of the code in the `clash` folder of the submodule `library/core`) that is covered by the GNU General Public License as published by the Free Software Foundation, version 3. If this code is used, the GNU General Public License as published by the Free Software Foundation, version 3, applies to the entire program.
+
+The GNU General Public License as published by the Free Software Foundation, version 3, applies to this program when `library/core` is compiled with `with_clash` tag.
+
+The GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version, applies to this program when `library/core` is compiled without `with_clash` tag.
+
 ## Build
 - Install and configure Git, JDK, Android SDK, Android NDK, Go and [this Go Mobile fork](https://github.com/sagernet/gomobile).
 - `git clone` this project and submodule `library/core`. Also clone the corresponding plugin submodules if needed.
@@ -66,7 +74,7 @@ ALIAS_NAME=your_alias_name
 ALIAS_PASS=your_alias_pass
 ```
 - Build the app:
-  - Build libcore: `/run lib core`
+  - Build libcore: `./run lib core`
   - Download assets `./gradlew :app:downloadAssets` or update assets `./gradlew :app:updateAssets`
   - Build app: `./gradlew :app:assembleOssRelease`
   - APK files are located in `app/build/outputs/apk/`.

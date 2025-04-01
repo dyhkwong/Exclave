@@ -88,9 +88,11 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
         (requireActivity() as? MainActivity)?.callback?.isEnabled = true
 
         runOnDefaultDispatcher {
-            val license = view.context.assets.open("LICENSE").bufferedReader().readText()
             onMainDispatcher {
-                binding.license.text = license
+                binding.license.text = "Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>\n\n" +
+                        "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.\n\n" +
+                        "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n" +
+                        "You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>."
                 Linkify.addLinks(binding.license, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS)
             }
         }
