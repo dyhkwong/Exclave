@@ -12,7 +12,7 @@ dependencies {
     protobuf(project(":library:proto"))
 
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
-    api("com.google.protobuf:protobuf-java:4.30.1")
+    api("com.google.protobuf:protobuf-java:4.30.2")
 }
 android {
     namespace = "com.v2ray.core"
@@ -25,7 +25,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.30.1"
+        artifact = "com.google.protobuf:protoc:4.30.2"
     }
     generateProtoTasks {
         all().forEach {

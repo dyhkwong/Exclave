@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.1.20-1.0.31"
+    id("com.google.devtools.ksp") version "2.1.20-1.0.32"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
@@ -42,9 +42,9 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.browser:browser:1.8.0")
-    implementation("androidx.camera:camera-view:1.4.1")
-    implementation("androidx.camera:camera-lifecycle:1.4.1")
-    implementation("androidx.camera:camera-camera2:1.4.1")
+    implementation("androidx.camera:camera-view:1.4.2")
+    implementation("androidx.camera:camera-lifecycle:1.4.2")
+    implementation("androidx.camera:camera-camera2:1.4.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
@@ -58,8 +58,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:1.1.0")
 
     implementation("com.google.android.material:material:1.12.0")
-    implementation("cn.hutool:hutool-core:5.8.36")
-    implementation("cn.hutool:hutool-json:5.8.36")
+    implementation("cn.hutool:hutool-core:5.8.37")
+    implementation("cn.hutool:hutool-json:5.8.37")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.google.zxing:core:3.5.3")
 
