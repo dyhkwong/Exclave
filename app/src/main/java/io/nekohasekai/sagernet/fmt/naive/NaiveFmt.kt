@@ -23,12 +23,9 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unUrlSafe
-import io.nekohasekai.sagernet.ktx.urlSafe
 import libcore.Libcore
 
 fun parseNaive(link: String): NaiveBean {
@@ -71,7 +68,7 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
             builder.addQueryParameter("extra-headers", extraHeaders.listByLine().joinToString("\r\n"))
         }
         if (name.isNotEmpty()) {
-            builder.setRawFragment(name.urlSafe())
+            builder.fragment = name
         }
         if (insecureConcurrency > 0) {
             builder.addQueryParameter("insecure-concurrency", "$insecureConcurrency")

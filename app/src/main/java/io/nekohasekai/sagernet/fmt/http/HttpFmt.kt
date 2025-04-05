@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.fmt.http
 
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.urlSafe
 import libcore.Libcore
 
 fun parseHttp(link: String): HttpBean {
@@ -59,7 +58,7 @@ fun HttpBean.toUri(): String {
         builder.addQueryParameter("sni", sni)
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
 
     return builder.string

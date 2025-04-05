@@ -21,8 +21,6 @@ package io.nekohasekai.sagernet.fmt.socks
 
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unUrlSafe
-import io.nekohasekai.sagernet.ktx.urlSafe
 import libcore.Libcore
 
 fun parseSOCKS(link: String): SOCKSBean {
@@ -36,9 +34,7 @@ fun parseSOCKS(link: String): SOCKSBean {
             serverPort = url1.port
             username = url1.username.takeIf { it != "null" } ?: ""
             password = url1.password.takeIf { it != "null" } ?: ""
-            if (link.contains("#")) {
-                name = link.substringAfter("#").unUrlSafe()
-            }
+            name = url.fragment
         }
     } else if (url.password.isEmpty() && url.username.decodeBase64UrlSafe().contains(":")) {
         // new v2rayNG format?
@@ -47,9 +43,7 @@ fun parseSOCKS(link: String): SOCKSBean {
             serverPort = url.port
             username = url.username.decodeBase64UrlSafe().substringBefore(":")
             password = url.username.decodeBase64UrlSafe().substringAfter(":")
-            if (link.contains("#")) {
-                name = link.substringAfter("#").unUrlSafe()
-            }
+            name = url.fragment
         }
     } else {
         return SOCKSBean().apply {
@@ -86,7 +80,7 @@ fun SOCKSBean.toUri(): String {
             builder.addQueryParameter("sni", sni) // non-standard
         }
     }
-    if (!name.isNullOrEmpty()) builder.setRawFragment(name.urlSafe())
+    if (!name.isNullOrEmpty()) builder.fragment = name
     return builder.string
 
 }

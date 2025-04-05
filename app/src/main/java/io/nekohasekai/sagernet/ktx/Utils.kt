@@ -46,9 +46,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import cn.hutool.core.net.URLDecoder
-import cn.hutool.core.net.URLEncoder
-import cn.hutool.core.util.CharsetUtil
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ui.MainActivity
@@ -183,29 +180,6 @@ fun String?.parseNumericAddress(): InetAddress? =
 @JvmOverloads
 fun DialogFragment.showAllowingStateLoss(fragmentManager: FragmentManager, tag: String? = null) {
     if (!fragmentManager.isStateSaved) show(fragmentManager, tag)
-}
-
-private val encoder = URLEncoder().apply {
-
-    addSafeCharacter('*')
-    addSafeCharacter('-')
-    addSafeCharacter('.')
-    addSafeCharacter('_')
-    addSafeCharacter('&')
-    addSafeCharacter('/')
-
-}
-
-fun String.pathSafe(): String {
-    return encoder.encode(this, CharsetUtil.CHARSET_UTF_8)
-}
-
-fun String.urlSafe(): String {
-    return URLEncoder.ALL.encode(this, CharsetUtil.CHARSET_UTF_8)
-}
-
-fun String.unUrlSafe(): String {
-    return URLDecoder.decode(this, CharsetUtil.CHARSET_UTF_8)
 }
 
 fun RecyclerView.scrollTo(index: Int, force: Boolean = false) {

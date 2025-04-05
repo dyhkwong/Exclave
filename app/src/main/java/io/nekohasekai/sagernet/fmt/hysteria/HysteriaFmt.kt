@@ -26,7 +26,6 @@ import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import java.io.File
 
-
 // hysteria://host:port?auth=123456&peer=sni.domain&insecure=1|0&upmbps=100&downmbps=100&alpn=hysteria&obfs=xplus&obfsParam=123456#remarks
 
 fun parseHysteria(url: String): HysteriaBean {
@@ -117,7 +116,7 @@ fun HysteriaBean.toUri(): String? {
         builder.addQueryParameter("protocol", "faketcp")
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
     return builder.string
 }

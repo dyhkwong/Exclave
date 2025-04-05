@@ -28,12 +28,10 @@ import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.isValidHysteriaPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.urlSafe
 import libcore.Libcore
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
-
 
 fun parseHysteria2(rawURL: String): Hysteria2Bean {
     var url = rawURL
@@ -129,7 +127,7 @@ fun Hysteria2Bean.toUri(): String? {
         builder.addQueryParameter("obfs-password", obfs)
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
     builder.rawPath = "/"
     val url = builder.string

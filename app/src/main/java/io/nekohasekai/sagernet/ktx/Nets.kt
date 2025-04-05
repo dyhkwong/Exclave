@@ -27,7 +27,7 @@ import java.net.Socket
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-fun URL.queryParameter(key: String) = queryParameterNotBlank(key).takeIf { it.isNotEmpty() }
+fun URL.queryParameter(key: String) = getQueryParameter(key).takeIf { it.isNotEmpty() }
 var URL.pathSegments: List<String>
     get() = path.split("/").filter { it.isNotEmpty() }
     set(value) {

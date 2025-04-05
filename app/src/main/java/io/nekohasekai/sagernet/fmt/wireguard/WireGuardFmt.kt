@@ -32,7 +32,7 @@ fun parseV2rayNWireGuard(server: String): AbstractBean {
         link.queryParameter("reserved")?.let {
             reserved = it
         }
-        link.fragment.takeIf { !it.isNullOrEmpty() }?.let {
+        link.fragment?.let {
             name = it
         }
     }

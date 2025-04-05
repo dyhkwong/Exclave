@@ -26,9 +26,7 @@ import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.urlSafe
 import libcore.Libcore
 
 fun parseTrojanGo(server: String): TrojanGoBean {
@@ -63,7 +61,7 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         link.queryParameter("plugin")?.let {
             plugin = it
         }
-        link.fragment.takeIf { !it.isNullOrEmpty() }?.let {
+        link.fragment?.let {
             name = it
         }
     }
@@ -104,7 +102,7 @@ fun TrojanGoBean.toUri(): String {
     }
 
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
 
     return builder.string

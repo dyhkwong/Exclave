@@ -30,7 +30,6 @@ import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.urlSafe
 import java.io.File
 import libcore.Libcore
 
@@ -71,7 +70,7 @@ fun parseTuic(server: String): AbstractBean {
                 link.queryParameter("disable_sni")?.let {
                     disableSNI = it == "1" || it == "true"
                 }
-                link.fragment.takeIf { !it.isNullOrEmpty() }?.let {
+                link.fragment?.let {
                     name = it
                 }
             }
@@ -111,7 +110,7 @@ fun parseTuic(server: String): AbstractBean {
         } ?: link.queryParameter("insecure")?.let {
             allowInsecure = it == "1" || it == "true"
         }
-        link.fragment.takeIf { !it.isNullOrEmpty() }?.let {
+        link.fragment?.let {
             name = it
         }
     }
@@ -142,7 +141,7 @@ fun Tuic5Bean.toUri(): String {
         builder.addQueryParameter("insecure", "1")
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
     builder.addQueryParameter("udp_relay-mode", udpRelayMode)
     builder.addQueryParameter("congestion_controller", congestionControl)

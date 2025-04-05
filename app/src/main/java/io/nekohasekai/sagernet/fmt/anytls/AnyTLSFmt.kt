@@ -38,7 +38,7 @@ fun AnyTLSBean.toUri(): String? {
         builder.addQueryParameter("insecure", "1")
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
     return builder.string
 }

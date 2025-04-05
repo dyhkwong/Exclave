@@ -50,7 +50,7 @@ fun JuicityBean.toUri(): String {
         builder.addQueryParameter("pinned_certchain_sha256", pinnedCertChainSha256)
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
     return builder.string
 }

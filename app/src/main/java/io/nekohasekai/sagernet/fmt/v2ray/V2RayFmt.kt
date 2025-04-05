@@ -25,7 +25,7 @@ import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 
 fun parseV2Ray(link: String): StandardV2RayBean {
-    if (!link.contains("@")) {
+    if (link.startsWith("vmess://") && !link.contains("@")) {
         return parseV2RayN(link)
     }
 
@@ -652,13 +652,11 @@ fun StandardV2RayBean.toUri(): String? {
                 builder.addQueryParameter("flow", flow.removeSuffix("-udp443"))
             }
         }
-        "none" -> if (this is TrojanBean) {
-            builder.addQueryParameter("security", security)
-        }
+        "none" -> builder.addQueryParameter("security", security)
     }
 
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
 
     return builder.string

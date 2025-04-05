@@ -25,7 +25,6 @@ import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
-import io.nekohasekai.sagernet.ktx.urlSafe
 import libcore.Libcore
 import java.io.File
 
@@ -47,7 +46,7 @@ fun TuicBean.toUri(): String {
         builder.addQueryParameter("disable_sni", "1")
     }
     if (name.isNotEmpty()) {
-        builder.setRawFragment(name.urlSafe())
+        builder.fragment = name
     }
     builder.addQueryParameter("udp_relay-mode", udpRelayMode)
     builder.addQueryParameter("congestion_controller", congestionController)
