@@ -18,6 +18,38 @@ A fork of SagerNet, the universal proxy toolchain for Android written in Kotlin.
 
 - [Other plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
 
+## License
+
+When `library/core` is compiled with `with_clash` tag, this program is licensed under the GNU General Public License as published by the Free Software Foundation, version 3.
+
+```
+Copyright (C) 2023-2025 by dyhkwong
+Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
+
+When `library/core` is compiled without `with_clash` tag, this program is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+```
+Copyright (C) 2023-2025 by dyhkwong
+Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
+
+## Translation
+
+Is Exclave not in your language, or the translation is incorrect or incomplete? Get involved in the translations on [Hosted Weblate](https://hosted.weblate.org/projects/exclave/).
+
 ## Report issues
 
 Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not report issues to upstream because the core used is heavily modified.
@@ -31,37 +63,6 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
 ## FAQs and explanation of terms
 
 [Wiki](https://github.com/dyhkwong/Exclave/wiki). The wiki may contain potentially distressing or otherwise sensitive content. Viewer discretion is advised.
-
-## Translation
-
-Is Exclave not in your language, or the translation is incorrect or incomplete? Get involved in the translations on [Hosted Weblate](https://hosted.weblate.org/projects/exclave/).
-
-## License
-
-This program is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-```
-Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
-```
-
-However, this program incorporates optional code (all of the code in the `clash` folder of the submodule `library/core`) that is covered by the GNU General Public License as published by the Free Software Foundation, version 3. If this code is used, the GNU General Public License as published by the Free Software Foundation, version 3, applies to the entire program.
-
-The GNU General Public License as published by the Free Software Foundation, version 3, applies to this program when `library/core` is compiled with `with_clash` tag.
-
-The GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version, applies to this program when `library/core` is compiled without `with_clash` tag.
 
 ## Build
 - Install and configure Git, JDK, Android SDK, Android NDK, Go and [this Go Mobile fork](https://github.com/sagernet/gomobile).
