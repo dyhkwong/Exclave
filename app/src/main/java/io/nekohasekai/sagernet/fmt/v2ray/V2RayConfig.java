@@ -716,6 +716,8 @@ public class V2RayConfig {
         public String address;
         public Integer port;
         public Integer userLevel;
+        public Boolean overrideResponseTTL;
+        public Integer responseTTL;
 
     }
 
