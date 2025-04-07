@@ -30,7 +30,7 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
 
 ## FAQs and explanation of terms
 
-[Wiki](https://github.com/dyhkwong/Exclave/wiki). Some of the words may be subjective and offensive.
+[Wiki](https://github.com/dyhkwong/Exclave/wiki). The wiki may contain potentially distressing or otherwise sensitive content. Viewer discretion is advised.
 
 ## Translation
 
