@@ -1843,20 +1843,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                         val popup = PopupMenu(requireContext(), anchor)
                         popup.menuInflater.inflate(R.menu.profile_share_menu, popup.menu)
 
-                        when {
-                            !proxyEntity.hasShareLink() -> {
-                                popup.menu.removeItem(R.id.action_qr)
-                                popup.menu.removeItem(R.id.action_clipboard)
-                            }
-                            !proxyEntity.canExportBackup() -> {
-                                popup.menu.removeItem(R.id.action_export_backup)
-                            }
-                            !proxyEntity.hasShareLink() && proxyEntity.wgBean == null  -> {
-                                popup.menu.findItem(R.id.action_export_backup).subMenu?.removeItem(R.id.action_export_backup_qr)
-                                popup.menu.findItem(R.id.action_export_backup).subMenu?.removeItem(R.id.action_export_backup_clipboard)
-                            }
+                        if (!proxyEntity.hasShareLink()) {
+                            popup.menu.removeItem(R.id.action_qr)
+                            popup.menu.removeItem(R.id.action_clipboard)
                         }
-
+                        if (!proxyEntity.canExportBackup()) {
+                            popup.menu.removeItem(R.id.action_export_backup)
+                        }
                         if (proxyEntity.brookBean != null) {
                             popup.menu.removeItem(R.id.action_export_configuration)
                         }
