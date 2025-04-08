@@ -20,7 +20,7 @@ A fork of SagerNet, the universal proxy toolchain for Android written in Kotlin.
 
 ## License
 
-When `library/core` is compiled with `with_clash` tag, this program is licensed under the GNU General Public License as published by the Free Software Foundation, version 3.
+When `library/core` is compiled with `with_clash` tag, Exclave is licensed under the GNU General Public License as published by the Free Software Foundation, version 3.
 
 ```
 Copyright (C) 2023-2025 by dyhkwong
@@ -33,7 +33,9 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 ```
 
-When `library/core` is compiled without `with_clash` tag, this program is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+When `library/core` is compiled without `with_clash` tag, Exclave is licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Plugins are licensed under the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 ```
 Copyright (C) 2023-2025 by dyhkwong
@@ -45,6 +47,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 ```
+
+The native libraries of plugins are executables that run in separate processes. Therefore, the native libraries of plugins are not subject to the restrictions of the GNU General Public License. The license of the corresponding upstream project applies to the native libraries of plugins.
 
 ## Translation
 
