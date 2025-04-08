@@ -21,7 +21,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.24.1
+          go-version: 1.24.0
           cache-dependency-path: "plugin/mieru/src/main/go/mieru/go.sum"
       - name: Setup Java
         uses: actions/setup-java@v4
