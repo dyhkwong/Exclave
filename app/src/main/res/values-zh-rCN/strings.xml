@@ -122,7 +122,7 @@
     <string name="add_profile_methods_scan_qr_code">扫描二维码</string>
     <string name="add_profile_methods_manual_settings">手动输入</string>
     <plurals name="removed">
-        <item quantity="other">已删除 %d 个配置</item>
+        <item quantity="other">已删除 %d 项</item>
     </plurals>
     <plurals name="added">
         <item quantity="other">已添加 %d 个配置</item>
