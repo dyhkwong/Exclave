@@ -23,6 +23,8 @@ import android.graphics.Rect
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.nekohasekai.sagernet.FabStyle
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ui.MainActivity
 
 class FixedLinearLayoutManager(val recyclerView: RecyclerView) :
@@ -41,6 +43,10 @@ class FixedLinearLayoutManager(val recyclerView: RecyclerView) :
         dx: Int, recycler: RecyclerView.Recycler,
         state: RecyclerView.State
     ): Int {
+        if (DataStore.fabStyle == FabStyle.Shadowsocks) {
+            return super.scrollVerticallyBy(dx, recycler, state)
+        }
+
         val scrollRange = super.scrollVerticallyBy(dx, recycler, state)
         if (listenerDisabled) return scrollRange
         val activity = recyclerView.context as? MainActivity

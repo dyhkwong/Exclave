@@ -87,7 +87,9 @@ class MainActivity : ThemedActivity(),
         super.onConfigurationChanged(newConfig)
         // FIXME: on uiMode/navigation changed
         when {
-            navigation.menu.findItem(R.id.nav_tools).isChecked || navigation.menu.findItem(R.id.nav_about).isChecked -> {
+            navigation.menu.findItem(R.id.nav_tools).isChecked ||
+                    navigation.menu.findItem(R.id.nav_about).isChecked ||
+                    navigation.menu.findItem(R.id.nav_traffic).isChecked -> {
                 binding.stats.allowShow = false
                 binding.stats.performHide()
                 binding.fab.hide()
@@ -118,7 +120,7 @@ class MainActivity : ThemedActivity(),
             }
             FabStyle.Shadowsocks -> {
                 binding.stats.fabAlignmentMode = FAB_ALIGNMENT_MODE_CENTER
-                binding.stats.fabCradleMargin = dp2px(6).toFloat()
+                binding.stats.fabCradleMargin = dp2px(5).toFloat()
                 binding.stats.fabCradleRoundedCornerRadius = dp2px(6).toFloat()
                 binding.stats.cradleVerticalOffset = 0F
             }
@@ -349,7 +351,7 @@ class MainActivity : ThemedActivity(),
 
 
     fun displayFragment(fragment: ToolbarFragment) {
-        if (fragment is ToolsFragment || fragment is AboutFragment) {
+        if (fragment is ToolsFragment || fragment is AboutFragment || fragment is TrafficFragment) {
             binding.stats.allowShow = false
             binding.stats.performHide()
             binding.fab.hide()

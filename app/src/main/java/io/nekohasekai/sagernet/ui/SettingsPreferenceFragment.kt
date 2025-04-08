@@ -63,7 +63,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             v.updatePadding(
                 left = bars.left,
                 right = bars.right,
-                bottom = bars.bottom,
+                bottom = bars.bottom + dp2px(64),
             )
             WindowInsetsCompat.CONSUMED
         }

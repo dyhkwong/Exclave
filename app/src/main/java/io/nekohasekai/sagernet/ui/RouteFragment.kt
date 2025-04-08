@@ -78,7 +78,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             v.updatePadding(
                 left = bars.left + dp2px(4),
                 right = bars.right + dp2px(4),
-                bottom = bars.bottom + dp2px(4),
+                bottom = bars.bottom + dp2px(64),
             )
             WindowInsetsCompat.CONSUMED
         }
@@ -238,7 +238,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             if (updated.isNotEmpty()) {
                 SagerDatabase.rulesDao.updateRules(updated.toList())
                 updated.clear()
-                needReload()
+                // needReload()
             }
         }
 
@@ -265,7 +265,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             ruleListView.post {
                 ruleList.add(rule)
                 ruleAdapter.notifyItemInserted(ruleList.size)
-                needReload()
+                // needReload()
             }
         }
 
@@ -275,7 +275,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             ruleListView.post {
                 ruleList[index] = rule
                 ruleAdapter.notifyItemChanged(index + 1)
-                needReload()
+                // needReload()
             }
         }
 
@@ -283,12 +283,12 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             val index = ruleList.indexOfFirst { it.id == ruleId }
             if (index == -1) {
                 onMainDispatcher {
-                    needReload()
+                    // needReload()
                 }
             } else ruleListView.post {
                 ruleList.removeAt(index)
                 ruleAdapter.notifyItemRemoved(index + 1)
-                needReload()
+                // needReload()
             }
         }
 
@@ -296,7 +296,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             ruleListView.post {
                 ruleList.clear()
                 ruleAdapter.notifyDataSetChanged()
-                needReload()
+                // needReload()
             }
         }
 
@@ -332,7 +332,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                         rule.enabled = isChecked
                         SagerDatabase.rulesDao.updateRule(rule)
                         onMainDispatcher {
-                            needReload()
+                            // needReload()
                         }
                     }
                 }
