@@ -323,7 +323,8 @@
             android:foregroundServiceType="systemExempted"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_VPN_SERVICE"
-            android:process=":bg">
+            android:process=":bg"
+            tools:ignore="ForegroundServicePermission" >
 
             <intent-filter>
                 <action android:name="android.net.VpnService" />
@@ -366,23 +367,31 @@
                 android:resource="@xml/cache_paths" />
         </provider>
 
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="merge">
+            <meta-data
+                android:name="io.nekohasekai.sagernet.SagerNet"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+
         <receiver
             android:name="io.nekohasekai.sagernet.BootReceiver"
             android:directBootAware="true"
             android:enabled="false"
             android:exported="true"
             android:process=":bg">
-            <intent-filter android:priority="999">
+            <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <!--<action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />-->
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove" />
 
         <service
             android:name="androidx.room.MultiInstanceInvalidationService"

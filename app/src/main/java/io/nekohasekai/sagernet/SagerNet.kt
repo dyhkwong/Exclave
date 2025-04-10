@@ -160,9 +160,12 @@ class SagerNet : Application(),
         updateNotificationChannels()
     }
 
-    override val workManagerConfiguration: WorkConfiguration = WorkConfiguration.Builder()
-        .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
-        .build()
+    override val workManagerConfiguration: androidx.work.Configuration
+        get() {
+            return WorkConfiguration.Builder()
+                .setDefaultProcessName("${BuildConfig.APPLICATION_ID}:bg")
+                .build()
+        }
 
     @SuppressLint("InlinedApi")
     companion object {

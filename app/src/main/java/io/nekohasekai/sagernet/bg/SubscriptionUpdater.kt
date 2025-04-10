@@ -28,9 +28,11 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkerParameters
 import androidx.work.multiprocess.RemoteWorkManager
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.group.GroupUpdater
+import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import java.util.concurrent.TimeUnit
 
@@ -48,8 +50,9 @@ object SubscriptionUpdater {
         // PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS
         var minDelay = subscriptions.minByOrNull { it.subscription!!.autoUpdateDelay }!!.subscription!!.autoUpdateDelay.toLong()
         val now = System.currentTimeMillis() / 1000L
-        val minInitDelay = subscriptions.minOf { now - it.subscription!!.lastUpdated - (minDelay * 60) }
+        var minInitDelay = subscriptions.minOf { now - it.subscription!!.lastUpdated - (minDelay * 60) }
         if (minDelay < 15) minDelay = 15
+        if (minInitDelay > 60) minInitDelay = 60
 
         RemoteWorkManager.getInstance(app).enqueueUniquePeriodicWork(
             WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE,
@@ -59,6 +62,7 @@ object SubscriptionUpdater {
                 }
                 .build()
         )
+        Logs.d("reconfigureUpdater, interval: $minDelay min" + if (minInitDelay > 0) ", initial delay: $minInitDelay s" else "")
     }
 
     class UpdateTask(
@@ -77,14 +81,14 @@ object SubscriptionUpdater {
         override suspend fun doWork(): Result {
             var subscriptions = SagerDatabase.groupDao.subscriptions()
                 .filter { it.subscription!!.autoUpdate }
-            if (DataStore.startedProfile == 0L) {
+            if (!(SagerNet.started && DataStore.startedProfile > 0)) {
                 subscriptions = subscriptions.filter { !it.subscription!!.updateWhenConnectedOnly }
             }
 
             if (subscriptions.isNotEmpty()) for (profile in subscriptions) {
                 val subscription = profile.subscription!!
 
-                if ((System.currentTimeMillis() / 1000 - subscription.lastUpdated) < subscription.autoUpdateDelay * 60) {
+                if (((System.currentTimeMillis() / 1000).toInt() - subscription.lastUpdated) < subscription.autoUpdateDelay * 60) {
                     continue
                 }
 
@@ -103,6 +107,5 @@ object SubscriptionUpdater {
             return Result.success()
         }
     }
-
 
 }
