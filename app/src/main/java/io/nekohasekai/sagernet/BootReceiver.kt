@@ -44,11 +44,11 @@ class BootReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_LOCKED_BOOT_COMPLETED) runOnDefaultDispatcher {
+        /*if (intent.action != Intent.ACTION_LOCKED_BOOT_COMPLETED) runOnDefaultDispatcher {
             runCatching {
                 SubscriptionUpdater.reconfigureUpdater()
             }
-        }
+        }*/
 
         if (!DataStore.persistAcrossReboot) {   // sanity check
             enabled = false
