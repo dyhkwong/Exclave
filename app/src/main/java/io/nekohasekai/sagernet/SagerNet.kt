@@ -96,16 +96,16 @@ class SagerNet : Application(),
             if (DataStore.enableDebug && DataStore.pprofServer.isNotEmpty()) {
                 DebugInstance().launch()
             }
-        }
 
-        Libcore.setenv("v2ray.conf.geoloader", "memconservative")
-        externalAssets.mkdirs()
-        Libcore.initializeV2Ray(
-            filesDir.absolutePath + "/",
-            externalAssets.absolutePath + "/",
-            "v2ray/",
-            DataStore.providerRootCA,
-        )
+            Libcore.setenv("v2ray.conf.geoloader", "memconservative")
+            externalAssets.mkdirs()
+            Libcore.initializeV2Ray(
+                filesDir.absolutePath + "/",
+                externalAssets.absolutePath + "/",
+                "v2ray/",
+                DataStore.providerRootCA,
+            )
+        }
 
         Theme.apply(this)
         Theme.applyNightTheme()
