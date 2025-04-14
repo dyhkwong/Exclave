@@ -29,15 +29,19 @@ import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 
 fun parseNaive(link: String): NaiveBean {
-    val proto = link.substringAfter("+").substringBefore(":")
+    // This format may be https://github.com/klzgrad/naiveproxy/issues/86.
     val url = Libcore.parseURL(link)
-    return NaiveBean().also {
-        it.proto = proto
-    }.apply {
+    return NaiveBean().apply {
+        proto = when (url.scheme) {
+            "naive+https" -> "https"
+            "naive+quic" -> "quic"
+            else -> error("impossible")
+        }
         serverAddress = url.host
         serverPort = url.port.takeIf { it > 0 } ?: 443
         username = url.username
         password = url.password
+        sni = url.queryParameter("sni")
         extraHeaders = url.queryParameter("extra-headers")?.replace("\r\n", "\n")
         insecureConcurrency = url.queryParameter("insecure-concurrency")?.toIntOrNull()
         name = url.fragment
