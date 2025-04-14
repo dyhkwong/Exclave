@@ -45,7 +45,7 @@ fun ShadowsocksBean.fixInvalidParams() {
 fun parseShadowsocks(url: String): ShadowsocksBean {
     val link = Libcore.parseURL(url)
     if (link.port == 0 && link.username.isEmpty() && link.password.isEmpty()) {
-        // v2rayN style
+        // pre-SIP002
         val link1 = Libcore.parseURL("ss://" + link.host.decodeBase64UrlSafe())
         return ShadowsocksBean().apply {
             serverAddress = link1.host
@@ -56,7 +56,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             fixInvalidParams()
         }
     } else {
-        // ss-android style
+        // SIP002
         if (link.password.isNotEmpty() ||
             url.substringAfter("ss://").substringBefore("#").substringBefore("@").endsWith(":")) {
             return ShadowsocksBean().apply {
