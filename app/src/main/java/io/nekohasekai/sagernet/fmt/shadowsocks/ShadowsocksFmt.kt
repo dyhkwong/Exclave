@@ -37,20 +37,34 @@ fun PluginConfiguration.fixInvalidParams() {
 
 fun ShadowsocksBean.fixInvalidParams() {
     if (method == "plain") method = "none"
-    plugin = PluginConfiguration(plugin).apply { fixInvalidParams() }.toString()
+    if (!plugin.isNullOrEmpty()) {
+        plugin = PluginConfiguration(plugin).apply { fixInvalidParams() }.toString()
+    }
 }
 
 fun parseShadowsocks(url: String): ShadowsocksBean {
     val link = Libcore.parseURL(url)
-    if (url.contains("@")) {
+    if (link.port == 0 && link.username.isEmpty() && link.password.isEmpty()) {
+        // v2rayN style
+        val link1 = Libcore.parseURL("ss://" + link.host.decodeBase64UrlSafe())
+        return ShadowsocksBean().apply {
+            serverAddress = link1.host
+            serverPort = link1.port
+            method = link1.username
+            password = link1.password
+            name = link.fragment
+            fixInvalidParams()
+        }
+    } else {
         // ss-android style
-        if (link.password.isNotEmpty() || url.substringAfter("ss://").substringBefore("@").endsWith(":")) {
+        if (link.password.isNotEmpty() ||
+            url.substringAfter("ss://").substringBefore("#").substringBefore("@").endsWith(":")) {
             return ShadowsocksBean().apply {
                 serverAddress = link.host
                 serverPort = link.port
                 method = link.username
                 password = link.password
-                plugin = link.queryParameter("plugin") ?: ""
+                plugin = link.queryParameter("plugin")
                 name = link.fragment
                 fixInvalidParams()
             }
@@ -60,19 +74,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             serverPort = link.port
             method = link.username.decodeBase64UrlSafe().substringBefore(":")
             password = link.username.decodeBase64UrlSafe().substringAfter(":")
-            plugin = link.queryParameter("plugin") ?: ""
-            name = link.fragment
-            fixInvalidParams()
-        }
-    } else {
-        // v2rayN style
-        val link1 = Libcore.parseURL("ss://" + link.host.decodeBase64UrlSafe())
-        return ShadowsocksBean().apply {
-            serverAddress = link1.host
-            serverPort = link1.port
-            method = link1.username
-            password = link1.password
-            plugin = ""
+            plugin = link.queryParameter("plugin")
             name = link.fragment
             fixInvalidParams()
         }
