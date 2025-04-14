@@ -1557,6 +1557,11 @@ object RawUpdater : GroupUpdater() {
                         tls.getString("server_name")?.also {
                             sni = it
                         }
+                        (tls.getAny("alpn") as? (List<String>))?.also {
+                            alpn = it[0]
+                        } ?: tls.getString("alpn")?.also {
+                            alpn = it
+                        }
                         tls.getBoolean("insecure")?.also {
                             allowInsecure = it
                         }
@@ -2475,7 +2480,7 @@ object RawUpdater : GroupUpdater() {
                     uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond() ?: proxy["up-speed"]?.toString()?.toIntOrNull()
                     downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond() ?: proxy["down-speed"]?.toString()?.toIntOrNull()
                     sni = proxy["sni"]?.toString()
-                    alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
+                    alpn = (proxy["alpn"] as? List<Any>)?.get(0)?.toString()
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                     obfuscation = proxy["obfs"]?.toString()?.takeIf { it.isNotEmpty() }
                     hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
