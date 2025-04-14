@@ -2505,7 +2505,7 @@ object RawUpdater : GroupUpdater() {
             "tuic" -> {
                 if (proxy["token"] != null) {
                     proxies.add(TuicBean().apply {
-                        serverAddress = proxy["server"]?.toString() ?: return proxies
+                        serverAddress = proxy["ip"]?.toString() ?: proxy["server"]?.toString() ?: return proxies
                         serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         token = proxy["token"]?.toString()
                         udpRelayMode = proxy["udp-relay-mode"] as? String
@@ -2513,13 +2513,13 @@ object RawUpdater : GroupUpdater() {
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         reduceRTT = proxy["reduce-rtt"] as? Boolean == true
                         // allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                        sni = proxy["sni"]?.toString()
+                        sni = proxy["sni"]?.toString() ?: if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null
                         alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
                     })
                 } else {
                     proxies.add(Tuic5Bean().apply {
-                        serverAddress = proxy["server"]?.toString() ?: return proxies
+                        serverAddress = proxy["ip"]?.toString() ?: proxy["server"]?.toString() ?: return proxies
                         serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         uuid = proxy["uuid"] as? String
                         password = proxy["password"]?.toString()
@@ -2528,7 +2528,7 @@ object RawUpdater : GroupUpdater() {
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         zeroRTTHandshake = proxy["reduce-rtt"] as? Boolean == true
                         allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                        sni = proxy["sni"]?.toString()
+                        sni =  proxy["sni"]?.toString() ?: if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null
                         alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
                     })
