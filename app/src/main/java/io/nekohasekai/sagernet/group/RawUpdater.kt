@@ -369,7 +369,7 @@ object RawUpdater : GroupUpdater() {
         if (json is JSONObject) {
             when {
                 json.containsKey("method") -> {
-                    return listOf(json.parseShadowsocks())
+                    return listOf(json.parseShadowsocks().applyDefaultValues())
                 }
                 // v2ray outbound
                 json.contains("protocol") -> {
