@@ -1035,7 +1035,12 @@ fun buildV2RayConfig(
                                         })
                                     })
                                 if (currentDomainStrategy == "AsIs") {
-                                    currentDomainStrategy = "UseIP"
+                                    currentDomainStrategy = when (ipv6Mode) {
+                                        IPv6Mode.DISABLE -> "UseIPv4"
+                                        IPv6Mode.PREFER -> "PreferIPv6"
+                                        IPv6Mode.ONLY -> "UseIPv6"
+                                        else -> "PreferIPv4"
+                                    }
                                 }
                             } else if (bean is SSHBean) {
                                 protocol = "ssh"
@@ -1303,7 +1308,13 @@ fun buildV2RayConfig(
                     currentOutbound.domainStrategy = currentDomainStrategy
 
                     if (bean is JuicityBean && DataStore.enableFakeDns && currentOutbound.domainStrategy == "AsIs") {
-                        currentOutbound.domainStrategy = "UseIP" // https://github.com/juicity/juicity/issues/140
+                        // https://github.com/juicity/juicity/issues/140
+                        currentOutbound.domainStrategy = when (ipv6Mode) {
+                            IPv6Mode.DISABLE -> "UseIPv4"
+                            IPv6Mode.PREFER -> "PreferIPv6"
+                            IPv6Mode.ONLY -> "UseIPv6"
+                            else -> "PreferIPv4"
+                        }
                     }
 
                     if (bean is ConfigBean && bean.type == "v2ray_outbound") {
