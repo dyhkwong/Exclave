@@ -1607,6 +1607,11 @@ object RawUpdater : GroupUpdater() {
                         tls.getString("server_name")?.also {
                             sni = it
                         }
+                        (tls.getAny("alpn") as? (List<String>))?.also {
+                            alpn = it.joinToString("\n")
+                        } ?: tls.getString("alpn")?.also {
+                            alpn = it
+                        }
                         tls.getBoolean("insecure")?.also {
                             allowInsecure = it
                         }
@@ -2519,6 +2524,7 @@ object RawUpdater : GroupUpdater() {
                         zeroRTTHandshake = proxy["reduce-rtt"] as? Boolean == true
                         allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                         sni = proxy["sni"]?.toString()
+                        alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
                     })
                 }
