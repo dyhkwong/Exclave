@@ -114,7 +114,7 @@ class StunLegacyActivity : ThemedActivity() {
         runOnDefaultDispatcher {
             val result = Libcore.stunLegacyTest(binding.natStunServer.text.toString(),
                 SagerNet.started && DataStore.startedProfile > 0,
-                DataStore.socksPort, DataStore.localDNSPort
+                DataStore.socksPort
             )
             onMainDispatcher {
                 if (result.error.isNotEmpty()) {

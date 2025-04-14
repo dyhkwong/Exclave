@@ -146,7 +146,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         get() = getLocalPort(Key.SOCKS_PORT, 2080)
         set(value) = saveLocalPort(Key.SOCKS_PORT, value)
     var localDNSPort: Int
-        get() = getLocalPort(Key.LOCAL_DNS_PORT, 6450)
+        get() = getLocalPort(Key.LOCAL_DNS_PORT, 0)
         set(value) {
             saveLocalPort(Key.LOCAL_DNS_PORT, value)
         }

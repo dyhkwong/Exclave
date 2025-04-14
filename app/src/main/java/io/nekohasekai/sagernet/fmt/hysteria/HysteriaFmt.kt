@@ -185,7 +185,6 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         if (connectionReceiveWindow > 0) it["recv_window"] = connectionReceiveWindow
         if (disableMtuDiscovery) it["disable_mtu_discovery"] = true
 
-        it["resolver"] = "udp://" + joinHostPort(LOCALHOST, DataStore.localDNSPort)
         it["lazy_start"] = true
         it["fast_open"] = true
     }.toStringPretty()

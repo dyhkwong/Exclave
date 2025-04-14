@@ -116,7 +116,7 @@ class StunActivity : ThemedActivity() {
         runOnDefaultDispatcher {
             val result = Libcore.stunTest(binding.natStunServer.text.toString(),
                 SagerNet.started && DataStore.startedProfile > 0,
-                DataStore.socksPort, DataStore.localDNSPort
+                DataStore.socksPort
             )
             onMainDispatcher {
                 if (result.error.isNotEmpty()) {

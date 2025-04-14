@@ -1672,7 +1672,7 @@ fun buildV2RayConfig(
                  })*/
         })
 
-        if (!forTest) {
+        if (!forTest && DataStore.localDNSPort > 0) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_DNS_IN
                 listen = bind
@@ -1680,11 +1680,10 @@ fun buildV2RayConfig(
                 protocol = "dokodemo-door"
                 settings = LazyInboundConfigurationObject(this,
                     DokodemoDoorInboundConfigurationObject().apply {
-                        address = "127.0.0.1" // placeholder, all queries are handled internally
+                        address = bind // placeholder, all queries are handled internally
                         network = "tcp,udp"
-                        port = 0 // placeholder, all queries are handled internally
+                        port = DataStore.localDNSPort // placeholder, all queries are handled internally
                     })
-
             })
         }
 
