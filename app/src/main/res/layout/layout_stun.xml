@@ -76,6 +76,41 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="start"
+                    android:orientation="vertical">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/stunRB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stun_test"
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
+                            android:tooltipText="@string/stun_test_summary" />
+
+                        <RadioButton
+                            android:id="@+id/stunLegacyRB"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stun_legacy_test"
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
+                            android:tooltipText="@string/stun_legacy_test_summary" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="16dp"
@@ -94,6 +129,7 @@
 
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/natMappingBehaviourCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
@@ -126,6 +162,7 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/natFilteringBehaviourCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
@@ -159,6 +196,73 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/natTypeCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/nat_type"
+                            android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                        <TextView
+                            android:id="@+id/natType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:textColorSecondary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/natExternalAddressCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/nat_external_address"
+                            android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                        <TextView
+                            android:id="@+id/nat_external_address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="?android:textColorSecondary" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>

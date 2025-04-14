@@ -287,11 +287,6 @@
             android:launchMode="singleTask"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.StunLegacyActivity"
-            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
-            android:launchMode="singleTask"
-            android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
-        <activity
             android:name="io.nekohasekai.sagernet.ui.ProbeCertActivity"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"

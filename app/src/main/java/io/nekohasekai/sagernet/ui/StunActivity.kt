@@ -105,9 +105,17 @@ class StunActivity : ThemedActivity() {
             listPopupWindow.anchorView = binding.natStunServer
             listPopupWindow.show()
         }
+        binding.stunRB.isChecked = true
         binding.stunTest.setOnClickListener {
-            doTest()
+            when {
+                binding.stunRB.isChecked -> doTest()
+                binding.stunLegacyRB.isChecked -> doLegacyTest()
+            }
         }
+        binding.natMappingBehaviourCard.isVisible = false
+        binding.natFilteringBehaviourCard.isVisible = false
+        binding.natTypeCard.isVisible = false
+        binding.natExternalAddressCard.isVisible = false
     }
 
     fun doTest() {
@@ -131,6 +139,39 @@ class StunActivity : ThemedActivity() {
                 binding.resultLayout.isVisible = true
                 markwon.setMarkdown(binding.natMappingBehaviour, result.natMapping)
                 markwon.setMarkdown(binding.natFilteringBehaviour, result.natFiltering)
+                binding.natMappingBehaviourCard.isVisible = true
+                binding.natFilteringBehaviourCard.isVisible = true
+                binding.natTypeCard.isVisible = false
+                binding.natExternalAddressCard.isVisible = false
+            }
+        }
+    }
+
+    fun doLegacyTest() {
+        binding.waitLayout.isVisible = true
+        binding.resultLayout.isVisible = false
+        runOnDefaultDispatcher {
+            val result = Libcore.stunLegacyTest(binding.natStunServer.text.toString(),
+                SagerNet.started && DataStore.startedProfile > 0,
+                DataStore.socksPort
+            )
+            onMainDispatcher {
+                if (result.error.isNotEmpty()) {
+                    AlertDialog.Builder(this@StunActivity)
+                        .setTitle(R.string.error_title)
+                        .setMessage(result.error)
+                        .setPositiveButton(android.R.string.ok) { _, _ -> }
+                        .setOnCancelListener { finish() }
+                        .runCatching { show() }
+                }
+                binding.waitLayout.isVisible = false
+                binding.resultLayout.isVisible = true
+                markwon.setMarkdown(binding.natType, result.natType)
+                markwon.setMarkdown(binding.natExternalAddress, result.host)
+                binding.natMappingBehaviourCard.isVisible = false
+                binding.natFilteringBehaviourCard.isVisible = false
+                binding.natTypeCard.isVisible = true
+                binding.natExternalAddressCard.isVisible = true
             }
         }
     }
