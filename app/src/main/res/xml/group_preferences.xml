@@ -58,12 +58,6 @@
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_manage_search_24"
-            app:key="subscriptionForceResolve"
-            app:summary="@string/force_resolve_sum"
-            app:title="@string/force_resolve" />
-
-        <SwitchPreference
             app:icon="@drawable/ic_baseline_import_contacts_24"
             app:key="subscriptionDeduplication"
             app:summary="@string/deduplication_sum"

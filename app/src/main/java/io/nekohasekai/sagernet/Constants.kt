@@ -25,7 +25,6 @@ object Key {
 
     const val DB_PUBLIC = "configuration.db"
     const val DB_PROFILE = "sager_net.db"
-    const val DISABLE_AEAD = "V2RAY_VMESS_AEAD_DISABLED"
 
     const val PERSIST_ACROSS_REBOOT = "isAutoConnect"
     const val DIRECT_BOOT_AWARE = "directBootAware"
@@ -265,7 +264,6 @@ object Key {
     const val SUBSCRIPTION_TYPE = "subscriptionType"
     const val SUBSCRIPTION_LINK = "subscriptionLink"
     const val SUBSCRIPTION_TOKEN = "subscriptionToken"
-    const val SUBSCRIPTION_FORCE_RESOLVE = "subscriptionForceResolve"
     const val SUBSCRIPTION_DEDUPLICATION = "subscriptionDeduplication"
     const val SUBSCRIPTION_UPDATE = "subscriptionUpdate"
     const val SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY = "subscriptionUpdateWhenConnectedOnly"

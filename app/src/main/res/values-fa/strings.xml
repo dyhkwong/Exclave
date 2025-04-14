@@ -108,8 +108,6 @@
     <string name="certificates">گواهینامه ها</string>
     <string name="alpn">برنامه-مذاکره پروتکل لایه کاربردی</string>
     <string name="sni">نشانه نام سرور (SNI)</string>
-    <string name="force_resolve_sum">هنگام به روزرسانی، تمام نام دامنه ها را به آدرس های IP تبدیل کنید. میزبان و SNI در صورت امکان به طور خودکار اضافه می شوند</string>
-    <string name="force_resolve">حل و فصل کردن</string>
     <string name="delete_group_prompt">آیا مطمئن هستید که می خواهید این گروه را حذف کنید؟</string>
     <string name="subscription_type">نوع اشتراک</string>
     <string name="group_type">نوع گروه</string>

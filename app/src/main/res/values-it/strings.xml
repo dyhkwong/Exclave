@@ -53,7 +53,6 @@
     <string name="protocol_settings">Impostazioni Protocollo</string>
     <string name="subscription_type">Tipo Iscrizione</string>
     <string name="delete_group_prompt">Sicuro di voler rimuovere questo gruppo\?</string>
-    <string name="force_resolve">Forza Risoluzione</string>
     <string name="deduplication_sum">Rimuovi le configurazioni duplicate durante l\'aggiornamento</string>
     <string name="update_when_connected_only">Aggiorna solo quando connesso</string>
     <string name="update_when_connected_only_sum">Prevenzione leak dell\'indirizzo IP</string>
@@ -168,7 +167,6 @@
     <string name="append_http_proxy_sum">Il proxy HTTP verrà usato direttamente da (browser / app supportate), senza passare tramite il dispositivo NIC virtuale (Android 10+)</string>
     <string name="group_settings">Impostazioni Gruppo</string>
     <string name="bypass_lan_in_core_only_sum">Se la funzione di Lineage \"Permetti agli utenti hotspot di usare la VPN\" non funziona, prova questo.</string>
-    <string name="force_resolve_sum">Risolvi tutti i nomi di dominio in indirizzi IP durante l\'aggiornamento. Host e SNI verranno aggiunti automaticamente se possibile</string>
     <string name="update_settings">Aggiorna Impostazioni</string>
     <string name="auto_update">Aggiornamento Automatico</string>
     <string name="auto_update_delay">Ritardo Aggiornamento Automatico (in minuti)</string>

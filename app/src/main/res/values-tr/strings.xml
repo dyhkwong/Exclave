@@ -130,7 +130,6 @@
     <string name="hysteria_connection_receive_window">QUIC Bağlantı Alım Penceresi</string>
     <string name="hysteria_stream_receive_window">QUIC Akış Alım Penceresi</string>
     <string name="experimental_no_termination_signal">Duplex sonlandırma sinyalini VMess kullanırken TCP bağlantısı için yollama. Bu bazı uygulamaları bozacaktır.</string>
-    <string name="force_resolve_sum">Güncelleme yaparken bütün alan adlarının IP adreslerini çöz. Mümkünse sunucu ve SNI otomatik olarak eklenir</string>
     <string name="bypass_lan_in_core_only_sum">Eğer Lineage\'in Hotspot istemcilerinin VPN kullanmasına izin ver özelliği çalışmıyorsa bunu deneyin.</string>
     <string name="bypass_lan_in_core_only">Yerel Ağı Sadece Çekirdekte Atlat</string>
     <string name="always_show_address_sum">Yapılandırma kartının üzerinde her zaman sunucu adresini göster</string>
@@ -203,7 +202,6 @@
     <string name="update_settings">Güncelleme Ayarları</string>
     <string name="raw">Ham</string>
     <string name="deduplication_sum">Güncellerken tekrarlanan yapılandırmaları kaldır</string>
-    <string name="force_resolve">Çözmeye Zorla</string>
     <string name="delete_group_prompt">Bu grubu kaldırmak istediğinize emin misiniz\?</string>
     <string name="subscription_type">Abonelik Türü</string>
     <string name="group_type">Grup Türü</string>

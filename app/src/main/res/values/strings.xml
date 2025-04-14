@@ -311,8 +311,6 @@
     <string name="group_type">Group type</string>
     <string name="subscription_type">Subscription type</string>
     <string name="delete_group_prompt">Are you sure you want to remove this group?</string>
-    <string name="force_resolve">Force resolving</string>
-    <string name="force_resolve_sum">Resolve all domain names to IP addresses when updating. Host and SNI will be automatically appended if possible.</string>
     <string name="deduplication_sum">Remove duplicate configurations when updating</string>
     <string name="raw">Raw</string>
     <string name="update_settings">Update settings</string>

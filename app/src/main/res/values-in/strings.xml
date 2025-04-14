@@ -285,8 +285,6 @@
     <string name="group_type">Tipe Grup</string>
     <string name="subscription_type">Jenis Langganan</string>
     <string name="delete_group_prompt">Anda yakin ingin menghapus grup ini\?</string>
-    <string name="force_resolve">Paksa Menyelesaikan</string>
-    <string name="force_resolve_sum">Atasi semua nama domain ke alamat IP saat memperbarui. Host dan SNI akan ditambahkan secara otomatis jika memungkinkan</string>
     <string name="auto_update">Perbarui otomatis</string>
     <string name="update_when_connected_only_sum">Cegah kebocoran alamat IP</string>
     <string name="confirm">Konfirmasi</string>

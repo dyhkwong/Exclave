@@ -210,7 +210,6 @@
     <string name="tile_title">Conmutador</string>
     <string name="group_default">Desagrupado</string>
     <string name="plugin_exists_but_on_shit_system">El perfil %s requiere el complemento %s, pero el proveedor de su equipo patentado (por lo general, los gigantes del capital de vigilancia y el fabricante de malware) manipuló su Android e inutilizó el complemento.</string>
-    <string name="force_resolve">Forzar resolución</string>
     <string name="delete_group_prompt">¿Estás seguro de que quieres eliminar este grupo\?</string>
     <string name="subscription_type">Tipo de suscripción</string>
     <string name="group_type">Tipo de grupo</string>
@@ -278,7 +277,6 @@
     <string name="group_added">Adicional:
 \n%s</string>
     <string name="experimental_authenticated_length">Haga que la longitud de cada segmento de carga útil ya no sea maleable. Este experimento requiere que el servidor y el cliente utilicen la misma versión de v2ray-core. Se esperan más actualizaciones de última hora sobre este experimento.</string>
-    <string name="force_resolve_sum">Resuelva todos los nombres de dominio a direcciones IP al actualizar. El host y el SNI se agregarán automáticamente si es posible</string>
     <string name="subscription">Suscripción</string>
     <string name="group_settings">Configuración de grupo</string>
     <string name="group_basic">Básico</string>

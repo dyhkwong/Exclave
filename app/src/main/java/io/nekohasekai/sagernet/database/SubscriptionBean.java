@@ -38,7 +38,6 @@ public class SubscriptionBean extends Serializable {
     public Integer type;
     public String link;
     public String token;
-    public Boolean forceResolve;
     public Boolean deduplication;
     public Boolean updateWhenConnectedOnly;
     public String customUserAgent;
@@ -64,7 +63,7 @@ public class SubscriptionBean extends Serializable {
 
     @Override
     public void serializeToBuffer(ByteBufferOutput output) {
-        output.writeInt(5);
+        output.writeInt(6);
 
         output.writeInt(type);
 
@@ -74,7 +73,6 @@ public class SubscriptionBean extends Serializable {
             output.writeString(link);
         }
 
-        output.writeBoolean(forceResolve);
         output.writeBoolean(deduplication);
         output.writeBoolean(updateWhenConnectedOnly);
         output.writeString(customUserAgent);
@@ -97,7 +95,7 @@ public class SubscriptionBean extends Serializable {
     }
 
     public void serializeForShare(ByteBufferOutput output) {
-        output.writeInt(4);
+        output.writeInt(5);
 
         output.writeInt(type);
 
@@ -107,7 +105,6 @@ public class SubscriptionBean extends Serializable {
             output.writeString(link);
         }
 
-        output.writeBoolean(forceResolve);
         output.writeBoolean(deduplication);
         output.writeBoolean(updateWhenConnectedOnly);
         output.writeString(customUserAgent);
@@ -133,7 +130,9 @@ public class SubscriptionBean extends Serializable {
         } else {
             link = input.readString();
         }
-        forceResolve = input.readBoolean();
+        if (version < 6) {
+            input.readBoolean(); // forceResolve, removed
+        }
         deduplication = input.readBoolean();
         if (version < 2) input.readBoolean();
         updateWhenConnectedOnly = input.readBoolean();
@@ -189,7 +188,9 @@ public class SubscriptionBean extends Serializable {
         } else {
             link = input.readString();
         }
-        forceResolve = input.readBoolean();
+        if (version < 5) {
+            input.readBoolean(); // forceResolve, removed
+        }
         deduplication = input.readBoolean();
         if (version < 1) input.readBoolean();
         updateWhenConnectedOnly = input.readBoolean();
@@ -226,7 +227,6 @@ public class SubscriptionBean extends Serializable {
         if (type == null) type = SubscriptionType.RAW;
         if (link == null) link = "";
         if (token == null) token = "";
-        if (forceResolve == null) forceResolve = false;
         if (deduplication == null) deduplication = false;
         if (updateWhenConnectedOnly == null) updateWhenConnectedOnly = false;
         if (customUserAgent == null) customUserAgent = "";
