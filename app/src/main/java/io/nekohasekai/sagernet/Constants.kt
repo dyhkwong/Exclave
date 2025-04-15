@@ -162,7 +162,7 @@ object Key {
     const val SERVER_PACKET_ENCODING = "serverPacketEncoding"
     const val SERVER_UTLS_FINGERPRINT = "serverUTLSFingerprint"
     const val SERVER_ECH_CONFIG = "serverEchConfig"
-    const val SERVER_ECH_DOH_SERVER = "serverEchDohServer"
+    //const val SERVER_ECH_DOH_SERVER = "serverEchDohServer"
 
     const val SERVER_REALITY_PUBLIC_KEY = "serverRealityPublicKey"
     const val SERVER_REALITY_SHORT_ID = "serverRealityShortId"

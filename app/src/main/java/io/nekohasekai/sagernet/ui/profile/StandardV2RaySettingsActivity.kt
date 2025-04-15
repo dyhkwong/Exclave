@@ -131,7 +131,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverSplithttpExtra = splithttpExtra
         DataStore.serverUTLSFingerprint = utlsFingerprint
         DataStore.serverEchConfig = echConfig
-        DataStore.serverEchDohServer = echDohServer
+        //DataStore.serverEchDohServer = echDohServer
 
         DataStore.serverRealityPublicKey = realityPublicKey
         DataStore.serverRealityShortId = realityShortId
@@ -216,7 +216,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         splithttpExtra = DataStore.serverSplithttpExtra
         utlsFingerprint = DataStore.serverUTLSFingerprint
         echConfig = DataStore.serverEchConfig
-        echDohServer = DataStore.serverEchDohServer
+        //echDohServer = DataStore.serverEchDohServer
 
         realityPublicKey = DataStore.serverRealityPublicKey
         realityShortId = DataStore.serverRealityShortId
@@ -259,7 +259,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var allowInsecure: SwitchPreference
     lateinit var utlsFingerprint: SimpleMenuPreference
     lateinit var echConfig: EditTextPreference
-    lateinit var echDohServer: EditTextPreference
+    //lateinit var echDohServer: EditTextPreference
 
     lateinit var realityPublicKey: EditTextPreference
     lateinit var realityShortId: EditTextPreference
@@ -322,7 +322,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         alterId = findPreference(Key.SERVER_ALTER_ID)!!
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
         echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
-        echDohServer = findPreference(Key.SERVER_ECH_DOH_SERVER)!!
+        //echDohServer = findPreference(Key.SERVER_ECH_DOH_SERVER)!!
 
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
         realityShortId = findPreference(Key.SERVER_REALITY_SHORT_ID)!!
@@ -680,7 +680,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 || network.value == "http" || network.value == "meek" || network.value == "httpupgrade"
                 || network.value == "grpc" || network.value == "splithttp" || network.value == "mekya")
         echConfig.isVisible = security == "tls"
-        echDohServer.isVisible = security == "tls"
+        //echDohServer.isVisible = security == "tls"
         realityFingerprint.isVisible = security == "reality"
     }
 

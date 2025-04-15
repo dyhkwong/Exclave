@@ -742,9 +742,9 @@ fun buildV2RayConfig(
                                                 if (bean.echConfig.isNotEmpty()) {
                                                     echConfig = bean.echConfig
                                                 }
-                                                if (bean.echDohServer.isNotEmpty()) {
+                                                /*if (bean.echDohServer.isNotEmpty()) {
                                                     echDohServer = bean.echDohServer
-                                                }
+                                                }*/
                                             }
                                         }
                                         "reality" -> {
@@ -1175,9 +1175,9 @@ fun buildV2RayConfig(
                                             if (bean.echConfig.isNotEmpty()) {
                                                 echConfig = bean.echConfig
                                             }
-                                            if (bean.echDohServer.isNotEmpty()) {
+                                            /*if (bean.echDohServer.isNotEmpty()) {
                                                 echDohServer = bean.echDohServer
-                                            }
+                                            }*/
                                         }
                                     }
                                 )
@@ -1253,9 +1253,9 @@ fun buildV2RayConfig(
                                                 if (bean.echConfig.isNotEmpty()) {
                                                     echConfig = bean.echConfig
                                                 }
-                                                if (bean.echDohServer.isNotEmpty()) {
+                                                /*if (bean.echDohServer.isNotEmpty()) {
                                                     echDohServer = bean.echDohServer
-                                                }
+                                                }*/
                                             }
                                         }
                                         "reality" -> {
