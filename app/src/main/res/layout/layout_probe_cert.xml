@@ -70,7 +70,6 @@
                                 android:layout_height="wrap_content"
                                 android:ems="10"
                                 android:inputType="text"
-                                android:text="www.microsoft.com:443"
                                 tools:ignore="LabelFor" />
 
                         <TextView
@@ -85,7 +84,6 @@
                                 android:layout_height="wrap_content"
                                 android:ems="10"
                                 android:inputType="text"
-                                android:text=""
                                 tools:ignore="LabelFor" />
 
                         <TextView

@@ -63,6 +63,8 @@ class ProbeCertActivity : ThemedActivity() {
             setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         }
 
+        binding.probeCertServer.setText("example.com:443")
+
         binding.probeCert.setOnClickListener {
             copyCert()
         }
