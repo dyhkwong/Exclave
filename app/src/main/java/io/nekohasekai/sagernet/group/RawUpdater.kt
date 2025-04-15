@@ -987,14 +987,14 @@ object RawUpdater : GroupUpdater() {
                                     hy2Settings.getString("password")?.also {
                                         hysteria2Bean.auth = it
                                     }
-                                    hy2Settings.getObject("congestion")?.also { congestion ->
+                                    /*hy2Settings.getObject("congestion")?.also { congestion ->
                                         congestion.getInteger("up_mbps")?.also {
                                             hysteria2Bean.uploadMbps = it
                                         }
                                         congestion.getInteger("down_mbps")?.also {
                                             hysteria2Bean.downloadMbps = it
                                         }
-                                    }
+                                    }*/
                                     hy2Settings.getObject("obfs")?.also { obfs ->
                                         obfs.getString("type")?.also { type ->
                                             if (type == "salamander") {
@@ -1503,12 +1503,12 @@ object RawUpdater : GroupUpdater() {
                             obfs = it
                         }
                     }
-                    outbound.getInt("up_mbps")?.also {
+                    /*outbound.getInt("up_mbps")?.also {
                         uploadMbps = it
                     }
                     outbound.getInt("down_mbps")?.also {
                         downloadMbps = it
-                    }
+                    }*/
                 }
                 proxies.add(hysteria2Bean)
             }
@@ -2199,14 +2199,14 @@ object RawUpdater : GroupUpdater() {
                         transportSettings["password"]?.toString()?.also {
                             hysteria2Bean.auth = it
                         }
-                        (transportSettings["congestion"] as? JSONObject)?.also { congestion ->
+                        /*(transportSettings["congestion"] as? JSONObject)?.also { congestion ->
                             (congestion["up_mbps"]?.toString()?.toInt()?: congestion["upMbps"]?.toString()?.toInt())?.also {
                                 hysteria2Bean.uploadMbps = it
                             }
                             (congestion["down_mbps"]?.toString()?.toInt() ?: congestion["downMbps"]?.toString()?.toInt())?.also {
                                 hysteria2Bean.downloadMbps = it
                             }
-                        }
+                        }*/
                     }
                     proxies.add(hysteria2Bean)
                 }
@@ -2490,8 +2490,8 @@ object RawUpdater : GroupUpdater() {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
                     serverPorts = proxy["ports"]?.toString() ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
                     auth = proxy["password"]?.toString()
-                    uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond()
-                    downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond()
+                    // uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond()
+                    // downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond()
                     sni = proxy["sni"]?.toString()
                     // alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
