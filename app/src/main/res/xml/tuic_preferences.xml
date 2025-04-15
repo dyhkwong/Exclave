@@ -35,7 +35,6 @@
             app:title="@string/certificates"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="https"
             app:entries="@array/tuic_udp_relay_mode_entry"
             app:entryValues="@array/tuic_udp_relay_mode_value"
             app:icon="@drawable/ic_baseline_add_road_24"
@@ -43,7 +42,6 @@
             app:title="@string/tuic_udp_relay_mode"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="https"
             app:entries="@array/tuic_congestion_controller_entry"
             app:entryValues="@array/tuic_congestion_controller_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
