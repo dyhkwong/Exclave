@@ -266,12 +266,18 @@ class SagerNet : Application(),
             val networkType = when {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "wifi"
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI_AWARE) -> "wifi"
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "data"
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) -> "bluetooth"
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> "ethernet"
-                else -> "data"
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_USB) -> "usb"
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_SATELLITE) -> "satellite"
+                // capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI_AWARE) -> "wifiaware"
+                // capabilities.hasTransport(NetworkCapabilities.TRANSPORT_LOWPAN) -> "lowpan"
+                // capabilities.hasTransport(NetworkCapabilities.TRANSPORT_THREAD) -> "thread"
+                else -> ""
             }
             Libcore.setNetworkType(networkType)
-            var ssid: String? = null
+            val ssid: String?
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 ssid = DefaultNetworkListener.ssid
             } else {

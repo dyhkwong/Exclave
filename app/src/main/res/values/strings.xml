@@ -432,7 +432,7 @@
     <string name="route_need_fine_location">Routing rule `%s` requires access to your **Wi-Fi SSID**, but this requires **fine location permission**</string>
     <string name="route_need_coarse_location">Routing rule `%s` requires access to your **Wi-Fi SSID**, but this requires **coarse location permission**</string>
     <string name="network_type">Network type</string>
-    <string name="network_data">Mobile data</string>
+    <string name="network_data">Mobile network</string>
     <string name="network_wifi">Wi-Fi</string>
     <string name="network_bt">Bluetooth</string>
     <string name="network_eth">Ethernet</string>
@@ -565,4 +565,7 @@
     <string name="wireguard_keepalive_interval">Persistent keepalive</string>
     <string name="language">Language</string>
     <string name="language_system_default">System default</string>
+    <string name="network_usb">USB</string>
+    <string name="network_satellite">Satellite</string>
+    <string name="network_invalid">Invalid network type: Android %s is required.</string>
 </resources>

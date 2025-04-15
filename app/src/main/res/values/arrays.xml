@@ -895,6 +895,8 @@
         <item>@string/network_wifi</item>
         <item>@string/network_bt</item>
         <item>@string/network_eth</item>
+        <item>@string/network_usb</item>
+        <item>@string/network_satellite</item>
     </string-array>
 
     <string-array name="network_type_value">
@@ -903,6 +905,8 @@
         <item>wifi</item>
         <item>bluetooth</item>
         <item>ethernet</item>
+        <item>usb</item>
+        <item>satellite</item>
     </string-array>
 
     <string-array name="tasker_action_entry">

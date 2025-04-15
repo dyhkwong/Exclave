@@ -25,6 +25,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.os.ext.SdkExtensions
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -48,18 +49,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.NetworkType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
-import io.nekohasekai.sagernet.ktx.FixedLinearLayoutManager
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.widget.AppListPreference
@@ -239,13 +239,36 @@ class RouteSettingsActivity(
         }
 
         fun updateNetwork(newValue: String = networkType.value) {
-            ssid.isVisible = newValue == NetworkType.WIFI
+            ssid.isVisible = newValue == "wifi"
         }
 
         updateNetwork()
 
         networkType.setOnPreferenceChangeListener { _, newValue ->
-            updateNetwork(newValue as String)
+            newValue as String
+            when (newValue) {
+                "usb" -> if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                    runOnMainDispatcher {
+                        MaterialAlertDialogBuilder(this@RouteSettingsActivity)
+                            .setMessage(getString(R.string.network_invalid, "12"))
+                            .setPositiveButton(android.R.string.ok, null)
+                            .show()
+                    }
+                }
+                "satellite" -> {
+                    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+                        SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) < 12 ||
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                        runOnMainDispatcher {
+                            MaterialAlertDialogBuilder(this@RouteSettingsActivity)
+                                .setMessage(getString(R.string.network_invalid, "15"))
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
+                        }
+                    }
+                }
+            }
+            updateNetwork(newValue)
             true
         }
     }

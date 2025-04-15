@@ -392,7 +392,7 @@
     <string name="missing_permission">缺少权限</string>
     <string name="location_disabled">位置已禁用</string>
     <string name="network_type">网络类型</string>
-    <string name="network_data">移动数据</string>
+    <string name="network_data">移动网络</string>
     <string name="network_wifi">Wi-Fi</string>
     <string name="network_bt">蓝牙</string>
     <string name="network_eth">以太网</string>
@@ -534,4 +534,7 @@
     <string name="wireguard_keepalive_interval">连接保活间隔</string>
     <string name="language">语言</string>
     <string name="language_system_default">系统默认设置</string>
+    <string name="network_usb">USB</string>
+    <string name="network_satellite">卫星</string>
+    <string name="network_invalid">无效的网络类型：需要 Android %s。</string>
 </resources>

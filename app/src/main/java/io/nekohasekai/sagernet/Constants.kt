@@ -342,13 +342,6 @@ object Action {
     const val EXTRA_PROFILE_ID = "io.nekohasekai.sagernet.EXTRA_PROFILE_ID"
 }
 
-object NetworkType {
-    const val DATA = "data"
-    const val WIFI = "wifi"
-    const val BLUETOOTH = "bluetooth"
-    const val ETHERNET = "ethernet"
-}
-
 object LogLevel {
     const val NONE = 0
     const val ERROR = 1

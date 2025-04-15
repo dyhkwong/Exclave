@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.database
 
 import android.os.Parcelable
 import androidx.room.*
-import io.nekohasekai.sagernet.NetworkType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.app
 import kotlinx.parcelize.Parcelize
@@ -77,14 +76,14 @@ data class RuleEntity(
         ) + "\n"
         if (ssid.isNotEmpty()) summary += "$ssid\n"
         if (networkType.isNotEmpty()) {
-            summary += app.getString(
-                when (networkType) {
-                    NetworkType.WIFI -> R.string.network_wifi
-                    NetworkType.BLUETOOTH -> R.string.network_bt
-                    NetworkType.ETHERNET -> R.string.network_eth
-                    else -> R.string.network_data
-                }
-            ) + "\n"
+            when (networkType) {
+                "data" -> summary += app.getString(R.string.network_data) + "\n"
+                "wifi" -> summary += app.getString(R.string.network_wifi) + "\n"
+                "bluetooth" -> summary += app.getString(R.string.network_bt) + "\n"
+                "ethernet" -> summary += app.getString(R.string.network_eth) + "\n"
+                "usb" -> summary += app.getString(R.string.network_usb) + "\n"
+                "satellite" -> summary += app.getString(R.string.network_satellite) + "\n"
+            }
         }
         val lines = summary.trim().split("\n")
         return if (lines.size > 3) {
