@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.1.20-1.0.32"
+    id("com.google.devtools.ksp") version "2.1.20-2.0.0"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
@@ -37,8 +37,8 @@ dependencies {
     implementation(project(":library:termux:terminal-view"))
     implementation(project(":library:termux:terminal-emulator"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.browser:browser:1.8.0")
@@ -60,7 +60,7 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
     implementation("cn.hutool:hutool-core:5.8.37")
     implementation("cn.hutool:hutool-json:5.8.37")
-    implementation("com.google.code.gson:gson:2.12.1")
+    implementation("com.google.code.gson:gson:2.13.0")
     implementation("com.google.zxing:core:3.5.3")
 
     implementation("org.yaml:snakeyaml:2.4")
@@ -76,9 +76,9 @@ dependencies {
         exclude(group = "androidx.appcompat")
     }
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.7.0")
+    ksp("androidx.room:room-compiler:2.7.0")
+    implementation("androidx.room:room-ktx:2.7.0")
 
     implementation("com.blacksquircle.ui:editorkit:2.0.0")
     implementation("com.blacksquircle.ui:language-json:2.0.0")
