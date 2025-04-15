@@ -414,9 +414,9 @@ class BaseService {
         }
 
         fun stopRunner(restart: Boolean = false, msg: String? = null, keepState: Boolean = true) {
-            if (data.state == State.Stopping) return
             data.notification?.destroy()
             data.notification = null
+            if (data.state == State.Stopping) return
             this as Service
 
             data.changeState(State.Stopping)
