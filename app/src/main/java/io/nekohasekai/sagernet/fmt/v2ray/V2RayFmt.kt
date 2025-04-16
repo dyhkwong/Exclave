@@ -141,8 +141,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 }
                 if (bean is VLESSBean && bean.security == "tls") {
                     url.queryParameter("flow")?.let {
-                        bean.flow = if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else it
-                        bean.packetEncoding = "xudp"
+                        when (it) {
+                            "xtls-rprx-vision", "xtls-rprx-vision-udp443" -> {
+                                bean.flow = "xtls-rprx-vision-udp443"
+                                bean.packetEncoding = "xudp"
+                            }
+                        }
                     }
                 }
                 // bad format from where?
@@ -172,8 +176,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 }
                 if (bean is VLESSBean) {
                     url.queryParameter("flow")?.let {
-                        bean.flow = if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else it
-                        bean.packetEncoding = "xudp"
+                        when (it) {
+                            "xtls-rprx-vision", "xtls-rprx-vision-udp443" -> {
+                                bean.flow = "xtls-rprx-vision-udp443"
+                                bean.packetEncoding = "xudp"
+                            }
+                        }
                     }
                 }
             }

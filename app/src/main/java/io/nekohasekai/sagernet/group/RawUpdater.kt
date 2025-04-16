@@ -790,12 +790,13 @@ object RawUpdater : GroupUpdater() {
                                     user.getString("id")?.also {
                                         v2rayBean.uuid = it
                                     }
-                                    user.getString("encryption")?.also {
-                                        v2rayBean.encryption = it.lowercase()
-                                    }
                                     user.getString("flow")?.also {
-                                        v2rayBean.flow = if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else it
-                                        v2rayBean.packetEncoding = "xudp"
+                                        when (it) {
+                                            "xtls-rprx-vision-udp443", "xtls-rprx-vision" -> {
+                                                v2rayBean.flow = "xtls-rprx-vision-udp443"
+                                                v2rayBean.packetEncoding = "xudp"
+                                            }
+                                        }
                                     }
                                 }
                                 proxies.add(v2rayBean)
@@ -1435,8 +1436,11 @@ object RawUpdater : GroupUpdater() {
                         outbound.getString("security")?.also {
                             v2rayBean.encryption = it
                         }
-                        outbound.getInteger("security")?.also {
+                        outbound.getInteger("alter_id")?.also {
                             v2rayBean.alterId = it
+                        }
+                        outbound.getBoolean("global_padding")?.also {
+                            v2rayBean.experimentalAuthenticatedLength = it
                         }
                         v2rayBean.packetEncoding = when (outbound.getString("packet_encoding")) {
                             "packetaddr" -> "packet"
@@ -1450,7 +1454,10 @@ object RawUpdater : GroupUpdater() {
                             v2rayBean.uuid = it
                         }
                         outbound.getString("flow")?.also {
-                            v2rayBean.flow = if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else it
+                            if (it == "xtls-rprx-vision") {
+                                v2rayBean.flow = "xtls-rprx-vision-udp443"
+                                v2rayBean.packetEncoding = "xudp"
+                            }
                         }
                         v2rayBean.packetEncoding = when (outbound.getString("packet_encoding")) {
                             "packetaddr" -> "packet"
@@ -2317,18 +2324,28 @@ object RawUpdater : GroupUpdater() {
                         "uuid" -> if (bean is VMessBean || bean is VLESSBean) bean.uuid = opt.value?.toString()
                         "alterId" -> if (bean is VMessBean) bean.alterId = opt.value?.toString()?.toIntOrNull()
                         "cipher" -> if (bean is VMessBean) bean.encryption = (opt.value as? String)
-                        "flow" -> if (bean is VLESSBean) bean.flow = (opt.value as? String)?.let {
-                            if (it == "xtls-rprx-vision") "xtls-rprx-vision-udp443" else null
+                        "flow" -> if (bean is VLESSBean && (opt.value as? String)?.startsWith("xtls-rprx-vision") == true) {
+                            bean.flow = "xtls-rprx-vision-udp443"
+                            bean.packetEncoding = "xudp"
                         }
-                        "packet-encoding" -> if (bean is VMessBean || bean is VLESSBean) {
-                            bean.packetEncoding = when ((opt.value as? String)) {
-                                "packetaddr" -> "packet"
-                                "xudp" -> "xudp"
-                                else -> "none"
+                        "authenticated-length" -> if (bean is VMessBean) bean.experimentalAuthenticatedLength = opt.value as? Boolean == true
+                        "packet-encoding" -> {
+                            when (bean) {
+                                is VMessBean -> bean.packetEncoding = when ((opt.value as? String)) {
+                                    "packetaddr", "packet" -> "packet"
+                                    "xudp" -> "xudp"
+                                    else -> "none"
+                                }
+                                is VLESSBean -> bean.packetEncoding = when ((opt.value as? String)) {
+                                    "packetaddr", "packet" -> "packet"
+                                    else -> "xudp"
+                                }
                             }
                         }
+                        "packet-addr" -> if (bean is VMessBean || bean is VLESSBean && opt.value as? Boolean == true) bean.packetEncoding = "packet"
+                        "xudp" -> if (bean is VMessBean || bean is VLESSBean && opt.value as? Boolean == true) bean.packetEncoding = "xudp"
                         "tls" -> if (bean is VMessBean || bean is VLESSBean) {
-                            bean.security = if (opt.value as? Boolean == true) "tls" else ""
+                            bean.security = if (opt.value as? Boolean == true) "tls" else "none"
                         }
                         "servername" -> if (bean is VMessBean || bean is VLESSBean) bean.sni = opt.value?.toString()
                         "sni" -> if (bean is TrojanBean) bean.sni = opt.value?.toString()
