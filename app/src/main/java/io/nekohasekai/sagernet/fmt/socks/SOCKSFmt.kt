@@ -25,43 +25,49 @@ import libcore.Libcore
 
 fun parseSOCKS(link: String): SOCKSBean {
     val url = Libcore.parseURL(link)
-    if (url.port == 0 && url.username.isEmpty() && url.password.isEmpty() &&
-        url.host.decodeBase64UrlSafe().contains(":")) {
-        // v2rayN shit format
-        val url1 = Libcore.parseURL("socks://" + url.host.decodeBase64UrlSafe())
+    if (url.scheme == "socks" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
+        // old v2rayNG format
+        // This format is broken if username and/or password contains ":".
+        val plainUri = url.host.decodeBase64UrlSafe()
         return SOCKSBean().apply {
-            serverAddress = url1.host
-            serverPort = url1.port
-            username = url1.username.takeIf { it != "null" } ?: ""
-            password = url1.password.takeIf { it != "null" } ?: ""
+            protocol = SOCKSBean.PROTOCOL_SOCKS5
+            serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")
+                .removeSuffix("/").removePrefix("[").removeSuffix("]")
+            serverPort = plainUri.substringAfterLast("@").substringAfterLast(":")
+                .removeSuffix("/").toIntOrNull()
+            username = plainUri.substringBeforeLast("@").substringBefore(":").takeIf { it != "null" } ?: ""
+            password = plainUri.substringBeforeLast("@").substringAfter(":").takeIf { it != "null" } ?: ""
             name = url.fragment
         }
-    } else if (url.password.isEmpty() && url.username.decodeBase64UrlSafe().contains(":")) {
-        // new v2rayNG format?
+    }
+    if (url.scheme == "socks" && url.password.isEmpty() && url.username.decodeBase64UrlSafe().contains(":")) {
+        // new v2rayNG format
+        // This format is broken if username and/or password contains ":".
         return SOCKSBean().apply {
+            protocol = SOCKSBean.PROTOCOL_SOCKS5
             serverAddress = url.host
             serverPort = url.port
             username = url.username.decodeBase64UrlSafe().substringBefore(":")
             password = url.username.decodeBase64UrlSafe().substringAfter(":")
             name = url.fragment
         }
-    } else {
-        return SOCKSBean().apply {
-            protocol = when {
-                link.startsWith("socks4://") -> SOCKSBean.PROTOCOL_SOCKS4
-                link.startsWith("socks4a://") -> SOCKSBean.PROTOCOL_SOCKS4A
-                else -> SOCKSBean.PROTOCOL_SOCKS5
-            }
-            serverAddress = url.host
-            serverPort = url.port.takeIf { it > 0 } ?: 1080
-            username = url.username
-            password = url.password
-            name = url.fragment
-            url.queryParameter("tls")?.takeIf { it == "true" || it == "1" }?.let {
-                // non-standard
-                url.queryParameter("sni")?.let {
-                    sni = it
-                }
+    }
+    return SOCKSBean().apply {
+        protocol = when (url.scheme) {
+            "socks4" -> SOCKSBean.PROTOCOL_SOCKS4
+            "socks4a" -> SOCKSBean.PROTOCOL_SOCKS4A
+            "socks5", "socks5h" /* blame cURL for this */, "socks" -> SOCKSBean.PROTOCOL_SOCKS5
+            else -> error("impossible")
+        }
+        serverAddress = url.host
+        serverPort = url.port.takeIf { it > 0 } ?: 1080
+        username = url.username
+        password = url.password
+        name = url.fragment
+        url.queryParameter("tls")?.takeIf { it == "true" || it == "1" }?.let {
+            // non-standard
+            url.queryParameter("sni")?.let {
+                sni = it
             }
         }
     }
