@@ -33,8 +33,7 @@ import io.nekohasekai.sagernet.widget.EditConfigPreference
 
 class ConfigSettingsActivity : ProfileSettingsActivity<ConfigBean>() {
 
-    override fun createEntity() =
-        ConfigBean()
+    override fun createEntity() = ConfigBean()
 
     var config = ""
     var dirty = false

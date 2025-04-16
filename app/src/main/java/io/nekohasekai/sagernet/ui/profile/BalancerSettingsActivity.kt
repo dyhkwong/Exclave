@@ -81,7 +81,6 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         proxies = proxyList.map { it.id }
         probeUrl = DataStore.balancerProbeUrl
         probeInterval = DataStore.balancerProbeInterval
-        initializeDefaultValues()
     }
 
     lateinit var balancerType: SimpleMenuPreference

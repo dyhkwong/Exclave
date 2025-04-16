@@ -8,11 +8,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
 
-    override fun createEntity() = Http3Bean().applyDefaultValues()
+    override fun createEntity() = Http3Bean()
 
     override fun Http3Bean.init() {
         DataStore.profileName = name

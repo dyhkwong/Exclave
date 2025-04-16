@@ -156,8 +156,6 @@ data class ProxyEntity(
         val configName by lazy { app.getString(R.string.custom_config) }
         val balancerName by lazy { app.getString(R.string.balancer) }
 
-        private val placeHolderBean = SOCKSBean().applyDefaultValues()
-
         @JvmField
         val CREATOR = object : CREATOR<ProxyEntity>() {
 

@@ -12,11 +12,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
 
-    override fun createEntity() = AnyTLSBean().applyDefaultValues()
+    override fun createEntity() = AnyTLSBean()
 
     override fun AnyTLSBean.init() {
         DataStore.profileName = name

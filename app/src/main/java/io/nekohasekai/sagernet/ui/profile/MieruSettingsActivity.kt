@@ -27,11 +27,10 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class MieruSettingsActivity : ProfileSettingsActivity<MieruBean>() {
 
-    override fun createEntity() = MieruBean().applyDefaultValues()
+    override fun createEntity() = MieruBean()
 
     override fun MieruBean.init() {
         DataStore.profileName = name

@@ -82,11 +82,12 @@ object SIP008Updater : GroupUpdater() {
         for (profile in servers) {
             val bean = profile.parseShadowsocks()
             appendExtraInfo(profile, bean)
-            bean.applyDefaultValues()
             if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
                 profiles.add(bean)
             }
         }
+
+        profiles.forEach { it.applyDefaultValues() }
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()

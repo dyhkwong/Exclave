@@ -20,12 +20,10 @@
 package io.nekohasekai.sagernet.ktx
 
 import cn.hutool.core.codec.Base64
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.parseAnyTLS
 import io.nekohasekai.sagernet.fmt.brook.parseBrook
-import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.parseHttp
 import io.nekohasekai.sagernet.fmt.http3.parseHttp3
 import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria
@@ -41,10 +39,6 @@ import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic5.parseTuic
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import io.nekohasekai.sagernet.fmt.wireguard.parseV2rayNWireGuard
-
-fun formatObject(obj: Any): String {
-    return gson.toJson(obj).let { JSONObject(it).toStringPretty() }
-}
 
 fun String.decodeBase64UrlSafe(): String {
     return Base64.decodeStr(
@@ -195,16 +189,7 @@ fun parseProxies(text: String): List<AbstractBean> {
     for (link in linksByLine) {
         link.parseLink(entitiesByLine)
     }
-    var isBadLink = false
-    if (entities.onEach { it.initializeDefaultValues() }.size == entitiesByLine.onEach { it.initializeDefaultValues() }.size) run test@{
-        entities.forEachIndexed { index, bean ->
-            val lineBean = entitiesByLine[index]
-            if (bean == lineBean && bean.displayName() != lineBean.displayName()) {
-                isBadLink = true
-                return@test
-            }
-        }
-    }
+
     return if (entities.size > entitiesByLine.size) entities else entitiesByLine
 }
 

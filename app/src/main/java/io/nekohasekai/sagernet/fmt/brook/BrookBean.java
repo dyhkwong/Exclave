@@ -189,7 +189,6 @@ public class BrookBean extends AbstractBean {
 
     @Override
     public void applyFeatureSettings(AbstractBean other) {
-        super.applyFeatureSettings(other);
         if (!(other instanceof BrookBean bean)) return;
         if (insecure) {
             bean.insecure = true;

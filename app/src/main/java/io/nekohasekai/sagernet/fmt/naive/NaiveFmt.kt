@@ -45,7 +45,6 @@ fun parseNaive(link: String): NaiveBean {
         extraHeaders = url.queryParameter("extra-headers")?.replace("\r\n", "\n")
         insecureConcurrency = url.queryParameter("insecure-concurrency")?.toIntOrNull()
         name = url.fragment
-        initializeDefaultValues()
     }
 }
 

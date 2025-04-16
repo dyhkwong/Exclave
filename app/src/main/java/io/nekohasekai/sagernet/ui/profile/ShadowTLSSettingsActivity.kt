@@ -20,20 +20,16 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
-import android.widget.Switch
 import androidx.preference.EditTextPreference
-import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
-import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.shadowtls.ShadowTLSBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
 
-    override fun createEntity() = ShadowTLSBean().applyDefaultValues()
+    override fun createEntity() = ShadowTLSBean()
 
     override fun ShadowTLSBean.init() {
         DataStore.profileName = name

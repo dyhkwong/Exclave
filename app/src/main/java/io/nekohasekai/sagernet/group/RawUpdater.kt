@@ -75,7 +75,6 @@ object RawUpdater : GroupUpdater() {
             proxies = contentText?.let { parseRaw(contentText) }
                 ?: error(app.getString(R.string.no_proxies_found_in_subscription))
         } else {
-
             val response = Libcore.newHttpClient().apply {
                 if (SagerNet.started && DataStore.startedProfile > 0) {
                     useSocks5(DataStore.socksPort)
@@ -128,15 +127,15 @@ object RawUpdater : GroupUpdater() {
                     bytesRemaining = -1L
                     expiryDate = -1L
                 }
-
             }
-
         }
 
         if (subscription.nameFilter.isNotEmpty()) {
             val pattern = Regex(subscription.nameFilter)
             proxies = proxies.filter { !pattern.containsMatchIn(it.name) }
         }
+
+        proxies.forEach { it.applyDefaultValues() }
 
         val proxiesMap = LinkedHashMap<String, AbstractBean>()
         for (proxy in proxies) {
@@ -285,7 +284,6 @@ object RawUpdater : GroupUpdater() {
                             proxies.addAll(p)
                         }
                     }
-                    proxies.forEach { it.initializeDefaultValues() }
                     return proxies
                 }
             } catch (e: YAMLException) {
@@ -334,7 +332,7 @@ object RawUpdater : GroupUpdater() {
     fun parseWireGuard(conf: String): List<WireGuardBean> {
         val ini = Ini(StringReader(conf))
         val iface = ini["Interface"] ?: error("Missing 'Interface' selection")
-        val bean = WireGuardBean().applyDefaultValues()
+        val bean = WireGuardBean()
         val localAddresses = iface.getAll("Address")
         if (localAddresses.isNullOrEmpty()) error("Empty address in 'Interface' selection")
         bean.localAddress = localAddresses.flatMap { it.filterNot { it.isWhitespace() }.split(",") }.joinToString("\n")
@@ -355,7 +353,7 @@ object RawUpdater : GroupUpdater() {
             peerBean.peerPublicKey = peer["PublicKey"] ?: continue
             peerBean.peerPreSharedKey = peer["PreSharedKey"]
             peerBean.keepaliveInterval = peer["PersistentKeepalive"]?.toIntOrNull()?.takeIf { it > 0 }
-            beans.add(peerBean.applyDefaultValues())
+            beans.add(peerBean)
         }
         if (beans.isEmpty()) error("Empty available peer list")
         return beans
@@ -367,7 +365,7 @@ object RawUpdater : GroupUpdater() {
         if (json is JSONObject) {
             when {
                 json.containsKey("method") -> {
-                    return listOf(json.parseShadowsocks().applyDefaultValues())
+                    return listOf(json.parseShadowsocks())
                 }
                 // v2ray outbound
                 json.contains("protocol") -> {
@@ -420,7 +418,6 @@ object RawUpdater : GroupUpdater() {
             }
         }
 
-        proxies.forEach { it.initializeDefaultValues() }
         return proxies
     }
 
@@ -437,7 +434,7 @@ object RawUpdater : GroupUpdater() {
                     "shadowsocks", "shadowsocks2022", "shadowsocks-2022" -> ShadowsocksBean()
                     "socks" -> SOCKSBean()
                     else -> HttpBean()
-                }.applyDefaultValues()
+                }
                 outbound.getObject("streamSettings")?.also { streamSettings ->
                     when (val security = streamSettings.getString("security")?.lowercase()) {
                         "tls", "utls" -> {
@@ -965,7 +962,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "hysteria2" -> {
-                val hysteria2Bean = Hysteria2Bean().applyDefaultValues()
+                val hysteria2Bean = Hysteria2Bean()
                 outbound.getString("tag")?.also {
                     hysteria2Bean.name = it
                 }
@@ -1032,7 +1029,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "wireguard" -> {
-                val wireguardBean = WireGuardBean().applyDefaultValues()
+                val wireguardBean = WireGuardBean()
                 outbound.getString("tag")?.also {
                     wireguardBean.name = it
                 }
@@ -1075,7 +1072,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "ssh" -> {
-                val sshBean = SSHBean().applyDefaultValues()
+                val sshBean = SSHBean()
                 outbound.getObject("settings")?.also { settings ->
                     outbound.getString("tag")?.also {
                         sshBean.name = it
@@ -1106,7 +1103,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "tuic" -> {
-                val tuic5Bean = Tuic5Bean().applyDefaultValues()
+                val tuic5Bean = Tuic5Bean()
                 outbound.getObject("settings")?.also { settings ->
                     outbound.getString("tag")?.also {
                         tuic5Bean.name = it
@@ -1152,7 +1149,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "http3" -> {
-                val http3Bean = Http3Bean().applyDefaultValues()
+                val http3Bean = Http3Bean()
                 outbound.getObject("settings")?.also { settings ->
                     outbound.getString("tag")?.also {
                         http3Bean.name = it
@@ -1187,7 +1184,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "anytls" -> {
-                val anytlsBean = AnyTLSBean().applyDefaultValues()
+                val anytlsBean = AnyTLSBean()
                 outbound.getObject("settings")?.also { settings ->
                     outbound.getString("tag")?.also {
                         anytlsBean.name = it
@@ -1267,7 +1264,7 @@ object RawUpdater : GroupUpdater() {
                     "socks" -> SOCKSBean()
                     "http" -> HttpBean()
                     else -> return proxies
-                }.applyDefaultValues().apply {
+                }.apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1461,7 +1458,7 @@ object RawUpdater : GroupUpdater() {
                 proxies.add(v2rayBean)
             }
             "hysteria2" -> {
-                val hysteria2Bean = Hysteria2Bean().applyDefaultValues().apply {
+                val hysteria2Bean = Hysteria2Bean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1513,7 +1510,7 @@ object RawUpdater : GroupUpdater() {
                 proxies.add(hysteria2Bean)
             }
             "hysteria" -> {
-                val hysteriaBean = HysteriaBean().applyDefaultValues().apply {
+                val hysteriaBean = HysteriaBean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1578,7 +1575,7 @@ object RawUpdater : GroupUpdater() {
                 proxies.add(hysteriaBean)
             }
             "tuic" -> {
-                val tuic5Bean = Tuic5Bean().applyDefaultValues().apply {
+                val tuic5Bean = Tuic5Bean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1626,7 +1623,7 @@ object RawUpdater : GroupUpdater() {
                 proxies.add(tuic5Bean)
             }
             "ssh" -> {
-                val sshBean = SSHBean().applyDefaultValues().apply {
+                val sshBean = SSHBean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1662,7 +1659,7 @@ object RawUpdater : GroupUpdater() {
             }
             "ssr" -> {
                 // removed in v1.6.0
-                val ssrBean = ShadowsocksRBean().applyDefaultValues().apply {
+                val ssrBean = ShadowsocksRBean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1701,7 +1698,7 @@ object RawUpdater : GroupUpdater() {
                     // wireguard endpoint format introduced in 1.11.0-alpha.19
                     return proxies
                 }
-                val wireGuardBean = WireGuardBean().applyDefaultValues().apply {
+                val wireGuardBean = WireGuardBean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1773,7 +1770,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "anytls" -> {
-                val anytlsBean = AnyTLSBean().applyDefaultValues().apply {
+                val anytlsBean = AnyTLSBean().apply {
                     outbound["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1830,7 +1827,7 @@ object RawUpdater : GroupUpdater() {
                     // legacy wireguard outbound format
                     return proxies
                 }
-                val wireGuardBean = WireGuardBean().applyDefaultValues().apply {
+                val wireGuardBean = WireGuardBean().apply {
                     endpoint["tag"]?.toString()?.also {
                         name = it
                     }
@@ -1894,7 +1891,7 @@ object RawUpdater : GroupUpdater() {
                     "socks" -> SOCKSBean()
                     "http" -> HttpBean()
                     else -> return proxies
-                }.applyDefaultValues().apply {
+                }.apply {
                     outbound.getString("tag")?.also {
                         name = it
                     }
@@ -2168,7 +2165,7 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "hysteria2" -> {
-                val hysteria2Bean = Hysteria2Bean().applyDefaultValues().apply {
+                val hysteria2Bean = Hysteria2Bean().apply {
                     outbound.getString("tag")?.also {
                         name = it
                     }

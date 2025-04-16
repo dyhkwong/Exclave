@@ -20,20 +20,17 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
-import android.widget.Switch
 import androidx.preference.EditTextPreference
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
-import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
 
-    override fun createEntity() = Tuic5Bean().applyDefaultValues()
+    override fun createEntity() = Tuic5Bean()
 
     override fun Tuic5Bean.init() {
         DataStore.profileName = name

@@ -7,11 +7,10 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
 
-    override fun createEntity() = JuicityBean().applyDefaultValues()
+    override fun createEntity() = JuicityBean()
 
     override fun JuicityBean.init() {
         DataStore.profileName = name

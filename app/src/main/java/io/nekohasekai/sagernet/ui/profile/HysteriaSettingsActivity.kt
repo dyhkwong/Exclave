@@ -28,11 +28,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
-import io.nekohasekai.sagernet.ktx.applyDefaultValues
 
 class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
 
-    override fun createEntity() = HysteriaBean().applyDefaultValues()
+    override fun createEntity() = HysteriaBean()
 
     override fun HysteriaBean.init() {
         DataStore.profileName = name
