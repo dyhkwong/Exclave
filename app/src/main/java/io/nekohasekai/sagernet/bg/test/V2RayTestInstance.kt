@@ -47,11 +47,11 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
                 try {
                     init(false)
                     launch()
-                    Logs.d(config.config)
+                    /*Logs.d(config.config)
                     pluginConfigs.forEach { (_, plugin) ->
                         val (_, content) = plugin
                         Logs.d(content)
-                    }
+                    }*/
                     c.tryResume(Libcore.urlTest(v2rayPoint, "", link, timeout))
                 } catch (e: Exception) {
                     c.tryResumeWithException(e)
