@@ -20,8 +20,10 @@
 package io.nekohasekai.sagernet.fmt.brook
 
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.Commandline
 import libcore.Libcore
 
 fun parseBrook(text: String): AbstractBean {
@@ -357,4 +359,28 @@ fun BrookBean.toInternalUri(): String {
         }
     }
     return builder.string
+}
+
+fun BrookBean.buildBrookConfig(port: Int): String {
+    // https://github.com/TxThinkingInc/CAC
+    val cac = mutableListOf<String>()
+    cac.add(when (protocol) {
+        "ws" -> {
+            "wsclient"
+        }
+        "wss" -> {
+            "wssclient"
+        }
+        "quic" -> {
+            "quicclient"
+        }
+        else -> {
+            "client"
+        }
+    })
+    cac.add("--link")
+    cac.add(toInternalUri())
+    cac.add("--socks5")
+    cac.add(joinHostPort(LOCALHOST, port))
+    return Commandline.toString(cac)
 }

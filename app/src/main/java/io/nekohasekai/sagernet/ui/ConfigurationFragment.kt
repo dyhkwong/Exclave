@@ -1850,9 +1850,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                         if (!proxyEntity.canExportBackup()) {
                             popup.menu.removeItem(R.id.action_export_backup)
                         }
-                        if (proxyEntity.brookBean != null) {
-                            popup.menu.removeItem(R.id.action_export_configuration)
-                        }
 
                         popup.setOnMenuItemClickListener(this@ConfigurationHolder)
                         popup.show()

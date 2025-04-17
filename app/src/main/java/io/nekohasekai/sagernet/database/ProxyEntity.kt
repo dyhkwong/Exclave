@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.anytls.toUri
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
+import io.nekohasekai.sagernet.fmt.brook.buildBrookConfig
 import io.nekohasekai.sagernet.fmt.brook.toUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -413,6 +414,12 @@ data class ProxyEntity(
                             is JuicityBean -> {
                                 append("\n\n")
                                 append(bean.buildJuicityConfig(port).also {
+                                    Logs.d(it)
+                                })
+                            }
+                            is BrookBean -> {
+                                append("\n\n")
+                                append(bean.buildBrookConfig(port).also {
                                     Logs.d(it)
                                 })
                             }

@@ -30,7 +30,6 @@ import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.AbstractInstance
-import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.bg.ExternalInstance
 import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.database.DataStore
@@ -38,6 +37,7 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
+import io.nekohasekai.sagernet.fmt.brook.buildBrookConfig
 import io.nekohasekai.sagernet.fmt.brook.toInternalUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
@@ -111,6 +111,7 @@ abstract class V2RayInstance(
                     }
                     is BrookBean -> {
                         initPlugin("brook-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildBrookConfig(port)
                     }
                     is HysteriaBean -> {
                         initPlugin("hysteria-plugin")
