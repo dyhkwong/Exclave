@@ -28,7 +28,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     if (link.startsWith("vmess://") && !link.contains("@")) {
         return parseV2RayN(link)
     }
-
+    // https://github.com/XTLS/Xray-core/issues/91
+    // https://github.com/XTLS/Xray-core/discussions/716
     val url = Libcore.parseURL(link)
     val bean = when (url.scheme) {
         "vmess" -> VMessBean()
@@ -41,289 +42,219 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     bean.serverPort = url.port
     bean.name = url.fragment
 
-    if (bean is VMessBean && url.password.isNotEmpty()) {
-        // https://github.com/v2fly/v2fly-github-io/issues/26
-        var protocol = url.username
-        bean.type = protocol
-        bean.alterId = url.password.substringAfterLast('-').toInt()
-        bean.uuid = url.password.substringBeforeLast('-')
-
-        if (protocol.endsWith("+tls")) {
-            bean.security = "tls"
-            protocol = protocol.substring(0, protocol.length - 4)
-
-            url.queryParameter("tlsServerName")?.let {
-                bean.sni = it
-            }
-        }
-
-        when (protocol) {
-            "tcp" -> {
-                url.queryParameter("type")?.let { type ->
-                    if (type == "http") {
-                        bean.headerType = "http"
-                        url.queryParameter("host")?.let {
-                            bean.host = it
-                        }
-                    }
-                }
-            }
-            "http" -> {
-                url.queryParameter("path")?.let {
-                    bean.path = it
-                }
-                url.queryParameter("host")?.let {
-                    bean.host = it.split("|").joinToString(",")
-                }
-            }
-            "ws" -> {
-                url.queryParameter("path")?.let {
-                    bean.path = it
-                }
-                url.queryParameter("host")?.let {
-                    bean.host = it
-                }
-            }
-            "kcp" -> {
-                url.queryParameter("type")?.let {
-                    bean.headerType = it
-                }
-                url.queryParameter("seed")?.let {
-                    bean.mKcpSeed = it
-                }
-            }
-            "quic" -> {
-                url.queryParameter("security")?.let {
-                    bean.quicSecurity = it
-                }
-                url.queryParameter("key")?.let {
-                    bean.quicKey = it
-                }
-                url.queryParameter("type")?.let {
-                    bean.headerType = it
-                }
-            }
-            else -> error("unknown protocol: $protocol")
+    if (bean is TrojanBean) {
+        bean.password = url.username
+        if (url.password.isNotEmpty()) {
+            // https://github.com/trojan-gfw/igniter/issues/318
+            bean.password += ":" + url.password
         }
     } else {
-        // https://github.com/XTLS/Xray-core/issues/91
-        // https://github.com/XTLS/Xray-core/discussions/716
+        bean.uuid = url.username
+    }
 
-        if (bean is TrojanBean) {
-            bean.password = url.username
-            if (url.password.isNotEmpty()) {
-                // https://github.com/trojan-gfw/igniter/issues/318
-                bean.password += ":" + url.password
-            }
-        } else {
-            bean.uuid = url.username
-        }
+    bean.type = url.queryParameter("type")
 
-        bean.type = url.queryParameter("type")
-
-        if (bean is TrojanBean) {
-            bean.security = url.queryParameter("security") ?: "tls"
-        } else {
-            bean.security = url.queryParameter("security") ?: "none"
-        }
-        when (bean.security) {
-            "tls", "xtls" -> {
-                bean.security = "tls"
-                if (bean is TrojanBean) {
-                    bean.sni = url.queryParameter("sni") ?: url.queryParameter("peer")
-                } else {
-                    url.queryParameter("sni")?.let {
-                        bean.sni = it
-                    }
-                }
-                url.queryParameter("alpn")?.let {
-                    bean.alpn = it.split(",").joinToString("\n")
-                }
-                if (bean is VLESSBean && bean.security == "tls") {
-                    url.queryParameter("flow")?.let {
-                        when (it) {
-                            "xtls-rprx-vision", "xtls-rprx-vision-udp443" -> {
-                                bean.flow = "xtls-rprx-vision-udp443"
-                                bean.packetEncoding = "xudp"
-                            }
-                        }
-                    }
-                }
-                // bad format from where?
-                url.queryParameter("allowInsecure")?.let {
-                    if (it == "1" || it.lowercase() == "true") {
-                        bean.allowInsecure = true // non-standard
-                    }
-                } ?: url.queryParameter("insecure")?.let {
-                    if (it == "1" || it.lowercase() == "true") {
-                        bean.allowInsecure = true // non-standard
-                    }
-                }
-                //url.queryParameter("fp")?.let {} // do not support this intentionally
-            }
-            "reality" -> {
+    if (bean is TrojanBean) {
+        bean.security = url.queryParameter("security") ?: "tls"
+    } else {
+        bean.security = url.queryParameter("security") ?: "none"
+    }
+    when (bean.security) {
+        "tls", "xtls" -> {
+            bean.security = "tls"
+            if (bean is TrojanBean) {
+                bean.sni = url.queryParameter("sni") ?: url.queryParameter("peer")
+            } else {
                 url.queryParameter("sni")?.let {
                     bean.sni = it
                 }
-                url.queryParameter("pbk")?.let {
-                    bean.realityPublicKey = it
-                }
-                url.queryParameter("sid")?.let {
-                    bean.realityShortId = it
-                }
-                url.queryParameter("fp")?.let {
-                    bean.realityFingerprint = it
-                }
-                if (bean is VLESSBean) {
-                    url.queryParameter("flow")?.let {
-                        when (it) {
-                            "xtls-rprx-vision", "xtls-rprx-vision-udp443" -> {
-                                bean.flow = "xtls-rprx-vision-udp443"
-                                bean.packetEncoding = "xudp"
-                            }
+            }
+            url.queryParameter("alpn")?.let {
+                bean.alpn = it.split(",").joinToString("\n")
+            }
+            if (bean is VLESSBean && bean.security == "tls") {
+                url.queryParameter("flow")?.let {
+                    when (it) {
+                        "xtls-rprx-vision", "xtls-rprx-vision-udp443" -> {
+                            bean.flow = "xtls-rprx-vision-udp443"
+                            bean.packetEncoding = "xudp"
                         }
                     }
                 }
             }
-            else -> bean.security = "none"
+            // bad format from where?
+            url.queryParameter("allowInsecure")?.let {
+                if (it == "1" || it.lowercase() == "true") {
+                    bean.allowInsecure = true // non-standard
+                }
+            } ?: url.queryParameter("insecure")?.let {
+                if (it == "1" || it.lowercase() == "true") {
+                    bean.allowInsecure = true // non-standard
+                }
+            }
+            //url.queryParameter("fp")?.let {} // do not support this intentionally
         }
-        when (bean.type) {
-            "tcp" -> {
-                url.queryParameter("headerType")?.let { headerType ->
-                    // invented by v2rayN(G)
-                    if (headerType == "http") {
-                        bean.headerType = headerType
-                        url.queryParameter("host")?.let {
-                            bean.host = it.split(",").joinToString("\n")
+        "reality" -> {
+            url.queryParameter("sni")?.let {
+                bean.sni = it
+            }
+            url.queryParameter("pbk")?.let {
+                bean.realityPublicKey = it
+            }
+            url.queryParameter("sid")?.let {
+                bean.realityShortId = it
+            }
+            url.queryParameter("fp")?.let {
+                bean.realityFingerprint = it
+            }
+            if (bean is VLESSBean) {
+                url.queryParameter("flow")?.let {
+                    when (it) {
+                        "xtls-rprx-vision", "xtls-rprx-vision-udp443" -> {
+                            bean.flow = "xtls-rprx-vision-udp443"
+                            bean.packetEncoding = "xudp"
                         }
                     }
                 }
             }
-            "kcp" -> {
-                url.queryParameter("headerType")?.let {
-                    bean.headerType = it
-                }
-                url.queryParameter("seed")?.let {
-                    bean.mKcpSeed = it
-                }
-            }
-            "http" -> {
-                url.queryParameter("host")?.let {
-                    // The proposal says "省略时复用 remote-host", but this is not correct except for the breaking change below.
-                    // will not follow the breaking change in https://github.com/XTLS/Xray-core/commit/0a252ac15d34e7c23a1d3807a89bfca51cbb559b
-                    // "若有多个域名，可使用英文逗号隔开，但中间及前后不可有空格。"
-                    bean.host = it.split(",").joinToString("\n")
-                }
-                url.queryParameter("path")?.let {
-                    bean.path = it
-                }
-            }
-            "xhttp", "splithttp" -> {
-                bean.type = "splithttp"
-                url.queryParameter("extra")?.let { extra ->
-                    JSONObject(extra).takeIf { !it.isEmpty() }?.also {
-                        // fuck RPRX `extra`
-                        bean.splithttpExtra = it.toString()
-                    }
-                }
-                url.queryParameter("host")?.let {
-                    bean.host = it
-                }
-                url.queryParameter("path")?.let {
-                    bean.path = it
-                }
-                when (val mode = url.queryParameter("mode")) {
-                    "", "auto" -> bean.splithttpMode = "auto"
-                    else -> bean.splithttpMode = mode
-                }
-            }
-            "httpupgrade" -> {
-                url.queryParameter("host")?.let {
-                    // will not follow the breaking change in
-                    // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
-                    bean.host = it
-                }
-                url.queryParameter("path")?.let { path ->
-                    // RPRX's smart-assed invention. This of course will break under some conditions.
-                    bean.path = path
-                    val u = Libcore.parseURL(path)
-                    u.queryParameter("ed")?.let {
-                        u.deleteQueryParameter("ed")
-                        bean.path = u.string
-                    }
-                }
-                url.queryParameter("eh")?.let {
-                    bean.earlyDataHeaderName = it // non-standard, invented by SagerNet and adopted by some other software
-                }
-                url.queryParameter("ed")?.toIntOrNull()?.let {
-                    bean.maxEarlyData = it // non-standard, invented by SagerNet and adopted by some other software
-                }
-            }
-            "ws" -> {
-                url.queryParameter("host")?.let {
-                    // will not follow the breaking change in
-                    // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
-                    bean.host = it
-                }
-                url.queryParameter("path")?.let { path ->
-                    // RPRX's smart-assed invention. This of course will break under some conditions.
-                    bean.path = path
-                    val u = Libcore.parseURL(path)
-                    u.queryParameter("ed")?.let { ed ->
-                        u.deleteQueryParameter("ed")
-                        bean.path = u.string
-                        bean.maxEarlyData = ed.toIntOrNull()
-                        bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
-                    }
-                }
-                url.queryParameter("eh")?.let {
-                    bean.earlyDataHeaderName = it // non-standard, invented by SagerNet and adopted by some other software
-                }
-                url.queryParameter("ed")?.toIntOrNull()?.let {
-                    bean.maxEarlyData = it // non-standard, invented by SagerNet and adopted by some other software
-                }
-            }
-            "quic" -> {
-                url.queryParameter("headerType")?.let {
-                    bean.headerType = it
-                }
-                url.queryParameter("quicSecurity")?.let { quicSecurity ->
-                    bean.quicSecurity = quicSecurity
-                    url.queryParameter("key")?.let {
-                        bean.quicKey = it
-                    }
-                }
-            }
-            "grpc" -> {
-                url.queryParameter("serviceName")?.let {
-                    // Xray hijacks the share link standard, uses escaped `serviceName` and some other non-standard `serviceName`s and breaks the compatibility with other implementations.
-                    // Fixing the compatibility with Xray will break the compatibility with V2Ray and others.
-                    // So do not fix the compatibility with Xray.
-                    bean.grpcServiceName = it
-                }
-            }
-            "meek" -> {
-                // https://github.com/v2fly/v2ray-core/discussions/2638
-                url.queryParameter("url")?.let {
-                    bean.meekUrl = it
-                }
-            }
-            "mekya" -> {
-                // not a standard
-                url.queryParameter("headerType")?.let {
-                    bean.mekyaKcpHeaderType = it
-                }
-                url.queryParameter("seed")?.let {
-                    bean.mekyaKcpSeed = it
-                }
-                url.queryParameter("url")?.let {
-                    bean.mekyaUrl = it
-                }
-            }
-            "hysteria2" -> error("unsupported")
-            else -> bean.type = "tcp"
         }
-
+        else -> bean.security = "none"
+    }
+    when (bean.type) {
+        "tcp" -> {
+            url.queryParameter("headerType")?.let { headerType ->
+                // invented by v2rayN(G)
+                if (headerType == "http") {
+                    bean.headerType = headerType
+                    url.queryParameter("host")?.let {
+                        bean.host = it.split(",").joinToString("\n")
+                    }
+                }
+            }
+        }
+        "kcp" -> {
+            url.queryParameter("headerType")?.let {
+                bean.headerType = it
+            }
+            url.queryParameter("seed")?.let {
+                bean.mKcpSeed = it
+            }
+        }
+        "http" -> {
+            url.queryParameter("host")?.let {
+                // The proposal says "省略时复用 remote-host", but this is not correct except for the breaking change below.
+                // will not follow the breaking change in https://github.com/XTLS/Xray-core/commit/0a252ac15d34e7c23a1d3807a89bfca51cbb559b
+                // "若有多个域名，可使用英文逗号隔开，但中间及前后不可有空格。"
+                bean.host = it.split(",").joinToString("\n")
+            }
+            url.queryParameter("path")?.let {
+                bean.path = it
+            }
+        }
+        "xhttp", "splithttp" -> {
+            bean.type = "splithttp"
+            url.queryParameter("extra")?.let { extra ->
+                JSONObject(extra).takeIf { !it.isEmpty() }?.also {
+                    // fuck RPRX `extra`
+                    bean.splithttpExtra = it.toString()
+                }
+            }
+            url.queryParameter("host")?.let {
+                bean.host = it
+            }
+            url.queryParameter("path")?.let {
+                bean.path = it
+            }
+            when (val mode = url.queryParameter("mode")) {
+                "", "auto" -> bean.splithttpMode = "auto"
+                else -> bean.splithttpMode = mode
+            }
+        }
+        "httpupgrade" -> {
+            url.queryParameter("host")?.let {
+                // will not follow the breaking change in
+                // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
+                bean.host = it
+            }
+            url.queryParameter("path")?.let { path ->
+                // RPRX's smart-assed invention. This of course will break under some conditions.
+                bean.path = path
+                val u = Libcore.parseURL(path)
+                u.queryParameter("ed")?.let {
+                    u.deleteQueryParameter("ed")
+                    bean.path = u.string
+                }
+            }
+            url.queryParameter("eh")?.let {
+                bean.earlyDataHeaderName = it // non-standard, invented by SagerNet and adopted by some other software
+            }
+            url.queryParameter("ed")?.toIntOrNull()?.let {
+                bean.maxEarlyData = it // non-standard, invented by SagerNet and adopted by some other software
+            }
+        }
+        "ws" -> {
+            url.queryParameter("host")?.let {
+                // will not follow the breaking change in
+                // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
+                bean.host = it
+            }
+            url.queryParameter("path")?.let { path ->
+                // RPRX's smart-assed invention. This of course will break under some conditions.
+                bean.path = path
+                val u = Libcore.parseURL(path)
+                u.queryParameter("ed")?.let { ed ->
+                    u.deleteQueryParameter("ed")
+                    bean.path = u.string
+                    bean.maxEarlyData = ed.toIntOrNull()
+                    bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                }
+            }
+            url.queryParameter("eh")?.let {
+                bean.earlyDataHeaderName = it // non-standard, invented by SagerNet and adopted by some other software
+            }
+            url.queryParameter("ed")?.toIntOrNull()?.let {
+                bean.maxEarlyData = it // non-standard, invented by SagerNet and adopted by some other software
+            }
+        }
+        "quic" -> {
+            url.queryParameter("headerType")?.let {
+                bean.headerType = it
+            }
+            url.queryParameter("quicSecurity")?.let { quicSecurity ->
+                bean.quicSecurity = quicSecurity
+                url.queryParameter("key")?.let {
+                    bean.quicKey = it
+                }
+            }
+        }
+        "grpc" -> {
+            url.queryParameter("serviceName")?.let {
+                // Xray hijacks the share link standard, uses escaped `serviceName` and some other non-standard `serviceName`s and breaks the compatibility with other implementations.
+                // Fixing the compatibility with Xray will break the compatibility with V2Ray and others.
+                // So do not fix the compatibility with Xray.
+                bean.grpcServiceName = it
+            }
+        }
+        "meek" -> {
+            // https://github.com/v2fly/v2ray-core/discussions/2638
+            url.queryParameter("url")?.let {
+                bean.meekUrl = it
+            }
+        }
+        "mekya" -> {
+            // not a standard
+            url.queryParameter("headerType")?.let {
+                bean.mekyaKcpHeaderType = it
+            }
+            url.queryParameter("seed")?.let {
+                bean.mekyaKcpSeed = it
+            }
+            url.queryParameter("url")?.let {
+                bean.mekyaUrl = it
+            }
+        }
+        "hysteria2" -> error("unsupported")
+        else -> bean.type = "tcp"
     }
 
     return bean
