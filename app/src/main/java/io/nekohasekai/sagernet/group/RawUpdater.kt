@@ -334,7 +334,9 @@ object RawUpdater : GroupUpdater() {
     }
 
     fun parseWireGuard(conf: String): List<WireGuardBean> {
-        val ini = Ini(StringReader(conf))
+        val ini = Ini(StringReader(conf)).apply {
+            config.isMultiSection = true
+        }
         val iface = ini["Interface"] ?: error("Missing 'Interface' selection")
         val bean = WireGuardBean().applyDefaultValues()
         val localAddresses = iface.getAll("Address")
