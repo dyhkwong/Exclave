@@ -1843,7 +1843,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         val popup = PopupMenu(requireContext(), anchor)
                         popup.menuInflater.inflate(R.menu.profile_share_menu, popup.menu)
 
-                        if (!proxyEntity.hasShareLink()) {
+                        if (!proxyEntity.hasShareLink() && proxyEntity.wgBean == null) {
                             popup.menu.removeItem(R.id.action_qr)
                             popup.menu.removeItem(R.id.action_clipboard)
                         }

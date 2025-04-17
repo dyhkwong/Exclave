@@ -42,7 +42,9 @@ fun parseV2rayNWireGuard(server: String): AbstractBean {
 
 fun parseWireGuardConfig(conf: String): List<WireGuardBean> {
     val beans = mutableListOf<WireGuardBean>()
-    val ini = Ini(StringReader(conf))
+    val ini = Ini(StringReader(conf)).apply {
+        config.isMultiSection = true
+    }
     if (ini.size == 0) {
         return beans
     }
