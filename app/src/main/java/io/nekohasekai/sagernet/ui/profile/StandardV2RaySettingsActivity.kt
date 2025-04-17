@@ -283,6 +283,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var wsUseBrowserForwarder: SwitchPreference
     lateinit var splithttpCategory: PreferenceCategory
     lateinit var splithttpMode: SimpleMenuPreference
+    lateinit var splithttpExtra: EditTextPreference
     lateinit var ssExperimentsCategory: PreferenceCategory
 
     lateinit var plugin: PluginPreference
@@ -359,6 +360,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         wsUseBrowserForwarder = findPreference(Key.SERVER_WS_BROWSER_FORWARDING)!!
         splithttpCategory = findPreference(Key.SERVER_SH_CATEGORY)!!
         splithttpMode = findPreference(Key.SERVER_SPLITHTTP_MODE)!!
+        splithttpExtra = findPreference(Key.SERVER_SPLITHTTP_EXTRA)!!
 
         findPreference<SwitchPreference>(Key.SERVER_WS_BROWSER_FORWARDING)!!.setOnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
@@ -543,6 +545,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         if (splithttpMode.value !in resources.getStringArray(R.array.splithttp_mode_value)) {
             splithttpMode.value = resources.getStringArray(R.array.splithttp_mode_value)[0]
         }
+        // Do not translate this as it is not a stable string.
+        splithttpExtra.dialogMessage = "`xmux` and `downloadSettings` are not supported."
 
         when (network) {
             "tcp" -> {
