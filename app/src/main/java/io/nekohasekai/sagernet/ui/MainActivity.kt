@@ -292,7 +292,7 @@ class MainActivity : ThemedActivity(),
 
     suspend fun importProfile(uri: Uri) {
         val profile = try {
-            parseProxies(uri.toString()).getOrNull(0) ?: error(getString(R.string.no_proxies_found))
+            parseShareLinks(uri.toString()).getOrNull(0) ?: error(getString(R.string.no_proxies_found))
         } catch (e: Exception) {
             onMainDispatcher {
                 alert(e.readableMessage).show()

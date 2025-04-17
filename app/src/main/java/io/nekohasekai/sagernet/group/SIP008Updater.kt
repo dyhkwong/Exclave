@@ -26,7 +26,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
+import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.USER_AGENT
 import io.nekohasekai.sagernet.ktx.app
@@ -80,7 +80,7 @@ object SIP008Updater : GroupUpdater() {
 
         val pattern = Regex(subscription.nameFilter)
         for (profile in servers) {
-            val bean = profile.parseShadowsocks()
+            val bean = profile.parseShadowsocksConfig() ?: continue
             appendExtraInfo(profile, bean)
             if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
                 profiles.add(bean)

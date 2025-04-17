@@ -116,7 +116,9 @@ fun ShadowsocksBean.toUri(): String {
 
 }
 
-fun JSONObject.parseShadowsocks(): ShadowsocksBean {
+fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
+    val address = getStr("server") ?: return null
+    val port = getInt("server_port") ?: return null
     return ShadowsocksBean().apply {
         var pluginStr = ""
         val pId = getStr("plugin")
@@ -124,14 +126,12 @@ fun JSONObject.parseShadowsocks(): ShadowsocksBean {
             val plugin = PluginOptions(pId, getStr("plugin_opts"))
             pluginStr = plugin.toString(false)
         }
-
-        serverAddress = getStr("server")
-        serverPort = getInt("server_port")
+        serverAddress = address
+        serverPort = port
         password = getStr("password")
-        method = getStr("method")
+        method = getStr("method") ?: "table"
         plugin = pluginStr
         name = getStr("remarks", "")
-
         fixInvalidParams()
     }
 }

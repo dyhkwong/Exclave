@@ -19,13 +19,19 @@
 
 package io.nekohasekai.sagernet.group
 
-import android.net.Uri
+import androidx.core.net.toUri
 import cn.hutool.core.codec.Base64
-import cn.hutool.json.*
+import cn.hutool.json.JSONObject
+import cn.hutool.json.JSONUtil
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.database.*
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.database.GroupManager
+import io.nekohasekai.sagernet.database.ProxyEntity
+import io.nekohasekai.sagernet.database.ProxyGroup
+import io.nekohasekai.sagernet.database.SagerDatabase
+import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -33,9 +39,9 @@ import io.nekohasekai.sagernet.fmt.http3.Http3Bean
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
-import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
@@ -44,16 +50,16 @@ import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardConfig
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
+import io.nekohasekai.sagernet.ktx.parseShareLinks
 import io.nekohasekai.sagernet.ktx.*
-import libcore.Libcore
-import org.ini4j.Ini
-import org.yaml.snakeyaml.TypeDescription
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.error.YAMLException
-import java.io.StringReader
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
+import libcore.Libcore
+import org.yaml.snakeyaml.TypeDescription
+import org.yaml.snakeyaml.Yaml
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object RawUpdater : GroupUpdater() {
@@ -68,7 +74,7 @@ object RawUpdater : GroupUpdater() {
         val link = subscription.link
         var proxies: List<AbstractBean>
         if (link.startsWith("content://")) {
-            val contentText = app.contentResolver.openInputStream(Uri.parse(link))
+            val contentText = app.contentResolver.openInputStream(link.toUri())
                 ?.bufferedReader()
                 ?.readText()
 
@@ -158,8 +164,8 @@ object RawUpdater : GroupUpdater() {
             Logs.d("Before deduplication: ${proxies.size}")
             val uniqueProxies = LinkedHashSet<Protocols.Deduplication>()
             val uniqueNames = HashMap<Protocols.Deduplication, String>()
-            for (_proxy in proxies) {
-                val proxy = Protocols.Deduplication(_proxy, _proxy.javaClass.toString())
+            for (p in proxies) {
+                val proxy = Protocols.Deduplication(p, p.javaClass.toString())
                 if (!uniqueProxies.add(proxy)) {
                     val index = uniqueProxies.indexOf(proxy)
                     if (uniqueNames.containsKey(proxy)) {
@@ -169,9 +175,9 @@ object RawUpdater : GroupUpdater() {
                             uniqueNames[proxy] = ""
                         }
                     }
-                    duplicate.add(_proxy.displayName() + " ($index)")
+                    duplicate.add(p.displayName() + " ($index)")
                 } else {
-                    uniqueNames[proxy] = _proxy.displayName()
+                    uniqueNames[proxy] = p.displayName()
                 }
             }
             uniqueProxies.retainAll(uniqueNames.keys)
@@ -268,161 +274,104 @@ object RawUpdater : GroupUpdater() {
 
     @Suppress("UNCHECKED_CAST")
     fun parseRaw(text: String): List<AbstractBean>? {
-
-        val proxies = mutableListOf<AbstractBean>()
-
         if (text.contains("proxies")) {
             try {
-                // Mihomo (f.k.a. Clash.Meta), Clash
-                val yaml = Yaml().apply {
+                (Yaml().apply {
                     addTypeDescription(TypeDescription(String::class.java, "str"))
-                }.loadAs(text, Map::class.java)["proxies"] as? List<Map<String, Any?>>
-                if (yaml != null) {
-                    for (map in yaml) {
-                        val p = parseClashProxies(map)
-                        if (p.isNotEmpty()) {
-                            proxies.addAll(p)
-                        }
+                }.loadAs(text, Map::class.java)["proxies"] as? List<Map<String, Any?>>)?.let { proxies ->
+                    val beans = mutableListOf<AbstractBean>()
+                    proxies.forEach {
+                        beans.addAll(parseClashProxies(it))
                     }
-                    return proxies
+                    return beans.takeIf { it.isNotEmpty() }
                 }
-            } catch (e: YAMLException) {
-                Logs.w(e)
-            }
+            } catch (_: Exception) {}
         }
-
         if (text.contains("[Interface]")) {
-            // wireguard
             try {
-                val p = parseWireGuard(text)
-                if (p.isNotEmpty()) {
-                    proxies.addAll(parseWireGuard(text))
-                    return proxies
+                parseWireGuardConfig(text).takeIf { it.isNotEmpty() }?.let {
+                    return it
                 }
-            } catch (e: Exception) {
-                Logs.w(e)
+            } catch (_: Exception) {}
+        }
+        try {
+            JSONUtil.parse(Libcore.stripJSON(text))?.let { json ->
+                if (json !is JSONObject) return null
+                return parseJSONConfig(json).takeIf { it.isNotEmpty() }
             }
-        }
-
+        } catch (_: Exception) {}
         try {
-            val json = JSONUtil.parse(Libcore.stripJSON(text))
-            return parseJSON(json)
-        } catch (e: JSONException) {
-            Logs.w(e)
-        }
-
-        try {
-            return parseProxies(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() }
-                ?: error("Not found")
-        } catch (e: Exception) {
-            Logs.w(e)
-        }
-
-        try {
-            return parseProxies(text).takeIf { it.isNotEmpty() } ?: error("Not found")
+            parseShareLinks(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() }?.let {
+                return it
+            }
         } catch (e: SubscriptionFoundException) {
-            throw e
-        } catch (e: Exception) {
-            Logs.w(e)
-        }
-
+            throw(e)
+        } catch (_: Exception) {}
+        try {
+            parseShareLinks(text).takeIf { it.isNotEmpty() }?.let {
+                return it
+            }
+        } catch (e: SubscriptionFoundException) {
+            throw(e)
+        } catch (_: Exception) {}
         return null
     }
 
-    fun parseWireGuard(conf: String): List<WireGuardBean> {
-        val ini = Ini(StringReader(conf))
-        val iface = ini["Interface"] ?: error("Missing 'Interface' selection")
-        val bean = WireGuardBean()
-        val localAddresses = iface.getAll("Address")
-        if (localAddresses.isNullOrEmpty()) error("Empty address in 'Interface' selection")
-        bean.localAddress = localAddresses.flatMap { it.filterNot { it.isWhitespace() }.split(",") }.joinToString("\n")
-        bean.privateKey = iface["PrivateKey"]
-        bean.mtu = iface["MTU"]?.toInt()?.takeIf { it > 0 } ?: 1420
-        val peers = ini.getAll("Peer")
-        if (peers.isNullOrEmpty()) error("Missing 'Peer' selections")
-        val beans = mutableListOf<WireGuardBean>()
-        for (peer in peers) {
-            val endpoint = peer["Endpoint"]
-            if (endpoint.isNullOrEmpty() || !endpoint.contains(":")) {
-                continue
+    @Suppress("UNCHECKED_CAST")
+    private fun parseJSONConfig(json: JSONObject): List<AbstractBean> {
+        when {
+            json.getInt("version") != null && json.containsKey("servers") -> {
+                val beans = ArrayList<ShadowsocksBean>()
+                (json.getJSONArray("servers") as? List<JSONObject>)?.forEach { server ->
+                    server.parseShadowsocksConfig()?.let {
+                        beans.add(it)
+                    }
+                }
+                return beans
             }
-
-            val peerBean = bean.clone()
-            peerBean.serverAddress = endpoint.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
-            peerBean.serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
-            peerBean.peerPublicKey = peer["PublicKey"] ?: continue
-            peerBean.peerPreSharedKey = peer["PreSharedKey"]
-            peerBean.keepaliveInterval = peer["PersistentKeepalive"]?.toIntOrNull()?.takeIf { it > 0 }
-            beans.add(peerBean)
-        }
-        if (beans.isEmpty()) error("Empty available peer list")
-        return beans
-    }
-
-    fun parseJSON(json: JSON): List<AbstractBean> {
-        val proxies = ArrayList<AbstractBean>()
-
-        if (json is JSONObject) {
-            when {
-                json.containsKey("method") -> {
-                    return listOf(json.parseShadowsocks())
+            json.containsKey("method") -> {
+                json.parseShadowsocksConfig()?.let {
+                    return listOf(it)
+                } ?: return ArrayList()
+            }
+            json.contains("type") -> {
+                return parseSingBoxEndpoint(json).takeIf { it.isNotEmpty() }
+                    ?: parseSingBoxOutbound(json)
+            }
+            json.contains("protocol") -> {
+                return parseV2ray5Outbound(json).takeIf { it.isNotEmpty() }
+                    ?: parseV2RayOutbound(json)
+            }
+            else -> {
+                val beans = ArrayList<AbstractBean>()
+                var maybeV2Ray = true
+                var maybeSingBox = true
+                json.getArray("endpoints")?.filterIsInstance<JSONObject>()?.forEach { endpoint ->
+                    maybeV2Ray = false
+                    beans.addAll(parseSingBoxEndpoint(endpoint))
                 }
-                // v2ray outbound
-                json.contains("protocol") -> {
-                    val p = parseV2ray5Outbound(json)
-                    if (p.isNotEmpty()) {
-                        return p
-                    }
-                    return parseV2RayOutbound(json)
-                }
-                // sing-box outbound
-                json.contains("type") -> {
-                    val endpoints = parseSingBoxEndpoint(json)
-                    if (endpoints.isNotEmpty()) {
-                        return endpoints
-                    }
-                    return parseSingBoxOutbound(json)
-                }
-                json.contains("outbounds") || json.contains("endpoints")  -> {
-                    json.getArray("outbounds")?.filterIsInstance<JSONObject>()?.forEach { outbound ->
-                        if (outbound.contains("protocol")) {
-                            val p = parseV2ray5Outbound(outbound)
-                            if (p.isNotEmpty()) {
-                                proxies.addAll(p)
-                            } else {
-                                proxies.addAll(parseV2RayOutbound(outbound))
-                            }
-                        } else if (outbound.contains("type")) {
-                            proxies.addAll(parseSingBoxOutbound(outbound))
+                json.getArray("outbounds")?.filterIsInstance<JSONObject>()?.forEach { outbound ->
+                    when {
+                        maybeV2Ray && outbound.contains("protocol") -> {
+                            maybeSingBox = false
+                            beans.addAll(
+                                parseV2ray5Outbound(outbound).takeIf { it.isNotEmpty() } ?:
+                                parseV2RayOutbound(outbound)
+                            )
                         }
-                    }
-                    // sing-box wireguard endpoint format introduced in 1.11.0-alpha.19
-                    json.getArray("endpoints")?.filterIsInstance<JSONObject>()?.forEach { endpoint ->
-                        if (endpoint.containsKey("type")) {
-                            proxies.addAll(parseSingBoxEndpoint(endpoint))
+                        maybeSingBox && outbound.contains("type") -> {
+                            maybeV2Ray = false
+                            beans.addAll(parseSingBoxOutbound(outbound))
                         }
                     }
                 }
-                else -> json.forEach { _, it ->
-                    if (it is JSON) {
-                        proxies.addAll(parseJSON(it))
-                    }
-                }
-            }
-        } else {
-            json as JSONArray
-            json.forEach {
-                if (it is JSON) {
-                    proxies.addAll(parseJSON(it))
-                }
+                return beans
             }
         }
-
-        return proxies
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
+    private fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
         // v2ray JSONv4 config, Xray config and JSONv4 config of Exclave's v2ray fork only
         val proxies = ArrayList<AbstractBean>()
         when (val proto = outbound.getString("protocol")?.lowercase()) {
@@ -1253,7 +1202,7 @@ object RawUpdater : GroupUpdater() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
+    private fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
         val proxies = ArrayList<AbstractBean>()
         when (val type = outbound["type"]) {
             "shadowsocks", "trojan", "vmess", "vless", "socks", "http" -> {
@@ -1826,7 +1775,7 @@ object RawUpdater : GroupUpdater() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun parseSingBoxEndpoint(endpoint: JSONObject): List<AbstractBean> {
+    private fun parseSingBoxEndpoint(endpoint: JSONObject): List<AbstractBean> {
         val proxies = ArrayList<AbstractBean>()
         when (endpoint["type"]) {
             "wireguard" -> {
@@ -1886,7 +1835,7 @@ object RawUpdater : GroupUpdater() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
+    private fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
         val proxies = ArrayList<AbstractBean>()
         when (val type = outbound.getString("protocol")) {
             "shadowsocks", "trojan", "vmess", "vless", "socks", "http", "shadowsocks2022" -> {
@@ -2220,7 +2169,7 @@ object RawUpdater : GroupUpdater() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
+    private fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
         val proxies = ArrayList<AbstractBean>()
         // Note: YAML numbers parsed as "Long"
         when (proxy["type"]) {

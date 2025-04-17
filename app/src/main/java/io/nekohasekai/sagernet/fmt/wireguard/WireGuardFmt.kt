@@ -6,6 +6,7 @@ import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 import org.ini4j.Ini
+import java.io.StringReader
 import java.io.StringWriter
 
 fun parseV2rayNWireGuard(server: String): AbstractBean {
@@ -36,6 +37,46 @@ fun parseV2rayNWireGuard(server: String): AbstractBean {
             name = it
         }
     }
+}
+
+fun parseWireGuardConfig(conf: String): List<WireGuardBean> {
+    val beans = mutableListOf<WireGuardBean>()
+    val ini = Ini(StringReader(conf))
+    if (ini.size == 0) {
+        return beans
+    }
+    val iface = ini["Interface"] ?: return beans
+    val localAddresses = iface.getAll("Address")
+    if (localAddresses.isNullOrEmpty()) {
+        return beans
+    }
+    val peers = ini.getAll("Peer")
+    if (peers.isNullOrEmpty()) {
+        return beans
+    }
+    val wgBean = WireGuardBean().apply {
+        localAddress = localAddresses.flatMap {
+            it.filterNot { it.isWhitespace() }.split(",")
+        }.joinToString("\n")
+        privateKey = iface["PrivateKey"]
+        mtu = iface["MTU"]?.toInt()?.takeIf { it > 0 } ?: 1420
+    }
+    for (peer in peers) {
+        val endpoint = peer["Endpoint"]
+        if (endpoint.isNullOrEmpty() || !endpoint.contains(":")) {
+            continue
+        }
+        val port = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
+        val publicKey = peer["PublicKey"] ?: continue
+        beans.add(wgBean.clone().apply {
+            serverAddress = endpoint.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
+            serverPort = port
+            peerPreSharedKey = peer["PreSharedKey"]
+            keepaliveInterval = peer["PersistentKeepalive"]?.toIntOrNull()?.takeIf { it > 0 }
+            peerPublicKey = publicKey
+        })
+    }
+    return beans
 }
 
 fun WireGuardBean.toConf(): String {
