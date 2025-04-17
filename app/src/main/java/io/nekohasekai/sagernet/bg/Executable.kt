@@ -24,10 +24,10 @@ package io.nekohasekai.sagernet.bg
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
-import android.text.TextUtils
 import io.nekohasekai.sagernet.ktx.Logs
 import java.io.File
 import java.io.IOException
+import androidx.core.text.isDigitsOnly
 
 object Executable {
     private val EXECUTABLES = setOf(
@@ -40,12 +40,11 @@ object Executable {
         "libmieru.so",
         "libtuic.so",
         "libtuic5.so",
-        "libshadowtls.so",
         "libjuicity.so",
     )
 
     fun killAll() {
-        for (process in File("/proc").listFiles { _, name -> TextUtils.isDigitsOnly(name) }
+        for (process in File("/proc").listFiles { _, name -> name.isDigitsOnly() }
             ?: return) {
             val exe = File(try {
                 File(process, "cmdline").inputStream().bufferedReader().use {
