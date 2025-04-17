@@ -1,6 +1,7 @@
 package io.nekohasekai.sagernet.fmt.wireguard
 
 import io.nekohasekai.sagernet.fmt.AbstractBean
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
@@ -68,7 +69,7 @@ fun parseWireGuardConfig(conf: String): List<WireGuardBean> {
         }
         val port = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
         val publicKey = peer["PublicKey"] ?: continue
-        beans.add(wgBean.clone().apply {
+        beans.add(wgBean.applyDefaultValues().clone().apply {
             serverAddress = endpoint.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
             serverPort = port
             peerPreSharedKey = peer["PreSharedKey"]

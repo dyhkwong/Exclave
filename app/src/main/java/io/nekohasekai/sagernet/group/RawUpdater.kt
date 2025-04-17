@@ -1003,7 +1003,7 @@ object RawUpdater : GroupUpdater() {
                         }
                     }
                     (settings.getArray("peers"))?.forEach { peer ->
-                        proxies.add(wireguardBean.clone().apply {
+                        proxies.add(wireguardBean.applyDefaultValues().clone().apply {
                             (peer as? JSONObject)?.getString("endpoint")?.also {
                                 serverAddress = it.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
                                 serverPort = it.substringAfterLast(":").toIntOrNull()
@@ -1697,7 +1697,7 @@ object RawUpdater : GroupUpdater() {
                 }
                 outbound.getArray("peers")?.forEach { json ->
                     val peer = json as? JSONObject
-                    proxies.add(wireGuardBean.clone().apply {
+                    proxies.add(wireGuardBean.applyDefaultValues().clone().apply {
                         peer?.getString("server")?.also {
                             serverAddress = it
                         }
@@ -1802,7 +1802,7 @@ object RawUpdater : GroupUpdater() {
                 }
                 endpoint.getArray("peers")?.forEach { json ->
                     val peer = json as? JSONObject
-                    proxies.add(wireGuardBean.clone().apply {
+                    proxies.add(wireGuardBean.applyDefaultValues().clone().apply {
                         peer?.getString("address")?.also {
                             serverAddress = it
                         }
@@ -2523,7 +2523,7 @@ object RawUpdater : GroupUpdater() {
                 }
                 (proxy["peers"] as? List<Map<String, Any>>)?.forEach {
                     if (it["server"] != null && it["port"] != null) {
-                        proxies.add(wireGuardBean.clone().apply {
+                        proxies.add(wireGuardBean.applyDefaultValues().clone().apply {
                             serverAddress = it["server"]?.toString()
                             serverPort = it["port"]?.toString()?.toIntOrNull()
                             peerPublicKey = it["public-key"] as? String
