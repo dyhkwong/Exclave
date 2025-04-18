@@ -2527,13 +2527,14 @@ object RawUpdater : GroupUpdater() {
                         serverAddress = proxy["ip"]?.toString() ?: proxy["server"]?.toString() ?: return proxies
                         serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         token = proxy["token"]?.toString()
-                        udpRelayMode = proxy["udp-relay-mode"] as? String
+                        udpRelayMode = if (proxy["udp-relay-mode"] as? String == "quic") "quic" else "native"
                         congestionController = proxy["congestion-controller"] as? String
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         reduceRTT = proxy["reduce-rtt"] as? Boolean == true
                         // allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                         sni = proxy["sni"]?.toString() ?: if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null
-                        alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
+                        // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
+                        alpn = if (!proxy.containsKey("alpn")) "h3" else (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
                     })
                 } else {
@@ -2542,13 +2543,14 @@ object RawUpdater : GroupUpdater() {
                         serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         uuid = proxy["uuid"] as? String
                         password = proxy["password"]?.toString()
-                        udpRelayMode = proxy["udp-relay-mode"] as? String
+                        udpRelayMode = if (proxy["udp-relay-mode"] as? String == "quic") "quic" else "native"
                         congestionControl = proxy["congestion-controller"] as? String
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         zeroRTTHandshake = proxy["reduce-rtt"] as? Boolean == true
                         allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                         sni =  proxy["sni"]?.toString() ?: if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null
-                        alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
+                        // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
+                        alpn = if (!proxy.containsKey("alpn")) "h3" else (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
                     })
                 }
