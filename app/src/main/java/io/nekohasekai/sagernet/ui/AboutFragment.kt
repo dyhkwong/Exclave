@@ -31,6 +31,7 @@ import android.view.View
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -44,7 +45,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
 import io.nekohasekai.sagernet.fmt.PluginEntry
-import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.onMainDispatcher
+import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.plugin.PluginManager
 import libcore.Libcore
 
@@ -125,9 +129,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(R.string.app_version)
                         .subText(BuildConfig.VERSION_NAME)
                         .setOnClickAction {
-                            requireContext().launchCustomTab(
-                                "https://github.com/dyhkwong/Exclave/releases"
-                            )
+                            startActivity(Intent(
+                                Intent.ACTION_VIEW,
+                                "https://github.com/dyhkwong/Exclave/releases".toUri()
+                            ))
                         }
                         .setOnLongClickAction {
                             DataStore.enableDebug = !DataStore.enableDebug
@@ -138,9 +143,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .text(getString(R.string.version_x, "v2ray-core"))
                         .subText("v" + Libcore.getV2RayVersion() + "-fork")
                         .setOnClickAction {
-                            requireContext().launchCustomTab(
-                                "https://github.com/dyhkwong/v2ray-core/tree/dev-sagernet"
-                            )
+                            startActivity(Intent(
+                                Intent.ACTION_VIEW,
+                                "https://github.com/dyhkwong/v2ray-core/tree/dev-sagernet".toUri()
+                            ))
                         }
                         .build())
                     .apply {
@@ -178,7 +184,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                         requestIgnoreBatteryOptimizations.launch(
                                             Intent(
                                                 Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                                                Uri.parse("package:${app.packageName}")
+                                                "package:${app.packageName}".toUri()
                                             )
                                         )
                                     }
@@ -190,9 +196,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             .text(R.string.donate_to_original_author)
                             .subText(R.string.donate_info)
                             .setOnClickAction {
-                                requireContext().launchCustomTab(
-                                    "https://sekai.icu/sponsors/"
-                                )
+                                startActivity(Intent(
+                                    Intent.ACTION_VIEW,
+                                    "https://sekai.icu/sponsors/".toUri()
+                                ))
                             }
                             .build())
                     }
@@ -204,10 +211,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         .icon(R.drawable.ic_baseline_sanitizer_24)
                         .text(R.string.github)
                         .setOnClickAction {
-                            requireContext().launchCustomTab(
-                                "https://github.com/dyhkwong/Exclave"
-
-                            )
+                            startActivity(Intent(
+                                Intent.ACTION_VIEW,
+                                "https://github.com/dyhkwong/Exclave".toUri()
+                            ))
                         }
                         .build())
                     .build())

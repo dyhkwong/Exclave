@@ -30,6 +30,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -210,11 +211,16 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
                         startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=${stats.packageName}")
+                                "market://details?id=${stats.packageName}".toUri()
                             )
                         )
                     } catch (e: ActivityNotFoundException) {
-                        requireContext().launchCustomTab("https://play.google.com/store/apps/details?id=${stats.packageName}")
+                        startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "https://play.google.com/store/apps/details?id=${stats.packageName}".toUri()
+                            )
+                        )
                     }
                 }
                 R.id.create_rule -> {

@@ -25,6 +25,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -303,7 +304,10 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         inner class DocumentHolder(binding: LayoutEmptyRouteBinding) : RecyclerView.ViewHolder(binding.root) {
             fun bind() {
                 itemView.setOnClickListener {
-                    it.context.launchCustomTab("https://www.v2fly.org/config/routing.html#ruleobject")
+                    startActivity(Intent(
+                        Intent.ACTION_VIEW,
+                        "https://www.v2fly.org/config/routing.html#ruleobject".toUri()
+                    ))
                 }
             }
         }
