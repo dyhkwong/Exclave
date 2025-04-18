@@ -119,6 +119,10 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             bean.uuid = url.username
         }
 
+        if (bean is VMessBean) {
+            bean.encryption = url.queryParameter("encryption")
+        }
+
         bean.type = url.queryParameter("type")
 
         if (bean is TrojanBean) {
