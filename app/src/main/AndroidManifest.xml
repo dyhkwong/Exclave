@@ -124,13 +124,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="exclave" />
+                <!--data android:scheme="http" /-->
+                <!--data android:scheme="https" /-->
                 <data android:scheme="ss" />
+                <!--data android:scheme="ssh" /-->
                 <data android:scheme="ssr" />
                 <data android:scheme="socks" />
                 <data android:scheme="socks4" />
                 <data android:scheme="socks4a" />
                 <data android:scheme="sock5" />
                 <data android:scheme="sock5h" />
+                <data android:scheme="socks+tls" />
                 <data android:scheme="vmess" />
                 <data android:scheme="vless" />
                 <data android:scheme="trojan" />
@@ -139,11 +143,13 @@
                 <data android:scheme="naive+quic" />
                 <data android:scheme="brook" />
                 <data android:scheme="hysteria" />
+                <data android:scheme="hy" />
                 <data android:scheme="hysteria2" />
                 <data android:scheme="hy2" />
                 <data android:scheme="juicity" />
                 <data android:scheme="tuic" />
                 <data android:scheme="wireguard" />
+                <data android:scheme="wg" />
                 <data android:scheme="mierus" />
                 <data android:scheme="quic" />
                 <data android:scheme="anytls" />

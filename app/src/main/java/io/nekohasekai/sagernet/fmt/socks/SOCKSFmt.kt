@@ -57,6 +57,7 @@ fun parseSOCKS(link: String): SOCKSBean {
             "socks4" -> SOCKSBean.PROTOCOL_SOCKS4
             "socks4a" -> SOCKSBean.PROTOCOL_SOCKS4A
             "socks5", "socks5h" /* blame cURL for this */, "socks" -> SOCKSBean.PROTOCOL_SOCKS5
+            "socks+tls" -> SOCKSBean.PROTOCOL_SOCKS5 // Who TF invent this?
             else -> error("impossible")
         }
         serverAddress = url.host
@@ -66,6 +67,14 @@ fun parseSOCKS(link: String): SOCKSBean {
         name = url.fragment
         url.queryParameter("tls")?.takeIf { it == "true" || it == "1" }?.let {
             // non-standard
+            security = "tls"
+            url.queryParameter("sni")?.let {
+                sni = it
+            }
+        }
+        if (url.scheme == "socks+tls") {
+            // non-standard
+            security = "tls"
             url.queryParameter("sni")?.let {
                 sni = it
             }
@@ -73,12 +82,22 @@ fun parseSOCKS(link: String): SOCKSBean {
     }
 }
 
-fun SOCKSBean.toUri(): String {
-    val builder = Libcore.newURL("socks${protocolVersion()}")
-    builder.host = serverAddress
-    builder.port = serverPort
-    if (!username.isNullOrEmpty()) builder.username = username
-    if (!password.isNullOrEmpty()) builder.password = password
+fun SOCKSBean.toUri(): String? {
+    if (security != "tls" && security != "none") error("unsupported socks with tls")
+    if (type != "tcp" || headerType != "none") error("unsupported socks with v2ray transport")
+
+    val builder = Libcore.newURL("socks${protocolVersion()}").apply {
+        host = serverAddress
+        port = serverPort
+        if (name.isNotEmpty()) fragment = name
+    }
+    if (username.isNotEmpty()) {
+        builder.username = username
+    }
+    if (password.isNotEmpty()) {
+        builder.password = password
+    }
+
     if (security == "tls") {
         // non-standard
         builder.addQueryParameter("tls", "true") // non-standard
@@ -86,7 +105,6 @@ fun SOCKSBean.toUri(): String {
             builder.addQueryParameter("sni", sni) // non-standard
         }
     }
-    if (!name.isNullOrEmpty()) builder.fragment = name
-    return builder.string
 
+    return builder.string
 }

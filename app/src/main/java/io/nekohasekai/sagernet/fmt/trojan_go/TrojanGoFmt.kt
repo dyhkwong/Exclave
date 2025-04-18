@@ -26,8 +26,15 @@ import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
+import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
+
+fun TrojanGoBean.fixInvalidParams() {
+    if (plugin != null) {
+        plugin = PluginConfiguration(plugin).apply { this.fixInvalidParams() }.toString()
+    }
+}
 
 fun parseTrojanGo(server: String): TrojanGoBean {
     val link = Libcore.parseURL(server)
@@ -39,25 +46,29 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         link.queryParameter("sni")?.let {
             sni = it
         }
-        link.queryParameter("type")?.let { lType ->
-            when (lType) {
+        link.queryParameter("type")?.let {
+            when (it) {
+                "original" -> type = "none"
                 "ws" -> {
-                    type = lType
-                    link.queryParameter("host")?.let {
-                        host = it
-                    }
-                    link.queryParameter("path")?.let {
-                        path = it
-                    }
+                    type = it
+                    host = link.queryParameter("host")
+                    path = link.queryParameter("path")
                 }
-                else -> type = "none"
+                else -> error("unsupported protocol")
             }
         }
         link.queryParameter("encryption")?.let {
-            encryption = it
+            encryption = when {
+                it == "none" -> it
+                it.startsWith("ss;aes-128-gcm:") ||
+                        it.startsWith("ss;aes-256-gcm:") ||
+                        it.startsWith("ss;chacha20-ietf-poly1305:") -> it
+                else -> error("unsupported encryption")
+            }
         }
         link.queryParameter("plugin")?.let {
             plugin = it
+            fixInvalidParams()
         }
         link.fragment?.let {
             name = it
@@ -65,16 +76,23 @@ fun parseTrojanGo(server: String): TrojanGoBean {
     }
 }
 
-fun TrojanGoBean.toUri(): String {
-    val builder = Libcore.newURL("trojan-go")
-    builder.host = serverAddress
-    builder.port = serverPort
-    builder.username = password
+fun TrojanGoBean.toUri(): String? {
+    val builder = Libcore.newURL("trojan-go").apply {
+        host = serverAddress
+        port = serverPort
+        if (password.isNotEmpty()) {
+            username = password
+        } else {
+            error("empty password")
+        }
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
+    }
 
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
-
     when (type) {
         "ws" -> {
             builder.addQueryParameter("type", type)
@@ -86,8 +104,7 @@ fun TrojanGoBean.toUri(): String {
             }
         }
     }
-
-    if (encryption.isNotEmpty() && encryption != "none") {
+    if (encryption != "none") {
         builder.addQueryParameter("encryption", encryption)
     }
     if (plugin.isNotEmpty() && PluginConfiguration(plugin).selected.isNotEmpty()) {
@@ -97,11 +114,6 @@ fun TrojanGoBean.toUri(): String {
         }
         builder.addQueryParameter("plugin", p)
     }
-
-    if (name.isNotEmpty()) {
-        builder.fragment = name
-    }
-
     return builder.string
 }
 
@@ -147,8 +159,7 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
         }
 
         when {
-            encryption == "none" -> {
-            }
+            encryption == "none" -> {}
             encryption.startsWith("ss;") -> conf["shadowsocks"] = JSONObject().also {
                 it["enabled"] = true
                 it["method"] = encryption.substringAfter(";").substringBefore(":")

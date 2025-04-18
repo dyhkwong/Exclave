@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.group
 
 import androidx.core.net.toUri
 import cn.hutool.core.codec.Base64
+import cn.hutool.core.lang.UUID
 import cn.hutool.json.JSONObject
 import cn.hutool.json.JSONUtil
 import com.github.shadowsocks.plugin.PluginOptions
@@ -42,14 +43,30 @@ import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
+import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocks2022Method
+import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocksMethod
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.fmt.shadowsocksr.supportedShadowsocksRMethod
+import io.nekohasekai.sagernet.fmt.shadowsocksr.supportedShadowsocksRObfs
+import io.nekohasekai.sagernet.fmt.shadowsocksr.supportedShadowsocksRProtocol
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
+import io.nekohasekai.sagernet.fmt.tuic.supportedTuicCongestionControl
+import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
+import io.nekohasekai.sagernet.fmt.tuic5.supportedTuic5CongestionControl
+import io.nekohasekai.sagernet.fmt.tuic5.supportedTuic5RelayMode
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
+import io.nekohasekai.sagernet.fmt.v2ray.legacyVlessFlow
+import io.nekohasekai.sagernet.fmt.v2ray.nonRawTransportName
+import io.nekohasekai.sagernet.fmt.v2ray.supportedKcpQuicHeaderType
+import io.nekohasekai.sagernet.fmt.v2ray.supportedQuicSecurity
+import io.nekohasekai.sagernet.fmt.v2ray.supportedVlessFlow
+import io.nekohasekai.sagernet.fmt.v2ray.supportedVmessMethod
+import io.nekohasekai.sagernet.fmt.v2ray.supportedXhttpMode
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardConfig
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
@@ -344,23 +361,18 @@ object RawUpdater : GroupUpdater() {
             }
             else -> {
                 val beans = ArrayList<AbstractBean>()
-                var maybeV2Ray = true
-                var maybeSingBox = true
                 json.getArray("endpoints")?.filterIsInstance<JSONObject>()?.forEach { endpoint ->
-                    maybeV2Ray = false
                     beans.addAll(parseSingBoxEndpoint(endpoint))
                 }
                 json.getArray("outbounds")?.filterIsInstance<JSONObject>()?.forEach { outbound ->
                     when {
-                        maybeV2Ray && outbound.contains("protocol") -> {
-                            maybeSingBox = false
+                        outbound.contains("protocol") -> {
                             beans.addAll(
                                 parseV2ray5Outbound(outbound).takeIf { it.isNotEmpty() } ?:
                                 parseV2RayOutbound(outbound)
                             )
                         }
-                        maybeSingBox && outbound.contains("type") -> {
-                            maybeV2Ray = false
+                        outbound.contains("type") -> {
                             beans.addAll(parseSingBoxOutbound(outbound))
                         }
                     }
@@ -385,289 +397,314 @@ object RawUpdater : GroupUpdater() {
                     else -> HttpBean()
                 }
                 outbound.getObject("streamSettings")?.also { streamSettings ->
-                    when (val security = streamSettings.getString("security")?.lowercase()) {
-                        "tls", "utls" -> {
-                            v2rayBean.security = "tls"
-                            var tlsConfig = streamSettings.getObject("tlsSettings")
-                            if (security == "utls") {
-                                streamSettings.getObject("utlsSettings")?.also {
-                                    tlsConfig = it.getObject("tlsConfig")
-                                }
-                            }
-                            tlsConfig?.also { tlsSettings ->
-                                tlsSettings.getString("serverName")?.also {
-                                    v2rayBean.sni = it
-                                }
-                                (tlsSettings.getAny("alpn") as? List<String>)?.also {
-                                    v2rayBean.alpn = it.joinToString("\n")
-                                } ?: tlsSettings.getString("alpn")?.also {
-                                    v2rayBean.alpn = it.split(",").joinToString("\n")
-                                }
-                                tlsSettings.getBoolean("allowInsecure")?.also {
-                                    v2rayBean.allowInsecure = it
-                                }
-                                (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
-                                    v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
-                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
-                                        v2rayBean.allowInsecure = allowInsecure
+                    streamSettings.getString("security")?.lowercase()?.also { security ->
+                        when (security) {
+                            "tls", "utls", "xtls" -> {
+                                v2rayBean.security = "tls"
+                                var tlsConfig = streamSettings.getObject("tlsSettings")
+                                if (security == "utls") {
+                                    streamSettings.getObject("utlsSettings")?.also {
+                                        tlsConfig = it.getObject("tlsConfig")
                                     }
                                 }
-                                // do not parse "imitate"
-                                // do not parse "fingerprint"
+                                if (security == "xtls") { // old Xray
+                                    streamSettings.getObject("xtlsSettings")?.also {
+                                        tlsConfig = it
+                                    }
+                                }
+                                tlsConfig?.also { tlsSettings ->
+                                    tlsSettings.getString("serverName")?.also {
+                                        v2rayBean.sni = it
+                                    }
+                                    (tlsSettings.getAny("alpn") as? List<String>)?.also {
+                                        v2rayBean.alpn = it.joinToString("\n")
+                                    } ?: tlsSettings.getString("alpn")?.also {
+                                        v2rayBean.alpn = it.split(",").joinToString("\n")
+                                    }
+                                    tlsSettings.getBoolean("allowInsecure")?.also {
+                                        v2rayBean.allowInsecure = it
+                                    }
+                                    (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                                        v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                        tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                            v2rayBean.allowInsecure = allowInsecure
+                                        }
+                                    }
+                                    // tlsSettings.getString("imitate")
+                                    // tlsSettings.getString("fingerprint")
+                                }
                             }
-                        }
-                        "reality" -> {
-                            v2rayBean.security = "reality"
-                            streamSettings.getObject("realitySettings")?.also { realitySettings ->
-                                realitySettings.getString("serverName")?.also {
-                                    v2rayBean.sni = it
-                                }
-                                realitySettings.getString("publicKey")?.also {
-                                    v2rayBean.realityPublicKey = it
-                                }
-                                realitySettings.getString("shortId")?.also {
-                                    v2rayBean.realityShortId = it
+                            "reality" -> {
+                                v2rayBean.security = "reality"
+                                streamSettings.getObject("realitySettings")?.also { realitySettings ->
+                                    realitySettings.getString("serverName")?.also {
+                                        v2rayBean.sni = it
+                                    }
+                                    realitySettings.getString("publicKey")?.also {
+                                        v2rayBean.realityPublicKey = it
+                                    }
+                                    realitySettings.getString("shortId")?.also {
+                                        v2rayBean.realityShortId = it
+                                    }
+                                    // realitySettings.getString("fingerprint")
                                 }
                             }
                         }
                     }
-                    when (streamSettings.getString("network")?.lowercase()) {
-                        "tcp", "raw" -> {
-                            v2rayBean.type = "tcp"
-                            (streamSettings.getObject("tcpSettings") ?: streamSettings.getObject("rawSettings"))?.also { tcpSettings ->
-                                tcpSettings.getObject("header")?.also { header ->
-                                    when (header.getString("type")?.lowercase()) {
-                                        "http" -> {
-                                            v2rayBean.headerType = "http"
-                                            header.getObject("request")?.also { request ->
-                                                (request.getAny("path") as? List<String>)?.also {
-                                                    v2rayBean.path = it.joinToString("\n")
-                                                } ?: request.getString("path")?.also {
-                                                    v2rayBean.path = it.split(",").joinToString("\n")
-                                                }
-                                                request.getObject("headers")?.also { headers ->
-                                                    (headers.getAny("Host") as? List<String>)?.also {
-                                                        v2rayBean.host = it.joinToString("\n")
-                                                    } ?: headers.getString("Host")?.also {
-                                                        v2rayBean.host = it.split(",").joinToString("\n")
+                    streamSettings.getString("network")?.lowercase()?.also { network ->
+                        when (network) {
+                            "tcp", "raw" -> {
+                                v2rayBean.type = "tcp"
+                                (streamSettings.getObject("tcpSettings") ?: streamSettings.getObject("rawSettings"))?.also { tcpSettings ->
+                                    tcpSettings.getObject("header")?.also { header ->
+                                        when (header.getString("type")?.lowercase()) {
+                                            "none" -> {}
+                                            "http" -> {
+                                                v2rayBean.headerType = "http"
+                                                header.getObject("request")?.also { request ->
+                                                    (request.getAny("path") as? List<String>)?.also {
+                                                        v2rayBean.path = it.joinToString("\n")
+                                                    } ?: request.getString("path")?.also {
+                                                        v2rayBean.path = it.split(",").joinToString("\n")
+                                                    }
+                                                    request.getObject("headers")?.also { headers ->
+                                                        (headers.getAny("Host") as? List<String>)?.also {
+                                                            v2rayBean.host = it.joinToString("\n")
+                                                        } ?: headers.getString("Host")?.also {
+                                                            v2rayBean.host = it.split(",").joinToString("\n")
+                                                        }
                                                     }
                                                 }
+                                            }
+                                            else -> return proxies
+                                        }
+                                    }
+                                }
+                            }
+                            "kcp", "mkcp" -> {
+                                v2rayBean.type = "kcp"
+                                streamSettings.getObject("kcpSettings")?.also { kcpSettings ->
+                                    kcpSettings.getString("seed")?.also {
+                                        v2rayBean.mKcpSeed = it
+                                    }
+                                    kcpSettings.getObject("header")?.also { header ->
+                                        header.getString("type")?.lowercase()?.also {
+                                            if (it !in supportedKcpQuicHeaderType) return proxies
+                                            v2rayBean.headerType = it
+                                        }
+                                    }
+                                }
+                            }
+                            "ws", "websocket" -> {
+                                v2rayBean.type = "ws"
+                                streamSettings.getObject("wsSettings")?.also { wsSettings ->
+                                    (wsSettings.getAny("headers") as? Map<String, String>)?.forEach { (key, value) ->
+                                        when (key.lowercase()) {
+                                            "host" -> {
+                                                v2rayBean.host = value
+                                            }
+                                        }
+                                    }
+                                    wsSettings.getString("host")?.also {
+                                        // Xray has a separate field of Host header
+                                        // will not follow the breaking change in
+                                        // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
+                                        v2rayBean.host = it
+                                    }
+                                    wsSettings.getInteger("maxEarlyData")?.also {
+                                        v2rayBean.maxEarlyData = it
+                                    }
+                                    wsSettings.getString("earlyDataHeaderName")?.also {
+                                        v2rayBean.earlyDataHeaderName = it
+                                    }
+                                    wsSettings.getString("path")?.also { path ->
+                                        v2rayBean.path = path
+                                        // RPRX's smart-assed invention. This of course will break under some conditions.
+                                        val u = Libcore.parseURL(path)
+                                        u.queryParameter("ed")?.also { ed ->
+                                            u.deleteQueryParameter("ed")
+                                            v2rayBean.path = u.string
+                                            (ed.toIntOrNull())?.also {
+                                                v2rayBean.maxEarlyData = it
+                                            }
+                                            v2rayBean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                                        }
+                                    }
+                                }
+                            }
+                            "http", "h2" -> {
+                                v2rayBean.type = "http"
+                                streamSettings.getObject("httpSettings")?.also { httpSettings ->
+                                    // will not follow the breaking change in
+                                    // https://github.com/XTLS/Xray-core/commit/0a252ac15d34e7c23a1d3807a89bfca51cbb559b
+                                    (httpSettings.getAny("host") as? List<String>)?.also {
+                                        v2rayBean.host = it.joinToString("\n")
+                                    } ?: httpSettings.getString("host")?.also {
+                                        v2rayBean.host = it.split(",").joinToString("\n")
+                                    }
+                                    httpSettings.getString("path")?.also {
+                                        v2rayBean.path = it
+                                    }
+                                }
+                            }
+                            "quic" -> {
+                                v2rayBean.type = "quic"
+                                streamSettings.getObject("quicSettings")?.also { quicSettings ->
+                                    quicSettings.getString("security")?.lowercase()?.also {
+                                        if (it !in supportedQuicSecurity) return proxies
+                                        v2rayBean.quicSecurity = it
+                                    }
+                                    quicSettings.getString("key")?.also {
+                                        v2rayBean.quicKey = it
+                                    }
+                                    quicSettings.getObject("header")?.also { header ->
+                                        header.getString("type")?.lowercase()?.also {
+                                            if (it !in supportedKcpQuicHeaderType) return proxies
+                                            v2rayBean.headerType = it
+                                        }
+                                    }
+                                }
+                            }
+                            "grpc", "gun" -> {
+                                v2rayBean.type = "grpc"
+                                // Xray hijacks the share link standard, uses escaped `serviceName` and some other non-standard `serviceName`s and breaks the compatibility with other implementations.
+                                // Fixing the compatibility with Xray will break the compatibility with V2Ray and others.
+                                // So do not fix the compatibility with Xray.
+                                (streamSettings.getObject("grpcSettings") ?: streamSettings.getObject("gunSettings"))?.also { grpcSettings ->
+                                    grpcSettings.getString("serviceName")?.also {
+                                        v2rayBean.grpcServiceName = it
+                                    }
+                                }
+                            }
+                            "httpupgrade" -> {
+                                v2rayBean.type = "httpupgrade"
+                                streamSettings.getObject("httpupgradeSettings")?.also { httpupgradeSettings ->
+                                    httpupgradeSettings.getString("host")?.also {
+                                        // will not follow the breaking change in
+                                        // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
+                                        v2rayBean.host = it
+                                    }
+                                    httpupgradeSettings.getString("path")?.also {
+                                        v2rayBean.path = it
+                                        // RPRX's smart-assed invention. This of course will break under some conditions.
+                                        val u = Libcore.parseURL(it)
+                                        u.queryParameter("ed")?.also {
+                                            u.deleteQueryParameter("ed")
+                                            v2rayBean.path = u.string
+                                        }
+                                    }
+                                    httpupgradeSettings.getInteger("maxEarlyData")?.also {
+                                        v2rayBean.maxEarlyData = it
+                                    }
+                                    httpupgradeSettings.getString("earlyDataHeaderName")?.also {
+                                        v2rayBean.earlyDataHeaderName = it
+                                    }
+                                }
+                            }
+                            "meek" -> {
+                                v2rayBean.type = "meek"
+                                streamSettings.getObject("meekSettings")?.also { meekSettings ->
+                                    meekSettings.getString("url")?.also {
+                                        v2rayBean.meekUrl = it
+                                    }
+                                }
+                            }
+                            "mekya" -> {
+                                v2rayBean.type = "mekya"
+                                streamSettings.getObject("mekyaSettings")?.also { mekyaSettings ->
+                                    mekyaSettings.getString("url")?.also {
+                                        v2rayBean.mekyaUrl = it
+                                    }
+                                    mekyaSettings.getObject("kcp")?.also { kcp ->
+                                        kcp.getString("seed")?.also {
+                                            v2rayBean.mekyaKcpSeed = it
+                                        }
+                                        kcp.getObject("header")?.also { header ->
+                                            header.getString("type")?.lowercase()?.also {
+                                                if (it !in supportedKcpQuicHeaderType) return proxies
+                                                v2rayBean.mekyaKcpHeaderType = it
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                        "kcp", "mkcp" -> {
-                            v2rayBean.type = "kcp"
-                            streamSettings.getObject("kcpSettings")?.also { kcpSettings ->
-                                kcpSettings.getString("seed")?.also {
-                                    v2rayBean.mKcpSeed = it
-                                }
-                                kcpSettings.getObject("header")?.also { header ->
-                                    header.getString("type")?.also {
-                                        v2rayBean.headerType = it.lowercase()
+                            "splithttp", "xhttp" -> {
+                                v2rayBean.type = "splithttp"
+                                (streamSettings.getObject("splithttpSettings") ?: streamSettings.getObject("xhttpSettings"))?.also { splithttpSettings ->
+                                    splithttpSettings.getString("host")?.also {
+                                        v2rayBean.host = it
                                     }
-                                }
-                            }
-                        }
-                        "ws", "websocket" -> {
-                            v2rayBean.type = "ws"
-                            streamSettings.getObject("wsSettings")?.also { wsSettings ->
-                                (wsSettings.getAny("headers") as? Map<String, String>)?.forEach { (key, value) ->
-                                    when (key.lowercase()) {
-                                        "host" -> {
-                                            v2rayBean.host = value
+                                    splithttpSettings.getString("path")?.also {
+                                        v2rayBean.path = it
+                                    }
+                                    splithttpSettings.getString("mode")?.also {
+                                        v2rayBean.splithttpMode = when (it) {
+                                            in supportedXhttpMode -> it
+                                            "" -> "auto"
+                                            else -> return proxies
                                         }
                                     }
-                                }
-                                wsSettings.getString("host")?.also {
-                                    // Xray has a separate field of Host header
-                                    // will not follow the breaking change in
-                                    // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
-                                    v2rayBean.host = it
-                                }
-                                wsSettings.getInteger("maxEarlyData")?.also {
-                                    v2rayBean.maxEarlyData = it
-                                }
-                                wsSettings.getString("earlyDataHeaderName")?.also {
-                                    v2rayBean.earlyDataHeaderName = it
-                                }
-                                wsSettings.getString("path")?.also { path ->
-                                    v2rayBean.path = path
-                                    // RPRX's smart-assed invention. This of course will break under some conditions.
-                                    val u = Libcore.parseURL(path)
-                                    u.queryParameter("ed")?.also { ed ->
-                                        u.deleteQueryParameter("ed")
-                                        v2rayBean.path = u.string
-                                        (ed.toIntOrNull())?.also {
-                                            v2rayBean.maxEarlyData = it
-                                        }
-                                        v2rayBean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                                    // fuck RPRX `extra`
+                                    var extra = JSONObject()
+                                    splithttpSettings.getObject("extra")?.also {
+                                        extra = it
                                     }
-                                }
-                            }
-                        }
-                        "http", "h2" -> {
-                            v2rayBean.type = "http"
-                            streamSettings.getObject("httpSettings")?.also { httpSettings ->
-                                // will not follow the breaking change in
-                                // https://github.com/XTLS/Xray-core/commit/0a252ac15d34e7c23a1d3807a89bfca51cbb559b
-                                (httpSettings.getAny("host") as? List<String>)?.also {
-                                    v2rayBean.host = it.joinToString("\n")
-                                } ?: httpSettings.getString("host")?.also {
-                                    v2rayBean.host = it.split(",").joinToString("\n")
-                                }
-                                httpSettings.getString("path")?.also {
-                                    v2rayBean.path = it
-                                }
-                            }
-                        }
-                        "quic" -> {
-                            v2rayBean.type = "quic"
-                            streamSettings.getObject("quicSettings")?.also { quicSettings ->
-                                quicSettings.getString("security")?.also {
-                                    v2rayBean.quicSecurity = it.lowercase()
-                                }
-                                quicSettings.getString("key")?.also {
-                                    v2rayBean.quicKey = it
-                                }
-                                quicSettings.getObject("header")?.also { header ->
-                                    header.getString("type")?.lowercase()?.also {
-                                        v2rayBean.headerType = it.lowercase()
-                                    }
-                                }
-                            }
-                        }
-                        "grpc", "gun" -> {
-                            v2rayBean.type = "grpc"
-                            // Xray hijacks the share link standard, uses escaped `serviceName` and some other non-standard `serviceName`s and breaks the compatibility with other implementations.
-                            // Fixing the compatibility with Xray will break the compatibility with V2Ray and others.
-                            // So do not fix the compatibility with Xray.
-                            (streamSettings.getObject("grpcSettings") ?: streamSettings.getObject("gunSettings"))?.also { grpcSettings ->
-                                grpcSettings.getString("serviceName")?.also {
-                                    v2rayBean.grpcServiceName = it
-                                }
-                            }
-                        }
-                        "httpupgrade" -> {
-                            v2rayBean.type = "httpupgrade"
-                            streamSettings.getObject("httpupgradeSettings")?.also { httpupgradeSettings ->
-                                httpupgradeSettings.getString("host")?.also {
-                                    // will not follow the breaking change in
-                                    // https://github.com/XTLS/Xray-core/commit/a2b773135a860f63e990874c551b099dfc888471
-                                    v2rayBean.host = it
-                                }
-                                httpupgradeSettings.getString("path")?.also {
-                                    v2rayBean.path = it
-                                    // RPRX's smart-assed invention. This of course will break under some conditions.
-                                    val u = Libcore.parseURL(it)
-                                    u.queryParameter("ed")?.also {
-                                        u.deleteQueryParameter("ed")
-                                        v2rayBean.path = u.string
-                                    }
-                                }
-                                httpupgradeSettings.getInteger("maxEarlyData")?.also {
-                                    v2rayBean.maxEarlyData = it
-                                }
-                                httpupgradeSettings.getString("earlyDataHeaderName")?.also {
-                                    v2rayBean.earlyDataHeaderName = it
-                                }
-                            }
-                        }
-                        "meek" -> {
-                            v2rayBean.type = "meek"
-                            streamSettings.getObject("meekSettings")?.also { meekSettings ->
-                                meekSettings.getString("url")?.also {
-                                    v2rayBean.meekUrl = it
-                                }
-                            }
-                        }
-                        "mekya" -> {
-                            v2rayBean.type = "mekya"
-                            streamSettings.getObject("mekyaSettings")?.also { mekyaSettings ->
-                                mekyaSettings.getString("url")?.also {
-                                    v2rayBean.mekyaUrl = it
-                                }
-                                mekyaSettings.getObject("kcp")?.also { kcp ->
-                                    kcp.getString("seed")?.also {
-                                        v2rayBean.mekyaKcpSeed = it
-                                    }
-                                    kcp.getObject("header")?.also { header ->
-                                        header.getString("type")?.also {
-                                            v2rayBean.mekyaKcpHeaderType = it.lowercase()
+                                    if (!extra.contains("scMaxEachPostBytes")) {
+                                        splithttpSettings.getInteger("scMaxEachPostBytes")?.also {
+                                            extra.set("scMaxEachPostBytes", it)
+                                        } ?: splithttpSettings.getString("scMaxEachPostBytes")?.also {
+                                            extra.set("scMaxEachPostBytes", it)
                                         }
                                     }
-                                }
-                            }
-                        }
-                        "splithttp", "xhttp" -> {
-                            v2rayBean.type = "splithttp"
-                            (streamSettings.getObject("splithttpSettings") ?: streamSettings.getObject("xhttpSettings"))?.also { splithttpSettings ->
-                                splithttpSettings.getString("host")?.also {
-                                    v2rayBean.host = it
-                                }
-                                splithttpSettings.getString("path")?.also {
-                                    v2rayBean.path = it
-                                }
-                                splithttpSettings.getString("mode")?.also {
-                                    if (it != "" && it != "auto") {
-                                        v2rayBean.splithttpMode = it
+                                    if (!extra.contains("scMinPostsIntervalMs")) {
+                                        splithttpSettings.getInteger("scMinPostsIntervalMs")?.also {
+                                            extra.set("scMinPostsIntervalMs", it)
+                                        } ?: splithttpSettings.getString("scMinPostsIntervalMs")?.also {
+                                            extra.set("scMinPostsIntervalMs", it)
+                                        }
                                     }
-                                }
-                                // fuck RPRX `extra`
-                                var extra = JSONObject()
-                                splithttpSettings.getObject("extra")?.also {
-                                    extra = it
-                                }
-                                if (!extra.contains("scMaxEachPostBytes")) {
-                                    splithttpSettings.getInteger("scMaxEachPostBytes")?.also {
-                                        extra.set("scMaxEachPostBytes", it)
-                                    } ?: splithttpSettings.getString("scMaxEachPostBytes")?.also {
-                                        extra.set("scMaxEachPostBytes", it)
+                                    if (!extra.contains("xPaddingBytes")) {
+                                        splithttpSettings.getInteger("xPaddingBytes")?.also {
+                                            extra.set("xPaddingBytes", it)
+                                        } ?: splithttpSettings.getString("xPaddingBytes")?.also {
+                                            extra.set("xPaddingBytes", it)
+                                        }
                                     }
-                                }
-                                if (!extra.contains("scMinPostsIntervalMs")) {
-                                    splithttpSettings.getInteger("scMinPostsIntervalMs")?.also {
-                                        extra.set("scMinPostsIntervalMs", it)
-                                    } ?: splithttpSettings.getString("scMinPostsIntervalMs")?.also {
-                                        extra.set("scMinPostsIntervalMs", it)
+                                    if (!extra.contains("noGRPCHeader")) {
+                                        splithttpSettings.getBoolean("noGRPCHeader")?.also {
+                                            extra.set("noGRPCHeader", it)
+                                        }
                                     }
-                                }
-                                if (!extra.contains("xPaddingBytes")) {
-                                    splithttpSettings.getInteger("xPaddingBytes")?.also {
-                                        extra.set("xPaddingBytes", it)
-                                    } ?: splithttpSettings.getString("xPaddingBytes")?.also {
-                                        extra.set("xPaddingBytes", it)
-                                    }
-                                }
-                                if (!extra.contains("noGRPCHeader")) {
-                                    splithttpSettings.getBoolean("noGRPCHeader")?.also {
-                                        extra.set("noGRPCHeader", it)
-                                    }
-                                }
-                                if (!extra.isEmpty()) {
-                                    v2rayBean.splithttpExtra = extra.toString()
-                                }
-                            }
-                        }
-                        "hysteria2", "hy2" -> {
-                            v2rayBean.type = "hysteria2"
-                            streamSettings.getObject("hy2Settings")?.also { hy2Settings ->
-                                hy2Settings.getString("password")?.also {
-                                    v2rayBean.hy2Password = it
-                                }
-                                hy2Settings.getObject("congestion")?.also { congestion ->
-                                    congestion.getInteger("up_mbps")?.also {
-                                        v2rayBean.hy2UpMbps = it
-                                    }
-                                    congestion.getInteger("down_mbps")?.also {
-                                        v2rayBean.hy2DownMbps = it
+                                    if (!extra.isEmpty()) {
+                                        v2rayBean.splithttpExtra = extra.toString()
                                     }
                                 }
                             }
+                            "hysteria2", "hy2" -> {
+                                v2rayBean.type = "hysteria2"
+                                streamSettings.getObject("hy2Settings")?.also { hy2Settings ->
+                                    hy2Settings.getString("password")?.also {
+                                        v2rayBean.hy2Password = it
+                                    }
+                                    hy2Settings.getObject("obfs")?.also { obfs ->
+                                        obfs.getString("type")?.also { type ->
+                                            if (type == "salamander") {
+                                                return proxies
+                                            }
+                                        }
+                                    }
+                                    /*hy2Settings.getObject("congestion")?.also { congestion ->
+                                        congestion.getInteger("up_mbps")?.also {
+                                            v2rayBean.hy2UpMbps = it
+                                        }
+                                        congestion.getInteger("down_mbps")?.also {
+                                            v2rayBean.hy2DownMbps = it
+                                        }
+                                    }*/
+                                }
+                            }
+                            else -> return proxies
                         }
-                        else -> return proxies
                     }
                 }
                 when (proto) {
@@ -690,11 +727,16 @@ object RawUpdater : GroupUpdater() {
                                     v2rayBean.serverPort = it
                                 }
                                 (vnext.getArray("users")?.get(0) as? JSONObject)?.also { user ->
-                                    user.getString("id")?.also {
-                                        v2rayBean.uuid = it
+                                    user.getString("id")?.takeIf { it.isNotEmpty() }?.also {
+                                        v2rayBean.uuid = try {
+                                            UUID.fromString(it).toString(false)
+                                        } catch (_: Exception) {
+                                            uuid5(it)
+                                        }
                                     }
-                                    user.getString("security")?.also {
-                                        v2rayBean.encryption = it.lowercase()
+                                    user.getString("security")?.lowercase()?.also {
+                                        if (it !in supportedVmessMethod) return proxies
+                                        v2rayBean.encryption = it
                                     }
                                     user.getInteger("alterId")?.also {
                                         v2rayBean.alterId = it
@@ -708,7 +750,6 @@ object RawUpdater : GroupUpdater() {
                                         }
                                     }
                                 }
-                                proxies.add(v2rayBean)
                             }
                         }
                     }
@@ -731,19 +772,24 @@ object RawUpdater : GroupUpdater() {
                                     v2rayBean.serverPort = it
                                 }
                                 (vnext.getArray("users")?.get(0) as? JSONObject)?.also { user ->
-                                    user.getString("id")?.also {
-                                        v2rayBean.uuid = it
+                                    user.getString("id")?.takeIf { it.isNotEmpty() }?.also {
+                                        v2rayBean.uuid = try {
+                                            UUID.fromString(it).toString(false)
+                                        } catch (_: Exception) {
+                                            uuid5(it)
+                                        }
                                     }
                                     user.getString("flow")?.also {
                                         when (it) {
-                                            "xtls-rprx-vision-udp443", "xtls-rprx-vision" -> {
+                                            in supportedVlessFlow -> {
                                                 v2rayBean.flow = "xtls-rprx-vision-udp443"
                                                 v2rayBean.packetEncoding = "xudp"
                                             }
+                                            in legacyVlessFlow,  "", "none" -> {}
+                                            else -> if (it.startsWith("xtls-rprx-")) return proxies
                                         }
                                     }
                                 }
-                                proxies.add(v2rayBean)
                             }
                         }
                     }
@@ -766,14 +812,21 @@ object RawUpdater : GroupUpdater() {
                                 server.getIntFromStringOrInt("port")?.also {
                                     v2rayBean.serverPort = it
                                 }
-                                server.getString("method")?.also {
-                                    v2rayBean.method = it.lowercase()
+                                server.getString("method")?.lowercase()?.also {
+                                    v2rayBean.method = when (it) {
+                                        in supportedShadowsocksMethod -> it
+                                        "aes_128_gcm", "aead_aes_128_gcm" -> "aes-128-gcm"
+                                        "aes_192_gcm", "aead_aes_192_gcm" -> "aes-192-gcm"
+                                        "aes_256_gcm", "aead_aes_256_gcm" -> "aes-256-gcm"
+                                        "chacha20_poly1305", "aead_chacha20_poly1305", "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+                                        "xchacha20_poly1305", "aead_xchacha20_poly1305", "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+                                        "plain" -> "none"
+                                        else -> return proxies
+                                    }
                                 }
                                 server.getString("password")?.also {
                                     v2rayBean.password = it
                                 }
-                                // do not parse "experimentReducedIvHeadEntropy"
-                                proxies.add(v2rayBean)
                             }
                         }
                     }
@@ -789,8 +842,9 @@ object RawUpdater : GroupUpdater() {
                             settings.getIntFromStringOrInt("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return proxies
-                            settings.getString("method")?.also {
-                                v2rayBean.method = it.lowercase()
+                            settings.getString("method")?.lowercase()?.also {
+                                if (it !in supportedShadowsocks2022Method) return proxies // unsupported method
+                                v2rayBean.method = it
                             }
                             settings.getString("psk")?.also { psk ->
                                 v2rayBean.password = psk
@@ -804,7 +858,6 @@ object RawUpdater : GroupUpdater() {
                                     v2rayBean.plugin += ";$it"
                                 }
                             }
-                            proxies.add(v2rayBean)
                         }
                     }
                     "shadowsocks-2022" -> {
@@ -819,8 +872,9 @@ object RawUpdater : GroupUpdater() {
                             settings.getIntFromStringOrInt("port")?.also {
                                 v2rayBean.serverPort = it
                             }
-                            settings.getString("method")?.also {
-                                v2rayBean.method = it.lowercase()
+                            settings.getString("method")?.lowercase()?.also {
+                                if (it !in supportedShadowsocks2022Method) return proxies // unsupported method
+                                v2rayBean.method = it
                             }
                             settings.getString("password")?.also {
                                 v2rayBean.password = it
@@ -831,7 +885,6 @@ object RawUpdater : GroupUpdater() {
                                     v2rayBean.plugin += ";$it"
                                 }
                             }
-                            proxies.add(v2rayBean)
                         }
                     }
                     "trojan" -> {
@@ -850,7 +903,6 @@ object RawUpdater : GroupUpdater() {
                                 server.getString("password")?.also {
                                     v2rayBean.password = it
                                 }
-                                proxies.add(v2rayBean)
                             }
                         }
                     }
@@ -863,7 +915,8 @@ object RawUpdater : GroupUpdater() {
                             v2rayBean.protocol = when (settings.getString("version")?.lowercase()) {
                                 "4" -> SOCKSBean.PROTOCOL_SOCKS4
                                 "4a" -> SOCKSBean.PROTOCOL_SOCKS4A
-                                else -> SOCKSBean.PROTOCOL_SOCKS5
+                                "", "5" -> SOCKSBean.PROTOCOL_SOCKS5
+                                else -> return proxies
                             }
                             (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
                                 server.getString("address")?.also {
@@ -880,7 +933,6 @@ object RawUpdater : GroupUpdater() {
                                         v2rayBean.password = it
                                     }
                                 }
-                                proxies.add(v2rayBean)
                             }
                         }
                     }
@@ -905,11 +957,11 @@ object RawUpdater : GroupUpdater() {
                                         v2rayBean.password = it
                                     }
                                 }
-                                proxies.add(v2rayBean)
                             }
                         }
                     }
                 }
+                proxies.add(v2rayBean)
             }
             "hysteria2" -> {
                 val hysteria2Bean = Hysteria2Bean()
@@ -951,7 +1003,7 @@ object RawUpdater : GroupUpdater() {
                                             }
                                         }
                                     }
-                                    hy2Settings.getString("hopPorts")?.also {
+                                    hy2Settings.getString("hopPorts")?.takeIf { it.isValidHysteriaMultiPort() }?.also {
                                         hysteria2Bean.serverPorts = it
                                     }
                                     hy2Settings.getInteger("hopInterval")?.also {
@@ -959,6 +1011,7 @@ object RawUpdater : GroupUpdater() {
                                     }
                                 }
                             }
+                            else -> return proxies
                         }
                     }
                     streamSettings.getString("security")?.lowercase()?.also { security ->
@@ -972,11 +1025,12 @@ object RawUpdater : GroupUpdater() {
                                         hysteria2Bean.allowInsecure = it
                                     }
                                 }
-                                proxies.add(hysteria2Bean)
                             }
+                            else -> return proxies
                         }
                     }
                 }
+                proxies.add(hysteria2Bean)
             }
             "wireguard" -> {
                 val wireguardBean = WireGuardBean()
@@ -1022,6 +1076,14 @@ object RawUpdater : GroupUpdater() {
                 }
             }
             "ssh" -> {
+                outbound.getObject("streamSettings")?.also { streamSettings ->
+                    streamSettings.getString("network")?.lowercase()?.also {
+                        if (it in nonRawTransportName) return proxies
+                    }
+                    streamSettings.getString("security")?.lowercase()?.also {
+                        if (it != "none") return proxies
+                    }
+                }
                 val sshBean = SSHBean()
                 outbound.getObject("settings")?.also { settings ->
                     outbound.getString("tag")?.also {
@@ -1049,8 +1111,8 @@ object RawUpdater : GroupUpdater() {
                         sshBean.authType = SSHBean.AUTH_TYPE_PASSWORD
                         sshBean.password = it
                     }
-                    proxies.add(sshBean)
                 }
+                proxies.add(sshBean)
             }
             "tuic" -> {
                 val tuic5Bean = Tuic5Bean()
@@ -1071,10 +1133,10 @@ object RawUpdater : GroupUpdater() {
                         tuic5Bean.password = it
                     }
                     settings.getString("congestionControl")?.also {
-                        tuic5Bean.congestionControl = it
+                        tuic5Bean.congestionControl = if (it in supportedTuic5CongestionControl) it else "cubic"
                     }
                     settings.getString("udpRelayMode")?.also {
-                        tuic5Bean.udpRelayMode = it
+                        tuic5Bean.udpRelayMode = if (it in supportedTuic5RelayMode) it else "native"
                     }
                     settings.getBoolean("zeroRTTHandshake")?.also {
                         tuic5Bean.zeroRTTHandshake = it
@@ -1095,8 +1157,8 @@ object RawUpdater : GroupUpdater() {
                     settings.getBoolean("disableSNI")?.also {
                         tuic5Bean.disableSNI = it
                     }
-                    proxies.add(tuic5Bean)
                 }
+                proxies.add(tuic5Bean)
             }
             "http3" -> {
                 val http3Bean = Http3Bean()
@@ -1130,10 +1192,15 @@ object RawUpdater : GroupUpdater() {
                             }
                         }
                     }
-                    proxies.add(http3Bean)
                 }
+                proxies.add(http3Bean)
             }
             "anytls" -> {
+                outbound.getObject("streamSettings")?.also { streamSettings ->
+                    streamSettings.getString("network")?.lowercase()?.also {
+                        if (it in nonRawTransportName) return proxies
+                    }
+                }
                 val anytlsBean = AnyTLSBean()
                 outbound.getObject("settings")?.also { settings ->
                     outbound.getString("tag")?.also {
@@ -1177,6 +1244,8 @@ object RawUpdater : GroupUpdater() {
                                         anytlsBean.allowInsecure = allowInsecure
                                     }
                                 }
+                                // tlsSettings.getString("imitate")
+                                // tlsSettings.getString("fingerprint")
                             }
                         }
                         "reality" -> {
@@ -1191,8 +1260,10 @@ object RawUpdater : GroupUpdater() {
                                 realitySettings.getString("shortId")?.also {
                                     anytlsBean.realityShortId = it
                                 }
+                                // realitySettings.getString("fingerprint")
                             }
                         }
+                        else -> anytlsBean.security = "none"
                     }
                 }
                 proxies.add(anytlsBean)
@@ -1330,10 +1401,13 @@ object RawUpdater : GroupUpdater() {
                 when (type) {
                     "socks" -> {
                         v2rayBean as SOCKSBean
-                        v2rayBean.protocol = when (outbound.getString("version")) {
-                            "4" -> SOCKSBean.PROTOCOL_SOCKS4
-                            "4a" -> SOCKSBean.PROTOCOL_SOCKS4A
-                            else -> SOCKSBean.PROTOCOL_SOCKS5
+                        outbound.getString("version")?.also {
+                            v2rayBean.protocol = when (it) {
+                                "4" -> SOCKSBean.PROTOCOL_SOCKS4
+                                "4a" -> SOCKSBean.PROTOCOL_SOCKS4A
+                                "", "5" -> SOCKSBean.PROTOCOL_SOCKS5
+                                else -> return proxies
+                            }
                         }
                         outbound.getString("username")?.also {
                             v2rayBean.username = it
@@ -1344,6 +1418,9 @@ object RawUpdater : GroupUpdater() {
                     }
                     "http" -> {
                         v2rayBean as HttpBean
+                        outbound.getString("path")?.also {
+                            if (it != "" && it != "/") return proxies
+                        }
                         outbound.getString("username")?.also {
                             v2rayBean.username = it
                         }
@@ -1354,12 +1431,14 @@ object RawUpdater : GroupUpdater() {
                     "shadowsocks" -> {
                         v2rayBean as ShadowsocksBean
                         outbound.getString("method")?.also {
+                            if (it !in supportedShadowsocksMethod) return proxies
                             v2rayBean.method = it
                         }
                         outbound.getString("password")?.also {
                             v2rayBean.password = it
                         }
                         outbound.getString("plugin")?.also { p ->
+                            if (p != "obfs-local" && p != "v2ray-plugin") return proxies
                             v2rayBean.plugin = p
                             outbound.getString("plugin_opts")?.also {
                                 v2rayBean.plugin += ";$it"
@@ -1374,10 +1453,15 @@ object RawUpdater : GroupUpdater() {
                     }
                     "vmess" -> {
                         v2rayBean as VMessBean
-                        outbound.getString("uuid")?.also {
-                            v2rayBean.uuid = it
+                        outbound.getString("uuid")?.takeIf { it.isNotEmpty() }?.also {
+                            v2rayBean.uuid = try {
+                                UUID.fromString(it).toString(false)
+                            } catch (_: Exception) {
+                                uuid5(it)
+                            }
                         }
                         outbound.getString("security")?.also {
+                            if (it !in supportedVmessMethod) return proxies
                             v2rayBean.encryption = it
                         }
                         outbound.getInteger("alter_id")?.also {
@@ -1394,13 +1478,11 @@ object RawUpdater : GroupUpdater() {
                     }
                     "vless" -> {
                         v2rayBean as VLESSBean
-                        outbound.getString("uuid")?.also {
-                            v2rayBean.uuid = it
-                        }
-                        outbound.getString("flow")?.also {
-                            if (it == "xtls-rprx-vision") {
-                                v2rayBean.flow = "xtls-rprx-vision-udp443"
-                                v2rayBean.packetEncoding = "xudp"
+                        outbound.getString("uuid")?.takeIf { it.isNotEmpty() }?.also {
+                            v2rayBean.uuid = try {
+                                UUID.fromString(it).toString(false)
+                            } catch (_: Exception) {
+                                uuid5(it)
                             }
                         }
                         v2rayBean.packetEncoding = when (outbound.getString("packet_encoding")) {
@@ -1408,8 +1490,17 @@ object RawUpdater : GroupUpdater() {
                             "xudp", null -> "xudp"
                             else -> "none"
                         }
+                        outbound.getString("flow")?.also {
+                            when (it) {
+                                "" -> {}
+                                "xtls-rprx-vision" -> {
+                                    v2rayBean.flow = "xtls-rprx-vision-udp443"
+                                    v2rayBean.packetEncoding = "xudp"
+                                }
+                                else -> return proxies
+                            }
+                        }
                     }
-                    else -> return proxies
                 }
                 proxies.add(v2rayBean)
             }
@@ -1428,6 +1519,9 @@ object RawUpdater : GroupUpdater() {
                     } ?: (outbound.getAny("server_ports") as? String)?.also {
                         serverPorts = it.replace(":", "-")
                     } ?: return proxies
+                    if (!serverPorts.isValidHysteriaPort()) {
+                        return proxies
+                    }
                     outbound.getString("hop_interval")?.also {
                         try {
                             val duration = Duration.parse(it)
@@ -1439,6 +1533,9 @@ object RawUpdater : GroupUpdater() {
                     }
                     outbound.getObject("tls")?.also { tls ->
                         if (tls.getBoolean("enabled") != true) {
+                            return proxies
+                        }
+                        if (tls.getObject("reality")?.getBoolean("enabled") == true) {
                             return proxies
                         }
                         tls.getString("server_name")?.also {
@@ -1480,6 +1577,9 @@ object RawUpdater : GroupUpdater() {
                     } ?: (outbound.getAny("server_ports") as? String)?.also {
                         serverPorts = it.replace(":", "-")
                     } ?: return proxies
+                    if (!serverPorts.isValidHysteriaPort()) {
+                        return proxies
+                    }
                     outbound.getString("hop_interval")?.also {
                         try {
                             val duration = Duration.parse(it)
@@ -1503,6 +1603,9 @@ object RawUpdater : GroupUpdater() {
                     }
                     outbound.getObject("tls")?.also { tls ->
                         if (tls.getBoolean("enabled") != true) {
+                            return proxies
+                        }
+                        if (tls.getObject("reality")?.getBoolean("enabled") == true) {
                             return proxies
                         }
                         tls.getString("server_name")?.also {
@@ -1548,16 +1651,19 @@ object RawUpdater : GroupUpdater() {
                         password = it
                     }
                     outbound.getString("congestion_control")?.also {
-                        congestionControl = it
+                        congestionControl = if (it in supportedTuic5CongestionControl) it else "cubic"
                     }
                     outbound.getString("udp_relay_mode")?.also {
-                        udpRelayMode = it
+                        udpRelayMode = if (it in supportedTuic5RelayMode) it else "native"
                     }
                     outbound.getBoolean("zero_rtt_handshake")?.also {
                         zeroRTTHandshake = it
                     }
                     outbound.getObject("tls")?.also { tls ->
                         if (tls.getBoolean("enabled") != true) {
+                            return proxies
+                        }
+                        if (tls.getObject("reality")?.getBoolean("enabled") == true) {
                             return proxies
                         }
                         tls.getString("server_name")?.also {
@@ -1626,6 +1732,7 @@ object RawUpdater : GroupUpdater() {
                         serverPort = it
                     } ?: return proxies
                     outbound.getString("method")?.also {
+                        if (it !in supportedShadowsocksRMethod) return proxies
                         method = it
                     }
                     outbound.getString("password")?.also {
@@ -1634,13 +1741,15 @@ object RawUpdater : GroupUpdater() {
                     outbound.getString("obfs")?.also {
                         obfs = when (it) {
                             "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
-                            else -> it
+                            in supportedShadowsocksRObfs -> it
+                            else -> return proxies
                         }
                     }
                     outbound.getString("obfs_param")?.also {
                         obfsParam = it
                     }
                     outbound.getString("protocol")?.also {
+                        if (it !in supportedShadowsocksRProtocol) return proxies
                         protocol = it
                     }
                     outbound.getString("protocol_param")?.also {
@@ -1764,6 +1873,8 @@ object RawUpdater : GroupUpdater() {
                                         }
                                     }
                                 }
+                            } else {
+                                security = "none"
                             }
                         }
                     }
@@ -1860,208 +1971,221 @@ object RawUpdater : GroupUpdater() {
                         || streamSettings.contains("quicSettings") || streamSettings.contains("hy2Settings")) { // jsonv4
                         return proxies
                     }
-                    when (val security = streamSettings.getString("security")) {
-                        null, "none" -> {}
-                        "tls", "utls" -> {
-                            v2rayBean.security = "tls"
-                            val securitySettings = streamSettings.getObject("securitySettings")
-                            val tls = if (security == "tls") {
-                                securitySettings
-                            } else {
-                                securitySettings?.get("tlsConfig") as? JSONObject
-                                    ?: securitySettings?.get("tls_config") as? JSONObject
-                            }
-                            tls?.also { tlsConfig ->
-                                (tlsConfig["serverName"]?.toString() ?: tlsConfig["server_name"]?.toString())?.also {
-                                    v2rayBean.sni = it
+                    streamSettings.getString("security")?.also { security ->
+                        when (security) {
+                            "none" -> {}
+                            "tls", "utls" -> {
+                                v2rayBean.security = "tls"
+                                val securitySettings = streamSettings.getObject("securitySettings")
+                                val tls = if (security == "tls") {
+                                    securitySettings
+                                } else {
+                                    securitySettings?.get("tlsConfig") as? JSONObject
+                                        ?: securitySettings?.get("tls_config") as? JSONObject
                                 }
-                                (tlsConfig["pinnedPeerCertificateChainSha256"] as? List<String>
-                                    ?: tlsConfig["pinned_peer_certificate_chain_sha256"] as? List<String>)?.also {
-                                    v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
-                                    (tlsConfig["allowInsecureIfPinnedPeerCertificate"] as? Boolean
-                                        ?: tlsConfig["allow_insecure_if_pinned_peer_certificate"] as? Boolean)?.also { allowInsecure ->
-                                        v2rayBean.allowInsecure = allowInsecure
+                                tls?.also { tlsConfig ->
+                                    (tlsConfig["serverName"]?.toString() ?: tlsConfig["server_name"]?.toString())?.also {
+                                        v2rayBean.sni = it
                                     }
+                                    (tlsConfig["pinnedPeerCertificateChainSha256"] as? List<String>
+                                        ?: tlsConfig["pinned_peer_certificate_chain_sha256"] as? List<String>)?.also {
+                                        v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                        (tlsConfig["allowInsecureIfPinnedPeerCertificate"] as? Boolean
+                                            ?: tlsConfig["allow_insecure_if_pinned_peer_certificate"] as? Boolean)?.also { allowInsecure ->
+                                            v2rayBean.allowInsecure = allowInsecure
+                                        }
+                                    }
+                                    (tlsConfig["nextProtocol"] as? List<String>)?.also {
+                                        v2rayBean.alpn = it.joinToString("\n")
+                                    } ?: (tlsConfig["next_protocol"] as? List<String>)?.also {
+                                        v2rayBean.alpn = it.joinToString("\n")
+                                    }
+                                    // tlsConfig["imitate"]
                                 }
-                                (tlsConfig["nextProtocol"] as? List<String>)?.also {
-                                    v2rayBean.alpn = it.joinToString("\n")
-                                } ?: (tlsConfig["next_protocol"] as? List<String>)?.also {
-                                    v2rayBean.alpn = it.joinToString("\n")
-                                }
-                                // do not parse "imitate"
                             }
+                            else -> return proxies
                         }
-                        else -> return proxies
                     }
-                    when (streamSettings.getString("transport")) {
-                        null -> {}
-                        "tcp" -> {
-                            v2rayBean.type = "tcp"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                (transportSettings["headerSettings"] as? JSONObject)
-                                    ?: (transportSettings["header_settings"] as? JSONObject)?.also { headerSettings ->
-                                    when (headerSettings["@type"] as? String) {
-                                        "v2ray.core.transport.internet.headers.http.Config" -> {
-                                            v2rayBean.headerType = "http"
-                                            (headerSettings["request"] as? JSONObject)?.also { request ->
-                                                (request["uri"] as? List<String>)?.also {
-                                                    v2rayBean.path = it.joinToString("\n")
-                                                }
-                                                (request.getAny("header") as? Map<String, List<String>>)?.forEach { (key, value) ->
-                                                    when (key.lowercase()) {
-                                                        "host" -> {
-                                                            v2rayBean.host = value.joinToString("\n")
+                    streamSettings.getString("transport")?.also { transport ->
+                        when (transport) {
+                            "tcp" -> {
+                                v2rayBean.type = "tcp"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    (transportSettings["headerSettings"] as? JSONObject)
+                                        ?: (transportSettings["header_settings"] as? JSONObject)?.also { headerSettings ->
+                                            when (headerSettings["@type"] as? String) {
+                                                "v2ray.core.transport.internet.headers.http.Config" -> {
+                                                    v2rayBean.headerType = "http"
+                                                    (headerSettings["request"] as? JSONObject)?.also { request ->
+                                                        (request["uri"] as? List<String>)?.also {
+                                                            v2rayBean.path = it.joinToString("\n")
+                                                        }
+                                                        (request.getAny("header") as? Map<String, List<String>>)?.forEach { (key, value) ->
+                                                            when (key.lowercase()) {
+                                                                "host" -> {
+                                                                    v2rayBean.host = value.joinToString("\n")
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
+                                }
+                            }
+                            "kcp" -> {
+                                v2rayBean.type = "kcp"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["seed"]?.toString()?.also {
+                                        v2rayBean.mKcpSeed = it
+                                    }
+                                    when ((transportSettings["headerConfig"] as? JSONObject)?.get("@type") as? String
+                                        ?: (transportSettings["header_config"] as? JSONObject)?.get("@type") as? String) {
+                                        null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.utp.Config" -> v2rayBean.headerType = "utp"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.wechat.VideoConfig" -> v2rayBean.headerType = "wechat-video"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.tls.PacketConfig" -> v2rayBean.headerType = "dtls"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.wireguard.WireguardConfig" -> v2rayBean.headerType = "wireguard"
+                                        else -> return proxies
                                     }
                                 }
                             }
-                        }
-                        "kcp" -> {
-                            v2rayBean.type = "kcp"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["seed"]?.toString()?.also {
-                                    v2rayBean.mKcpSeed = it
-                                }
-                                when ((transportSettings["headerConfig"] as? JSONObject)?.get("@type") as? String
-                                    ?: (transportSettings["header_config"] as? JSONObject)?.get("@type") as? String) {
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.utp.Config" -> v2rayBean.headerType = "utp"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.wechat.VideoConfig" -> v2rayBean.headerType = "wechat-video"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.tls.PacketConfig" -> v2rayBean.headerType = "dtls"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.wireguard.WireguardConfig" -> v2rayBean.headerType = "wireguard"
-                                }
-                            }
-                        }
-                        "ws" -> {
-                            v2rayBean.type = "ws"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["path"]?.toString()?.also {
-                                    v2rayBean.path = it
-                                }
-                                (transportSettings["maxEarlyData"]?.toString()?.toInt()
-                                    ?: transportSettings["max_early_data"]?.toString()?.toInt())?.also {
-                                    v2rayBean.maxEarlyData = it
-                                }
-                                (transportSettings["earlyDataHeaderName"]?.toString()
-                                    ?: transportSettings["early_data_header_name"]?.toString())?.also {
-                                    v2rayBean.earlyDataHeaderName = it
-                                }
-                                (transportSettings["header"] as? Map<String, String>)?.forEach { (key, value) ->
-                                    when (key.lowercase()) {
-                                        "host" -> {
-                                            v2rayBean.host = value
+                            "ws" -> {
+                                v2rayBean.type = "ws"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["path"]?.toString()?.also {
+                                        v2rayBean.path = it
+                                    }
+                                    (transportSettings["maxEarlyData"]?.toString()?.toInt()
+                                        ?: transportSettings["max_early_data"]?.toString()?.toInt())?.also {
+                                        v2rayBean.maxEarlyData = it
+                                    }
+                                    (transportSettings["earlyDataHeaderName"]?.toString()
+                                        ?: transportSettings["early_data_header_name"]?.toString())?.also {
+                                        v2rayBean.earlyDataHeaderName = it
+                                    }
+                                    (transportSettings["header"] as? Map<String, String>)?.forEach { (key, value) ->
+                                        when (key.lowercase()) {
+                                            "host" -> {
+                                                v2rayBean.host = value
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
-                        "h2" -> {
-                            v2rayBean.type = "http"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["path"]?.toString()?.also {
-                                    v2rayBean.path = it
-                                }
-                                (transportSettings["host"] as? List<String>)?.also {
-                                    v2rayBean.host = it.joinToString("\n")
-                                }
-                            }
-                        }
-                        "quic" -> {
-                            v2rayBean.type = "quic"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["security"]?.toString()?.also {
-                                    v2rayBean.quicSecurity = it.lowercase()
-                                }
-                                transportSettings["key"]?.toString()?.also {
-                                    v2rayBean.quicKey = it
-                                }
-                                when ((transportSettings["header"] as? JSONObject)?.get("@type") as? String) {
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.utp.Config" -> v2rayBean.headerType = "utp"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.wechat.VideoConfig" -> v2rayBean.headerType = "wechat-video"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.tls.PacketConfig" -> v2rayBean.headerType = "dtls"
-                                    "types.v2fly.org/v2ray.core.transport.internet.headers.wireguard.WireguardConfig" -> v2rayBean.headerType = "wireguard"
-                                }
-                            }
-                        }
-                        "grpc" -> {
-                            v2rayBean.type = "grpc"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                (transportSettings["serviceName"]?.toString()
-                                    ?: transportSettings["service_name"]?.toString())?.also {
-                                    v2rayBean.grpcServiceName = it
-                                }
-                            }
-                        }
-                        "httpupgrade" -> {
-                            v2rayBean.type = "httpupgrade"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["path"]?.toString()?.also {
-                                    v2rayBean.path = it
-                                }
-                                transportSettings["host"]?.toString()?.also {
-                                    v2rayBean.host = it
-                                }
-                                (transportSettings["maxEarlyData"]?.toString()?.toInt()
-                                    ?: transportSettings["max_early_data"]?.toString()?.toInt())?.also {
-                                    v2rayBean.maxEarlyData = it
-                                }
-                                (transportSettings["earlyDataHeaderName"]?.toString()
-                                    ?: transportSettings["early_data_header_name"]?.toString())?.also {
-                                    v2rayBean.earlyDataHeaderName = it
-                                }
-                            }
-                        }
-                        "meek" -> {
-                            v2rayBean.type = "meek"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["url"]?.toString()?.also {
-                                    v2rayBean.meekUrl = it
-                                }
-                            }
-                        }
-                        "mekya" -> {
-                            v2rayBean.type = "mekya"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["url"]?.toString()?.also {
-                                    v2rayBean.mekyaUrl = it
-                                }
-                                (transportSettings["kcp"] as? JSONObject)?.also { kcp ->
-                                    kcp["seed"]?.toString()?.also {
-                                        v2rayBean.mekyaKcpSeed = it
+                            "h2" -> {
+                                v2rayBean.type = "http"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["path"]?.toString()?.also {
+                                        v2rayBean.path = it
                                     }
-                                    when ((kcp["headerConfig"] as? JSONObject)?.get("@type") as? String
-                                        ?: (kcp["header_config"] as? JSONObject)?.get("@type") as? String) {
-                                        "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.mekyaKcpHeaderType = "srtp"
-                                        "types.v2fly.org/v2ray.core.transport.internet.headers.utp.Config" -> v2rayBean.mekyaKcpHeaderType = "utp"
-                                        "types.v2fly.org/v2ray.core.transport.internet.headers.wechat.VideoConfig" -> v2rayBean.mekyaKcpHeaderType = "wechat-video"
-                                        "types.v2fly.org/v2ray.core.transport.internet.headers.tls.PacketConfig" -> v2rayBean.mekyaKcpHeaderType = "dtls"
-                                        "types.v2fly.org/v2ray.core.transport.internet.headers.wireguard.WireguardConfig" -> v2rayBean.mekyaKcpHeaderType = "wireguard"
+                                    (transportSettings["host"] as? List<String>)?.also {
+                                        v2rayBean.host = it.joinToString("\n")
                                     }
                                 }
                             }
-                        }
-                        "hysteria2" -> {
-                            v2rayBean.type = "hysteria2"
-                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                transportSettings["password"]?.toString()?.also {
-                                    v2rayBean.hy2Password = it
-                                }
-                                (transportSettings["congestion"] as? JSONObject)?.also { congestion ->
-                                    (congestion["up_mbps"] as? Int ?: congestion["upMbps"] as? Int)?.also {
-                                        v2rayBean.hy2UpMbps = it
+                            "quic" -> {
+                                v2rayBean.type = "quic"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["security"]?.toString()?.lowercase()?.also {
+                                        if (it !in supportedQuicSecurity) return proxies
+                                        v2rayBean.quicSecurity = it
                                     }
-                                    (congestion["down_mbps"] as? Int ?: congestion["downMbps"] as? Int)?.also {
-                                        v2rayBean.hy2DownMbps = it
+                                    transportSettings["key"]?.toString()?.also {
+                                        v2rayBean.quicKey = it
+                                    }
+                                    when ((transportSettings["header"] as? JSONObject)?.get("@type") as? String) {
+                                        null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.utp.Config" -> v2rayBean.headerType = "utp"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.wechat.VideoConfig" -> v2rayBean.headerType = "wechat-video"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.tls.PacketConfig" -> v2rayBean.headerType = "dtls"
+                                        "types.v2fly.org/v2ray.core.transport.internet.headers.wireguard.WireguardConfig" -> v2rayBean.headerType = "wireguard"
+                                        else -> return proxies
                                     }
                                 }
                             }
+                            "grpc" -> {
+                                v2rayBean.type = "grpc"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    (transportSettings["serviceName"]?.toString()
+                                        ?: transportSettings["service_name"]?.toString())?.also {
+                                        v2rayBean.grpcServiceName = it
+                                    }
+                                }
+                            }
+                            "httpupgrade" -> {
+                                v2rayBean.type = "httpupgrade"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["path"]?.toString()?.also {
+                                        v2rayBean.path = it
+                                    }
+                                    transportSettings["host"]?.toString()?.also {
+                                        v2rayBean.host = it
+                                    }
+                                    (transportSettings["maxEarlyData"]?.toString()?.toInt()
+                                        ?: transportSettings["max_early_data"]?.toString()?.toInt())?.also {
+                                        v2rayBean.maxEarlyData = it
+                                    }
+                                    (transportSettings["earlyDataHeaderName"]?.toString()
+                                        ?: transportSettings["early_data_header_name"]?.toString())?.also {
+                                        v2rayBean.earlyDataHeaderName = it
+                                    }
+                                }
+                            }
+                            "meek" -> {
+                                v2rayBean.type = "meek"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["url"]?.toString()?.also {
+                                        v2rayBean.meekUrl = it
+                                    }
+                                }
+                            }
+                            "mekya" -> {
+                                v2rayBean.type = "mekya"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["url"]?.toString()?.also {
+                                        v2rayBean.mekyaUrl = it
+                                    }
+                                    (transportSettings["kcp"] as? JSONObject)?.also { kcp ->
+                                        kcp["seed"]?.toString()?.also {
+                                            v2rayBean.mekyaKcpSeed = it
+                                        }
+                                        when ((kcp["headerConfig"] as? JSONObject)?.get("@type") as? String
+                                            ?: (kcp["header_config"] as? JSONObject)?.get("@type") as? String) {
+                                            null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
+                                            "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
+                                            "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.mekyaKcpHeaderType = "srtp"
+                                            "types.v2fly.org/v2ray.core.transport.internet.headers.utp.Config" -> v2rayBean.mekyaKcpHeaderType = "utp"
+                                            "types.v2fly.org/v2ray.core.transport.internet.headers.wechat.VideoConfig" -> v2rayBean.mekyaKcpHeaderType = "wechat-video"
+                                            "types.v2fly.org/v2ray.core.transport.internet.headers.tls.PacketConfig" -> v2rayBean.mekyaKcpHeaderType = "dtls"
+                                            "types.v2fly.org/v2ray.core.transport.internet.headers.wireguard.WireguardConfig" -> v2rayBean.mekyaKcpHeaderType = "wireguard"
+                                            else -> return proxies
+                                        }
+                                    }
+                                }
+                            }
+                            "hysteria2" -> {
+                                v2rayBean.type = "hysteria2"
+                                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                    transportSettings["password"]?.toString()?.also {
+                                        v2rayBean.hy2Password = it
+                                    }
+                                    /*(transportSettings["congestion"] as? JSONObject)?.also { congestion ->
+                                        (congestion["up_mbps"] as? Int ?: congestion["upMbps"] as? Int)?.also {
+                                            v2rayBean.hy2UpMbps = it
+                                        }
+                                        (congestion["down_mbps"] as? Int ?: congestion["downMbps"] as? Int)?.also {
+                                            v2rayBean.hy2DownMbps = it
+                                        }
+                                    }*/
+                                }
+                            }
+                            else -> return proxies
                         }
-                        else -> return proxies
                     }
                 }
 
@@ -2078,8 +2202,17 @@ object RawUpdater : GroupUpdater() {
                     when (type) {
                         "shadowsocks" -> {
                             v2rayBean as ShadowsocksBean
-                            settings["method"]?.toString()?.also {
-                                v2rayBean.method = it.lowercase()
+                            settings["method"]?.toString()?.lowercase()?.also {
+                                v2rayBean.method = when (it) {
+                                    in supportedShadowsocksMethod -> it
+                                    "aes_128_gcm", "aead_aes_128_gcm" -> "aes-128-gcm"
+                                    "aes_192_gcm", "aead_aes_192_gcm" -> "aes-192-gcm"
+                                    "aes_256_gcm", "aead_aes_256_gcm" -> "aes-256-gcm"
+                                    "chacha20_poly1305", "aead_chacha20_poly1305", "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+                                    "xchacha20_poly1305", "aead_xchacha20_poly1305", "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+                                    "plain" -> "none"
+                                    else -> return proxies
+                                }
                             }
                             settings["password"]?.toString()?.also {
                                 v2rayBean.password = it
@@ -2106,7 +2239,9 @@ object RawUpdater : GroupUpdater() {
                         "shadowsocks2022" -> {
                             v2rayBean as ShadowsocksBean
                             settings["method"]?.toString()?.also {
-                                v2rayBean.method = it.lowercase()
+                                if (it !in supportedShadowsocks2022Method)
+                                    return proxies
+                                v2rayBean.method = it
                             }
                             settings["psk"]?.toString()?.also { psk ->
                                 v2rayBean.password = psk
@@ -2231,7 +2366,11 @@ object RawUpdater : GroupUpdater() {
                             if (opts?.get("mux") as? Boolean == true) {
                                 pluginOpts["mux"] = "8"
                             }
+                            if (opts?.get("v2ray-http-upgrade") as? Boolean == true) {
+                                return proxies
+                            }
                         }
+                        else -> return proxies
                     }
                     pluginStr = pluginOpts.toString(false)
                 }
@@ -2239,9 +2378,10 @@ object RawUpdater : GroupUpdater() {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
                     serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                     password = proxy["password"]?.toString()
-                    method = when (proxy["cipher"]) {
+                    method = when (val cipher = proxy["cipher"] as? String) {
                         "dummy" -> "none"
-                        else -> (proxy["cipher"] as? String)
+                        in supportedShadowsocksMethod -> cipher
+                        else -> return proxies
                     }
                     plugin = pluginStr
                     name = proxy["name"]?.toString()
@@ -2265,13 +2405,28 @@ object RawUpdater : GroupUpdater() {
                     when (opt.key) {
                         "name" -> bean.name = opt.value?.toString()
                         "password" -> if (bean is TrojanBean) bean.password = opt.value?.toString()
-                        "uuid" -> if (bean is VMessBean || bean is VLESSBean) bean.uuid = opt.value?.toString()
+                        "uuid" -> if (bean is VMessBean || bean is VLESSBean) {
+                            opt.value?.toString()?.takeIf { it.isNotEmpty() }?.also {
+                                bean.uuid = try {
+                                    UUID.fromString(it).toString(false)
+                                } catch (_: Exception) {
+                                    uuid5(it)
+                                }
+                            }
+                        }
                         "alterId" -> if (bean is VMessBean) bean.alterId = opt.value?.toString()?.toIntOrNull()
-                        "cipher" -> if (bean is VMessBean) bean.encryption = (opt.value as? String)
+                        "cipher" -> {
+                            if (bean is VMessBean) {
+                                bean.encryption = when (val cipher = opt.value as? String) {
+                                    in supportedVmessMethod -> cipher
+                                    else -> return proxies
+                                }
+                            }
+                        }
                         "flow" -> if (bean is VLESSBean && (opt.value as? String)?.startsWith("xtls-rprx-vision") == true) {
                             bean.flow = "xtls-rprx-vision-udp443"
                             bean.packetEncoding = "xudp"
-                        }
+                        } else return proxies
                         "authenticated-length" -> if (bean is VMessBean) bean.experimentalAuthenticatedLength = opt.value as? Boolean == true
                         "packet-encoding" -> {
                             when (bean) {
@@ -2312,6 +2467,10 @@ object RawUpdater : GroupUpdater() {
                                     bean.headerType = "http"
                                 }
                                 "ws", "grpc" -> bean.type = opt.value as String
+                                else -> {
+                                    // Do not `return proxies` here. Fuck those non-standard configs.
+                                    bean.type = "tcp"
+                                }
                             }
                         }
                         "ws-opts" -> (opt.value as? Map<String, Any?>)?.also {
@@ -2380,17 +2539,22 @@ object RawUpdater : GroupUpdater() {
                 proxies.add(ShadowsocksRBean().apply {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
                     serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
-                    method = when (proxy["cipher"]) {
+                    method = when (val cipher = proxy["cipher"] as? String) {
                         "dummy" -> "none"
-                        else -> (proxy["cipher"] as? String)
+                        in supportedShadowsocksRMethod -> cipher
+                        else -> return proxies
                     }
                     password = proxy["password"]?.toString()
-                    obfs = when (val it = proxy["obfs"]) {
+                    obfs = when (val it = proxy["obfs"] as? String) {
                         "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
-                        else -> it as? String
+                        in supportedShadowsocksRObfs -> it
+                        else -> return proxies
                     }
                     obfsParam = proxy["obfs-param"]?.toString()
-                    protocol = proxy["protocol"] as? String
+                    protocol = when (val it = proxy["protocol"] as? String) {
+                        in supportedShadowsocksRProtocol -> it
+                        else -> return proxies
+                    }
                     protocolParam = proxy["protocol-param"]?.toString()
                     name = proxy["name"]?.toString()
                 })
@@ -2423,13 +2587,15 @@ object RawUpdater : GroupUpdater() {
             "hysteria" -> {
                 proxies.add(HysteriaBean().apply {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
-                    serverPorts = proxy["ports"]?.toString() ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
+                    serverPorts = proxy["ports"]?.toString()?.takeIf { it.isValidHysteriaPort() }
+                        ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
                     protocol = when (proxy["protocol"] as? String ?: proxy["obfs-protocol"] as? String) {
                         "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
                         "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
                         "udp" -> HysteriaBean.PROTOCOL_UDP
                         else -> return proxies
                     }
+                    authPayloadType = HysteriaBean.TYPE_NONE
                     proxy["auth-str"]?.also {
                         authPayloadType = HysteriaBean.TYPE_STRING
                         authPayload = it.toString()
@@ -2451,14 +2617,21 @@ object RawUpdater : GroupUpdater() {
             "hysteria2" -> {
                 proxies.add(Hysteria2Bean().apply {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
-                    serverPorts = proxy["ports"]?.toString() ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
+                    serverPorts = proxy["ports"]?.toString()?.takeIf { it.isValidHysteriaPort() }
+                        ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
                     auth = proxy["password"]?.toString()
                     // uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond()
                     // downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond()
                     sni = proxy["sni"]?.toString()
                     // alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                    obfs = if (proxy["obfs"] as? String == "salamander") proxy["obfs-password"]?.toString() else null
+                    when (proxy["obfs"] as? String) {
+                        "" -> {}
+                        "salamander" -> {
+                            obfs = proxy["obfs-password"]?.toString()
+                        }
+                        else -> return proxies
+                    }
                     hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
                     name = proxy["name"]?.toString()
                 })
@@ -2469,8 +2642,14 @@ object RawUpdater : GroupUpdater() {
                         serverAddress = proxy["ip"]?.toString() ?: proxy["server"]?.toString() ?: return proxies
                         serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         token = proxy["token"]?.toString()
-                        udpRelayMode = if (proxy["udp-relay-mode"] as? String == "quic") "quic" else "native"
-                        congestionController = proxy["congestion-controller"] as? String
+                        udpRelayMode = when (val mode = proxy["udp-relay-mode"] as? String) {
+                            in supportedTuicRelayMode -> mode
+                            else -> "native"
+                        }
+                        congestionController = when (val controller = proxy["congestion-controller"] as? String) {
+                            in supportedTuicCongestionControl -> controller
+                            else -> "cubic"
+                        }
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         reduceRTT = proxy["reduce-rtt"] as? Boolean == true
                         // allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
@@ -2485,8 +2664,14 @@ object RawUpdater : GroupUpdater() {
                         serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
                         uuid = proxy["uuid"] as? String
                         password = proxy["password"]?.toString()
-                        udpRelayMode = if (proxy["udp-relay-mode"] as? String == "quic") "quic" else "native"
-                        congestionControl = proxy["congestion-controller"] as? String
+                        udpRelayMode = when (val mode = proxy["udp-relay-mode"] as? String) {
+                            in supportedTuic5RelayMode -> mode
+                            else -> "native"
+                        }
+                        congestionControl = when (val controller = proxy["congestion-controller"] as? String) {
+                            in supportedTuic5CongestionControl -> controller
+                            else -> "cubic"
+                        }
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         zeroRTTHandshake = proxy["reduce-rtt"] as? Boolean == true
                         allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
@@ -2503,7 +2688,8 @@ object RawUpdater : GroupUpdater() {
                     serverPort = proxy["port"]?.toString()?.toIntOrNull()
                     privateKey = proxy["private-key"] as? String
                     peerPublicKey = proxy["public-key"] as? String
-                    peerPreSharedKey = proxy["pre-shared-key"] as? String ?: proxy["preshared-key"] as? String
+                    peerPreSharedKey = proxy["pre-shared-key"] as? String
+                        ?: proxy["preshared-key"] as? String // "preshared-key" from Clash Premium
                     mtu = (proxy["mtu"]?.toString()?.toIntOrNull())?.takeIf { it > 0 } ?: 1408
                     localAddress = listOfNotNull(proxy["ip"] as? String, proxy["ipv6"] as? String).joinToString("\n")
                     keepaliveInterval = proxy["persistent-keepalive"]?.toString()?.toIntOrNull()?.takeIf { it > 0 }
@@ -2566,6 +2752,7 @@ object RawUpdater : GroupUpdater() {
                             "MULTIPLEXING_LOW" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_LOW
                             "MULTIPLEXING_MIDDLE" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_MIDDLE
                             "MULTIPLEXING_HIGH" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_HIGH
+                            else -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_LOW
                         }
                     }
                 }

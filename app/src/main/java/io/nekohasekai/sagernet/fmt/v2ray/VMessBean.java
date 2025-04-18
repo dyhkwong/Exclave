@@ -35,12 +35,12 @@ public class VMessBean extends StandardV2RayBean {
 
     @Override
     public void initializeDefaultValues() {
-        super.initializeDefaultValues();
-
         if (alterId == null) alterId = 0;
-        if (encryption == null) encryption = "auto";
         if (experimentalAuthenticatedLength == null) experimentalAuthenticatedLength = false;
         if (experimentalNoTerminationSignal == null) experimentalNoTerminationSignal = false;
+
+        if (encryption == null) encryption = "auto";
+        super.initializeDefaultValues();
     }
 
     @Override

@@ -67,12 +67,20 @@ fun parseMieru(link: String): MieruBean {
     }
 }
 
-fun MieruBean.toUri(): String {
+fun MieruBean.toUri(): String? {
     val builder = Libcore.newURL("mierus").apply {
         host = serverAddress
     }
-    builder.username = username
-    builder.password = password
+    if (username.isNotEmpty()) {
+        builder.username = username
+    } else {
+        error("empty username")
+    }
+    if (password.isNotEmpty()) {
+        builder.password = password
+    } else {
+        error("empty password")
+    }
     if (name.isNotEmpty()) {
         builder.addQueryParameter("profile", name)
     }
@@ -107,8 +115,7 @@ fun MieruBean.toUri(): String {
 
 fun MieruBean.buildMieruConfig(port: Int): String {
     return JSONObject().also {
-        // Enable this means giving up the support for mieru < 3.13, mieru version 2 and mieru version 1.
-        // I don't know if it is possible to do a version number check.
+        // Uncomment this means giving up the support for mieru < 3.13, mieru version 2 and mieru version 1.
         /*it["advancedSettings"] = JSONObject().also {
             it["noCheckUpdate"] = true
         }*/

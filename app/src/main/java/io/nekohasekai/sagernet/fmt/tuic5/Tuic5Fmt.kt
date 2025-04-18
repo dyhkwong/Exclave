@@ -27,52 +27,73 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
+import io.nekohasekai.sagernet.fmt.tuic.supportedTuicCongestionControl
+import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import java.io.File
 import libcore.Libcore
 
+val supportedTuic5CongestionControl = arrayOf("cubic", "bbr", "new_reno")
+val supportedTuic5RelayMode = arrayOf("native", "quic")
+
 fun parseTuic(server: String): AbstractBean {
-    val link = if (server.length > 46 && UUID.fromString(server.substring(7, 43)) != null && server.substring(43, 46) == "%3A" && !server.contains("version=")) {
+    var link = Libcore.parseURL(server)
+    try {
         // v2rayN broken format
-        Libcore.parseURL(server.substring(0, 43) + ":" + server.substring(46, server.length))
-    } else {
-        Libcore.parseURL(server)
-    }
-    link.queryParameter("version")?.let { version ->
-        if (version == "4" || link.password.isEmpty()) {
-            return TuicBean().apply {
-                serverAddress = link.host
-                serverPort = link.port
-                if (link.port == 0) {
-                    serverPort = 443
+        if (server.length > 46 && UUID.fromString(server.substring(7, 43)) != null && server.substring(43, 46) == "%3A" && !server.contains("version=")) {
+            link = Libcore.parseURL(server.substring(0, 43) + ":" + server.substring(46, server.length))
+        }
+    } catch (_: Exception) {}
+    val version = link.queryParameter("version")
+    if (version == "4" || (version != "5" && link.password.isEmpty())) {
+        return TuicBean().apply {
+            serverAddress = link.host
+            serverPort = link.port
+            if (link.port == 0) {
+                serverPort = 443
+            }
+            token = link.username
+            link.queryParameter("sni")?.let {
+                sni = it
+            }
+            link.queryParameter("alpn")?.let {
+                alpn = it.split(",").joinToString("\n")
+            }
+            (link.queryParameter("congestion_controller") ?:
+            link.queryParameter("congestion-controller") ?:
+            link.queryParameter("congestion_control") ?:
+            link.queryParameter("congestion-control"))?.let {
+                congestionController = when (it) {
+                    in supportedTuicCongestionControl -> it
+                    "new-reno" -> "new_reno"
+                    else -> "cubic"
                 }
-                token = link.username
-                link.queryParameter("sni")?.let {
-                    sni = it
+            }
+            (link.queryParameter("udp-relay-mode") ?:
+            link.queryParameter("udp_relay_mode") ?:
+            link.queryParameter("udp-relay_mode") ?:
+            link.queryParameter("udp_relay-mode"))?.let {
+                udpRelayMode = when (it) {
+                    in supportedTuicRelayMode -> it
+                    else -> "native"
                 }
-                link.queryParameter("congestion_controller")?.let {
-                    congestionController = it
-                }
-                link.queryParameter("congestion_control")?.let {
-                    congestionController = it
-                }
-                link.queryParameter("udp_relay-mode")?.let {
-                    udpRelayMode = it
-                }
-                link.queryParameter("udp_relay_mode")?.let {
-                    udpRelayMode = it
-                }
-                link.queryParameter("alpn")?.let {
-                    alpn = it.split(",").joinToString("\n")
-                }
-                link.queryParameter("disable_sni")?.let {
-                    disableSNI = it == "1" || it == "true"
-                }
-                link.fragment?.let {
-                    name = it
-                }
+            }
+            (link.queryParameter("disable_sni") ?: link.queryParameter("disable-sni"))
+                ?.takeIf { it == "1" || it == "true" }?.let {
+                disableSNI = true
+            }
+            (link.queryParameter("reduce_rtt") ?: link.queryParameter("reduce-rtt"))
+                ?.takeIf { it == "1" || it == "true" }?.let {
+                reduceRTT = true
+            }
+            /*(link.queryParameter("allow_insecure") ?: link.queryParameter("allow-insecure") ?:
+            link.queryParameter("insecure"))?.takeIf { it == "1" || it == "true" }?.let {
+                allowInsecure = true
+            }*/
+            link.fragment?.let {
+                name = it
             }
         }
     }
@@ -87,28 +108,39 @@ fun parseTuic(server: String): AbstractBean {
         link.queryParameter("sni")?.let {
             sni = it
         }
-        link.queryParameter("congestion_controller")?.let {
-            congestionControl = it
-        }
-        link.queryParameter("congestion_control")?.let {
-            congestionControl = it
-        }
-        link.queryParameter("udp_relay-mode")?.let {
-            udpRelayMode = it
-        }
-        link.queryParameter("udp_relay_mode")?.let {
-            udpRelayMode = it
-        }
         link.queryParameter("alpn")?.let {
             alpn = it.split(",").joinToString("\n")
         }
-        link.queryParameter("disable_sni")?.let {
-            disableSNI = it == "1" || it == "true"
+        (link.queryParameter("congestion_controller") ?:
+        link.queryParameter("congestion-controller") ?:
+        link.queryParameter("congestion_control") ?:
+        link.queryParameter("congestion-control"))?.let {
+            congestionControl = when (it) {
+                in supportedTuic5CongestionControl -> it
+                "new-reno" -> "new_reno"
+                else -> "cubic"
+            }
         }
-        link.queryParameter("allow_insecure")?.let {
-            allowInsecure = it == "1" || it == "true"
-        } ?: link.queryParameter("insecure")?.let {
-            allowInsecure = it == "1" || it == "true"
+        (link.queryParameter("udp-relay-mode") ?:
+        link.queryParameter("udp_relay_mode") ?:
+        link.queryParameter("udp-relay_mode") ?:
+        link.queryParameter("udp_relay-mode"))?.let {
+            udpRelayMode = when (it) {
+                in supportedTuic5RelayMode -> it
+                else -> "native"
+            }
+        }
+        (link.queryParameter("disable_sni") ?: link.queryParameter("disable-sni"))
+            ?.takeIf { it == "1" || it == "true" }?.let {
+                disableSNI = true
+            }
+        (link.queryParameter("reduce_rtt") ?: link.queryParameter("reduce-rtt"))
+            ?.takeIf { it == "1" || it == "true" }?.let {
+                zeroRTTHandshake = true
+            }
+        (link.queryParameter("allow_insecure") ?: link.queryParameter("allow-insecure") ?:
+        link.queryParameter("insecure"))?.takeIf { it == "1" || it == "true" }?.let {
+            allowInsecure = true
         }
         link.fragment?.let {
             name = it
@@ -116,17 +148,26 @@ fun parseTuic(server: String): AbstractBean {
     }
 }
 
-fun Tuic5Bean.toUri(): String {
-    val builder = Libcore.newURL("tuic")
-    builder.host = serverAddress
-    builder.port = serverPort
-    builder.username = uuid
-    builder.password = password
+fun Tuic5Bean.toUri(): String? {
+    val builder = Libcore.newURL("tuic").apply {
+        host = serverAddress
+        port = serverPort
+        if (uuid.isNotEmpty()) {
+            username = uuid
+        }
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
+    }
+    if (password.isNotEmpty()) {
+        builder.password = password
+    } else {
+        error("empty password")
+    }
     builder.addQueryParameter("version", "5")
     builder.addQueryParameter("udp_relay_mode", udpRelayMode)
-
     builder.addQueryParameter("congestion_control", congestionControl)
-
+    builder.addQueryParameter("congestion_controller", congestionControl)
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
@@ -136,15 +177,12 @@ fun Tuic5Bean.toUri(): String {
     if (disableSNI) {
         builder.addQueryParameter("disable_sni", "1")
     }
+    if (zeroRTTHandshake) {
+        builder.addQueryParameter("reduce_rtt", "1")
+    }
     if (allowInsecure) {
         builder.addQueryParameter("allow_insecure", "1")
-        builder.addQueryParameter("insecure", "1")
     }
-    if (name.isNotEmpty()) {
-        builder.fragment = name
-    }
-    builder.addQueryParameter("udp_relay-mode", udpRelayMode)
-    builder.addQueryParameter("congestion_controller", congestionControl)
     return builder.string
 }
 

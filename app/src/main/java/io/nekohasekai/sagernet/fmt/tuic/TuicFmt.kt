@@ -28,14 +28,25 @@ import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import libcore.Libcore
 import java.io.File
 
+val supportedTuicCongestionControl = arrayOf("cubic", "bbr", "new_reno")
+val supportedTuicRelayMode = arrayOf("native", "quic")
+
 fun TuicBean.toUri(): String {
-    val builder = Libcore.newURL("tuic")
-    builder.host = serverAddress
-    builder.port = serverPort
-    builder.username = token
+    // No standard at all. What a mess.
+    val builder = Libcore.newURL("tuic").apply {
+        host = serverAddress
+        port = serverPort
+        if (token.isNotEmpty()) {
+            username = token
+        }
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
+    }
     builder.addQueryParameter("version", "4")
     builder.addQueryParameter("udp_relay_mode", udpRelayMode)
     builder.addQueryParameter("congestion_control", congestionController)
+    builder.addQueryParameter("congestion_controller", congestionController)
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
@@ -45,11 +56,9 @@ fun TuicBean.toUri(): String {
     if (disableSNI) {
         builder.addQueryParameter("disable_sni", "1")
     }
-    if (name.isNotEmpty()) {
-        builder.fragment = name
+    if (reduceRTT) {
+        builder.addQueryParameter("reduce_rtt", "1")
     }
-    builder.addQueryParameter("udp_relay-mode", udpRelayMode)
-    builder.addQueryParameter("congestion_controller", congestionController)
     return builder.string
 }
 

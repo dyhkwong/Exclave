@@ -21,9 +21,9 @@ package io.nekohasekai.sagernet.fmt
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import androidx.core.net.toUri
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
@@ -524,7 +524,9 @@ fun buildV2RayConfig(
                                                     port = bean.serverPort
                                                     users = listOf(VMessOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            id = bean.uuidOrGenerate()
+                                                            if (bean.uuid.isNotEmpty()) {
+                                                                id = bean.uuidOrGenerate()
+                                                            }
                                                             if (bean.alterId > 0) {
                                                                 alterId = bean.alterId
                                                             }
@@ -562,7 +564,9 @@ fun buildV2RayConfig(
                                                     port = bean.serverPort
                                                     users = listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            id = bean.uuidOrGenerate()
+                                                            if (bean.uuid.isNotEmpty()) {
+                                                                id = bean.uuidOrGenerate()
+                                                            }
                                                             encryption = bean.encryption
                                                             if (bean.flow.isNotEmpty()) {
                                                                 flow = bean.flow
@@ -1759,7 +1763,7 @@ fun buildV2RayConfig(
         }
 
         remoteDns.forEach { dns ->
-            Uri.parse(dns).host?.takeIf { !it.isIpAddress() }?.also {
+            dns.toUri().host?.takeIf { !it.isIpAddress() }?.also {
                 bypassDomainSkipFakeDns.add("full:$it")
             }
             if (!dns.contains("://") && !dns.isIpAddress() && dns != "localhost") {
@@ -1768,7 +1772,7 @@ fun buildV2RayConfig(
         }
 
         directDNS.forEach { dns ->
-            Uri.parse(dns).host?.takeIf { !it.isIpAddress() }?.also {
+            dns.toUri().host?.takeIf { !it.isIpAddress() }?.also {
                 bootstrapDomain.add("full:$it")
             }
             if (!dns.contains("://") && !dns.isIpAddress() && dns != "localhost") {

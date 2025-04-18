@@ -26,45 +26,52 @@ import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import java.io.File
 
-// hysteria://host:port?auth=123456&peer=sni.domain&insecure=1|0&upmbps=100&downmbps=100&alpn=hysteria&obfs=xplus&obfsParam=123456#remarks
+val supportedHysteriaProtocol = arrayOf("udp", "faketcp", "wechat-video")
 
+// https://v1.hysteria.network/docs/uri-scheme/
+// hysteria://host:port?auth=123456&peer=sni.domain&insecure=1|0&upmbps=100&downmbps=100&alpn=hysteria&obfs=xplus&obfsParam=123456#remarks
 fun parseHysteria(url: String): HysteriaBean {
     val link = Libcore.parseURL(url)
 
     return HysteriaBean().apply {
         serverAddress = link.host
-        serverPorts = link.port.toString()
+        serverPorts = if (link.port > 0) link.port.toString() else "443"
         name = link.fragment
 
-        link.queryParameter("mport")?.also {
+        link.queryParameter("mport")?.takeIf { it.isValidHysteriaMultiPort() }?.also {
             serverPorts = it
         }
         link.queryParameter("peer")?.also {
+            sni = it
+        } ?: link.queryParameter("sni")?.also {
             sni = it
         }
         link.queryParameter("auth")?.also {
             authPayloadType = HysteriaBean.TYPE_STRING
             authPayload = it
         }
-        link.queryParameter("insecure")?.also {
-            allowInsecure = it == "1"
+        link.queryParameter("insecure")?.takeIf { it == "1" || it == "true" }?.also {
+            allowInsecure = true
         }
         link.queryParameter("alpn")?.also {
             alpn = it.split(",")[0]
         }
-        link.queryParameter("obfs")?.takeIf { it == "xplus" }?.also {
+        link.queryParameter("obfs")?.also {
+            if (it.isNotEmpty() && it != "xplus") {
+                error("unsupport obfs")
+            }
             link.queryParameter("obfsParam")?.also {
                 obfuscation = it
             }
         }
         link.queryParameter("protocol")?.also {
-            when (it) {
-                "faketcp" -> {
-                    protocol = HysteriaBean.PROTOCOL_FAKETCP
-                }
-                "wechat-video" -> {
-                    protocol = HysteriaBean.PROTOCOL_WECHAT_VIDEO
-                }
+            protocol = when (it) {
+                "" -> HysteriaBean.PROTOCOL_UDP
+                !in supportedHysteriaProtocol -> error("unsupported protocol")
+                "udp" -> HysteriaBean.PROTOCOL_UDP
+                "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
+                "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
+                else -> error("invalid")
             }
         }
         link.queryParameter("upmbps")?.also {
@@ -78,11 +85,19 @@ fun parseHysteria(url: String): HysteriaBean {
 
 fun HysteriaBean.toUri(): String? {
     if (!serverPorts.isValidHysteriaPort()) {
-        return null
+        error("invalid port")
     }
-    val builder = Libcore.newURL("hysteria")
-    builder.host = serverAddress
-    builder.port = serverPorts.substringBefore(",").substringBefore("-").toInt() // use the first port if port hopping
+    if (authPayloadType == HysteriaBean.TYPE_BASE64) {
+        error("unsupported auth payload type: base64")
+    }
+
+    val builder = Libcore.newURL("hysteria").apply {
+        host = serverAddress
+        port = serverPorts.substringBefore(",").substringBefore("-").toInt() // use the first port if port hopping
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
+    }
 
     if (serverPorts.isValidHysteriaMultiPort()) {
         builder.addQueryParameter("mport", serverPorts)
@@ -107,6 +122,9 @@ fun HysteriaBean.toUri(): String? {
         builder.addQueryParameter("obfsParam", obfuscation)
     }
     when (protocol) {
+        HysteriaBean.PROTOCOL_UDP -> {
+            builder.addQueryParameter("protocol", "udp")
+        }
         HysteriaBean.PROTOCOL_FAKETCP -> {
             builder.addQueryParameter("protocol", "faketcp")
         }
@@ -114,18 +132,12 @@ fun HysteriaBean.toUri(): String? {
             builder.addQueryParameter("protocol", "wechat-video")
         }
     }
-    if (protocol == HysteriaBean.PROTOCOL_FAKETCP) {
-        builder.addQueryParameter("protocol", "faketcp")
-    }
-    if (name.isNotEmpty()) {
-        builder.fragment = name
-    }
+
     return builder.string
 }
 
 fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): String {
     if (!serverPorts.isValidHysteriaPort()) {
-
         error("invalid port: $serverPorts")
     }
     val usePortHopping = DataStore.hysteriaEnablePortHopping && serverPorts.isValidHysteriaMultiPort()

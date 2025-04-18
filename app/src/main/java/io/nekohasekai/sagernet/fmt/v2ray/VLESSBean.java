@@ -32,11 +32,10 @@ public class VLESSBean extends StandardV2RayBean {
 
     @Override
     public void initializeDefaultValues() {
-        super.initializeDefaultValues();
-
-        if (encryption == null) encryption = "none";
         if (flow == null) flow = "";
 
+        if (encryption == null) encryption = "none";
+        super.initializeDefaultValues();
     }
 
     @Override

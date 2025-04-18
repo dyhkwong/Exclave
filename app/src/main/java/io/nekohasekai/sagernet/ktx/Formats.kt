@@ -35,10 +35,11 @@ import io.nekohasekai.sagernet.fmt.parseBackupLink
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
+import io.nekohasekai.sagernet.fmt.ssh.parseSSH
 import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic5.parseTuic
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
-import io.nekohasekai.sagernet.fmt.wireguard.parseV2rayNWireGuard
+import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuard
 
 fun String.decodeBase64UrlSafe(): String {
     return Base64.decodeStr(
@@ -97,7 +98,7 @@ fun parseShareLinks(text: String): List<AbstractBean> {
             runCatching {
                 entities.add(parseBrook(this))
             }
-        } else if (startsWith("hysteria://")) {
+        } else if (startsWith("hysteria://") || startsWith("hy://")) {
             runCatching {
                 entities.add(parseHysteria(this))
             }
@@ -113,9 +114,9 @@ fun parseShareLinks(text: String): List<AbstractBean> {
             runCatching {
                 entities.add(parseTuic(this))
             }
-        } else if (startsWith("wireguard://")) {
+        } else if (startsWith("wireguard://") || startsWith("wg://")) {
             runCatching {
-                entities.add(parseV2rayNWireGuard(this))
+                entities.add(parseWireGuard(this))
             }
         } else if (startsWith("mierus://")) {
             runCatching {
@@ -128,6 +129,10 @@ fun parseShareLinks(text: String): List<AbstractBean> {
         } else if (startsWith("anytls://")) {
             runCatching {
                 entities.add(parseAnyTLS(this))
+            }
+        } else if (startsWith("ssh://")) {
+            runCatching {
+                entities.add(parseSSH(this))
             }
         }
     }

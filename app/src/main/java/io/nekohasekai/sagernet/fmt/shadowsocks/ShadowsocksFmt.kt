@@ -27,7 +27,29 @@ import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 
+val supportedShadowsocksMethod = arrayOf(
+    "aes-128-gcm","aes-192-gcm","aes-256-gcm",
+    "chacha20-ietf-poly1305","xchacha20-ietf-poly1305",
+    "2022-blake3-aes-128-gcm","2022-blake3-aes-256-gcm","2022-blake3-chacha20-poly1305",
+    "rc4","rc4-md5","rc4-md5-6",
+    "aes-128-ctr","aes-192-ctr","aes-256-ctr",
+    "aes-128-cfb","aes-192-cfb","aes-256-cfb",
+    "aes-128-cfb8","aes-192-cfb8","aes-256-cfb8",
+    "aes-128-ofb","aes-192-ofb","aes-256-ofb",
+    "bf-cfb","cast5-cfb","des-cfb","rc2-cfb","seed-cfb",
+    "camellia-128-cfb","camellia-192-cfb","camellia-256-cfb",
+    "camellia-128-cfb8","camellia-192-cfb8","camellia-256-cfb8",
+    "salsa20","chacha20","chacha20-ietf","xchacha20",
+    "none", "table"
+)
+
+val supportedShadowsocks2022Method = arrayOf(
+    "2022-blake3-aes-128-gcm","2022-blake3-aes-256-gcm","2022-blake3-chacha20-poly1305",
+)
+
 fun PluginConfiguration.fixInvalidParams() {
+    // A typo in https://github.com/shadowsocks/shadowsocks-org/blob/6b1c064db4129de99c516294960e731934841c94/docs/doc/sip002.md?plain=1#L15
+    // "simple-obfs" should be "obfs-local"
     if (selected == "simple-obfs") {
         pluginsOptions["obfs-local"] = getOptions().apply { id = "obfs-local" }
         pluginsOptions.remove(selected)
@@ -36,8 +58,7 @@ fun PluginConfiguration.fixInvalidParams() {
 }
 
 fun ShadowsocksBean.fixInvalidParams() {
-    if (!method.isNullOrEmpty() && method == "plain") method = "none"
-    if (!plugin.isNullOrEmpty()) {
+    if (plugin != null) {
         plugin = PluginConfiguration(plugin).apply { fixInvalidParams() }.toString()
     }
 }
@@ -48,12 +69,19 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         // pre-SIP002, https://shadowsocks.org/doc/configs.html#uri-and-qr-code
         // example: ss://YmYtY2ZiOnRlc3QvIUAjOkAxOTIuMTY4LjEwMC4xOjg4ODg#example-server
         val plainUri = link.host.decodeBase64UrlSafe()
+
         return ShadowsocksBean().apply {
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")
-                .removeSuffix("/").removePrefix("[").removeSuffix("]")
+                .removePrefix("[").removeSuffix("]")
             serverPort = plainUri.substringAfterLast("@").substringAfterLast(":")
-                .removeSuffix("/").toIntOrNull()
-            method = plainUri.substringBeforeLast("@").substringBefore(":")
+                .toIntOrNull() ?: error("invalid port")
+            method = when (val it = plainUri.substringBeforeLast("@").substringBefore(":")) {
+                in supportedShadowsocksMethod -> it
+                "plain" -> "none"
+                "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+                "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+                else -> error("unsupported method")
+            }
             password = plainUri.substringBeforeLast("@").substringAfter(":")
             name = link.fragment
             fixInvalidParams()
@@ -68,7 +96,13 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         return ShadowsocksBean().apply {
             serverAddress = link.host
             serverPort = link.port
-            method = link.username
+            method = when (link.username) {
+                in supportedShadowsocksMethod -> link.username
+                "plain" -> "none"
+                "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+                "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+                else -> error("unsupported method")
+            }
             password = link.password
             plugin = link.queryParameter("plugin")
             name = link.fragment
@@ -80,7 +114,13 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         // example: ss://YWVzLTEyOC1nY206dGVzdA@127.0.0.1:8888#Example1
         serverAddress = link.host
         serverPort = link.port
-        method = link.username.decodeBase64UrlSafe().substringBefore(":")
+        method = when (val it = link.username.decodeBase64UrlSafe().substringBefore(":")) {
+            in supportedShadowsocksMethod -> it
+            "plain" -> "none"
+            "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+            "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+            else -> error("unsupported method")
+        }
         password = link.username.decodeBase64UrlSafe().substringAfter(":")
         plugin = link.queryParameter("plugin")
         name = link.fragment
@@ -88,13 +128,20 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
     }
 }
 
-fun ShadowsocksBean.toUri(): String {
+fun ShadowsocksBean.toUri(): String? {
+    if (security != "none") error("unsupported ss with tls")
+    if (type != "tcp" || headerType != "none") error("unsupported ss with v2ray transport")
+
     val builder = Libcore.newURL("ss")
     builder.host = serverAddress
     builder.port = serverPort
-    if (method.startsWith("2022-blake3-")) {
+    if (method in supportedShadowsocks2022Method) {
         builder.username = method
-        builder.password = password
+        if (password.isNotEmpty()) {
+            builder.password = password
+        } else {
+            error("empty password")
+        }
     } else {
         builder.username = Base64.encodeUrlSafe("$method:$password")
     }
@@ -117,8 +164,6 @@ fun ShadowsocksBean.toUri(): String {
 }
 
 fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
-    val address = getStr("server") ?: return null
-    val port = getInt("server_port") ?: return null
     return ShadowsocksBean().apply {
         var pluginStr = ""
         val pId = getStr("plugin")
@@ -126,10 +171,16 @@ fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
             val plugin = PluginOptions(pId, getStr("plugin_opts"))
             pluginStr = plugin.toString(false)
         }
-        serverAddress = address
-        serverPort = port
+        serverAddress = getStr("server") ?: return null
+        serverPort = getInt("server_port") ?: return null
         password = getStr("password")
-        method = getStr("method") ?: "table"
+        method = when (val it = getStr("method", "table")) {
+            in supportedShadowsocksMethod -> it
+            "plain" -> "none"
+            "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+            "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+            else -> error("unsupported method")
+        }
         plugin = pluginStr
         name = getStr("remarks", "")
         fixInvalidParams()

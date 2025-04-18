@@ -7,6 +7,9 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 
+// invalid option
+val supportedJuicityCongestionControl = arrayOf("cubic", "bbr", "new_reno")
+
 fun parseJuicity(url: String): JuicityBean {
     val link = Libcore.parseURL(url)
     return JuicityBean().apply {
@@ -23,7 +26,10 @@ fun parseJuicity(url: String): JuicityBean {
             allowInsecure = (it == "1" || it == "true")
         }
         link.queryParameter("congestion_control")?.also {
-            congestionControl = it
+            congestionControl = when (it) {
+                in supportedJuicityCongestionControl -> it
+                else -> "bbr"
+            }
         }
         link.queryParameter("pinned_certchain_sha256")?.also {
             pinnedCertChainSha256 = it
@@ -31,15 +37,25 @@ fun parseJuicity(url: String): JuicityBean {
     }
 }
 
-fun JuicityBean.toUri(): String {
-    val builder = Libcore.newURL("juicity")
-    builder.host = serverAddress
-    builder.port = serverPort
-    builder.username = uuid
-    builder.password = password
-    if (congestionControl.isNotEmpty()) {
-        builder.addQueryParameter("congestion_control", congestionControl)
+fun JuicityBean.toUri(): String? {
+
+    val builder = Libcore.newURL("juicity").apply {
+        host = serverAddress
+        port = serverPort
+        if (uuid.isNotEmpty()) {
+            username = uuid
+        } else {
+            error("empty uuid")
+        }
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
     }
+    if (password.isNotEmpty()) {
+        builder.password = password
+    }
+
+    builder.addQueryParameter("congestion_control", congestionControl)
     if (allowInsecure) {
         builder.addQueryParameter("allow_insecure", "1")
     }
@@ -49,9 +65,7 @@ fun JuicityBean.toUri(): String {
     if (pinnedCertChainSha256.isNotEmpty()) {
         builder.addQueryParameter("pinned_certchain_sha256", pinnedCertChainSha256)
     }
-    if (name.isNotEmpty()) {
-        builder.fragment = name
-    }
+
     return builder.string
 }
 

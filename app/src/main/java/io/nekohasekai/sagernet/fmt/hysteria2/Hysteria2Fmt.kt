@@ -50,7 +50,6 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
     val link = Libcore.parseURL(url)
     return Hysteria2Bean().apply {
         name = link.fragment
-
         serverAddress = link.host
         serverPorts = if (port.isNotEmpty() && port.isValidHysteriaMultiPort()) {
             port
@@ -59,33 +58,30 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
         } else {
             "443"
         }
-
-        link.queryParameter("mport")?.also {
+        link.queryParameter("mport")?.takeIf { it.isValidHysteriaMultiPort() }?.also {
             serverPorts = it
         }
-
         if (link.username.isNotEmpty()) {
             auth = link.username
         }
-
         if (link.password.isNotEmpty()) {
             auth += ":" + link.password
         }
-
         link.queryParameter("sni")?.also {
             sni = it
         }
-        link.queryParameter("insecure")?.also {
-            allowInsecure = it == "1"
+        link.queryParameter("insecure")?.takeIf { it == "1" || it == "true" }?.also {
+            allowInsecure = true
         }
         link.queryParameter("pinSHA256")?.also {
             pinSHA256 = it
         }
-        link.queryParameter("obfs")?.also { it ->
-            if (it.lowercase() == "salamander") {
-                link.queryParameter("obfs-password")?.also {
-                    obfs = it
-                }
+        link.queryParameter("obfs")?.also {
+            if (it.isNotEmpty() && it != "salamander") {
+                error("unsupported obfs")
+            }
+            link.queryParameter("obfs-password")?.also {
+                obfs = it
             }
         }
     }
@@ -93,23 +89,24 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
 
 fun Hysteria2Bean.toUri(): String? {
     if (!serverPorts.isValidHysteriaPort()) {
-        return null
-    }
-    val builder = Libcore.newURL("hysteria2")
-    builder.host = serverAddress
-    builder.port = if (serverPorts.isValidHysteriaMultiPort()) {
-        0 // placeholder
-    } else {
-        serverPorts.toInt()
+        error("invalid port")
     }
 
-    if (auth.isNotEmpty()) {
-        if (auth.contains(":")) {
-            // https://github.com/apernet/hysteria/blob/c7545cc870e5cc62a187ad03a083920e6bef049f/app/cmd/client.go#L308-L316
-            builder.username = auth.substringBefore(":")
-            builder.password = auth.substringAfter(":")
+    val builder = Libcore.newURL("hysteria2").apply {
+        host = serverAddress
+        port = if (serverPorts.isValidHysteriaMultiPort()) {
+            0 // placeholder
         } else {
-            builder.username = auth
+            serverPorts.toInt()
+        }
+        if (auth.isNotEmpty()) {
+            if (auth.contains(":")) {
+                // https://github.com/apernet/hysteria/blob/c7545cc870e5cc62a187ad03a083920e6bef049f/app/cmd/client.go#L308-L316
+                username = auth.substringBefore(":")
+                password = auth.substringAfter(":")
+            } else {
+                username = auth
+            }
         }
     }
 
@@ -130,6 +127,7 @@ fun Hysteria2Bean.toUri(): String? {
         builder.fragment = name
     }
     builder.rawPath = "/"
+
     val url = builder.string
     if (serverPorts.isValidHysteriaMultiPort()) {
         // fuck port hopping URL

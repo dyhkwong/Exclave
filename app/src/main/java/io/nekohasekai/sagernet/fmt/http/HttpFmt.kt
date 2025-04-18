@@ -42,23 +42,27 @@ fun parseHttp(link: String): HttpBean {
     }
 }
 
-fun HttpBean.toUri(): String {
-    val builder = Libcore.newURL(if (security == "tls") "https" else "http")
-    builder.host = serverAddress
-    builder.port = serverPort
+fun HttpBean.toUri(): String? {
+    if (security != "tls" && security != "none") error("unsupported http with reality")
+    if (type != "tcp" || headerType != "none") error("unsupported http with v2ray transport")
 
+    val builder = Libcore.newURL(if (security == "tls") "https" else "http").apply {
+        host = serverAddress
+        port = serverPort
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
+    }
     if (username.isNotEmpty()) {
         builder.username = username
     }
     if (password.isNotEmpty()) {
         builder.password = password
     }
+
     if (security == "tls" && sni.isNotEmpty()) {
         // non-standard
         builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotEmpty()) {
-        builder.fragment = name
     }
 
     return builder.string

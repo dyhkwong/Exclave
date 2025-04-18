@@ -20,22 +20,23 @@ fun parseHttp3(link: String): Http3Bean {
 }
 
 fun Http3Bean.toUri(): String {
-    val builder = Libcore.newURL("quic")
-    builder.host = serverAddress
-    builder.port = serverPort
-
+    val builder = Libcore.newURL("quic").apply {
+        host = serverAddress
+        port = serverPort
+        if (name.isNotEmpty()) {
+            fragment = name
+        }
+    }
     if (username.isNotEmpty()) {
         builder.username = username
     }
     if (password.isNotEmpty()) {
         builder.password = password
     }
+
     if (sni.isNotEmpty()) {
         // non-standard
         builder.addQueryParameter("sni", sni)
-    }
-    if (name.isNotEmpty()) {
-        builder.fragment = name
     }
 
     return builder.string

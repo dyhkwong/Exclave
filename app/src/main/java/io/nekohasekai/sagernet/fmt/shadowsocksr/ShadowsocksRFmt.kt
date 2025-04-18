@@ -25,18 +25,39 @@ import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 import java.util.*
 
+val supportedShadowsocksRMethod = arrayOf(
+    "rc4","rc4-md5","rc4-md5-6",
+    "aes-128-ctr","aes-192-ctr","aes-256-ctr",
+    "aes-128-cfb","aes-192-cfb","aes-256-cfb",
+    "aes-128-cfb8","aes-192-cfb8","aes-256-cfb8",
+    "aes-128-ofb","aes-192-ofb","aes-256-ofb",
+    "bf-cfb","cast5-cfb","des-cfb","rc2-cfb","seed-cfb",
+    "camellia-128-cfb","camellia-192-cfb","camellia-256-cfb",
+    "camellia-128-cfb8","camellia-192-cfb8","camellia-256-cfb8",
+    "salsa20","chacha20","chacha20-ietf","xchacha20",
+    "none", "table"
+)
+
+val supportedShadowsocksRProtocol = arrayOf(
+    "origin", "auth_sha1_v4", "auth_aes128_sha1", "auth_aes128_md5", "auth_chain_a", "auth_chain_b"
+)
+
+val supportedShadowsocksRObfs = arrayOf(
+    "plain", "http_simple", "http_post", "tls1.2_ticket_auth", "random_head"
+)
+
 fun parseShadowsocksR(url: String): ShadowsocksRBean {
 
     val params = url.substringAfter("ssr://").decodeBase64UrlSafe().split(":")
 
     val bean = ShadowsocksRBean().apply {
         serverAddress = params[0]
-        serverPort = params[1].toInt()
-        protocol = params[2]
-        method = params[3]
+        serverPort = params[1].toIntOrNull() ?: error("invalid port")
+        protocol = params[2].takeIf { it in supportedShadowsocksRProtocol } ?: error("unsupported protocol")
+        method = params[3].takeIf { it in supportedShadowsocksRMethod } ?: error("unsupported method")
         obfs = when (val it = params[4]) {
             "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
-            else -> it
+            else -> it.takeIf { it in supportedShadowsocksRObfs } ?: error("unsupported obfs")
         }
         password = params[5].substringBefore("/").decodeBase64UrlSafe()
     }
@@ -60,7 +81,6 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
 }
 
 fun ShadowsocksRBean.toUri(): String {
-
     return "ssr://" + Base64.encodeUrlSafe(
         "%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
             Locale.ENGLISH,

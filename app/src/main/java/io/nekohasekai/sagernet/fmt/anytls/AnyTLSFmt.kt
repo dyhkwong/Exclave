@@ -22,7 +22,7 @@ fun parseAnyTLS(url: String): AnyTLSBean {
 
 fun AnyTLSBean.toUri(): String? {
     if (security != "tls") {
-        return null
+        error("anytls must use tls")
     }
     val builder = Libcore.newURL("anytls")
     builder.host = serverAddress
