@@ -110,10 +110,23 @@ fun parseV2Ray(link: String): StandardV2RayBean {
         // https://github.com/XTLS/Xray-core/discussions/716
 
         if (bean is TrojanBean) {
-            bean.password = url.username
-            if (url.password.isNotEmpty()) {
-                // https://github.com/trojan-gfw/igniter/issues/318
-                bean.password += ":" + url.password
+            // https://github.com/trojan-gfw/igniter/issues/318
+            if (url.username.isEmpty() && url.password.isEmpty()
+                && link.substringAfter("trojan://").substringBefore("@") == ":") {
+                bean.password = ":"
+            } else {
+                if (url.username.isEmpty() && url.password.isEmpty()) {
+                    error("empty trojan password")
+                }
+                if (url.username.isNotEmpty() && url.password.isEmpty()) {
+                    bean.password = url.username
+                }
+                if (url.username.isNotEmpty() && url.password.isNotEmpty()) {
+                    bean.password = url.username + ":" + url.password
+                }
+                if (url.username.isEmpty() && url.password.isNotEmpty()) {
+                    bean.password = ":" + url.password
+                }
             }
         } else {
             bean.uuid = url.username
