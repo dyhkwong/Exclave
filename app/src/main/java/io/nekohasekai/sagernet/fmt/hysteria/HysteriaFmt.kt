@@ -50,7 +50,7 @@ fun parseHysteria(url: String): HysteriaBean {
             allowInsecure = it == "1"
         }
         link.queryParameter("alpn")?.also {
-            alpn = it
+            alpn = it.split(",")[0]
         }
         link.queryParameter("obfsParam")?.also {
             obfuscation = it
