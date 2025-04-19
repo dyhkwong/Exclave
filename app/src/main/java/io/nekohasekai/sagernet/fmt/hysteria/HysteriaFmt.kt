@@ -52,8 +52,10 @@ fun parseHysteria(url: String): HysteriaBean {
         link.queryParameter("alpn")?.also {
             alpn = it.split(",")[0]
         }
-        link.queryParameter("obfsParam")?.also {
-            obfuscation = it
+        link.queryParameter("obfs")?.takeIf { it == "xplus" }?.also {
+            link.queryParameter("obfsParam")?.also {
+                obfuscation = it
+            }
         }
         link.queryParameter("protocol")?.also {
             when (it) {
