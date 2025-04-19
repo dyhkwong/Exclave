@@ -1227,7 +1227,7 @@ object RawUpdater : GroupUpdater() {
                 }
                 when (type) {
                     "trojan", "vmess", "vless" -> {
-                        outbound.getObject("transport")?.also { transport ->
+                        outbound.getObject("transport")?.takeIf { !it.isEmpty() }?.also { transport ->
                             when (transport["type"]) {
                                 "ws" -> {
                                     v2rayBean.type = "ws"
