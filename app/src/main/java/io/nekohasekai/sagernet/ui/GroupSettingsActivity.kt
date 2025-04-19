@@ -97,9 +97,13 @@ class GroupSettingsActivity(
     }
 
     fun ProxyGroup.serialize() {
-        name = DataStore.groupName.takeIf { it.isNotEmpty() }
-            ?: ("My group " + System.currentTimeMillis() / 1000)
         type = DataStore.groupType
+        name = DataStore.groupName.takeIf { it.isNotEmpty() } ?:
+                if (type == GroupType.SUBSCRIPTION) {
+                    getString(R.string.subscription)
+                } else {
+                    getString(R.string.menu_group)
+                }
         order = DataStore.groupOrder
 
         frontProxy = if (DataStore.frontProxy == 1) DataStore.frontProxyOutbound else -1

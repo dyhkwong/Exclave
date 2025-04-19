@@ -265,7 +265,7 @@ class MainActivity : ThemedActivity(),
         if (name.isNullOrEmpty()) return
 
         group.name = group.name.takeIf { !it.isNullOrEmpty() }
-            ?: ("Subscription #" + System.currentTimeMillis())
+            ?: getString(R.string.subscription)
 
         onMainDispatcher {
 
