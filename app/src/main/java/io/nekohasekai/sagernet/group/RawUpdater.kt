@@ -2156,7 +2156,7 @@ object RawUpdater : GroupUpdater() {
                             }
                         }
                         "vless" -> {
-                            v2rayBean as VMessBean
+                            v2rayBean as VLESSBean
                             settings["uuid"]?.toString()?.also {
                                 v2rayBean.uuid = it
                             }
