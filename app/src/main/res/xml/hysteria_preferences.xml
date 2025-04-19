@@ -49,7 +49,6 @@
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:dialogMessage="@string/one_per_line"
             app:icon="@drawable/ic_baseline_legend_toggle_24"
             app:key="serverALPN"
             app:title="@string/alpn"
