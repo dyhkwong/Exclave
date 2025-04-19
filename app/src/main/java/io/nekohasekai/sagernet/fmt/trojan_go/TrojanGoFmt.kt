@@ -40,10 +40,9 @@ fun parseTrojanGo(server: String): TrojanGoBean {
             sni = it
         }
         link.queryParameter("type")?.let { lType ->
-            type = lType
-
-            when (type) {
+            when (lType) {
                 "ws" -> {
+                    type = lType
                     link.queryParameter("host")?.let {
                         host = it
                     }
@@ -51,8 +50,7 @@ fun parseTrojanGo(server: String): TrojanGoBean {
                         path = it
                     }
                 }
-                else -> {
-                }
+                else -> type = "none"
             }
         }
         link.queryParameter("encryption")?.let {
@@ -76,20 +74,19 @@ fun TrojanGoBean.toUri(): String {
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
-    if (type.isNotEmpty() && type != "original") {
-        builder.addQueryParameter("type", type)
 
-        when (type) {
-            "ws" -> {
-                if (host.isNotEmpty()) {
-                    builder.addQueryParameter("host", host)
-                }
-                if (path.isNotEmpty()) {
-                    builder.addQueryParameter("path", path)
-                }
+    when (type) {
+        "ws" -> {
+            builder.addQueryParameter("type", type)
+            if (host.isNotEmpty()) {
+                builder.addQueryParameter("host", host)
+            }
+            if (path.isNotEmpty()) {
+                builder.addQueryParameter("path", path)
             }
         }
     }
+
     if (encryption.isNotEmpty() && encryption != "none") {
         builder.addQueryParameter("encryption", encryption)
     }
@@ -131,8 +128,6 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
         }
 
         when (type) {
-            "original" -> {
-            }
             "ws" -> conf["websocket"] = JSONObject().also {
                 it["enabled"] = true
                 it["host"] = host
