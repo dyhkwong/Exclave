@@ -154,6 +154,8 @@ fun Tuic5Bean.toUri(): String? {
         port = serverPort
         if (uuid.isNotEmpty()) {
             username = uuid
+        } else {
+            error("empty uuid")
         }
         if (name.isNotEmpty()) {
             fragment = name
@@ -161,8 +163,6 @@ fun Tuic5Bean.toUri(): String? {
     }
     if (password.isNotEmpty()) {
         builder.password = password
-    } else {
-        error("empty password")
     }
     builder.addQueryParameter("version", "5")
     builder.addQueryParameter("udp_relay_mode", udpRelayMode)
