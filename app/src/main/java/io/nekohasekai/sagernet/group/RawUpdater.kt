@@ -2595,7 +2595,6 @@ object RawUpdater : GroupUpdater() {
                         "udp" -> HysteriaBean.PROTOCOL_UDP
                         else -> return proxies
                     }
-                    authPayloadType = HysteriaBean.TYPE_NONE
                     proxy["auth-str"]?.also {
                         authPayloadType = HysteriaBean.TYPE_STRING
                         authPayload = it.toString()
