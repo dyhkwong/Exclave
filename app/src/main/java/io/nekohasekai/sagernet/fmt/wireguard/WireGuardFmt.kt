@@ -88,8 +88,6 @@ fun parseWireGuardConfig(conf: String): List<WireGuardBean> {
 }
 
 fun WireGuardBean.toConf(): String {
-    if (privateKey.isEmpty()) error("empty private key")
-    if (peerPublicKey.isEmpty()) error("empty peer public key")
     val ini = Ini().apply {
         config.isEscape = false
     }
@@ -97,9 +95,21 @@ fun WireGuardBean.toConf(): String {
     if (mtu > 0) {
         ini.add("Interface", "MTU", mtu)
     }
-    ini.add("Interface", "PrivateKey", privateKey)
-    ini.add("Peer", "Endpoint", joinHostPort(serverAddress, serverPort))
-    ini.add("Peer", "PublicKey", peerPublicKey)
+    ini.add(
+        "Interface",
+        "PrivateKey",
+        privateKey.ifEmpty { error("empty private key") }
+    )
+    ini.add(
+        "Peer",
+        "Endpoint",
+        joinHostPort(serverAddress.ifEmpty { error("empty server address") }, serverPort)
+    )
+    ini.add(
+        "Peer",
+        "PublicKey",
+        peerPublicKey.ifEmpty { error("empty peer public key") }
+    )
     if (peerPreSharedKey.isNotEmpty()) {
         ini.add("Peer", "PreSharedKey", peerPreSharedKey)
     }

@@ -133,7 +133,7 @@ fun ShadowsocksBean.toUri(): String? {
     if (type != "tcp" || headerType != "none") error("unsupported ss with v2ray transport")
 
     val builder = Libcore.newURL("ss")
-    builder.host = serverAddress
+    builder.host = serverAddress.ifEmpty { error("empty server address") }
     builder.port = serverPort
     if (method in supportedShadowsocks2022Method) {
         builder.username = method

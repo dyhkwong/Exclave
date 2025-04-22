@@ -34,7 +34,7 @@ val supportedTuicRelayMode = arrayOf("native", "quic")
 fun TuicBean.toUri(): String {
     // No standard at all. What a mess.
     val builder = Libcore.newURL("tuic").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
         if (token.isNotEmpty()) {
             username = token

@@ -87,7 +87,7 @@ fun SOCKSBean.toUri(): String? {
     if (type != "tcp" || headerType != "none") error("unsupported socks with v2ray transport")
 
     val builder = Libcore.newURL("socks${protocolVersion()}").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
         if (name.isNotEmpty()) fragment = name
     }

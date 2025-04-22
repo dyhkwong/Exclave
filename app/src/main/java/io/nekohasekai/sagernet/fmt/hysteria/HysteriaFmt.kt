@@ -92,7 +92,7 @@ fun HysteriaBean.toUri(): String? {
     }
 
     val builder = Libcore.newURL("hysteria").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPorts.substringBefore(",").substringBefore("-").toInt() // use the first port if port hopping
         if (name.isNotEmpty()) {
             fragment = name

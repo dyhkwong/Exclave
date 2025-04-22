@@ -21,7 +21,7 @@ fun parseHttp3(link: String): Http3Bean {
 
 fun Http3Bean.toUri(): String {
     val builder = Libcore.newURL("quic").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
         if (name.isNotEmpty()) {
             fragment = name

@@ -47,7 +47,7 @@ fun HttpBean.toUri(): String? {
     if (type != "tcp" || headerType != "none") error("unsupported http with v2ray transport")
 
     val builder = Libcore.newURL(if (security == "tls") "https" else "http").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
         if (name.isNotEmpty()) {
             fragment = name

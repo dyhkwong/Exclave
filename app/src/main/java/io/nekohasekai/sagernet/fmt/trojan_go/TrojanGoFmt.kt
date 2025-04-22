@@ -78,13 +78,9 @@ fun parseTrojanGo(server: String): TrojanGoBean {
 
 fun TrojanGoBean.toUri(): String? {
     val builder = Libcore.newURL("trojan-go").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
-        if (password.isNotEmpty()) {
-            username = password
-        } else {
-            error("empty password")
-        }
+        username = password.ifEmpty { error("empty password") }
         if (name.isNotEmpty()) {
             fragment = name
         }

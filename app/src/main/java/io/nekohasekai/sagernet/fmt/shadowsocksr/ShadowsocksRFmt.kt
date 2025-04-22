@@ -84,7 +84,7 @@ fun ShadowsocksRBean.toUri(): String {
     return "ssr://" + Base64.encodeUrlSafe(
         "%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
             Locale.ENGLISH,
-            serverAddress,
+            serverAddress.ifEmpty { error("empty server address") },
             serverPort,
             protocol,
             method,

@@ -526,7 +526,7 @@ fun StandardV2RayBean.toUri(): String? {
             else -> error("impossible")
         }
     ).apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
         if (name.isNotEmpty()) {
             fragment = name
@@ -535,17 +535,20 @@ fun StandardV2RayBean.toUri(): String? {
 
     when (this) {
         is TrojanBean -> {
-            if (password.isNotEmpty()) builder.username = password
-            else error("empty password")
+            builder.username = password.ifEmpty { error("empty password") }
         }
         is VMessBean -> {
-            if (uuid.isNotEmpty()) builder.username = uuidOrGenerate()
-            else error("empty uuid")
+            if (uuid.isEmpty()) {
+                error("empty uuid")
+            }
+            builder.username = uuidOrGenerate()
             builder.addQueryParameter("encryption", encryption)
         }
         is VLESSBean -> {
-            if (uuid.isNotEmpty()) builder.username = uuidOrGenerate()
-            else error("empty uuid")
+            if (uuid.isEmpty()) {
+                error("empty uuid")
+            }
+            builder.username = uuidOrGenerate()
             builder.addQueryParameter("encryption", "none")
         }
     }

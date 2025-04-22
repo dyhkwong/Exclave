@@ -69,7 +69,7 @@ fun parseMieru(link: String): MieruBean {
 
 fun MieruBean.toUri(): String? {
     val builder = Libcore.newURL("mierus").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
     }
     if (username.isNotEmpty()) {
         builder.username = username

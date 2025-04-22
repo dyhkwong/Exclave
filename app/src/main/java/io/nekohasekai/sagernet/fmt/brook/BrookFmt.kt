@@ -184,6 +184,9 @@ fun parseBrook(text: String): AbstractBean {
 }
 
 fun BrookBean.toUri(): String? {
+    if (serverAddress.isEmpty()) {
+        error("empty server address")
+    }
     val builder = Libcore.newURL("brook")
     if (clientHKDFInfo.isNotEmpty()) {
         builder.addQueryParameter("clientHKDFInfo", clientHKDFInfo)

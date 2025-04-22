@@ -25,7 +25,7 @@ fun AnyTLSBean.toUri(): String? {
         error("anytls must use tls")
     }
     val builder = Libcore.newURL("anytls")
-    builder.host = serverAddress
+    builder.host = serverAddress.ifEmpty { error("empty server address") }
     builder.port = serverPort
     if (password.isNotEmpty()) {
         builder.username = password

@@ -38,15 +38,10 @@ fun parseJuicity(url: String): JuicityBean {
 }
 
 fun JuicityBean.toUri(): String? {
-
     val builder = Libcore.newURL("juicity").apply {
-        host = serverAddress
+        host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
-        if (uuid.isNotEmpty()) {
-            username = uuid
-        } else {
-            error("empty uuid")
-        }
+        username = uuid.ifEmpty { error("empty uuid") }
         if (name.isNotEmpty()) {
             fragment = name
         }

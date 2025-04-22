@@ -53,7 +53,7 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
     if (sni.isNotEmpty() && proxyOnly) {
         builder.host = sni
     } else {
-        builder.host = serverAddress
+        builder.host = serverAddress.ifEmpty { error("empty server address") }
     }
     if (proxyOnly && canMapping()) {
         builder.port = finalPort
