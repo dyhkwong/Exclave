@@ -735,6 +735,7 @@
         <item>Chrome_115_PQ</item>
         <item>Chrome_120</item>
         <item>Chrome_120_PQ</item>
+        <item>Chrome_131</item>
         <item>IOS_11_1</item>
         <item>IOS_12_1</item>
         <item>IOS_13</item>
@@ -781,6 +782,7 @@
         <item>hellochrome_115_pq</item>
         <item>hellochrome_120</item>
         <item>hellochrome_120_pq</item>
+        <item>hellochrome_131</item>
         <item>helloios_11_1</item>
         <item>helloios_12_1</item>
         <item>helloios_13</item>
