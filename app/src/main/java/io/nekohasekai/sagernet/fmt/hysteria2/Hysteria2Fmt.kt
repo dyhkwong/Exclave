@@ -64,12 +64,28 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
             serverPorts = it
         }
 
-        if (link.username.isNotEmpty()) {
-            auth = link.username
-        }
-
-        if (link.password.isNotEmpty()) {
-            auth += ":" + link.password
+        when {
+            // Warning: Do not use colon in username or password in so-called `userpass` authentication.
+            // Official Hysteria2 server can not handle it correctly.
+            // need to handle so-called broken "userpass" authentication
+            link.username.isEmpty() && link.password.isEmpty() -> {
+                if (rawURL.substringAfter("://").substringBefore("@") == ":") {
+                    auth = ":"
+                }
+            }
+            link.username.isNotEmpty() && link.password.isEmpty() -> {
+                auth = if (rawURL.substringAfter("://").substringBefore("@").endsWith(":")) {
+                    link.username + ":"
+                } else {
+                    link.username
+                }
+            }
+            link.username.isEmpty() && link.password.isNotEmpty() -> {
+                auth = ":" + link.password
+            }
+            link.username.isNotEmpty() && link.password.isNotEmpty() -> {
+                auth = link.username + ":" + link.password
+            }
         }
 
         link.queryParameter("sni")?.also {
@@ -104,13 +120,8 @@ fun Hysteria2Bean.toUri(): String? {
     }
 
     if (auth.isNotEmpty()) {
-        if (auth.contains(":")) {
-            // https://github.com/apernet/hysteria/blob/c7545cc870e5cc62a187ad03a083920e6bef049f/app/cmd/client.go#L308-L316
-            builder.username = auth.substringBefore(":")
-            builder.password = auth.substringAfter(":")
-        } else {
-            builder.username = auth
-        }
+        // No need to care about so-called broken "userpass" here.
+        builder.username = auth
     }
 
     if (sni.isNotEmpty()) {
@@ -250,8 +261,8 @@ fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean, cacheFile: (()
     confObject["fastOpen"] = true
 
     val options = DumperOptions()
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-    options.isPrettyFlow = true;
+    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK)
+    options.isPrettyFlow = true
     val yaml = Yaml(options)
     return yaml.dump(confObject)
 }

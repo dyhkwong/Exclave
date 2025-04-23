@@ -111,21 +111,24 @@ fun parseV2Ray(link: String): StandardV2RayBean {
 
         if (bean is TrojanBean) {
             // https://github.com/trojan-gfw/igniter/issues/318
-            if (url.username.isEmpty() && url.password.isEmpty()
-                && link.substringAfter("trojan://").substringBefore("@") == ":") {
-                bean.password = ":"
-            } else {
-                if (url.username.isEmpty() && url.password.isEmpty()) {
-                    error("empty trojan password")
+            when {
+                url.username.isEmpty() && url.password.isEmpty() -> {
+                    if (link.substringAfter("trojan://").substringBefore("@") == ":") {
+                        bean.password = ":"
+                    }
                 }
-                if (url.username.isNotEmpty() && url.password.isEmpty()) {
-                    bean.password = url.username
+                url.username.isNotEmpty() && url.password.isEmpty() -> {
+                    bean.password = if (link.substringAfter("trojan://").substringBefore("@").endsWith(":")) {
+                        url.username + ":"
+                    } else {
+                        url.username
+                    }
                 }
-                if (url.username.isNotEmpty() && url.password.isNotEmpty()) {
-                    bean.password = url.username + ":" + url.password
-                }
-                if (url.username.isEmpty() && url.password.isNotEmpty()) {
+                url.username.isEmpty() && url.password.isNotEmpty() -> {
                     bean.password = ":" + url.password
+                }
+                url.username.isNotEmpty() && url.password.isNotEmpty() -> {
+                    bean.password = url.username + ":" + url.password
                 }
             }
         } else {
