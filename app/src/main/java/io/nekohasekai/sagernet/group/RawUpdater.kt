@@ -52,6 +52,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.supportedShadowsocksRProtocol
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
 import io.nekohasekai.sagernet.fmt.tuic.supportedTuicCongestionControl
 import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
@@ -1034,49 +1035,6 @@ object RawUpdater : GroupUpdater() {
                 }
                 proxies.add(hysteria2Bean)
             }
-            "wireguard" -> {
-                val wireguardBean = WireGuardBean()
-                outbound.getString("tag")?.also {
-                    wireguardBean.name = it
-                }
-                outbound.getObject("settings")?.also { settings ->
-                    settings.getString("secretKey")?.also {
-                        // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L126-L148
-                        wireguardBean.privateKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
-                    }
-                    // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L75
-                    wireguardBean.localAddress = "10.0.0.1/32\nfd59:7153:2388:b5fd:0000:0000:0000:0001/128"
-                    (settings.getAny("address") as? List<String>)?.also {
-                        wireguardBean.localAddress = it.joinToString("\n")
-                    }
-                    wireguardBean.mtu = 1420
-                    settings.getInteger("mtu")?.takeIf { it > 0 }?.also {
-                        wireguardBean.mtu = it
-                    }
-                    (settings.getAny("reserved") as? List<Int>)?.also {
-                        if (it.size == 3) {
-                            wireguardBean.reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
-                        }
-                    }
-                    (settings.getArray("peers"))?.forEach { peer ->
-                        proxies.add(wireguardBean.applyDefaultValues().clone().apply {
-                            (peer as? JSONObject)?.getString("endpoint")?.also {
-                                serverAddress = it.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
-                                serverPort = it.substringAfterLast(":").toIntOrNull()
-                            }
-                            (peer as? JSONObject)?.getString("publicKey")?.also {
-                                peerPublicKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
-                            }
-                            (peer as? JSONObject)?.getString("preSharedKey")?.also {
-                                peerPreSharedKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
-                            }
-                            (peer as? JSONObject)?.getInt("keepAlive")?.takeIf { it > 0 }?.also {
-                                keepaliveInterval = it
-                            }
-                        })
-                    }
-                }
-            }
             "ssh" -> {
                 outbound.getObject("streamSettings")?.also { streamSettings ->
                     streamSettings.getString("network")?.lowercase()?.also {
@@ -1269,6 +1227,49 @@ object RawUpdater : GroupUpdater() {
                     }
                 }
                 proxies.add(anytlsBean)
+            }
+            "wireguard" -> {
+                val wireguardBean = WireGuardBean()
+                outbound.getString("tag")?.also {
+                    wireguardBean.name = it
+                }
+                outbound.getObject("settings")?.also { settings ->
+                    settings.getString("secretKey")?.also {
+                        // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L126-L148
+                        wireguardBean.privateKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
+                    }
+                    // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L75
+                    wireguardBean.localAddress = "10.0.0.1/32\nfd59:7153:2388:b5fd:0000:0000:0000:0001/128"
+                    (settings.getAny("address") as? List<String>)?.also {
+                        wireguardBean.localAddress = it.joinToString("\n")
+                    }
+                    wireguardBean.mtu = 1420
+                    settings.getInteger("mtu")?.takeIf { it > 0 }?.also {
+                        wireguardBean.mtu = it
+                    }
+                    (settings.getAny("reserved") as? List<Int>)?.also {
+                        if (it.size == 3) {
+                            wireguardBean.reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
+                        }
+                    }
+                    (settings.getArray("peers"))?.forEach { peer ->
+                        proxies.add(wireguardBean.applyDefaultValues().clone().apply {
+                            (peer as? JSONObject)?.getString("endpoint")?.also {
+                                serverAddress = it.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
+                                serverPort = it.substringAfterLast(":").toIntOrNull()
+                            }
+                            (peer as? JSONObject)?.getString("publicKey")?.also {
+                                peerPublicKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
+                            }
+                            (peer as? JSONObject)?.getString("preSharedKey")?.also {
+                                peerPreSharedKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
+                            }
+                            (peer as? JSONObject)?.getInt("keepAlive")?.takeIf { it > 0 }?.also {
+                                keepaliveInterval = it
+                            }
+                        })
+                    }
+                }
             }
         }
         return proxies
@@ -1760,6 +1761,53 @@ object RawUpdater : GroupUpdater() {
                 }
                 proxies.add(ssrBean)
             }
+            "anytls" -> {
+                val anytlsBean = AnyTLSBean().apply {
+                    outbound["tag"]?.toString()?.also {
+                        name = it
+                    }
+                    outbound.getString("server")?.also {
+                        serverAddress = it
+                    } ?: return proxies
+                    outbound.getInteger("server_port")?.also {
+                        serverPort = it
+                    } ?: return proxies
+                    outbound.getObject("tls")?.also { tls ->
+                        (tls.getBoolean("enabled"))?.also { enabled ->
+                            if (enabled) {
+                                security = "tls"
+                                tls.getString("server_name")?.also {
+                                    sni = it
+                                }
+                                tls.getBoolean("insecure")?.also {
+                                    allowInsecure = it
+                                }
+                                (tls.getAny("alpn") as? (List<String>))?.also {
+                                    alpn = it.joinToString("\n")
+                                } ?: tls.getString("alpn")?.also {
+                                    alpn = it
+                                }
+                                tls.getObject("reality")?.also { reality ->
+                                    reality.getBoolean("enabled")?.also { enabled ->
+                                        if (enabled) {
+                                            security = "reality"
+                                            reality.getString("public_key")?.also {
+                                                realityPublicKey = it
+                                            }
+                                            reality.getString("short_id")?.also {
+                                                realityShortId = it
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                security = "none"
+                            }
+                        }
+                    }
+                }
+                proxies.add(anytlsBean)
+            }
             "wireguard" -> {
                 if (outbound.contains("address")) {
                     // wireguard endpoint format introduced in 1.11.0-alpha.19
@@ -1835,53 +1883,6 @@ object RawUpdater : GroupUpdater() {
                         }
                     })
                 }
-            }
-            "anytls" -> {
-                val anytlsBean = AnyTLSBean().apply {
-                    outbound["tag"]?.toString()?.also {
-                        name = it
-                    }
-                    outbound.getString("server")?.also {
-                        serverAddress = it
-                    } ?: return proxies
-                    outbound.getInteger("server_port")?.also {
-                        serverPort = it
-                    } ?: return proxies
-                    outbound.getObject("tls")?.also { tls ->
-                        (tls.getBoolean("enabled"))?.also { enabled ->
-                            if (enabled) {
-                                security = "tls"
-                                tls.getString("server_name")?.also {
-                                    sni = it
-                                }
-                                tls.getBoolean("insecure")?.also {
-                                    allowInsecure = it
-                                }
-                                (tls.getAny("alpn") as? (List<String>))?.also {
-                                    alpn = it.joinToString("\n")
-                                } ?: tls.getString("alpn")?.also {
-                                    alpn = it
-                                }
-                                tls.getObject("reality")?.also { reality ->
-                                    reality.getBoolean("enabled")?.also { enabled ->
-                                        if (enabled) {
-                                            security = "reality"
-                                            reality.getString("public_key")?.also {
-                                                realityPublicKey = it
-                                            }
-                                            reality.getString("short_id")?.also {
-                                                realityShortId = it
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                security = "none"
-                            }
-                        }
-                    }
-                }
-                proxies.add(anytlsBean)
             }
         }
         return proxies
@@ -2404,6 +2405,18 @@ object RawUpdater : GroupUpdater() {
                 if (bean is TrojanBean) {
                     bean.security = "tls"
                 }
+                when (val network = proxy["network"]?.toString()) {
+                    "h2" -> bean.type = "http"
+                    "http" -> {
+                        bean.type = "tcp"
+                        bean.headerType = "http"
+                    }
+                    "ws", "grpc" -> bean.type = network
+                    else -> {
+                        // Do not `return proxies` here. Fuck those non-standard configs.
+                        bean.type = "tcp"
+                    }
+                }
                 for (opt in proxy) {
                     when (opt.key) {
                         "name" -> bean.name = opt.value?.toString()
@@ -2427,7 +2440,7 @@ object RawUpdater : GroupUpdater() {
                             }
                         }
                         "flow" -> {
-                            if (bean is VLESSBean) {
+                            if (bean is VLESSBean && bean.type != "ws") {
                                 (opt.value as? String)?.also {
                                     if (it.startsWith("xtls-rprx-vision")) {
                                         bean.flow = "xtls-rprx-vision-udp443"
@@ -2465,20 +2478,6 @@ object RawUpdater : GroupUpdater() {
                                 when (realityOpt.key) {
                                     "public-key" -> bean.realityPublicKey = realityOpt.value?.toString()
                                     "short-id" -> bean.realityShortId = realityOpt.value?.toString()
-                                }
-                            }
-                        }
-                        "network" -> {
-                            when (opt.value) {
-                                "h2" -> bean.type = "http"
-                                "http" -> {
-                                    bean.type = "tcp"
-                                    bean.headerType = "http"
-                                }
-                                "ws", "grpc" -> bean.type = opt.value as String
-                                else -> {
-                                    // Do not `return proxies` here. Fuck those non-standard configs.
-                                    bean.type = "tcp"
                                 }
                             }
                         }
@@ -2540,6 +2539,28 @@ object RawUpdater : GroupUpdater() {
                                 }
                             }
                         }
+                        "ss-opts" -> {
+                            if (bean is TrojanBean) {
+                                (opt.value as? Map<String, Any?>)?.also {
+                                    if (it["enabled"] as? Boolean == true) {
+                                        if (bean.security != "tls") return proxies
+                                        val ssMethod = when (val method = it["method"] as? String) {
+                                            "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305" -> method
+                                            else -> return proxies
+                                        }
+                                        val ssPassword = it["password"]?.toString() ?: ""
+                                        return listOf(TrojanGoBean().apply {
+                                            serverAddress = bean.serverAddress
+                                            serverPort = bean.serverPort
+                                            password = bean.password
+                                            sni = bean.sni
+                                            allowInsecure = bean.allowInsecure
+                                            encryption = "ss;$ssMethod:$ssPassword"
+                                        })
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 proxies.add(bean)
@@ -2569,29 +2590,22 @@ object RawUpdater : GroupUpdater() {
                 })
             }
             "ssh" -> {
-                val bean = SSHBean().apply {
+                proxies.add(SSHBean().apply {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
                     serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
-                }
-                for (opt in proxy) {
-                    when (opt.key) {
-                        "name" -> bean.name = opt.value?.toString()
-                        "username" -> bean.username = opt.value?.toString()
-                        "password" -> {
-                            bean.password = opt.value?.toString()
-                            bean.authType = SSHBean.AUTH_TYPE_PASSWORD
-                        }
-                        "private-key" -> {
-                            bean.privateKey = opt.value?.toString()
-                            bean.authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
-                        }
-                        "private-key-passphrase" -> bean.privateKeyPassphrase = opt.value?.toString()
-                        "host-key" -> (opt.value as? List<Any>)?.also {
-                            bean.publicKey = it.joinToString("\n")
-                        }
+                    username = proxy["username"]?.toString()
+                    proxy["password"]?.toString()?.also {
+                        password = it
+                        authType = SSHBean.AUTH_TYPE_PASSWORD
                     }
-                }
-                proxies.add(bean)
+                    proxy["private-key"]?.toString()?.also {
+                        privateKey = it
+                        authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
+                    }
+                    privateKeyPassphrase = proxy["private-key-passphrase"]?.toString()
+                    publicKey = (proxy["host-key"] as? List<Any>)?.joinToString("\n")
+                    name = proxy["name"]?.toString()
+                })
             }
             "hysteria" -> {
                 proxies.add(HysteriaBean().apply {
@@ -2696,7 +2710,50 @@ object RawUpdater : GroupUpdater() {
                     })
                 }
             }
+            "mieru" -> {
+                proxies.add(MieruBean().apply {
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    // Why yet another protocol containing port-range? Let us use the first port only for now.
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: (proxy["port-range"]?.toString())?.substringBefore("-")?.toIntOrNull() ?: return proxies
+                    username = proxy["username"]?.toString()
+                    password = proxy["password"]?.toString()
+                    protocol = MieruBean.PROTOCOL_TCP
+                    proxy["transport"]?.toString()?.also {
+                        protocol = when (it) {
+                            "TCP", "" -> MieruBean.PROTOCOL_TCP
+                            "UDP" -> MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
+                            else -> return proxies
+                        }
+                    }
+                    proxy["multiplexing"]?.toString()?.also {
+                        multiplexingLevel = when (it) {
+                            "MULTIPLEXING_OFF" -> MieruBean.MULTIPLEXING_OFF
+                            "MULTIPLEXING_LOW" -> MieruBean.MULTIPLEXING_LOW
+                            "MULTIPLEXING_MIDDLE" -> MieruBean.MULTIPLEXING_MIDDLE
+                            "MULTIPLEXING_HIGH" -> MieruBean.MULTIPLEXING_HIGH
+                            else -> MieruBean.MULTIPLEXING_LOW
+                        }
+                    }
+                    name = proxy["name"]?.toString()
+                })
+            }
+            "anytls" -> {
+                proxies.add(AnyTLSBean().apply {
+                    serverAddress = proxy["server"]?.toString() ?: return proxies
+                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
+                    password = proxy["password"]?.toString()
+                    security = "tls"
+                    sni = proxy["sni"]?.toString()
+                    alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
+                    allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
+                    name = proxy["name"]?.toString()
+                })
+            }
             "wireguard" -> {
+                (proxy["amnezia-wg-option"] as? Map<String, Any?>)?.also {
+                    // unsupported
+                    return proxies
+                }
                 val wireGuardBean = WireGuardBean().apply {
                     serverAddress = proxy["server"]?.toString()
                     serverPort = proxy["port"]?.toString()?.toIntOrNull()
@@ -2744,52 +2801,6 @@ object RawUpdater : GroupUpdater() {
                         })
                     }
                 }
-            }
-            "mieru" -> {
-                val bean = MieruBean().apply {
-                    serverAddress = proxy["server"]?.toString() ?: return proxies
-                    // Why yet another protocol containing port-range? Let us use the first port only for now.
-                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: (proxy["port-range"]?.toString())?.substringBefore("-")?.toIntOrNull() ?: return proxies
-                }
-                for (opt in proxy) {
-                    when (opt.key) {
-                        "name" -> bean.name = opt.value?.toString()
-                        "username" -> bean.username = opt.value?.toString()
-                        "password" -> bean.password = opt.value?.toString()
-                        "transport" -> opt.value?.also {
-                            when (it) {
-                                "TCP" -> bean.protocol = MieruBean.PROTOCOL_TCP
-                                "UDP" -> bean.protocol = MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
-                                else -> return proxies
-                            }
-                        }
-                        "multiplexing" -> when (opt.value) {
-                            "MULTIPLEXING_OFF" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_OFF
-                            "MULTIPLEXING_LOW" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_LOW
-                            "MULTIPLEXING_MIDDLE" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_MIDDLE
-                            "MULTIPLEXING_HIGH" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_HIGH
-                            else -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_LOW
-                        }
-                    }
-                }
-                proxies.add(bean)
-            }
-            "anytls" -> {
-                val bean = AnyTLSBean().apply {
-                    serverAddress = proxy["server"]?.toString() ?: return proxies
-                    serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return proxies
-                    security = "tls"
-                }
-                for (opt in proxy) {
-                    when (opt.key) {
-                        "name" -> bean.name = opt.value?.toString()
-                        "password" -> bean.password = opt.value?.toString()
-                        "sni" -> bean.sni = opt.value?.toString()
-                        "skip-cert-verify" -> bean.allowInsecure = opt.value as? Boolean
-                        "alpn" -> bean.alpn = (opt.value as? List<Any>)?.joinToString("\n")
-                    }
-                }
-                proxies.add(bean)
             }
         }
         return proxies
