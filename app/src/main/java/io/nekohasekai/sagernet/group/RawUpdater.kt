@@ -2124,7 +2124,7 @@ object RawUpdater : GroupUpdater() {
                 }
 
                 (outbound["settings"] as? JSONObject)?.also { settings ->
-                    if (settings.containsKey("servers") || settings.containsKey("vnext")) { // jsonv4
+                    if (settings.contains("servers") || settings.contains("vnext")) { // jsonv4
                         return proxies
                     }
                     settings["address"]?.toString()?.also {
