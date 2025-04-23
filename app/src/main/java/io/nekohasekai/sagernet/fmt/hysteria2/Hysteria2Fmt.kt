@@ -120,6 +120,7 @@ fun Hysteria2Bean.toUri(): String? {
         builder.addQueryParameter("pinSHA256", pinSHA256)
     }
     if (obfs.isNotEmpty()) {
+        // obfs password must not be empty
         builder.addQueryParameter("obfs", "salamander")
         builder.addQueryParameter("obfs-password", obfs)
     }

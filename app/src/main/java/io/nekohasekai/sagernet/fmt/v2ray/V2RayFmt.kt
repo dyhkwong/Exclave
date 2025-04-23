@@ -712,9 +712,7 @@ fun StandardV2RayBean.toUri(): String? {
             if (sni.isNotEmpty()) {
                 builder.addQueryParameter("sni", sni)
             }
-            if (realityPublicKey.isNotEmpty()) {
-                builder.addQueryParameter("pbk", realityPublicKey)
-            }
+            builder.addQueryParameter("pbk", realityPublicKey.ifEmpty { error("empty reality public key") })
             if (realityShortId.isNotEmpty()) {
                 builder.addQueryParameter("sid", realityShortId)
             }

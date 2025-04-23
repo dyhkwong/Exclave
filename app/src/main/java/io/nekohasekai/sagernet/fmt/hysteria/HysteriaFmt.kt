@@ -87,9 +87,6 @@ fun HysteriaBean.toUri(): String? {
     if (!serverPorts.isValidHysteriaPort()) {
         error("invalid port")
     }
-    if (authPayloadType == HysteriaBean.TYPE_BASE64) {
-        error("unsupported auth payload type: base64")
-    }
 
     val builder = Libcore.newURL("hysteria").apply {
         host = serverAddress.ifEmpty { error("empty server address") }
@@ -105,9 +102,17 @@ fun HysteriaBean.toUri(): String? {
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("peer", sni)
     }
-    if (authPayload.isNotEmpty()) {
-        builder.addQueryParameter("auth", authPayload)
+    if (authPayloadType != HysteriaBean.TYPE_NONE && authPayload.isNotEmpty()) {
+        when (authPayloadType) {
+            HysteriaBean.TYPE_BASE64 -> {
+                builder.addQueryParameter("auth", authPayload.decodeBase64UrlSafe())
+            }
+            HysteriaBean.TYPE_STRING -> {
+                builder.addQueryParameter("auth", authPayload)
+            }
+        }
     }
+
     if (uploadMbps != 0) {
         builder.addQueryParameter("upmbps", "$uploadMbps")
     }
@@ -173,7 +178,9 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         it["up_mbps"] = uploadMbps
         it["down_mbps"] = downloadMbps
         it["socks5"] = JSONObject(mapOf("listen" to joinHostPort(LOCALHOST, port)))
-        it["obfs"] = obfuscation
+        if (obfuscation.isNotEmpty()) {
+            it["obfs"] = obfuscation
+        }
         when (authPayloadType) {
             HysteriaBean.TYPE_BASE64 -> it["auth"] = authPayload
             HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload

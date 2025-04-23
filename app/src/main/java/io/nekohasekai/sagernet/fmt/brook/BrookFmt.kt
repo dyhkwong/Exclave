@@ -271,9 +271,7 @@ fun BrookBean.toUri(): String? {
             }
         }
     }
-    if (name.isNotEmpty()) {
-        builder.addQueryParameter("password", password)
-    }
+    builder.addQueryParameter("password", password)
 
     if (name.isNotEmpty()) {
         builder.addQueryParameter("name", name)
