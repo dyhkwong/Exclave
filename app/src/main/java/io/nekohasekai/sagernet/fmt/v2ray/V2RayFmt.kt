@@ -535,7 +535,9 @@ fun StandardV2RayBean.toUri(): String? {
 
     when (this) {
         is TrojanBean -> {
-            builder.username = password.ifEmpty { error("empty password") }
+            if (password.isEmpty()) {
+                builder.username = password
+            }
         }
         is VMessBean -> {
             if (uuid.isEmpty()) {

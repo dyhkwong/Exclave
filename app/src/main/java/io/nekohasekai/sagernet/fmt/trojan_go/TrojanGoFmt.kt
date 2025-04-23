@@ -80,7 +80,9 @@ fun TrojanGoBean.toUri(): String? {
     val builder = Libcore.newURL("trojan-go").apply {
         host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort
-        username = password.ifEmpty { error("empty password") }
+        if (password.isEmpty()) {
+            username = password
+        }
         if (name.isNotEmpty()) {
             fragment = name
         }
