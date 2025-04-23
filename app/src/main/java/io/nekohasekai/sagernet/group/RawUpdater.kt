@@ -457,26 +457,28 @@ object RawUpdater : GroupUpdater() {
                                 v2rayBean.type = "tcp"
                                 (streamSettings.getObject("tcpSettings") ?: streamSettings.getObject("rawSettings"))?.also { tcpSettings ->
                                     tcpSettings.getObject("header")?.also { header ->
-                                        when (header.getString("type")?.lowercase()) {
-                                            "none" -> {}
-                                            "http" -> {
-                                                v2rayBean.headerType = "http"
-                                                header.getObject("request")?.also { request ->
-                                                    (request.getAny("path") as? List<String>)?.also {
-                                                        v2rayBean.path = it.joinToString("\n")
-                                                    } ?: request.getString("path")?.also {
-                                                        v2rayBean.path = it.split(",").joinToString("\n")
-                                                    }
-                                                    request.getObject("headers")?.also { headers ->
-                                                        (headers.getAny("Host") as? List<String>)?.also {
-                                                            v2rayBean.host = it.joinToString("\n")
-                                                        } ?: headers.getString("Host")?.also {
-                                                            v2rayBean.host = it.split(",").joinToString("\n")
+                                        header.getString("type")?.lowercase()?.also { type ->
+                                            when (type) {
+                                                "none" -> {}
+                                                "http" -> {
+                                                    v2rayBean.headerType = "http"
+                                                    header.getObject("request")?.also { request ->
+                                                        (request.getAny("path") as? List<String>)?.also {
+                                                            v2rayBean.path = it.joinToString("\n")
+                                                        } ?: request.getString("path")?.also {
+                                                            v2rayBean.path = it.split(",").joinToString("\n")
+                                                        }
+                                                        request.getObject("headers")?.also { headers ->
+                                                            (headers.getAny("Host") as? List<String>)?.also {
+                                                                v2rayBean.host = it.joinToString("\n")
+                                                            } ?: headers.getString("Host")?.also {
+                                                                v2rayBean.host = it.split(",").joinToString("\n")
+                                                            }
                                                         }
                                                     }
                                                 }
+                                                else -> return proxies
                                             }
-                                            else -> return proxies
                                         }
                                     }
                                 }
@@ -2370,6 +2372,7 @@ object RawUpdater : GroupUpdater() {
                                 return proxies
                             }
                         }
+                        "", null -> {}
                         else -> return proxies
                     }
                     pluginStr = pluginOpts.toString(false)
@@ -2423,10 +2426,16 @@ object RawUpdater : GroupUpdater() {
                                 }
                             }
                         }
-                        "flow" -> if (bean is VLESSBean && (opt.value as? String)?.startsWith("xtls-rprx-vision") == true) {
-                            bean.flow = "xtls-rprx-vision-udp443"
-                            bean.packetEncoding = "xudp"
-                        } else return proxies
+                        "flow" -> {
+                            if (bean is VLESSBean) {
+                                (opt.value as? String)?.also {
+                                    if (it.startsWith("xtls-rprx-vision")) {
+                                        bean.flow = "xtls-rprx-vision-udp443"
+                                        bean.packetEncoding = "xudp"
+                                    } else return proxies
+                                }
+                            }
+                        }
                         "authenticated-length" -> if (bean is VMessBean) bean.experimentalAuthenticatedLength = opt.value as? Boolean == true
                         "packet-encoding" -> {
                             when (bean) {
@@ -2587,17 +2596,19 @@ object RawUpdater : GroupUpdater() {
             "hysteria" -> {
                 proxies.add(HysteriaBean().apply {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
-                    serverPorts = proxy["ports"]?.toString()?.takeIf { it.isValidHysteriaPort() }
-                        ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
-                    protocol = when (proxy["protocol"] as? String ?: proxy["obfs-protocol"] as? String) {
-                        "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
-                        "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
-                        "udp" -> HysteriaBean.PROTOCOL_UDP
-                        else -> return proxies
+                    serverPorts = (proxy["ports"]?.toString()?.takeIf { it.isValidHysteriaPort() }
+                        ?: proxy["port"]?.toString()?.toIntOrNull()?.toString()) ?: return proxies
+                    (proxy["protocol"] as? String ?: proxy["obfs-protocol"] as? String)?.also {
+                        protocol = when (it) {
+                            "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
+                            "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
+                            "udp", "" -> HysteriaBean.PROTOCOL_UDP
+                            else -> return proxies
+                        }
                     }
-                    proxy["auth-str"]?.also {
+                    proxy["auth-str"]?.toString()?.takeIf { it.isNotEmpty() }?.also {
                         authPayloadType = HysteriaBean.TYPE_STRING
-                        authPayload = it.toString()
+                        authPayload = it
                     }
                     proxy["auth"]?.toString()?.takeIf { it.isNotEmpty() }?.also {
                         authPayloadType = HysteriaBean.TYPE_BASE64
@@ -2616,20 +2627,22 @@ object RawUpdater : GroupUpdater() {
             "hysteria2" -> {
                 proxies.add(Hysteria2Bean().apply {
                     serverAddress = proxy["server"]?.toString() ?: return proxies
-                    serverPorts = proxy["ports"]?.toString()?.takeIf { it.isValidHysteriaPort() }
-                        ?: proxy["port"]?.toString()?.toIntOrNull()?.toString() ?: return proxies
+                    serverPorts = (proxy["ports"]?.toString()?.takeIf { it.isValidHysteriaPort() }
+                        ?: proxy["port"]?.toString()?.toIntOrNull()?.toString()) ?: return proxies
                     auth = proxy["password"]?.toString()
                     // uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond()
                     // downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond()
                     sni = proxy["sni"]?.toString()
                     // alpn = (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                     allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                    when (proxy["obfs"] as? String) {
-                        "" -> {}
-                        "salamander" -> {
-                            obfs = proxy["obfs-password"]?.toString()
+                    (proxy["obfs"] as? String)?.also {
+                        when (it) {
+                            "" -> {}
+                            "salamander" -> {
+                                obfs = proxy["obfs-password"]?.toString()
+                            }
+                            else -> return proxies
                         }
-                        else -> return proxies
                     }
                     hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
                     name = proxy["name"]?.toString()
@@ -2652,7 +2665,8 @@ object RawUpdater : GroupUpdater() {
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         reduceRTT = proxy["reduce-rtt"] as? Boolean == true
                         // allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                        sni = proxy["sni"]?.toString() ?: if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null
+                        sni = proxy["sni"]?.toString()
+                            ?: (if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null)
                         // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
                         alpn = if (!proxy.containsKey("alpn")) "h3" else (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
@@ -2674,7 +2688,8 @@ object RawUpdater : GroupUpdater() {
                         disableSNI = proxy["disable-sni"] as? Boolean == true
                         zeroRTTHandshake = proxy["reduce-rtt"] as? Boolean == true
                         allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
-                        sni =  proxy["sni"]?.toString() ?: if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null
+                        sni = proxy["sni"]?.toString()
+                            ?: (if (proxy["ip"]?.toString() != null) proxy["server"]?.toString() else null)
                         // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
                         alpn = if (!proxy.containsKey("alpn")) "h3" else (proxy["alpn"] as? List<Any>)?.joinToString("\n")
                         name = proxy["name"]?.toString()
@@ -2741,10 +2756,12 @@ object RawUpdater : GroupUpdater() {
                         "name" -> bean.name = opt.value?.toString()
                         "username" -> bean.username = opt.value?.toString()
                         "password" -> bean.password = opt.value?.toString()
-                        "transport" -> when (opt.value) {
-                            "TCP" -> bean.protocol = MieruBean.PROTOCOL_TCP
-                            "UDP" -> bean.protocol = MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
-                            else -> return proxies
+                        "transport" -> opt.value?.also {
+                            when (it) {
+                                "TCP" -> bean.protocol = MieruBean.PROTOCOL_TCP
+                                "UDP" -> bean.protocol = MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
+                                else -> return proxies
+                            }
                         }
                         "multiplexing" -> when (opt.value) {
                             "MULTIPLEXING_OFF" -> bean.multiplexingLevel = MieruBean.MULTIPLEXING_OFF
