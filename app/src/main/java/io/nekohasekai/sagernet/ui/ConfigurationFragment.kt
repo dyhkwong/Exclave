@@ -1447,7 +1447,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             var configurationIdList: MutableList<Long> = mutableListOf()
             val configurationList = HashMap<Long, ProxyEntity>()
 
-            private fun getItem(profileId: Long): ProxyEntity {
+            private fun getItem(profileId: Long): ProxyEntity? {
                 var profile = configurationList[profileId]
                 if (profile == null) {
                     profile = ProfileManager.getProfile(profileId)
@@ -1455,7 +1455,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         configurationList[profileId] = profile
                     }
                 }
-                return profile!!
+                return profile
             }
 
             private fun getItemAt(index: Int) = getItem(configurationIdList[index])
@@ -1476,7 +1476,9 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             override fun onBindViewHolder(holder: ConfigurationHolder, position: Int) {
                 try {
-                    holder.bind(getItemAt(position))
+                    getItemAt(position)?.let {
+                        holder.bind(it)
+                    }
                 } catch (ignored: NullPointerException) { // when group deleted
                 }
             }
@@ -1503,13 +1505,13 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             fun move(from: Int, to: Int) {
-                val first = getItemAt(from)
+                val first = getItemAt(from) ?: return
                 var previousOrder = first.userOrder
                 val (step, range) = if (from < to) Pair(1, from until to) else Pair(
                     -1, to + 1 downTo from
                 )
                 for (i in range) {
-                    val next = getItemAt(i + step)
+                    val next = getItemAt(i + step) ?: return
                     val order = next.userOrder
                     next.userOrder = previousOrder
                     previousOrder = order
@@ -1528,6 +1530,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
 
             fun remove(pos: Int) {
+                if (pos < 0) return
                 configurationIdList.removeAt(pos)
                 notifyItemRemoved(pos)
             }
