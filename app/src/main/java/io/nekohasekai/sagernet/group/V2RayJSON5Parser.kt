@@ -258,7 +258,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
             }
 
             (outbound["settings"] as? JSONObject)?.also { settings ->
-                if (settings.containsKey("servers") || settings.containsKey("vnext")) { // jsonv4
+                if (settings.contains("servers") || settings.contains("vnext")) { // jsonv4
                     return listOf()
                 }
                 settings["address"]?.toString()?.also {
