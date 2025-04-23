@@ -90,8 +90,17 @@ fun HysteriaBean.toUri(): String? {
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("peer", sni)
     }
-    if (authPayload.isNotEmpty()) {
-        builder.addQueryParameter("auth", authPayload)
+    if (authPayloadType != HysteriaBean.TYPE_NONE && authPayload.isNotEmpty()) {
+        when (authPayloadType) {
+            HysteriaBean.TYPE_BASE64 -> {
+                builder.addQueryParameter("auth", authPayload.decodeBase64UrlSafe())
+            }
+            HysteriaBean.TYPE_STRING -> {
+                builder.addQueryParameter("auth", authPayload)
+            }
+        }
+    } else {
+        builder.addQueryParameter("auth", "")
     }
     if (uploadMbps != 0) {
         builder.addQueryParameter("upmbps", "$uploadMbps")
@@ -103,6 +112,7 @@ fun HysteriaBean.toUri(): String? {
         builder.addQueryParameter("alpn", alpn)
     }
     if (obfuscation.isNotEmpty()) {
+        // obfs password must not be empty
         builder.addQueryParameter("obfs", "xplus")
         builder.addQueryParameter("obfsParam", obfuscation)
     }
@@ -161,7 +171,9 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         it["up_mbps"] = uploadMbps
         it["down_mbps"] = downloadMbps
         it["socks5"] = JSONObject(mapOf("listen" to joinHostPort(LOCALHOST, port)))
-        it["obfs"] = obfuscation
+        if (obfuscation.isNotEmpty()) {
+            it["obfs"] = obfuscation
+        }
         when (authPayloadType) {
             HysteriaBean.TYPE_BASE64 -> it["auth"] = authPayload
             HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload
