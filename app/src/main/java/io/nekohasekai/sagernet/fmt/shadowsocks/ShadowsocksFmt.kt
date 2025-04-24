@@ -77,7 +77,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
                 .toIntOrNull() ?: error("invalid port")
             method = when (val it = plainUri.substringBeforeLast("@").substringBefore(":")) {
                 in supportedShadowsocksMethod -> it
-                "plain" -> "none"
+                "plain", "dummy" -> "none"
                 "chacha20-poly1305" -> "chacha20-ietf-poly1305"
                 "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
                 else -> error("unsupported method")
@@ -98,7 +98,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             serverPort = link.port
             method = when (link.username) {
                 in supportedShadowsocksMethod -> link.username
-                "plain" -> "none"
+                "plain", "dummy" -> "none"
                 "chacha20-poly1305" -> "chacha20-ietf-poly1305"
                 "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
                 else -> error("unsupported method")
@@ -116,7 +116,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         serverPort = link.port
         method = when (val it = link.username.decodeBase64UrlSafe().substringBefore(":")) {
             in supportedShadowsocksMethod -> it
-            "plain" -> "none"
+            "plain", "dummy" -> "none"
             "chacha20-poly1305" -> "chacha20-ietf-poly1305"
             "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
             else -> error("unsupported method")
@@ -174,9 +174,10 @@ fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
         serverAddress = getStr("server") ?: return null
         serverPort = getInt("server_port") ?: return null
         password = getStr("password")
-        method = when (val it = getStr("method", "table")) {
+        method = when (val it = getStr("method", "table")?.lowercase()
+            ?.replace("_", "-")?.removePrefix("aead-")) {
             in supportedShadowsocksMethod -> it
-            "plain" -> "none"
+            "plain", "dummy" -> "none"
             "chacha20-poly1305" -> "chacha20-ietf-poly1305"
             "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
             else -> error("unsupported method")

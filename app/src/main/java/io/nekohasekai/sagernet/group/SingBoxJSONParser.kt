@@ -280,10 +280,10 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 if (!serverPorts.isValidHysteriaPort()) {
                     return listOf()
                 }
-                outbound.getString("hop_interval")?.also {
+                outbound.getString("hop_interval")?.also { interval ->
                     try {
-                        val duration = Duration.parse(it)
-                        hopInterval = duration.toInt(DurationUnit.SECONDS)
+                        val duration = Duration.parse(interval)
+                        hopInterval = duration.toInt(DurationUnit.SECONDS).takeIf { it > 0 }
                     } catch (_: Exception) {}
                 }
                 outbound.getString("password")?.also {
@@ -338,10 +338,10 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 if (!serverPorts.isValidHysteriaPort()) {
                     return listOf()
                 }
-                outbound.getString("hop_interval")?.also {
+                outbound.getString("hop_interval")?.also { interval ->
                     try {
-                        val duration = Duration.parse(it)
-                        hopInterval = duration.toInt(DurationUnit.SECONDS)
+                        val duration = Duration.parse(interval)
+                        hopInterval = duration.toInt(DurationUnit.SECONDS).takeIf { it > 0 }
                     } catch (_: Exception) {}
                 }
                 if (outbound.getString("auth")?.isNotEmpty() == true) {

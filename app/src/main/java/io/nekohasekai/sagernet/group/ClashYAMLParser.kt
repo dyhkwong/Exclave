@@ -50,6 +50,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedVmessMethod
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
+import libcore.Libcore
 
 @Suppress("UNCHECKED_CAST")
 fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
@@ -126,8 +127,14 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                 serverAddress = proxy["server"]?.toString() ?: return listOf()
                 serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return listOf()
                 password = proxy["password"]?.toString()
-                method = when (val cipher = proxy["cipher"] as? String) {
+                method = when (val cipher = (proxy["cipher"] as? String)?.lowercase()) {
                     "dummy" -> "none"
+                    "aead_aes_128_gcm" -> "aes-128-gcm"
+                    "aead_aes_192_gcm" -> "aes-192-gcm"
+                    "aead_aes_256_gcm" -> "aes-256-gcm"
+                    "aead_chacha20_poly1305" -> "chacha20-ietf-poly1305"
+                    "aead_xchacha20_poly1305" -> "xchacha20-ietf-poly1305"
+
                     in supportedShadowsocksMethod -> cipher
                     else -> return listOf()
                 }
@@ -148,16 +155,20 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                 name = proxy["name"]?.toString()
             }
 
-            when (val network = proxy["network"]?.toString()) {
-                "h2" -> bean.type = "http"
-                "http" -> {
-                    bean.type = "tcp"
-                    bean.headerType = "http"
+            if (bean is TrojanBean) {
+                when (val network = proxy["network"]?.toString()) {
+                    "ws", "grpc" -> bean.type = network
+                    else -> bean.type = "tcp"
                 }
-                "ws", "grpc" -> bean.type = network
-                else -> {
-                    // Do not `return proxies` here. Fuck those non-standard configs.
-                    bean.type = "tcp"
+            } else {
+                when (val network = proxy["network"]?.toString()) {
+                    "h2" -> bean.type = "http"
+                    "http" -> {
+                        bean.type = "tcp"
+                        bean.headerType = "http"
+                    }
+                    "ws", "grpc" -> bean.type = network
+                    else -> bean.type = "tcp"
                 }
             }
 
@@ -167,7 +178,9 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                 bean.password = proxy["password"]?.toString()
             } else {
                 bean.security = if (proxy["tls"] as? Boolean == true) "tls" else "none"
-                bean.sni = proxy["servername"]?.toString()
+                if (bean.security == "tls") {
+                    bean.sni = proxy["servername"]?.toString()
+                }
                 proxy["uuid"]?.toString()?.takeIf { it.isNotEmpty() }?.also {
                     bean.uuid = try {
                         UUID.fromString(it).toString()
@@ -280,13 +293,21 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                 }
             }
             if (bean.type == "ws") {
-                (proxy["ws-opts"] as? Map<String, Any?>)?.also {
-                    for (wsOpt in it) {
+                if (bean is TrojanBean && (bean.security == "tls" || bean.security == "reality") && !bean.sni.isNullOrEmpty()) {
+                    bean.host = bean.sni
+                }
+                (proxy["ws-opts"] as? Map<String, Any?>)?.also { wsOpts ->
+                    for (wsOpt in wsOpts) {
                         when (wsOpt.key) {
                             "headers" -> (wsOpt.value as? Map<Any, Any?>)?.forEach { (key, value) ->
                                 when (key.toString().lowercase()) {
                                     "host" -> {
-                                        bean.host = value?.toString()
+                                        value?.toString()?.takeIf { it.isNotEmpty() }?.also {
+                                            bean.host = it
+                                            if (bean !is TrojanBean && (bean.security == "tls" || bean.security == "reality") && bean.sni.isNullOrEmpty()) {
+                                                bean.sni = it
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -302,8 +323,21 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                             "v2ray-http-upgrade" -> {
                                 if (wsOpt.value as? Boolean == true) {
                                     bean.type = "httpupgrade"
+                                    bean.maxEarlyData = null
+                                    bean.earlyDataHeaderName = null
                                 }
                             }
+                        }
+                    }
+                    if (!bean.path.isNullOrEmpty()) {
+                        val u = Libcore.parseURL(bean.path)
+                        u.queryParameter("ed")?.also { ed ->
+                            u.deleteQueryParameter("ed")
+                            bean.path = u.string
+                            (ed.toIntOrNull())?.also {
+                                bean.maxEarlyData = it
+                            }
+                            bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
                         }
                     }
                 }
@@ -335,8 +369,11 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                             // unsupported
                             return listOf()
                         }
-                        val ssMethod = when (val method = it["method"] as? String) {
+                        val ssMethod = when (val method = (it["method"] as? String)?.lowercase()) {
                             "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305" -> method
+                            "aead_aes_128_gcm", "" -> "aes-128-gcm"
+                            "aead_aes_256_gcm" -> "aes-256-gcm"
+                            "aead_chacha20_poly1305" -> "chacha20-ietf-poly1305"
                             else -> return listOf()
                         }
                         val ssPassword = it["password"]?.toString() ?: ""
@@ -357,7 +394,7 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
             return listOf(ShadowsocksRBean().apply {
                 serverAddress = proxy["server"]?.toString() ?: return listOf()
                 serverPort = proxy["port"]?.toString()?.toIntOrNull() ?: return listOf()
-                method = when (val cipher = proxy["cipher"] as? String) {
+                method = when (val cipher = (proxy["cipher"] as? String)?.lowercase()) {
                     "dummy" -> "none"
                     in supportedShadowsocksRMethod -> cipher
                     else -> return listOf()
@@ -422,7 +459,7 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                 alpn = (proxy["alpn"] as? List<Any>)?.get(0)?.toString()
                 allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                 obfuscation = proxy["obfs"]?.toString()?.takeIf { it.isNotEmpty() }
-                hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
+                hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()?.takeIf { it > 0 }
                 name = proxy["name"]?.toString()
             })
         }
@@ -446,7 +483,7 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                         else -> return listOf()
                     }
                 }
-                hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()
+                hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()?.takeIf { it > 0 }
                 name = proxy["name"]?.toString()
             })
         }

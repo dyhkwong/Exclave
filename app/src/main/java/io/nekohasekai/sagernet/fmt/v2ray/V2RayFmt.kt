@@ -572,6 +572,7 @@ fun StandardV2RayBean.toUri(): String? {
         "kcp", "ws", "http", "httpupgrade", "quic", "grpc", "meek", "meyka" -> {
             builder.addQueryParameter("type", type)
         }
+        else -> error("unsupported transport")
     }
 
     when (type) {
