@@ -395,6 +395,7 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
             if (it !in supportedVmessMethod) error("unsupported vmess encryption")
             encryption = it
         }
+        name = json.getStr("ps")?.takeIf { it.isNotEmpty() }
     }
 
     val net = json.getStr("net")
