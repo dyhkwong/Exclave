@@ -23,7 +23,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.SystemClock
 import android.provider.OpenableColumns
 import android.text.format.Formatter
 import android.view.*
@@ -75,10 +74,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import libcore.Libcore
-import java.net.InetAddress
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.UnknownHostException
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.zip.ZipInputStream
@@ -590,12 +585,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
                 }
             }
-            R.id.action_connection_icmp_ping -> {
-                pingTest(true)
-            }
-            R.id.action_connection_tcp_ping -> {
-                pingTest(false)
-            }
             R.id.action_connection_url_test -> {
                 urlTest()
             }
@@ -862,162 +851,6 @@ class ConfigurationFragment @JvmOverloads constructor(
         if (SagerNet.started) SagerNet.stopService()
         while (SagerNet.started) {
             delay(100L)
-        }
-    }
-
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    fun pingTest(icmpPing: Boolean) {
-        val test = TestDialog()
-        val testJobs = mutableListOf<Job>()
-        val dialog = test.builder.show()
-        val mainJob = runOnDefaultDispatcher {
-            val group = DataStore.currentGroup()
-            var profilesUnfiltered = SagerDatabase.proxyDao.getByGroup(group.id)
-            if (group.subscription?.type == SubscriptionType.OOCv1) {
-                val subscription = group.subscription!!
-                if (subscription.selectedGroups.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
-                }
-                if (subscription.selectedOwners.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
-                }
-                if (subscription.selectedTags.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { profile ->
-                        profile.requireBean().tags.containsAll(
-                            subscription.selectedTags
-                        )
-                    }
-                }
-            }
-            stopService()
-            val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
-            val testPool = newFixedThreadPoolContext(5, "Connection test pool")
-            repeat(6) {
-                testJobs.add(launch(testPool) {
-                    while (isActive) {
-                        val profile = profiles.poll() ?: break
-
-                        if (icmpPing) {
-                            if (!profile.requireBean().canICMPing()) {
-                                profile.status = -1
-                                profile.error = app.getString(R.string.connection_test_icmp_ping_unavailable)
-                                test.insert(profile)
-                                continue
-                            }
-                        } else {
-                            if (!profile.requireBean().canTCPing()) {
-                                profile.status = -1
-                                profile.error = app.getString(R.string.connection_test_tcp_ping_unavailable)
-                                test.insert(profile)
-                                continue
-                            }
-                        }
-
-                        profile.status = 0
-                        test.insert(profile)
-                        var address = profile.requireBean().serverAddress
-                        if (!address.isIpAddress()) {
-                            try {
-                                InetAddress.getAllByName(address).apply {
-                                    if (isNotEmpty()) {
-                                        address = this[0].hostAddress
-                                    }
-                                }
-                            } catch (ignored: UnknownHostException) {
-                            }
-                        }
-                        if (!isActive) break
-                        if (!address.isIpAddress()) {
-                            profile.status = 2
-                            profile.error = app.getString(R.string.connection_test_domain_not_found)
-                            test.update(profile)
-                            continue
-                        }
-                        try {
-                            if (icmpPing) {
-                                val result = Libcore.icmpPing(
-                                    address, 5000
-                                )
-                                if (!isActive) break
-                                if (result != -1) {
-                                    profile.status = 1
-                                    profile.ping = result
-                                } else {
-                                    profile.status = 2
-                                    profile.error = getString(R.string.connection_test_unreachable)
-                                }
-                                test.update(profile)
-                            } else {
-                                val socket = Socket()
-                                try {
-                                    socket.soTimeout = 5000
-                                    socket.bind(InetSocketAddress(0))
-                                    protectFromVpn(socket.fileDescriptor.int)
-                                    val start = SystemClock.elapsedRealtime()
-                                    socket.connect(
-                                        InetSocketAddress(
-                                            address, profile.requireBean().serverPort // hysteria(2) can not tcping, no need to handle serverPorts here
-                                        ), 5000
-                                    )
-                                    if (!isActive) break
-                                    profile.status = 1
-                                    profile.ping = (SystemClock.elapsedRealtime() - start).toInt()
-                                    test.update(profile)
-                                } finally {
-                                    runCatching {
-                                        socket.close()
-                                    }
-                                }
-                            }
-                        } catch (e: Exception) {
-                            if (!isActive) break
-                            val message = e.readableMessage
-
-                            if (icmpPing) {
-                                profile.status = 2
-                                profile.error = getString(R.string.connection_test_unreachable)
-                            } else {
-                                profile.status = 2
-                                when {
-                                    !message.contains("failed:") -> profile.error = getString(R.string.connection_test_timeout)
-                                    else -> when {
-                                        message.contains("ECONNREFUSED") -> {
-                                            profile.error = getString(R.string.connection_test_refused)
-                                        }
-                                        message.contains("ENETUNREACH") -> {
-                                            profile.error = getString(R.string.connection_test_unreachable)
-                                        }
-                                        else -> {
-                                            profile.status = 3
-                                            profile.error = message
-                                        }
-                                    }
-                                }
-                            }
-                            test.update(profile)
-                        }
-                    }
-                })
-            }
-
-            testJobs.joinAll()
-            testPool.close()
-            test.close()
-
-            ProfileManager.updateProfile(test.results.filter { it.status != 0 })
-
-            onMainDispatcher {
-                test.binding.progressCircular.isGone = true
-                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setText(android.R.string.ok)
-            }
-        }
-        test.cancel = {
-            mainJob.cancel()
-            testJobs.forEach { it.cancel() }
-            runOnDefaultDispatcher {
-                ProfileManager.updateProfile(test.results.filter { it.status != 0 })
-                GroupManager.postReload(DataStore.currentGroupId())
-            }
         }
     }
 

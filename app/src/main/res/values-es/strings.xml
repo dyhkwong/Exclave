@@ -288,8 +288,6 @@
     <string name="connection_test_timeout">Se acabó el tiempo</string>
     <string name="connection_test_unreachable">Inalcanzable</string>
     <string name="connection_test_domain_not_found">dominio no encontrado</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing no disponible</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing no disponible</string>
     <string name="connection_test">Prueba de conexión</string>
     <string name="clear_traffic_statistics">Limpiar estadísticas de tráfico</string>
     <string name="unavailable">Indisponible</string>

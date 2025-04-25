@@ -48,8 +48,6 @@
     <string name="always_show_address_sum">Visualizzare sempre l\'indirizzo del server sulla scheda di configurazione</string>
     <string name="connection_test">Test di connessione</string>
     <string name="connection_test_clear_results">Cancella i risultati dei test</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing non disponibile</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing non disponibile</string>
     <string name="protocol_settings">Impostazioni Protocollo</string>
     <string name="subscription_type">Tipo Iscrizione</string>
     <string name="delete_group_prompt">Sicuro di voler rimuovere questo gruppo\?</string>

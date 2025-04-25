@@ -62,11 +62,6 @@ public class JuicityBean extends AbstractBean {
     }
 
     @Override
-    public boolean canTCPing() {
-        return false;
-    }
-
-    @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof JuicityBean bean)) return;
         if (allowInsecure) {

@@ -69,14 +69,6 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         return "tcp,udp";
     }
 
-    public boolean canICMPing() {
-        return true;
-    }
-
-    public boolean canTCPing() {
-        return true;
-    }
-
     public boolean canMapping() {
         return true;
     }

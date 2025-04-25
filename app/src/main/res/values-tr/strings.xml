@@ -216,8 +216,6 @@
     <string name="connection_test_unreachable">Erişilemez</string>
     <string name="connection_test_refused">Bağlantı reddedildi</string>
     <string name="connection_test_domain_not_found">Alan adı bulunamadı</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing kullanılamıyor</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing kullanılamıyor</string>
     <string name="connection_test_clear_results">Test sonuçlarını temizle</string>
     <string name="connection_test">Bağlantı testi</string>
     <string name="clear_traffic_statistics">Trafik istatistiklerini temizle</string>

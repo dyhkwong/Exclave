@@ -131,8 +131,6 @@
     <string name="connection_test_unreachable">Uoppnåelig</string>
     <string name="connection_test_refused">Tilkobling nektet</string>
     <string name="connection_test_domain_not_found">Domenet ble ikke funnet</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing er ikke tilgjengelig</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing utilgjengelig</string>
     <string name="clear_traffic_statistics">Slett trafikkstatistikk</string>
     <string name="always_show_address_sum">Vis alltid serveradressen på konfigurasjonskortet</string>
     <string name="always_show_address">Vis alltid adresse</string>

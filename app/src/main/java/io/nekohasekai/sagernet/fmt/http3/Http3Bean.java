@@ -82,11 +82,6 @@ public class Http3Bean extends AbstractBean {
     }
 
     @Override
-    public boolean canTCPing() {
-        return false;
-    }
-
-    @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof Http3Bean bean)) return;
         if (allowInsecure) {

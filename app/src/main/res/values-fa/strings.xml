@@ -124,8 +124,6 @@
     <string name="connection_test_unreachable">غیر قابل دسترسی</string>
     <string name="connection_test_refused">ارتباط رد شد</string>
     <string name="connection_test_domain_not_found">دامنه یافت نشد</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing در دسترس نیست</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing در دسترس نیست</string>
     <string name="connection_test_clear_results">پاک کردن نتایج تست</string>
     <string name="connection_test">تست اتصال</string>
     <string name="clear_traffic_statistics">پاک کردن آمار ترافیک</string>

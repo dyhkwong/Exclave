@@ -100,11 +100,6 @@ public class Tuic5Bean extends AbstractBean {
     }
 
     @Override
-    public boolean canTCPing() {
-        return false;
-    }
-
-    @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof Tuic5Bean bean)) return;
         bean.caText = caText;

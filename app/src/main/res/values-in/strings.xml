@@ -274,8 +274,6 @@
     <string name="always_show_address_sum">Selalu tampilkan alamat server pada kartu konfigurasi</string>
     <string name="clear_traffic_statistics">Bersihkan statistik lalu lintas</string>
     <string name="connection_test_clear_results">Bersihkan hasil tes</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing tidak tersedia</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing tidak tersedia</string>
     <string name="connection_test_unreachable">Tidak terjangkau</string>
     <string name="bypass_lan_in_core_only">Lewati LAN hanya di Core saja</string>
     <string name="bypass_lan_in_core_only_sum">Jika fitur Izinkan klien hotspot untuk menggunakan VPN milik Lineage tidak berfungsi, coba ini.</string>

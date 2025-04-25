@@ -100,11 +100,6 @@ public class NaiveBean extends AbstractBean {
     }
 
     @Override
-    public boolean canTCPing() {
-        return !proto.equals("quic");
-    }
-
-    @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof NaiveBean bean)) return;
         bean.noPostQuantum = noPostQuantum;

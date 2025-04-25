@@ -183,11 +183,6 @@ public class BrookBean extends AbstractBean {
     }
 
     @Override
-    public boolean canTCPing() {
-        return !protocol.equals("quic");
-    }
-
-    @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof BrookBean bean)) return;
         if (insecure) {

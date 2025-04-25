@@ -255,9 +255,7 @@
     <string name="always_show_address_sum">使用在設定檔卡片中顯示伺服器位址</string>
     <string name="clear_traffic_statistics">清除流量統計資料</string>
     <string name="connection_test">連線測試</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing 無法使用</string>
     <string name="connection_test_clear_results">清除測試結果</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing 無法使用</string>
     <string name="connection_test_domain_not_found">網域不存在</string>
     <string name="connection_test_refused">連線被拒</string>
     <string name="donate_info">世界很可愛 請給世界錢</string>

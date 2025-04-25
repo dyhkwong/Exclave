@@ -250,8 +250,6 @@
     <string name="connection_test_unreachable">لا يمكن الوصول إليه</string>
     <string name="connection_test_refused">الاتصال مرفوض</string>
     <string name="connection_test_domain_not_found">المجال لم يتم العثور</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing غير متوفر</string>
-    <string name="connection_test_tcp_ping_unavailable">TCPing غير متوفر</string>
     <string name="connection_test_clear_results">المقاصة نتائج الاختبار</string>
     <string name="connection_test">اختبار الاتصال</string>
     <string name="clear_traffic_statistics">مسح إحصائيات حركة المرور</string>

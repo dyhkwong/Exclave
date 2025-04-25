@@ -145,8 +145,6 @@
     <string name="connection_test_unreachable">Недоступно</string>
     <string name="connection_test_refused">В соединении отказано</string>
     <string name="connection_test_domain_not_found">Домен не найден</string>
-    <string name="connection_test_icmp_ping_unavailable">ICMPing недоступен</string>
-    <string name="connection_test_tcp_ping_unavailable">TCP-пинг недоступен</string>
     <string name="connection_test_clear_results">Сбросить результаты теста</string>
     <string name="connection_test">Тест подключения</string>
     <string name="clear_traffic_statistics">Сбросить статистику трафика</string>

@@ -155,11 +155,6 @@ public class Hysteria2Bean extends AbstractBean {
         return "udp";
     }
 
-    @Override
-    public boolean canTCPing() {
-        return false;
-    }
-
     @NotNull
     @Override
     public Hysteria2Bean clone() {

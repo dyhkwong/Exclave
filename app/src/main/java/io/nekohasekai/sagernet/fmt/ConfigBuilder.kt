@@ -969,7 +969,8 @@ fun buildV2RayConfig(
                                             }
                                         }
                                     }
-                                    if (DataStore.enableFragment && bean.canTCPing()
+                                    if (DataStore.enableFragment
+                                        && (network != "kcp" && network != "quic" && network != "hysteria2")
                                         && (security == "tls" || security == "reality")
                                         && !(bean is ShadowsocksBean && bean.plugin.isNotEmpty()
                                         && !(network == "ws" && bean.wsUseBrowserForwarder)
