@@ -34,7 +34,7 @@
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/juicity_congestion_control_entry"
+            app:entries="@array/juicity_congestion_control_value"
             app:entryValues="@array/juicity_congestion_control_value"
             app:icon="@drawable/baseline_widgets_24"
             app:key="serverJuicityCongestionControl"

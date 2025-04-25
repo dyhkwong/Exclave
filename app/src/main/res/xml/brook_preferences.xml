@@ -72,7 +72,7 @@
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/brook_tls_fingerprint_entry"
+            app:entries="@array/brook_tls_fingerprint_value"
             app:entryValues="@array/brook_tls_fingerprint_value"
             app:icon="@drawable/ic_baseline_fingerprint_24"
             app:key="serverBrookTlsFingerprint"

@@ -49,7 +49,7 @@
             app:title="@string/enc_method"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/trojan_go_utls_entry"
+            app:entries="@array/trojan_go_utls_value"
             app:entryValues="@array/trojan_go_utls_value"
             app:icon="@drawable/ic_baseline_fingerprint_24"
             app:key="serverUTLSFingerprint"
@@ -78,7 +78,7 @@
 
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="aes-128-gcm"
-            app:entries="@array/trojan_go_methods"
+            app:entries="@array/trojan_go_methods_value"
             app:entryValues="@array/trojan_go_methods_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverMethod"

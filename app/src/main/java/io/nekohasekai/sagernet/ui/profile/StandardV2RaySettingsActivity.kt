@@ -376,7 +376,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
         when (bean) {
             is VLESSBean -> {
-                encryption.setEntries(R.array.vless_encryption_entry)
+                encryption.setEntries(R.array.vless_encryption_value)
                 encryption.setEntryValues(R.array.vless_encryption_value)
                 val vev = resources.getStringArray(R.array.vless_encryption_value)
                 if (encryption.value !in vev) {
@@ -388,7 +388,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 }
             }
             is VMessBean -> {
-                encryption.setEntries(R.array.vmess_encryption_entry)
+                encryption.setEntries(R.array.vmess_encryption_value)
                 encryption.setEntryValues(R.array.vmess_encryption_value)
                 val vev = resources.getStringArray(R.array.vmess_encryption_value)
                 if (encryption.value !in vev) {
@@ -396,7 +396,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 }
             }
             is ShadowsocksBean -> {
-                encryption.setEntries(R.array.enc_method_entry)
+                encryption.setEntries(R.array.enc_method_value)
                 encryption.setEntryValues(R.array.enc_method_value)
                 val sev = resources.getStringArray(R.array.enc_method_value)
                 if (encryption.value !in sev) {
@@ -598,7 +598,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 path.isVisible = true
             }
             "kcp" -> {
-                header.setEntries(R.array.kcp_quic_headers_entry)
+                header.setEntries(R.array.kcp_quic_headers_value)
                 header.setEntryValues(R.array.kcp_quic_headers_value)
                 path.setTitle(R.string.kcp_seed)
                 path.setDialogTitle(R.string.kcp_seed)

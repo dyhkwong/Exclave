@@ -75,8 +75,8 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
                 .removePrefix("[").removeSuffix("]")
             serverPort = plainUri.substringAfterLast("@").substringAfterLast(":")
                 .toIntOrNull() ?: error("invalid port")
-            method = when (val it = plainUri.substringBeforeLast("@").substringBefore(":")) {
-                in supportedShadowsocksMethod -> it
+            method = when (val m = plainUri.substringBeforeLast("@").substringBefore(":").lowercase()) {
+                in supportedShadowsocksMethod -> m
                 "plain", "dummy" -> "none"
                 "chacha20-poly1305" -> "chacha20-ietf-poly1305"
                 "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
@@ -96,8 +96,8 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         return ShadowsocksBean().apply {
             serverAddress = link.host
             serverPort = link.port
-            method = when (link.username) {
-                in supportedShadowsocksMethod -> link.username
+            method = when (val m = link.username?.lowercase()) {
+                in supportedShadowsocksMethod -> m
                 "plain", "dummy" -> "none"
                 "chacha20-poly1305" -> "chacha20-ietf-poly1305"
                 "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
@@ -114,8 +114,8 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         // example: ss://YWVzLTEyOC1nY206dGVzdA@127.0.0.1:8888#Example1
         serverAddress = link.host
         serverPort = link.port
-        method = when (val it = link.username.decodeBase64UrlSafe().substringBefore(":")) {
-            in supportedShadowsocksMethod -> it
+        method = when (val m = link.username?.decodeBase64UrlSafe()?.substringBefore(":")?.lowercase()) {
+            in supportedShadowsocksMethod -> m
             "plain", "dummy" -> "none"
             "chacha20-poly1305" -> "chacha20-ietf-poly1305"
             "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
@@ -174,14 +174,23 @@ fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
         serverAddress = getStr("server") ?: return null
         serverPort = getInt("server_port") ?: return null
         password = getStr("password")
-        method = when (val it = getStr("method", "table")?.lowercase()
-            ?.replace("_", "-")?.removePrefix("aead-")) {
-            in supportedShadowsocksMethod -> it
+
+        var m = getStr("method")?.lowercase()
+        if (!m.isNullOrEmpty() && m.contains("_") && !m.contains("-")) {
+            m = m.replace("_", "-")
+        }
+        method = when (m) {
+            in supportedShadowsocksMethod -> m
             "plain", "dummy" -> "none"
-            "chacha20-poly1305" -> "chacha20-ietf-poly1305"
-            "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+            "aead-chacha20-poly1305", "aead-chacha20-ietf-poly1305", "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+            "aead-xchacha20-poly1305", "aead-xchacha20-ietf-poly1305", "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+            "aead-aes-128-gcm" -> "aes-128-gcm"
+            "aead-aes-192-gcm" -> "aes-192-gcm"
+            "aead-aes-256-gcm" -> "aes-256-gcm"
+            "", null -> error("unsupported method") // different impl has different default value
             else -> error("unsupported method")
         }
+
         plugin = pluginStr
         name = getStr("remarks", "")
         fixInvalidParams()

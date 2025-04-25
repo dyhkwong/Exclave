@@ -34,7 +34,8 @@
             app:title="@string/alter_id"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/vmess_encryption_entry"
+            app:defaultValue="auto"
+            app:entries="@array/vmess_encryption_value"
             app:entryValues="@array/vmess_encryption_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverEncryption"
@@ -49,7 +50,7 @@
             app:title="@string/app_version"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/xtls_flow_entry"
+            app:entries="@array/xtls_flow_value"
             app:entryValues="@array/xtls_flow_value"
             app:icon="@drawable/ic_baseline_stream_24"
             app:key="serverFlow"
@@ -79,7 +80,7 @@
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="none"
-            app:entries="@array/quic_security_entry"
+            app:entries="@array/quic_security_value"
             app:entryValues="@array/quic_security_value"
             app:icon="@drawable/ic_baseline_security_24"
             app:key="serverQuicSecurity"
@@ -129,6 +130,7 @@
             app:title="@string/url"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="none"
             app:entries="@array/transport_layer_encryption_entry"
             app:entryValues="@array/transport_layer_encryption_value"
             app:icon="@drawable/ic_baseline_layers_24"

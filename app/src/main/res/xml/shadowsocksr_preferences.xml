@@ -26,14 +26,14 @@
             app:useSimpleSummaryProvider="true" />
 
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/ssr_enc_method_entry"
+            app:entries="@array/ssr_enc_method_value"
             app:entryValues="@array/ssr_enc_method_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverMethod"
             app:title="@string/enc_method"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/protocol_entry"
+            app:entries="@array/protocol_value"
             app:entryValues="@array/protocol_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="serverProtocol"
@@ -45,7 +45,7 @@
             app:title="@string/protocol_param"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/obfs_entry"
+            app:entries="@array/obfs_value"
             app:entryValues="@array/obfs_value"
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="serverObfs"

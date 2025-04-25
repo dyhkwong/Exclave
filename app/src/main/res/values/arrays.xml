@@ -158,49 +158,6 @@
         <item>208.0.0.0/4</item>
     </string-array>
 
-    <string-array name="enc_method_entry">
-        <item>NONE</item>
-        <item>AES-128-GCM</item>
-        <item>AES-192-GCM</item>
-        <item>AES-256-GCM</item>
-        <item>CHACHA20-IETF-POLY1305</item>
-        <item>XCHACHA20-IETF-POLY1305</item>
-        <item>2022-BLAKE3-AES-128-GCM</item>
-        <item>2022-BLAKE3-AES-256-GCM</item>
-        <item>2022-BLAKE3-CHACHA20-POLY1305</item>
-        <item>RC4</item>
-        <item>RC4-MD5</item>
-        <item>RC4-MD5-6</item>
-        <item>AES-128-CTR</item>
-        <item>AES-192-CTR</item>
-        <item>AES-256-CTR</item>
-        <item>AES-128-CFB</item>
-        <item>AES-192-CFB</item>
-        <item>AES-256-CFB</item>
-        <item>AES-128-CFB8</item>
-        <item>AES-192-CFB8</item>
-        <item>AES-256-CFB8</item>
-        <item>AES-128-OFB</item>
-        <item>AES-192-OFB</item>
-        <item>AES-256-OFB</item>
-        <item>BF-CFB</item>
-        <item>CAST5-CFB</item>
-        <item>DES-CFB</item>
-        <item>RC2-CFB</item>
-        <item>SEED-CFB</item>
-        <item>CAMELLIA-128-CFB</item>
-        <item>CAMELLIA-192-CFB</item>
-        <item>CAMELLIA-256-CFB</item>
-        <item>CAMELLIA-128-CFB8</item>
-        <item>CAMELLIA-192-CFB8</item>
-        <item>CAMELLIA-256-CFB8</item>
-        <item>SALSA20</item>
-        <item>CHACHA20</item>
-        <item>CHACHA20-IETF</item>
-        <item>XCHACHA20</item>
-        <item>TABLE</item>
-    </string-array>
-
     <string-array name="enc_method_value">
         <item>none</item>
         <item>aes-128-gcm</item>
@@ -242,41 +199,6 @@
         <item>chacha20-ietf</item>
         <item>xchacha20</item>
         <item>table</item>
-    </string-array>
-
-    <string-array name="ssr_enc_method_entry">
-        <item>NONE</item>
-        <item>RC4</item>
-        <item>RC4-MD5</item>
-        <item>RC4-MD5-6</item>
-        <item>AES-128-CTR</item>
-        <item>AES-192-CTR</item>
-        <item>AES-256-CTR</item>
-        <item>AES-128-CFB</item>
-        <item>AES-192-CFB</item>
-        <item>AES-256-CFB</item>
-        <item>AES-128-CFB8</item>
-        <item>AES-192-CFB8</item>
-        <item>AES-256-CFB8</item>
-        <item>AES-128-OFB</item>
-        <item>AES-192-OFB</item>
-        <item>AES-256-OFB</item>
-        <item>BF-CFB</item>
-        <item>CAST5-CFB</item>
-        <item>DES-CFB</item>
-        <item>RC2-CFB</item>
-        <item>SEED-CFB</item>
-        <item>CAMELLIA-128-CFB</item>
-        <item>CAMELLIA-192-CFB</item>
-        <item>CAMELLIA-256-CFB</item>
-        <item>CAMELLIA-128-CFB8</item>
-        <item>CAMELLIA-192-CFB8</item>
-        <item>CAMELLIA-256-CFB8</item>
-        <item>SALSA20</item>
-        <item>CHACHA20</item>
-        <item>CHACHA20-IETF</item>
-        <item>XCHACHA20</item>
-        <item>TABLE</item>
     </string-array>
 
     <string-array name="ssr_enc_method_value">
@@ -330,7 +252,7 @@
     </string-array>
 
     <string-array name="route_protocol_entry">
-        <item>TCP and UDP</item>
+        <item />
         <item>TCP</item>
         <item>UDP</item>
     </string-array>
@@ -352,15 +274,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="protocol_entry">
-        <item>ORIGIN</item>
-        <item>AUTH_SHA1_V4</item>
-        <item>AUTH_AES128_SHA1</item>
-        <item>AUTH_AES128_MD5</item>
-        <item>AUTH_CHAIN_A</item>
-        <item>AUTH_CHAIN_B</item>
-    </string-array>
-
     <string-array name="protocol_value">
         <item>origin</item>
         <item>auth_sha1_v4</item>
@@ -368,14 +281,6 @@
         <item>auth_aes128_md5</item>
         <item>auth_chain_a</item>
         <item>auth_chain_b</item>
-    </string-array>
-
-    <string-array name="obfs_entry">
-        <item>PLAIN</item>
-        <item>HTTP_SIMPLE</item>
-        <item>HTTP_POST</item>
-        <item>TLS1.2_TICKET_AUTH</item>
-        <item>RANDOM_HEAD</item>
     </string-array>
 
     <string-array name="obfs_value">
@@ -388,16 +293,16 @@
 
     <string-array name="networks_entry">
         <item/>
-        <item>KCP</item>
-        <item>WS</item>
-        <item>HTTP</item>
-        <item>QUIC</item>
-        <item>GRPC</item>
-        <item>Meek</item>
-        <item>HTTPUpgrade</item>
-        <item>XHTTP</item>
-        <item>Hysteria2</item>
-        <item>Mekya</item>
+        <item>kcp</item>
+        <item>ws</item>
+        <item>http</item>
+        <item>quic</item>
+        <item>grpc</item>
+        <item>meek</item>
+        <item>httpupgrade</item>
+        <item>xhttp</item>
+        <item>hysteria2</item>
+        <item>mekya</item>
     </string-array>
 
     <string-array name="networks_value">
@@ -415,8 +320,8 @@
     </string-array>
 
     <string-array name="trojan_go_networks_entry">
-        <item>NONE</item>
-        <item>WEBSOCKET</item>
+        <item />
+        <item>websocket</item>
     </string-array>
 
     <string-array name="trojan_go_networks_value">
@@ -425,24 +330,23 @@
     </string-array>
 
     <string-array name="tcp_headers_entry">
-        <item/>
-        <item>HTTP</item>
+        <item />
+        <item>http</item>
+    </string-array>
+
+    <string-array name="tcp_headers_value">
+        <item>none</item>
+        <item>http</item>
     </string-array>
 
     <string-array name="trojan_go_security_entry">
-        <item>NONE</item>
-        <item>SHADOWSOCKS</item>
+        <item />
+        <item>shadowsocks</item>
     </string-array>
 
     <string-array name="trojan_go_security_value">
         <item>none</item>
         <item>ss</item>
-    </string-array>
-
-    <string-array name="trojan_go_methods">
-        <item>AES-128-GCM</item>
-        <item>AES-256-GCM</item>
-        <item>CHACHA20-IETF-POLY1305</item>
     </string-array>
 
     <string-array name="trojan_go_methods_value">
@@ -451,18 +355,13 @@
         <item>chacha20-ietf-poly1305</item>
     </string-array>
 
-    <string-array name="tcp_headers_value">
-        <item>none</item>
-        <item>http</item>
-    </string-array>
-
     <string-array name="kcp_quic_headers_entry">
-        <item/>
-        <item>SRTP</item>
-        <item>UTP</item>
-        <item>WECHAT-VIDEO</item>
-        <item>DTLS</item>
-        <item>WIREGUARD</item>
+        <item />
+        <item>srtp</item>
+        <item>utp</item>
+        <item>wechat-video</item>
+        <item>dtls</item>
+        <item>wireguard</item>
     </string-array>
 
     <string-array name="kcp_quic_headers_value">
@@ -474,36 +373,18 @@
         <item>wireguard</item>
     </string-array>
 
-    <string-array name="quic_security_entry">
-        <item>CHACHA20-POLY1305</item>
-        <item>AES-128-GCM</item>
-        <item>NONE</item>
-    </string-array>
-
     <string-array name="quic_security_value">
-        <item>chacha20-poly1305</item>
-        <item>aes-128-gcm</item>
         <item>none</item>
-    </string-array>
-
-    <string-array name="vmess_encryption_entry">
-        <item>CHACHA20-POLY1305</item>
-        <item>AES-128-GCM</item>
-        <item>AUTO</item>
-        <item>NONE</item>
-        <item>ZERO</item>
+        <item>aes-128-gcm</item>
+        <item>chacha20-poly1305</item>
     </string-array>
 
     <string-array name="vmess_encryption_value">
-        <item>chacha20-poly1305</item>
-        <item>aes-128-gcm</item>
         <item>auto</item>
+        <item>aes-128-gcm</item>
+        <item>chacha20-poly1305</item>
         <item>none</item>
         <item>zero</item>
-    </string-array>
-
-    <string-array name="vless_encryption_entry">
-        <item>NONE</item>
     </string-array>
 
     <string-array name="vless_encryption_value">
@@ -511,9 +392,9 @@
     </string-array>
 
     <string-array name="transport_layer_encryption_entry">
-        <item/>
-        <item>TLS</item>
-        <item>REALITY</item>
+        <item />
+        <item>tls</item>
+        <item>reality</item>
     </string-array>
 
     <string-array name="transport_layer_encryption_value">
@@ -522,13 +403,7 @@
         <item>reality</item>
     </string-array>
 
-    <string-array name="xtls_flow_entry" translatable="false">
-        <item />
-        <item>XTLS-RPRX-VISION</item>
-        <item>XTLS-RPRX-VISION-UDP443</item>
-    </string-array>
-
-    <string-array name="xtls_flow_value" translatable="false">
+    <string-array name="xtls_flow_value">
         <item />
         <item>xtls-rprx-vision</item>
         <item>xtls-rprx-vision-udp443</item>
@@ -577,7 +452,7 @@
     </string-array>
 
     <string-array name="brook_protocol_entry">
-        <item>DEFAULT</item>
+        <item />
         <item>WS</item>
         <item>WSS</item>
         <item>QUIC</item>
@@ -690,8 +565,8 @@
 
     <string-array name="hysteria_auth_type">
         <item>@string/plugin_disabled</item>
-        <item>STRING</item>
-        <item>BASE64</item>
+        <item>string</item>
+        <item>base64</item>
     </string-array>
 
     <string-array name="socks_versions">
@@ -849,23 +724,11 @@
         <item>unsafe</item>
     </string-array>
 
-    <string-array name="trojan_go_utls_entry">
-        <item>@string/disable</item>
-        <item>Chrome</item>
-        <item>Firefox</item>
-        <item>iOS</item>
-    </string-array>
-
     <string-array name="trojan_go_utls_value">
         <item />
         <item>chrome</item>
         <item>firefox</item>
         <item>ios</item>
-    </string-array>
-
-    <string-array name="simple_obfs">
-        <item>http</item>
-        <item>tls</item>
     </string-array>
 
     <string-array name="group_orders">
@@ -928,9 +791,9 @@
     </string-array>
 
     <string-array name="packet_encoding_entry">
-        <item/>
-        <item>Packet</item>
-        <item>XUDP</item>
+        <item />
+        <item>packet</item>
+        <item>xudp</item>
     </string-array>
 
     <string-array name="packet_encoding_value">
@@ -943,21 +806,10 @@
         <item>TCP</item>
         <item>UDP</item>
     </string-array>
-
-    <string-array name="tuic_udp_relay_mode_entry">
-        <item>NATIVE</item>
-        <item>QUIC</item>
-    </string-array>
     
     <string-array name="tuic_udp_relay_mode_value">
         <item>native</item>
         <item>quic</item>
-    </string-array>
-
-    <string-array name="tuic_congestion_controller_entry">
-        <item>CUBIC</item>
-        <item>NEW RENO</item>
-        <item>BBR</item>
     </string-array>
 
     <string-array name="tuic_congestion_controller_value">
@@ -982,20 +834,9 @@
         <item>4</item>
     </string-array>
 
-    <string-array name="brook_tls_fingerprint_entry">
-        <item />
-        <item>chrome</item>
-    </string-array>
-
     <string-array name="brook_tls_fingerprint_value">
         <item />
         <item>chrome</item>
-    </string-array>
-
-    <string-array name="juicity_congestion_control_entry">
-        <item>BBR</item>
-        <item>CUBIC</item>
-        <item>NEW_RENO</item>
     </string-array>
 
     <string-array name="juicity_congestion_control_value">

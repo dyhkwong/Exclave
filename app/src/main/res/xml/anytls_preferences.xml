@@ -24,6 +24,7 @@
             app:title="@string/password"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="tls"
             app:entries="@array/transport_layer_encryption_entry"
             app:entryValues="@array/transport_layer_encryption_value"
             app:icon="@drawable/ic_baseline_layers_24"
