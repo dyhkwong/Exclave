@@ -48,6 +48,11 @@ public class ShadowsocksBean extends StandardV2RayBean {
     }
 
     @Override
+    public boolean canMapping() {
+        return plugin.isEmpty();
+    }
+
+    @Override
     public void serialize(ByteBufferOutput output) {
         output.writeInt(5);
         super.serialize(output);

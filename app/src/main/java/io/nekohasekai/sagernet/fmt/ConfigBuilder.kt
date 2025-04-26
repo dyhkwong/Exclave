@@ -35,6 +35,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.Shadowsocks2022Implementation
+import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
@@ -156,7 +157,7 @@ class V2rayBuildResult(
 }
 
 fun buildV2RayConfig(
-    proxy: ProxyEntity, forTest: Boolean = false
+    proxy: ProxyEntity, forTest: Boolean = false, forExport: Boolean = false
 ): V2rayBuildResult {
 
     val outboundTags = ArrayList<String>()
@@ -614,17 +615,30 @@ fun buildV2RayConfig(
                                                 }
                                                 if (bean.plugin.isNotEmpty()) {
                                                     val pluginConfiguration = PluginConfiguration(bean.plugin)
-                                                    try {
-                                                        PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
-                                                            plugin = path
-                                                            pluginOpts = opts.toString()
-                                                        }
-                                                    } catch (e: PluginManager.PluginNotFoundException) {
-                                                        if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
-                                                            plugin = e.plugin
-                                                            pluginOpts = pluginConfiguration.getOptions().toString()
-                                                        } else {
-                                                            throw e
+                                                    if (forExport) {
+                                                        plugin = pluginConfiguration.selected
+                                                        pluginOpts = pluginConfiguration.getOptions().toString()
+                                                    } else {
+                                                        try {
+                                                            PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                                                                plugin = path
+                                                                if (!forTest && DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM) {
+                                                                    pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
+                                                                    if (isV2) {
+                                                                        opts["__android_vpn"] = ""
+                                                                    } else {
+                                                                        pluginArgs = listOf("-V")
+                                                                    }
+                                                                }
+                                                                pluginOpts = opts.toString()
+                                                            }
+                                                        } catch (e: PluginManager.PluginNotFoundException) {
+                                                            if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
+                                                                plugin = e.plugin
+                                                                pluginOpts = pluginConfiguration.getOptions().toString()
+                                                            } else {
+                                                                throw e
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -644,17 +658,30 @@ fun buildV2RayConfig(
                                                     }
                                                     if (bean.plugin.isNotEmpty()) {
                                                         val pluginConfiguration = PluginConfiguration(bean.plugin)
-                                                        try {
-                                                            PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
-                                                                plugin = path
-                                                                pluginOpts = opts.toString()
-                                                            }
-                                                        } catch (e: PluginManager.PluginNotFoundException) {
-                                                            if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
-                                                                plugin = e.plugin
-                                                                pluginOpts = pluginConfiguration.getOptions().toString()
-                                                            } else {
-                                                                throw e
+                                                        if (forExport) {
+                                                            plugin = pluginConfiguration.selected
+                                                            pluginOpts = pluginConfiguration.getOptions().toString()
+                                                        } else {
+                                                            try {
+                                                                PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                                                                    plugin = path
+                                                                    if (!forTest && DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM) {
+                                                                        pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
+                                                                        if (isV2) {
+                                                                            opts["__android_vpn"] = ""
+                                                                        } else {
+                                                                            pluginArgs = listOf("-V")
+                                                                        }
+                                                                    }
+                                                                    pluginOpts = opts.toString()
+                                                                }
+                                                            } catch (e: PluginManager.PluginNotFoundException) {
+                                                                if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
+                                                                    plugin = e.plugin
+                                                                    pluginOpts = pluginConfiguration.getOptions().toString()
+                                                                } else {
+                                                                    throw e
+                                                                }
                                                             }
                                                         }
                                                     }

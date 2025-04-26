@@ -441,6 +441,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
         public String packetEncoding;
         public List<UserObject> clients;
         public List<UserObject> users;
@@ -525,6 +526,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
 
     }
 
@@ -536,6 +538,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
         public List<UserObject> users;
 
         public static class UserObject {
@@ -556,6 +559,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
         public List<DestinationObject> destinations;
 
         public static class DestinationObject {
@@ -828,6 +832,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
 
     }
 
@@ -840,6 +845,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
 
     }
 
@@ -853,6 +859,7 @@ public class V2RayConfig {
         public String plugin;
         public String pluginOpts;
         public List<String> pluginArgs;
+        public String pluginWorkingDir;
 
     }
 

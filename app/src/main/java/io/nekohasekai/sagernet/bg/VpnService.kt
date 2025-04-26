@@ -301,11 +301,13 @@ class VpnService : BaseVpnService(),
             localResolver = this@VpnService
         }
 
-        val needProtectServer = tunImplementation == TunImplementation.SYSTEM && data.proxy!!.config.outboundTagsAll.values.any {
-            it.hysteria2Bean?.canMapping() == false || it.hysteriaBean?.canMapping() == false
-        }
-        if (needProtectServer) {
-            config.protectPath = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path" // FIXME: incorrect working dir
+        if (tunImplementation == TunImplementation.SYSTEM &&
+            data.proxy!!.config.outboundTagsAll.values.any {
+                it.hysteria2Bean?.canMapping() == false ||
+                        it.hysteriaBean?.canMapping() == false ||
+                        it.ssBean?.canMapping() == false
+            }) {
+            config.protectPath = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
         }
 
         tun = Libcore.newTun2ray(config)
