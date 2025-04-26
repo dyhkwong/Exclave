@@ -56,13 +56,6 @@ class PluginConfigurationDialogFragment : EditTextPreferenceDialogFragmentCompat
                 activity.pluginHelp.launch(intent.putExtra(PluginContract.EXTRA_OPTIONS,
                     editText.text.toString()))
             }
-        } else {
-            activity as TrojanGoSettingsActivity
-            if (intent.resolveActivity(app.packageManager) != null) builder.setNeutralButton(
-                "?") { _, _ ->
-                activity.pluginHelp.launch(intent.putExtra(PluginContract.EXTRA_OPTIONS,
-                    editText.text.toString()))
-            }
         }
     }
 

@@ -37,7 +37,6 @@ public class TrojanGoBean extends AbstractBean {
     public String host;
     public String path;
     public String encryption;
-    public String plugin;
 
     public Boolean allowInsecure;
     public String utlsFingerprint;
@@ -55,7 +54,6 @@ public class TrojanGoBean extends AbstractBean {
         if (host == null) host = "";
         if (path == null) path = "";
         if (encryption == null) encryption = "none";
-        if (plugin == null) plugin = "";
         if (allowInsecure == null) allowInsecure = false;
         if (utlsFingerprint == null) utlsFingerprint = "";
         if (mux == null) mux = false;
@@ -78,7 +76,7 @@ public class TrojanGoBean extends AbstractBean {
             }
         }
         output.writeString(encryption);
-        output.writeString(plugin);
+        output.writeString(""); // plugin, to be removed
         output.writeBoolean(allowInsecure);
         output.writeString(utlsFingerprint);
         output.writeBoolean(mux);
@@ -107,7 +105,7 @@ public class TrojanGoBean extends AbstractBean {
             String pass = encryption.substring(encryption.indexOf(":") + 1);
             encryption = "ss;" + method + ":" + pass;
         }
-        plugin = input.readString();
+        input.readString(); // plugin, to be removed
         if (version >= 1) {
             allowInsecure = input.readBoolean();
         }

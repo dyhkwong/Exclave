@@ -21,8 +21,6 @@ package io.nekohasekai.sagernet.fmt.trojan_go
 
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
-import com.github.shadowsocks.plugin.PluginConfiguration
-import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
@@ -56,9 +54,6 @@ fun parseTrojanGo(server: String): TrojanGoBean {
         link.queryParameter("encryption")?.let {
             encryption = it
         }
-        link.queryParameter("plugin")?.let {
-            plugin = it
-        }
         link.fragment?.let {
             name = it
         }
@@ -89,13 +84,6 @@ fun TrojanGoBean.toUri(): String {
 
     if (encryption.isNotEmpty() && encryption != "none") {
         builder.addQueryParameter("encryption", encryption)
-    }
-    if (plugin.isNotEmpty() && PluginConfiguration(plugin).selected.isNotEmpty()) {
-        var p = PluginConfiguration(plugin).selected
-        if (PluginConfiguration(plugin).getOptions().toString().isNotEmpty()) {
-            p += ";" + PluginConfiguration(plugin).getOptions().toString()
-        }
-        builder.addQueryParameter("plugin", p)
     }
 
     if (name.isNotEmpty()) {
@@ -156,16 +144,5 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
             }
         }
 
-        if (plugin.isNotEmpty()) {
-            val pluginConfiguration = PluginConfiguration(plugin ?: "")
-            PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
-                conf["transport_plugin"] = JSONObject().also {
-                    it["enabled"] = true
-                    it["type"] = "shadowsocks"
-                    it["command"] = path
-                    it["option"] = opts.toString()
-                }
-            }
-        }
     }.toStringPretty()
 }
