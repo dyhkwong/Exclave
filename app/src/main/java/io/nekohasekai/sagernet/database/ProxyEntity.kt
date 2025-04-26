@@ -360,7 +360,7 @@ data class ProxyEntity(
 
         return with(requireBean()) {
             StringBuilder().apply {
-                val config = buildV2RayConfig(this@ProxyEntity)
+                val config = buildV2RayConfig(this@ProxyEntity, forExport = true)
                 append(config.config)
 
                 if (!config.index.all { it.chain.isEmpty() }) {
