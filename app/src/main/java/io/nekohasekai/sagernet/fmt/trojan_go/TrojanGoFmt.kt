@@ -21,20 +21,11 @@ package io.nekohasekai.sagernet.fmt.trojan_go
 
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
-import com.github.shadowsocks.plugin.PluginConfiguration
-import com.github.shadowsocks.plugin.PluginManager
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
-
-fun TrojanGoBean.fixInvalidParams() {
-    if (plugin != null) {
-        plugin = PluginConfiguration(plugin).apply { this.fixInvalidParams() }.toString()
-    }
-}
 
 fun parseTrojanGo(server: String): TrojanGoBean {
     val link = Libcore.parseURL(server)
@@ -66,9 +57,8 @@ fun parseTrojanGo(server: String): TrojanGoBean {
                 else -> error("unsupported encryption")
             }
         }
-        link.queryParameter("plugin")?.let {
-            plugin = it
-            fixInvalidParams()
+        link.queryParameter("plugin")?.takeIf { it.isNotEmpty() }?.let {
+            error("plugin not supported")
         }
         link.fragment?.let {
             name = it
@@ -104,13 +94,6 @@ fun TrojanGoBean.toUri(): String? {
     }
     if (encryption != "none") {
         builder.addQueryParameter("encryption", encryption)
-    }
-    if (plugin.isNotEmpty() && PluginConfiguration(plugin).selected.isNotEmpty()) {
-        var p = PluginConfiguration(plugin).selected
-        if (PluginConfiguration(plugin).getOptions().toString().isNotEmpty()) {
-            p += ";" + PluginConfiguration(plugin).getOptions().toString()
-        }
-        builder.addQueryParameter("plugin", p)
     }
     return builder.string
 }
@@ -165,16 +148,5 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
             }
         }
 
-        if (plugin.isNotEmpty()) {
-            val pluginConfiguration = PluginConfiguration(plugin ?: "")
-            PluginManager.init(pluginConfiguration)?.let { (path, opts, _) ->
-                conf["transport_plugin"] = JSONObject().also {
-                    it["enabled"] = true
-                    it["type"] = "shadowsocks"
-                    it["command"] = path
-                    it["option"] = opts.toString()
-                }
-            }
-        }
     }.toStringPretty()
 }

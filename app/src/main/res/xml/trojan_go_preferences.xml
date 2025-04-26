@@ -91,22 +91,6 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/plugin">
-
-        <com.github.shadowsocks.preference.PluginPreference
-            app:icon="@drawable/ic_av_playlist_add"
-            app:key="serverPlugin"
-            app:persistent="false"
-            app:title="@string/plugin"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:icon="@drawable/ic_action_settings"
-            app:key="serverPluginConfigure"
-            app:persistent="false"
-            app:title="@string/plugin_configure"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
     <PreferenceCategory
         app:key="serverMuxCategory"
         app:title="@string/mux_settings">
