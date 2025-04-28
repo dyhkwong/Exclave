@@ -200,13 +200,13 @@ fun String.toMegaBitsPerSecond(): Int? {
     }
     this.substring(0, splitAt).toIntOrNull()?.takeIf { it >= 0 }?.let {
         val ret = when (this.substring(splitAt).trim()) {
-            "bps" -> (it / 1000000f).roundToInt()
-            "Kbps" -> (it / 1000f).roundToInt()
+            "bps" -> (it * 0.000001f).roundToInt()
+            "Kbps" -> (it * 0.001f).roundToInt()
             "Mbps" -> it
             "Gbps" -> it * 1000
             "Tbps" -> it * 1000000
-            "Bps" -> (it / 125000f).roundToInt()
-            "KBps" -> (it / 125f).roundToInt()
+            "Bps" -> (it * 0.000008f).roundToInt()
+            "KBps" -> (it * 0.008f).roundToInt()
             "MBps" -> it * 8
             "GBps" -> it * 8000
             "TBps" -> it * 8000000
@@ -225,7 +225,7 @@ fun String.toMegaBits(): Int? {
         if (it < 0f) {
             return null
         }
-        val ret = (it / 1000f / 1000f).roundToInt()
+        val ret = (it * 0.000008f).roundToInt()
         return if (it > 0f && ret == 0) 1 else ret
     }
     var splitAt = 0
@@ -237,19 +237,19 @@ fun String.toMegaBits(): Int? {
     }
     this.substring(0, splitAt).replace(",", "").toFloatOrNull()?.takeIf { it >= 0f }?.let {
         val ret = when (this.substring(splitAt).trim().lowercase()) {
-            "b" -> (it / 1000f / 1000f).roundToInt()
-            "k", "kb" -> (it / 1000f).roundToInt()
-            "m", "mb" -> it.roundToInt()
-            "g", "gb" -> (it * 1000f).roundToInt()
-            "t", "tb" -> (it * 1000f * 1000f).roundToInt()
-            "p", "pb" -> (it * 1000f * 1000f * 1000f).roundToInt()
-            "e", "eb" -> (it * 1000f * 1000f * 1000f * 1000f).roundToInt()
-            "ki", "kib" -> (it * 1.024f / 1000f).roundToInt()
-            "mi", "mib" -> (it * 1.024f * 1.024f).roundToInt()
-            "gi", "gib" -> (it * 1.024f * 1.024f * 1.024f * 1000f).roundToInt()
-            "ti", "tib" -> (it * 1.024f * 1.024f * 1.024f * 1.024f * 1000f * 1000f).roundToInt()
-            "pi", "pib" -> (it * 1.024f * 1.024f * 1.024f * 1.024f * 1.024f * 1000f * 1000f * 1000f).roundToInt()
-            "ei", "eib" -> (it * 1.024f * 1.024f * 1.024f * 1.024f * 1.024f * 1.024f * 1000f * 1000f * 1000f * 1000f).roundToInt()
+            "b" -> (it * 0.000008f).roundToInt()
+            "k", "kb" -> (it * 0.008f).roundToInt()
+            "m", "mb" -> (it * 8f).roundToInt()
+            "g", "gb" -> (it * 8000f).roundToInt()
+            "t", "tb" -> (it * 8000000f).roundToInt()
+            "p", "pb" -> (it * 8000000000f).roundToInt()
+            "e", "eb" -> (it * 8000000000000f).roundToInt()
+            "ki", "kib" -> (it * 0.008192f).roundToInt()
+            "mi", "mib" -> (it * 8.388608f).roundToInt()
+            "gi", "gib" -> (it * 1.024f * 8388.608f).roundToInt()
+            "ti", "tib" -> (it * 1.024f * 1.024f * 8388608f).roundToInt()
+            "pi", "pib" -> (it * 1.024f * 1.024f * 1.024f * 8388608000f).roundToInt()
+            "ei", "eib" -> (it * 1.024f * 1.024f * 1.024f * 1.024f * 8388608000000f).roundToInt()
             else -> return null
         }
         return if (it > 0f && ret == 0) 1 else ret
