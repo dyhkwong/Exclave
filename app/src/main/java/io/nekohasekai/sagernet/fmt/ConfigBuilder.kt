@@ -119,6 +119,7 @@ import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.ktx.toHysteriaPort
+import io.nekohasekai.sagernet.ktx.unescapeLineFeed
 import io.nekohasekai.sagernet.utils.PackageCache
 
 const val TAG_SOCKS = "socks"
@@ -150,7 +151,7 @@ class V2rayBuildResult(
     var bypassTag: String,
     var observerTag: String,
     var observatoryTags: Set<String>,
-    val dumpUid: Boolean,
+    val dumpUID: Boolean,
     val alerts: List<Pair<Int, String>>,
 ) {
     data class IndexEntity(var isBalancer: Boolean, var chain: LinkedHashMap<Int, ProxyEntity>)
@@ -255,7 +256,7 @@ fun buildV2RayConfig(
         else -> "PreferIPv4"
     }
 
-    var dumpUid = false
+    var dumpUID = false
     val alerts = mutableListOf<Pair<Int, String>>()
 
     lateinit var result: V2rayBuildResult
@@ -1416,13 +1417,10 @@ fun buildV2RayConfig(
                             DokodemoDoorInboundConfigurationObject().apply {
                                 address = bean.serverAddress
                                 network = bean.network()
-                                port = bean.serverPort
-                                port = if (bean is HysteriaBean) {
-                                    bean.serverPorts.toHysteriaPort()
-                                } else if (bean is Hysteria2Bean) {
-                                    bean.serverPorts.toHysteriaPort()
-                                } else {
-                                    bean.serverPort
+                                port = when (bean) {
+                                    is HysteriaBean -> bean.serverPorts.toHysteriaPort()
+                                    is Hysteria2Bean -> bean.serverPorts.toHysteriaPort()
+                                    else -> bean.serverPort
                                 }
                             })
                         routing.rules.add(RoutingObject.RuleObject().apply {
@@ -1528,7 +1526,7 @@ fun buildV2RayConfig(
 
         for (rule in extraRules) {
             if (rule.packages.isNotEmpty()) {
-                dumpUid = true
+                dumpUID = true
                 if (!isVpn) {
                     alerts.add(Alerts.ROUTE_ALERT_NOT_VPN to rule.displayName())
                     continue
@@ -1538,7 +1536,7 @@ fun buildV2RayConfig(
                 type = "field"
                 if (rule.packages.isNotEmpty()) {
                     PackageCache.awaitLoadSync()
-                    uidList = rule.packages.map {
+                    uid = rule.packages.map {
                         PackageCache[it]?.takeIf { uid -> uid >= 10000 } ?: 1000
                     }.toHashSet().toList()
                 }
@@ -1598,10 +1596,11 @@ fun buildV2RayConfig(
                     attrs = rule.attrs
                 }
                 if (rule.ssid.isNotEmpty()) {
-                    ssidList = rule.ssid.listByLineOrComma()
+                    // a hack for SSID containing `\n`
+                    ssid = rule.ssid.split("\n").map { it.unescapeLineFeed() }
                 }
                 if (rule.networkType.isNotEmpty()) {
-                    networkType = rule.networkType
+                    networkType = rule.networkType.toMutableList()
                 }
                 when {
                     rule.reverse -> inboundTag = listOf("reverse-${rule.id}")
@@ -1992,7 +1991,7 @@ fun buildV2RayConfig(
             TAG_BYPASS,
             rootObserver?.tag ?: "",
             rootObserver?.settings?.get("subjectSelector") as? Set<String> ?: HashSet(),
-            dumpUid,
+            dumpUID,
             alerts
         )
     }

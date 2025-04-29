@@ -47,6 +47,11 @@ fun PreferenceDataStore.int(
     defaultValue: () -> Int = { 0 },
 ) = PreferenceProxy(name, defaultValue, ::getInt, ::putInt)
 
+fun PreferenceDataStore.stringSet(
+    name: String,
+    defaultValue: () -> Set<String> = { emptySet() },
+) = PreferenceProxy(name, defaultValue, ::getStringSet, ::putStringSet)
+
 fun PreferenceDataStore.stringToInt(
     name: String,
     defaultValue: () -> Int = { 0 },

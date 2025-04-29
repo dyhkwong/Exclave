@@ -31,8 +31,6 @@ import android.net.ProxyInfo
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.os.PowerManager
-import android.system.ErrnoException
-import android.system.Os
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -49,7 +47,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libcore.*
-import java.io.FileDescriptor
 import android.net.VpnService as BaseVpnService
 
 class VpnService : BaseVpnService(),
@@ -69,14 +66,6 @@ class VpnService : BaseVpnService(),
         const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
         const val FAKEDNS_VLAN6_CLIENT = "fc00::"
 
-        private fun <T> FileDescriptor.use(block: (FileDescriptor) -> T) = try {
-            block(this)
-        } finally {
-            try {
-                Os.close(this)
-            } catch (_: ErrnoException) {
-            }
-        }
     }
 
     lateinit var conn: ParcelFileDescriptor
@@ -294,7 +283,7 @@ class VpnService : BaseVpnService(),
             overrideDestination = DataStore.destinationOverride
             fakeDNS = DataStore.enableFakeDns
             debug = DataStore.logLevel == LogLevel.DEBUG
-            dumpUID = data.proxy!!.config.dumpUid
+            dumpUID = data.proxy!!.config.dumpUID
             trafficStats = DataStore.appTrafficStatistics
             pCap = DataStore.enablePcap
             protector = this@VpnService
@@ -362,6 +351,5 @@ class VpnService : BaseVpnService(),
         super.onDestroy()
         data.binder.close()
     }
-
 
 }

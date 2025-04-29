@@ -40,6 +40,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.EditTextPreference
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.SwitchPreference
@@ -181,7 +182,7 @@ class RouteSettingsActivity(
     lateinit var reverse: SwitchPreference
     lateinit var redirect: EditTextPreference
     lateinit var apps: AppListPreference
-    lateinit var networkType: SimpleMenuPreference
+    lateinit var networkType: MultiSelectListPreference
     lateinit var ssid: EditTextPreference
 
     fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
@@ -238,16 +239,28 @@ class RouteSettingsActivity(
             true
         }
 
-        fun updateNetwork(newValue: String = networkType.value) {
-            ssid.isVisible = newValue == "wifi"
+        fun updateNetwork(newValues: Set<String> = networkType.values) {
+            networkType.summary = if (newValues.isEmpty()) {
+                app.getString(androidx.preference.R.string.not_set)
+            } else {
+                val types = mutableListOf<String>()
+                if (newValues.contains("data")) types.add(app.getString(R.string.network_data))
+                if (newValues.contains("wifi")) types.add(app.getString(R.string.network_wifi))
+                if (newValues.contains("bluetooth")) types.add(app.getString(R.string.network_bt))
+                if (newValues.contains("ethernet")) types.add(app.getString(R.string.network_eth))
+                if (newValues.contains("usb")) types.add(app.getString(R.string.network_usb))
+                if (newValues.contains("satellite")) types.add(app.getString(R.string.network_satellite))
+                types.joinToString("\n")
+            }
+            ssid.isVisible = newValues.contains("wifi")
         }
 
         updateNetwork()
 
-        networkType.setOnPreferenceChangeListener { _, newValue ->
-            newValue as String
-            when (newValue) {
-                "usb" -> if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+        networkType.setOnPreferenceChangeListener { _, newValues ->
+            newValues as Set<String>
+            when {
+                newValues.contains("usb") -> if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                     runOnMainDispatcher {
                         MaterialAlertDialogBuilder(this@RouteSettingsActivity)
                             .setMessage(getString(R.string.network_invalid, "12"))
@@ -255,7 +268,7 @@ class RouteSettingsActivity(
                             .show()
                     }
                 }
-                "satellite" -> {
+                newValues.contains("satellite") -> {
                     if (Build.VERSION.SDK_INT == Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
                         SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) < 12 ||
                         Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -268,7 +281,7 @@ class RouteSettingsActivity(
                     }
                 }
             }
-            updateNetwork(newValue)
+            updateNetwork(newValues)
             true
         }
     }

@@ -10,7 +10,7 @@
         app:icon="@drawable/ic_baseline_legend_toggle_24"
         app:key="routePackages"
         app:title="@string/apps" />
-    <com.takisoft.preferencex.SimpleMenuPreference
+    <androidx.preference.MultiSelectListPreference
         app:entries="@array/network_type_entry"
         app:entryValues="@array/network_type_value"
         app:icon="@drawable/baseline_public_24"
@@ -21,6 +21,7 @@
         app:icon="@drawable/baseline_wifi_lock_24"
         app:key="routeSSID"
         app:title="@string/route_ssid"
+        app:dialogMessage="@string/one_per_line"
         app:useSimpleSummaryProvider="true" />
     <PreferenceCategory app:title="@string/cag_route">
         <EditTextPreference

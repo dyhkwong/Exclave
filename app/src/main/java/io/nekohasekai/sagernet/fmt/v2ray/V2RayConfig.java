@@ -147,9 +147,9 @@ public class V2RayConfig {
 
             // SagerNet private
 
-            public List<Integer> uidList;
-            public List<String> ssidList;
-            public String networkType;
+            public List<Integer> uid;
+            public List<String> ssid;
+            public List<String> networkType;
             public Boolean skipDomain;
 
         }

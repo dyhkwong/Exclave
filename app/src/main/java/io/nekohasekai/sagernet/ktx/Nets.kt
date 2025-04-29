@@ -281,3 +281,33 @@ val PUBLIC_STUN_SERVERS = arrayOf(
     "stun.voipgate.com:3478",
     "stun.mixvoip.com:3478"
 )
+
+fun String.unescapeLineFeed(): String {
+    val chars = this.toCharArray()
+    var from = 0
+    var to = 0
+    val length = chars.size
+    while (from < length) {
+        val ch = chars[from]
+        if (ch == '\\' && from + 1 < length) {
+            when (chars[from+1]) {
+                'n' -> {
+                    chars[to] = '\n'
+                    to += 1
+                    from += 2
+                    continue
+                }
+                '\\' -> {
+                    chars[to] = '\\'
+                    to += 1
+                    from += 2
+                    continue
+                }
+            }
+        }
+        chars[to] = ch
+        to += 1
+        from += 1
+    }
+    return String(chars, 0, to)
+}

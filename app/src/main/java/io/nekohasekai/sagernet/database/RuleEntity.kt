@@ -27,7 +27,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "rules")
 @Parcelize
-@TypeConverters(ListConverter::class)
+@TypeConverters(ListConverter::class, StringCollectionConverter::class)
 data class RuleEntity(
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var name: String = "",
@@ -46,7 +46,7 @@ data class RuleEntity(
     var redirect: String = "",
     var packages: List<String> = listOf(),
     @ColumnInfo(defaultValue = "") var ssid: String = "",
-    @ColumnInfo(defaultValue = "") var networkType: String = "",
+    @ColumnInfo(defaultValue = "") var networkType: Set<String> = emptySet(),
 ) : Parcelable {
 
     fun isBypassRule(): Boolean {
@@ -76,14 +76,14 @@ data class RuleEntity(
         ) + "\n"
         if (ssid.isNotEmpty()) summary += "$ssid\n"
         if (networkType.isNotEmpty()) {
-            when (networkType) {
-                "data" -> summary += app.getString(R.string.network_data) + "\n"
-                "wifi" -> summary += app.getString(R.string.network_wifi) + "\n"
-                "bluetooth" -> summary += app.getString(R.string.network_bt) + "\n"
-                "ethernet" -> summary += app.getString(R.string.network_eth) + "\n"
-                "usb" -> summary += app.getString(R.string.network_usb) + "\n"
-                "satellite" -> summary += app.getString(R.string.network_satellite) + "\n"
-            }
+            val types = mutableListOf<String>()
+            if (networkType.contains("data")) types.add(app.getString(R.string.network_data))
+            if (networkType.contains("wifi")) types.add(app.getString(R.string.network_wifi))
+            if (networkType.contains("bluetooth")) types.add(app.getString(R.string.network_bt))
+            if (networkType.contains("ethernet")) types.add(app.getString(R.string.network_eth))
+            if (networkType.contains("usb")) types.add(app.getString(R.string.network_usb))
+            if (networkType.contains("satellite")) types.add(app.getString(R.string.network_satellite))
+            summary += types.joinToString("\n") + "\n"
         }
         val lines = summary.trim().split("\n")
         return if (lines.size > 3) {
