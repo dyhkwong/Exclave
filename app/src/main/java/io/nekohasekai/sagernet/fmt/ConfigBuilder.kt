@@ -150,7 +150,7 @@ class V2rayBuildResult(
     var bypassTag: String,
     var observerTag: String,
     var observatoryTags: Set<String>,
-    val dumpUid: Boolean,
+    val dumpUID: Boolean,
     val alerts: List<Pair<Int, String>>,
 ) {
     data class IndexEntity(var isBalancer: Boolean, var chain: LinkedHashMap<Int, ProxyEntity>)
@@ -1522,7 +1522,7 @@ fun buildV2RayConfig(
                 type = "field"
                 if (rule.packages.isNotEmpty()) {
                     PackageCache.awaitLoadSync()
-                    uidList = rule.packages.map {
+                    uid = rule.packages.map {
                         PackageCache[it]?.takeIf { uid -> uid >= 10000 } ?: 1000
                     }.toHashSet().toList()
                 }
@@ -1582,10 +1582,10 @@ fun buildV2RayConfig(
                     attrs = rule.attrs
                 }
                 if (rule.ssid.isNotEmpty()) {
-                    ssidList = rule.ssid.listByLineOrComma()
+                    ssid = rule.ssid.listByLineOrComma()
                 }
                 if (rule.networkType.isNotEmpty()) {
-                    networkType = rule.networkType
+                    networkType = listOf(rule.networkType)
                 }
                 when {
                     rule.reverse -> inboundTag = listOf("reverse-${rule.id}")

@@ -60,13 +60,13 @@ import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
-import libcore.UidDumper
-import libcore.UidInfo
+import libcore.UIDDumper
+import libcore.UIDInfo
 import java.net.InetSocketAddress
 import androidx.work.Configuration as WorkConfiguration
 
 class SagerNet : Application(),
-    UidDumper,
+    UIDDumper,
     WorkConfiguration.Provider {
 
     override fun attachBaseContext(base: Context) {
@@ -92,7 +92,7 @@ class SagerNet : Application(),
         val isMainProcess = ActivityThread.currentProcessName() == BuildConfig.APPLICATION_ID
 
         if (!isMainProcess) {
-            Libcore.setUidDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+            Libcore.setUIDDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             if (DataStore.enableDebug && DataStore.pprofServer.isNotEmpty()) {
                 DebugInstance().launch()
             }
@@ -121,7 +121,7 @@ class SagerNet : Application(),
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    override fun dumpUid(
+    override fun dumpUID(
         ipProto: Int, srcIp: String, srcPort: Int, destIp: String, destPort: Int
     ): Int {
         return SagerNet.connectivity.getConnectionOwnerUid(
@@ -129,11 +129,11 @@ class SagerNet : Application(),
         )
     }
 
-    override fun getUidInfo(uid: Int): UidInfo {
+    override fun getUIDInfo(uid: Int): UIDInfo {
         PackageCache.awaitLoadSync()
 
         if (uid <= 1000L) {
-            val uidInfo = UidInfo()
+            val uidInfo = UIDInfo()
             uidInfo.label = PackageCache.loadLabel("android")
             uidInfo.packageName = "android"
             return uidInfo
@@ -141,7 +141,7 @@ class SagerNet : Application(),
 
         val packageNames = PackageCache.uidMap[uid.toInt()]
         if (!packageNames.isNullOrEmpty()) for (packageName in packageNames) {
-            val uidInfo = UidInfo()
+            val uidInfo = UIDInfo()
             uidInfo.label = PackageCache.loadLabel(packageName)
             uidInfo.packageName = packageName
             return uidInfo
@@ -267,7 +267,7 @@ class SagerNet : Application(),
                 val wifiInfo = wifi.connectionInfo
                 ssid = wifiInfo?.ssid
             }
-            Libcore.setWifiSSID(ssid?.trim { it == '"' } ?: "")
+            Libcore.setSSID(ssid?.trim { it == '"' } ?: "")
         }
 
         fun startService() = ContextCompat.startForegroundService(
