@@ -20,6 +20,7 @@
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password"

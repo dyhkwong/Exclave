@@ -33,18 +33,21 @@
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_baseline_vpn_key_24"
             app:key="serverPrivateKey"
             app:title="@string/ssh_private_key"
             app:useSimpleSummaryProvider="true" />
 
         <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword1"
             app:title="@string/ssh_private_key_passphrase"

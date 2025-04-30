@@ -19,6 +19,7 @@
             app:title="@string/server_port"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword"
             app:title="@string/password"
@@ -85,6 +86,7 @@
             app:title="@string/enc_method"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
+            app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_settings_password"
             app:key="serverPassword1"
             app:title="@string/password"
