@@ -539,7 +539,7 @@ fun StandardV2RayBean.toUri(): String? {
 
     when (this) {
         is TrojanBean -> {
-            if (password.isEmpty()) {
+            if (password.isNotEmpty()) {
                 builder.username = password
             }
         }
