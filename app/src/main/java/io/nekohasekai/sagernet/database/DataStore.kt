@@ -210,6 +210,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var httpProxyException by configurationStore.string(Key.HTTP_PROXY_EXCEPTION)
     var requireTransproxy by configurationStore.boolean(Key.REQUIRE_TRANSPROXY)
     var transproxyMode by configurationStore.stringToInt(Key.TRANSPROXY_MODE)
+    var requireDnsInbound by configurationStore.boolean(Key.REQUIRE_DNS_INBOUND)
     var connectionTestURL by configurationStore.string(Key.CONNECTION_TEST_URL) { CONNECTION_TEST_URL }
     var alwaysShowAddress by configurationStore.boolean(Key.ALWAYS_SHOW_ADDRESS)
     var showGroupName by configurationStore.boolean(Key.SHOW_GROUP_NAME)

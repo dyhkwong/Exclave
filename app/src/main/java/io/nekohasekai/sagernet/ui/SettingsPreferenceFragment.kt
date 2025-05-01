@@ -139,7 +139,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val appendHttpProxy = findPreference<SwitchPreference>(Key.APPEND_HTTP_PROXY)!!
         val httpProxyException = findPreference<EditTextPreference>(Key.HTTP_PROXY_EXCEPTION)!!
         val portHttp = findPreference<EditTextPreference>(Key.HTTP_PORT)!!
-
+        val requireDns = findPreference<SwitchPreference>(Key.REQUIRE_DNS_INBOUND)!!
+        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
+        portLocalDns.isEnabled = requireDns.isChecked
+        requireDns.setOnPreferenceChangeListener { _, newValue ->
+            portLocalDns.isEnabled = newValue as Boolean
+            needReload()
+            true
+        }
         portHttp.isEnabled = requireHttp.isChecked
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             appendHttpProxy.remove()
@@ -169,7 +176,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             }
         }
 
-        val portLocalDns = findPreference<EditTextPreference>(Key.LOCAL_DNS_PORT)!!
         val ipv6Mode = findPreference<Preference>(Key.IPV6_MODE)!!
         val domainStrategy = findPreference<Preference>(Key.DOMAIN_STRATEGY)!!
 

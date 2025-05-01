@@ -1703,7 +1703,7 @@ fun buildV2RayConfig(
                  })*/
         })
 
-        if (!forTest && DataStore.localDNSPort > 0) {
+        if (!forTest && DataStore.requireDnsInbound && DataStore.localDNSPort > 0) {
             inbounds.add(InboundObject().apply {
                 tag = TAG_DNS_IN
                 listen = bind
@@ -1713,8 +1713,9 @@ fun buildV2RayConfig(
                     DokodemoDoorInboundConfigurationObject().apply {
                         address = bind // placeholder, all queries are handled internally
                         network = "tcp,udp"
-                        port = DataStore.localDNSPort // placeholder, all queries are handled internally
-                    })
+                        port = 53 // placeholder, all queries are handled internally
+                    }
+                )
             })
         }
 
