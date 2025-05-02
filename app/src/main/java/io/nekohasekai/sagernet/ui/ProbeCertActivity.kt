@@ -3,7 +3,11 @@ package io.nekohasekai.sagernet.ui
 import android.content.ClipData
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.ListPopupWindow
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -18,6 +22,7 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import libcore.Libcore
+
 
 class ProbeCertActivity : ThemedActivity() {
 
@@ -64,6 +69,33 @@ class ProbeCertActivity : ThemedActivity() {
         }
 
         binding.probeCertServer.setText("example.com:443")
+        binding.probeCertAlpn.setText("h2,http/1.1")
+        val list = arrayListOf("h2,http/1.1", "h3")
+        binding.probeCertAlpn.setOnClickListener {
+            val listPopupWindow = ListPopupWindow(this)
+            listPopupWindow.setAdapter(
+                ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
+            )
+            listPopupWindow.setOnItemClickListener { _, _, i, _ ->
+                binding.probeCertAlpn.setText(list[i])
+                listPopupWindow.dismiss()
+            }
+            listPopupWindow.anchorView = binding.probeCertAlpn
+            listPopupWindow.show()
+        }
+        binding.probeCertProtocol.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>, view: View, position: Int, id: Long
+            ) {
+                when (position) {
+                    0 -> binding.probeCertAlpn.setText("h2,http/1.1")
+                    1 -> binding.probeCertAlpn.setText("h3")
+                    else -> error("unknown protocol")
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
 
         binding.probeCert.setOnClickListener {
             copyCert()
@@ -81,10 +113,11 @@ class ProbeCertActivity : ThemedActivity() {
             1 -> "quic"
             else -> error("unknown protocol")
         }
+        val alpn = binding.probeCertAlpn.text.toString()
 
         runOnDefaultDispatcher {
             try {
-                val certificate = Libcore.probeCert(server, serverName, protocol,
+                val certificate = Libcore.probeCert(server, serverName, alpn, protocol,
                     SagerNet.started && DataStore.startedProfile > 0, DataStore.socksPort
                 )
                 Logs.i(certificate)

@@ -87,6 +87,20 @@
                                 tools:ignore="LabelFor" />
 
                         <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/alpn"
+                            android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                        <EditText
+                            android:id="@+id/probe_cert_alpn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:inputType="text"
+                            tools:ignore="LabelFor" />
+
+                        <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/protocol"
