@@ -192,6 +192,17 @@ class ConfigurationFragment @JvmOverloads constructor(
         groupPager.adapter = adapter
         groupPager.offscreenPageLimit = 2
 
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {}
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                searchView?.setQuery(null, true)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+
+        })
+
         TabLayoutMediator(tabLayout, groupPager) { tab, position ->
             if (adapter.groupList.size > position) {
                 tab.text = adapter.groupList[position].displayName()
