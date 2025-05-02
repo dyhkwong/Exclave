@@ -196,7 +196,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             override fun onTabSelected(tab: TabLayout.Tab) {}
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                searchView?.setQuery(null, true)
+                onQueryTextChange("")
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {}
