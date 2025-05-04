@@ -109,7 +109,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 "es" -> getString(R.string.language_es_display_name)
                 "fa" -> getString(R.string.language_fa_display_name)
                 "fr" -> getString(R.string.language_fr_display_name)
-                "in" -> getString(R.string.language_in_display_name)
+                "id" -> getString(R.string.language_id_display_name)
                 "it" -> getString(R.string.language_it_display_name)
                 "nb-NO" -> getString(R.string.language_nb_NO_display_name)
                 "ru" -> getString(R.string.language_ru_display_name)
@@ -120,12 +120,17 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             }
         }
         val appLanguage = findPreference<SimpleMenuPreference>(Key.APP_LANGUAGE)!!
-        val locale = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+        val locale = when (val value = AppCompatDelegate.getApplicationLocales().toLanguageTags()) {
+            // https://stackoverflow.com/questions/13291578/how-to-localize-an-android-app-in-indonesian-language
+            // Some old Android versions still return "in".
+            "in" -> "id"
+            else -> value
+        }
         appLanguage.summary = getLanguageDisplayName(locale)
         appLanguage.value = if (locale in resources.getStringArray(R.array.language_value)) locale else ""
         appLanguage.setOnPreferenceChangeListener { _, newValue ->
             newValue as String
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(newValue))
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(newValue)) // "id" always works
             appLanguage.summary = getLanguageDisplayName(newValue)
             appLanguage.value = newValue
             true

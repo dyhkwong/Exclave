@@ -1069,7 +1069,7 @@
         <item>@string/language_es_display_name</item>
         <item>@string/language_fa_display_name</item>
         <item>@string/language_fr_display_name</item>
-        <item>@string/language_in_display_name</item>
+        <item>@string/language_id_display_name</item>
         <item>@string/language_it_display_name</item>
         <item>@string/language_nb_NO_display_name</item>
         <item>@string/language_ru_display_name</item>
@@ -1085,7 +1085,7 @@
         <item>es</item>
         <item>fa</item>
         <item>fr</item>
-        <item>in</item>
+        <item>id</item>
         <item>it</item>
         <item>nb-NO</item>
         <item>ru</item>
