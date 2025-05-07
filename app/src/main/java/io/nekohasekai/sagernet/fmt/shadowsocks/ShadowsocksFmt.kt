@@ -47,19 +47,17 @@ val supportedShadowsocks2022Method = arrayOf(
     "2022-blake3-aes-128-gcm","2022-blake3-aes-256-gcm","2022-blake3-chacha20-poly1305",
 )
 
-fun PluginConfiguration.fixInvalidParams() {
-    // A typo in https://github.com/shadowsocks/shadowsocks-org/blob/6b1c064db4129de99c516294960e731934841c94/docs/doc/sip002.md?plain=1#L15
-    // "simple-obfs" should be "obfs-local"
-    if (selected == "simple-obfs") {
-        pluginsOptions["obfs-local"] = getOptions().apply { id = "obfs-local" }
-        pluginsOptions.remove(selected)
-        selected = "obfs-local"
-    }
-}
-
 fun ShadowsocksBean.fixInvalidParams() {
-    if (plugin != null) {
-        plugin = PluginConfiguration(plugin).apply { fixInvalidParams() }.toString()
+    if (!plugin.isNullOrEmpty()) {
+        plugin = PluginConfiguration(plugin).apply {
+            // A typo in https://github.com/shadowsocks/shadowsocks-org/blob/6b1c064db4129de99c516294960e731934841c94/docs/doc/sip002.md?plain=1#L15
+            // "simple-obfs" should be "obfs-local"
+            if (selected == "simple-obfs") {
+                pluginsOptions["obfs-local"] = getOptions().apply { id = "obfs-local" }
+                pluginsOptions.remove(selected)
+                selected = "obfs-local"
+            }
+        }.toString()
     }
 }
 
@@ -84,7 +82,6 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
             }
             password = plainUri.substringBeforeLast("@").substringAfter(":")
             name = link.fragment
-            fixInvalidParams()
         }
     }
     if (link.password.isNotEmpty() ||
@@ -147,12 +144,13 @@ fun ShadowsocksBean.toUri(): String? {
     }
 
     if (plugin.isNotEmpty() && PluginConfiguration(plugin).selected.isNotEmpty()) {
-        var p = PluginConfiguration(plugin).selected
-        if (PluginConfiguration(plugin).getOptions().toString().isNotEmpty()) {
-            p += ";" + PluginConfiguration(plugin).getOptions().toString()
-        }
         builder.rawPath = "/"
-        builder.addQueryParameter("plugin", p)
+        builder.addQueryParameter("plugin",
+            PluginOptions(
+                PluginConfiguration(plugin).selected,
+                PluginConfiguration(plugin).getOptions().toString()
+            ).toString(trimId = false)
+        )
     }
 
     if (name.isNotEmpty()) {
@@ -165,12 +163,6 @@ fun ShadowsocksBean.toUri(): String? {
 
 fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
     return ShadowsocksBean().apply {
-        var pluginStr = ""
-        val pId = getStr("plugin")
-        if (!pId.isNullOrEmpty()) {
-            val plugin = PluginOptions(pId, getStr("plugin_opts"))
-            pluginStr = plugin.toString(false)
-        }
         serverAddress = getStr("server") ?: return null
         serverPort = getInt("server_port") ?: return null
         password = getStr("password")
@@ -190,9 +182,13 @@ fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
             "", null -> error("unsupported method") // different impl has different default value
             else -> error("unsupported method")
         }
-
-        plugin = pluginStr
+        val pluginId = when (val id = getStr("plugin")) {
+            "simple-obfs" -> "obfs-local"
+            else -> id
+        }
+        if (!pluginId.isNullOrEmpty()) {
+            plugin = PluginOptions(pluginId, getStr("plugin_opts")).toString(trimId = false)
+        }
         name = getStr("remarks", "")
-        fixInvalidParams()
     }
 }

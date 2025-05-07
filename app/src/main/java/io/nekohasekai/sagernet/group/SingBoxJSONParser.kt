@@ -3,6 +3,7 @@ package io.nekohasekai.sagernet.group
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.lang.UUID
 import cn.hutool.json.JSONObject
+import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -195,12 +196,9 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                     outbound.getString("password")?.also {
                         v2rayBean.password = it
                     }
-                    outbound.getString("plugin")?.takeIf { it.isNotEmpty() }?.also { plugin ->
-                        if (plugin != "obfs-local" && plugin != "v2ray-plugin") return listOf()
-                        v2rayBean.plugin = plugin
-                        outbound.getString("plugin_opts")?.also {
-                            v2rayBean.plugin += ";$it"
-                        }
+                    outbound.getString("plugin")?.takeIf { it.isNotEmpty() }?.also { pluginId ->
+                        if (pluginId != "obfs-local" && pluginId != "v2ray-plugin") return listOf()
+                        v2rayBean.plugin = PluginOptions(pluginId, outbound.getString("plugin_opts")).toString(trimId = false)
                     }
                 }
                 "trojan" -> {

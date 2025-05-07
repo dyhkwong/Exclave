@@ -1000,9 +1000,9 @@ fun buildV2RayConfig(
                                     if (DataStore.enableFragment
                                         && (network != "kcp" && network != "quic" && network != "hysteria2")
                                         && (security == "tls" || security == "reality")
-                                        && !(bean is ShadowsocksBean && bean.plugin.isNotEmpty()
+                                        && !(bean is ShadowsocksBean && bean.plugin.isNotEmpty() && PluginConfiguration(bean.plugin).selected.isNotEmpty())
                                         && !(network == "ws" && bean.wsUseBrowserForwarder)
-                                        && !(network == "splithttp" && bean.shUseBrowserForwarder))
+                                        && !(network == "splithttp" && bean.shUseBrowserForwarder)
                                     ) {
                                         sockopt = StreamSettingsObject.SockoptObject().apply {
                                             if (DataStore.enableFragment) {

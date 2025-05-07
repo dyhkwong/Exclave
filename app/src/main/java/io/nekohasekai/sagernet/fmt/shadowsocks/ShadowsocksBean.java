@@ -26,6 +26,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.github.shadowsocks.plugin.PluginConfiguration;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean;
@@ -49,7 +50,9 @@ public class ShadowsocksBean extends StandardV2RayBean {
 
     @Override
     public boolean canMapping() {
-        return plugin.isEmpty();
+        if (plugin.isEmpty()) return true;
+        PluginConfiguration pluginConfiguration = new PluginConfiguration(plugin);
+        return pluginConfiguration.getSelected().isEmpty();
     }
 
     @Override

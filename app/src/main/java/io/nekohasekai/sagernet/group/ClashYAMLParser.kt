@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocksMethod
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.supportedShadowsocksRMethod
@@ -134,13 +133,11 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                     "aead_aes_256_gcm" -> "aes-256-gcm"
                     "aead_chacha20_poly1305" -> "chacha20-ietf-poly1305"
                     "aead_xchacha20_poly1305" -> "xchacha20-ietf-poly1305"
-
                     in supportedShadowsocksMethod -> cipher
                     else -> return listOf()
                 }
                 plugin = pluginStr
                 name = proxy["name"]?.toString()
-                fixInvalidParams()
             })
         }
         "vmess", "vless", "trojan" -> {

@@ -2,6 +2,7 @@ package io.nekohasekai.sagernet.group
 
 import cn.hutool.core.lang.UUID
 import cn.hutool.json.JSONObject
+import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -448,11 +449,8 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                     }
                     outbound.getObject("settings")?.also { settings ->
                         (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
-                            settings.getString("plugin")?.also { plugin ->
-                                v2rayBean.plugin = plugin
-                                settings.getString("pluginOpts").also {
-                                    v2rayBean.plugin += ";$it"
-                                }
+                            settings.getString("plugin")?.also { pluginId ->
+                                v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
                             }
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it

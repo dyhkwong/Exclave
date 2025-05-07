@@ -134,17 +134,15 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 bean.method = profile.getStr("method")
                 bean.password = profile.getStr("password")
 
-                val pluginName = profile.getStr("pluginName")
-                if (!pluginName.isNullOrEmpty()) {
+                val pluginId = when (val id = profile.getStr("pluginName")) {
+                    "simple-obfs" -> "obfs-local"
+                    else -> id
+                }
+                if (!pluginId.isNullOrEmpty()) {
                     // TODO: check plugin exists
                     // TODO: check pluginVersion
                     // TODO: support pluginArguments
-
-                    val pl = PluginConfiguration()
-                    pl.selected = pluginName
-                    pl.pluginsOptions[pl.selected] = PluginOptions(profile.getStr("pluginOptions"))
-                    pl.fixInvalidParams()
-                    bean.plugin = pl.toString()
+                    bean.plugin = PluginOptions(pluginId, profile.getStr("pluginOptions")).toString(trimId = false)
                 }
 
                 appendExtraInfo(profile, bean)
