@@ -405,7 +405,7 @@
     <string name="backup_import">导入</string>
     <string name="use_local_dns_as_direct_dns">使用系统 DNS 作为直连 DNS</string>
     <string name="backup_settings">设置</string>
-    <string name="backup_summary">如果路由规则不与配置一起备份，则自定义出站将丢失。</string>
+    <string name="backup_summary">如果路由规则不与配置一起备份，则自定义出站将丢失。不保证向后或向前兼容性。</string>
     <string name="backup_rules">路由规则</string>
     <string name="backup_not_file">不是备份文件，预期 .json，但 %s</string>
     <string name="invalid_backup_file">无效的备份文件</string>
