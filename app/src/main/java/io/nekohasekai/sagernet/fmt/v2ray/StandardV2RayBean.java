@@ -76,6 +76,16 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public String muxPacketEncoding;
 
     @Override
+    public boolean canMapping() {
+        return switch (type) {
+            case "ws" -> !wsUseBrowserForwarder;
+            case "splithttp" -> !shUseBrowserForwarder;
+            // case "quic" -> false; // "quic" is incompatible with chain proxy but this should be a bug.
+            default -> true;
+        };
+    }
+
+    @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
 

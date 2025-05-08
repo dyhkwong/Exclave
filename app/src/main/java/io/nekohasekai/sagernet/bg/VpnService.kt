@@ -199,10 +199,10 @@ class VpnService : BaseVpnService(),
         val proxyApps = DataStore.proxyApps
         val tunImplementation = DataStore.tunImplementation
         val needIncludeSelf = tunImplementation == TunImplementation.SYSTEM /*data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }*/
-        val needBypassRootUid = data.proxy!!.config.outboundTagsAll.values.any {
-            it.hysteriaBean?.protocol == HysteriaBean.PROTOCOL_FAKETCP
+        val needBypassRootUID = data.proxy!!.config.outboundTagsAll.values.any {
+            it.requireBean().needBypassRootUID()
         }
-        if (proxyApps || needBypassRootUid) {
+        if (proxyApps || needBypassRootUID) {
             var bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
             val allApps by lazy {
@@ -218,7 +218,7 @@ class VpnService : BaseVpnService(),
             }
             if (proxyApps) {
                 individual.addAll(DataStore.individual.split('\n').filter { it.isNotEmpty() })
-                if (bypass && needBypassRootUid) {
+                if (bypass && needBypassRootUID) {
                     val individualNew = allApps.toMutableList()
                     individualNew.removeAll(individual)
                     individual.clear()
@@ -291,11 +291,8 @@ class VpnService : BaseVpnService(),
         }
 
         if (tunImplementation == TunImplementation.SYSTEM &&
-            data.proxy!!.config.outboundTagsAll.values.any {
-                it.hysteria2Bean?.canMapping() == false ||
-                        it.hysteriaBean?.canMapping() == false ||
-                        it.ssBean?.canMapping() == false
-            }) {
+            data.proxy!!.config.outboundTagsAll.values.any { it.requireBean().needProtect() }
+            ) {
             config.protectPath = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
         }
 

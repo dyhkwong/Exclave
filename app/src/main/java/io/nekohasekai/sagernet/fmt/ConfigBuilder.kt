@@ -174,7 +174,12 @@ fun buildV2RayConfig(
             val beanList = ArrayList<ProxyEntity>()
             for ((index, proxyId) in bean.proxies.withIndex()) {
                 val item = beansMap[proxyId] ?: continue
-                if (!item.requireBean().canMapping() && index != 0) error("Some configurations are incompatible with chain.")
+                if (!item.requireBean().canMapping() && index != 0) {
+                    error("Configuration ${item.displayName()} can be the front proxy only.")
+                }
+                if (item.type == ProxyEntity.TYPE_WG && index != bean.proxies.size - 1) {
+                    error("Configuration ${item.displayName()} can be the landing proxy only.")
+                }
                 beanList.addAll(item.resolveChain())
             }
             return beanList.asReversed()

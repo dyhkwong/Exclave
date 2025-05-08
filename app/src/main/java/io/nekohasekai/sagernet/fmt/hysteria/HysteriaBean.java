@@ -73,6 +73,19 @@ public class HysteriaBean extends AbstractBean {
     }
 
     @Override
+    public boolean needProtect() {
+        if (!DataStore.INSTANCE.getHysteriaEnablePortHopping()) {
+            return false;
+        }
+        return NetsKt.isValidHysteriaMultiPort(serverPorts);
+    }
+
+    @Override
+    public boolean needBypassRootUID() {
+        return protocol == PROTOCOL_FAKETCP;
+    }
+
+    @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
         if (authPayloadType == null) authPayloadType = TYPE_NONE;
