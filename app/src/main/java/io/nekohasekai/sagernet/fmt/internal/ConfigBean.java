@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
+import io.nekohasekai.sagernet.ProtocolProvider;
+import io.nekohasekai.sagernet.database.DataStore;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class ConfigBean extends InternalBean {
@@ -31,6 +33,11 @@ public class ConfigBean extends InternalBean {
     public String type;
     public String content;
     public String serverAddresses;
+
+    @Override
+    public boolean canMapping() {
+        return !type.equals("v2ray"); // mark it as canMapping anyway
+    }
 
     @Override
     public String displayName() {

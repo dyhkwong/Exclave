@@ -81,6 +81,14 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
         return true;
     }
 
+    public boolean needProtect() {
+        return false;
+    }
+
+    public boolean needBypassRootUID() {
+        return false;
+    }
+
     @Override
     public void initializeDefaultValues() {
         if (serverAddress == null) serverAddress = "127.0.0.1";

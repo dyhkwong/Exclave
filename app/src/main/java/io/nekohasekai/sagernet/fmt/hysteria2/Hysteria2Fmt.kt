@@ -233,7 +233,7 @@ fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean, cacheFile: (()
     if (maxConnReceiveWindow > 0) {
         quicObject["maxConnReceiveWindow"] = maxConnReceiveWindow
     }
-    if (!canMapping() && DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.serviceMode == Key.MODE_VPN && isVpn) {
+    if (needProtect() && DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.serviceMode == Key.MODE_VPN && isVpn) {
         val sockoptsObject: MutableMap<String, Any> = HashMap()
         sockoptsObject["fdControlUnixSocket"] = "protect_path"
         quicObject["sockopts"] = sockoptsObject
