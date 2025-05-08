@@ -375,7 +375,7 @@
     <string name="missing_permission">Отсутствует разрешение</string>
     <string name="location_disabled">Местоположение отключено</string>
     <string name="network_type">Тип сети</string>
-    <string name="network_data">Мобильные данные</string>
+    <string name="network_data">Мобильная сеть</string>
     <string name="network_wifi">Wi-Fi</string>
     <string name="network_bt">Bluetooth</string>
     <string name="network_eth">Ethernet</string>
@@ -390,7 +390,7 @@
     <string name="backup_import">Импорт</string>
     <string name="use_local_dns_as_direct_dns">Использовать локальный DNS как прямой DNS</string>
     <string name="backup_groups_and_configurations">Группы и профили</string>
-    <string name="backup_summary">Если правила маршрутизации резервируются без конфигураций, то пользовательские исходящие соединения будут потеряны.</string>
+    <string name="backup_summary">Если правила маршрутизации резервируются без конфигураций, то пользовательские исходящие соединения будут потеряны. Обратная или прямая совместимость не гарантируется.</string>
     <string name="tasker_action_stop_service">Остановить сервис</string>
     <string name="experimental_reduced_iv_head_entropy">Это предложение GFWReport по контрмерам блокировке потоковых протоколов случайных данных, наблюдаемой на GFW.
 \n
@@ -523,4 +523,8 @@
     <string name="wireguard_keepalive_interval">Постоянное соединение</string>
     <string name="language">Язык</string>
     <string name="language_system_default">Системные настройки по умолчанию</string>
+    <string name="require_dns_inbound">Включить входящий DNS</string>
+    <string name="network_usb">USB</string>
+    <string name="network_satellite">Спутниковый интернет</string>
+    <string name="network_invalid">Неверный тип сети: требуется Android %s.</string>
 </resources>
