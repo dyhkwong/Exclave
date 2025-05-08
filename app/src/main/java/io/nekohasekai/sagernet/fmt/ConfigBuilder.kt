@@ -1935,7 +1935,7 @@ fun buildV2RayConfig(
             })
         }
 
-        if (!forTest && DataStore.hijackDns) {
+        if (!forTest && trafficSniffing && DataStore.hijackDns) {
             routing.rules.add(0, RoutingObject.RuleObject().apply {
                 type = "field"
                 protocol = listOf("dns")
