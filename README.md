@@ -50,6 +50,10 @@ You should have received a copy of the GNU General Public License along with thi
 
 The native libraries of plugins are executables that run in separate processes. Therefore, the native libraries of plugins are not subject to the restrictions of the GNU General Public License. The license of the corresponding upstream project applies to the native libraries of plugins.
 
+The bundled `geosite.dat` is pulled from https://github.com/v2fly/domain-list-community (licensed under the MIT License) and is not part of the code. Therefore, the bundled `geosite.dat` is not subject to the restrictions of the GNU General Public License.
+
+The bundled `geoip.dat` is pulled from https://github.com/v2fly/geoip (licensed under CC-BY-SA-4.0) and is not part of the code. Therefore, the bundled `geoip.dat` is not subject to the restrictions of the GNU General Public License.
+
 ## Translation
 
 Is Exclave not in your language, or the translation is incorrect or incomplete? Get involved in the translations on [Hosted Weblate](https://hosted.weblate.org/projects/exclave/).
