@@ -675,7 +675,6 @@
         <item>safari</item>
         <item>ios</item>
         <item>edge</item>
-        <item>360</item>
         <item>qq</item>
         <item>random</item>
         <item>randomized</item>
@@ -698,30 +697,19 @@
         <item>hellosafari_16_0</item>
         <item>hello360_11_0</item>
         <item>helloqq_11_1</item>
-        <item>hellogolang</item>
         <item>hellorandomized</item>
         <item>hellorandomizedalpn</item>
         <item>hellorandomizednoalpn</item>
         <item>hellofirefox_auto</item>
-        <item>hellofirefox_55</item>
-        <item>hellofirefox_56</item>
         <item>hellofirefox_63</item>
         <item>hellofirefox_65</item>
         <item>hellochrome_auto</item>
-        <item>hellochrome_58</item>
-        <item>hellochrome_62</item>
         <item>hellochrome_70</item>
         <item>hellochrome_72</item>
         <item>helloios_auto</item>
-        <item>helloios_11_1</item>
-        <item>helloios_12_1</item>
-        <item>helloandroid_11_okhttp</item>
         <item>helloedge_auto</item>
         <item>hellosafari_auto</item>
-        <item>hello360_auto</item>
-        <item>hello360_7_5</item>
         <item>helloqq_auto</item>
-        <item>unsafe</item>
     </string-array>
 
     <string-array name="trojan_go_utls_value">
