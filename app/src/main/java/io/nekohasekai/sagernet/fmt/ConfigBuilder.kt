@@ -124,6 +124,7 @@ import io.nekohasekai.sagernet.utils.PackageCache
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
 const val TAG_TRANS = "trans"
+const val TAG_TRANS6 = "trans6"
 
 const val TAG_AGENT = "proxy"
 const val TAG_DIRECT = "direct"
@@ -136,6 +137,7 @@ const val TAG_DNS_OUT = "dns-out"
 const val TAG_DNS_DIRECT = "dns-direct"
 
 const val LOCALHOST = "127.0.0.1"
+const val LOCALHOST6 = "::1"
 
 class V2rayBuildResult(
     var config: String,
@@ -355,8 +357,8 @@ fun buildV2RayConfig(
                         enabled = true
                         destOverride = when {
                             useFakeDns && !trafficSniffing -> listOf("fakedns")
-                            useFakeDns -> listOf("fakedns", "http", "tls", "quic")
-                            else -> listOf("http", "tls", "quic")
+                            useFakeDns -> listOf("fakedns", "http", "tls")
+                            else -> listOf("http", "tls")
                         }
                         metadataOnly = useFakeDns && !trafficSniffing
                         routeOnly = !destinationOverride
@@ -373,7 +375,8 @@ fun buildV2RayConfig(
                 protocol = "dokodemo-door"
                 settings = LazyInboundConfigurationObject(this,
                     DokodemoDoorInboundConfigurationObject().apply {
-                        network = "tcp,udp"
+                        // network = "tcp,udp"
+                        network = "tcp"
                         followRedirect = true
                     })
                 if (trafficSniffing || useFakeDns) {
@@ -381,21 +384,58 @@ fun buildV2RayConfig(
                         enabled = true
                         destOverride = when {
                             useFakeDns && !trafficSniffing -> listOf("fakedns")
-                            useFakeDns -> listOf("fakedns", "http", "tls", "quic")
-                            else -> listOf("http", "tls", "quic")
+                            // useFakeDns -> listOf("fakedns", "http", "tls", "quic")
+                            useFakeDns -> listOf("fakedns", "http", "tls")
+                            // else -> listOf("http", "tls", "quic")
+                            else -> listOf("http", "tls")
                         }
                         metadataOnly = useFakeDns && !trafficSniffing
                         routeOnly = !destinationOverride
                     }
                 }
-                when (DataStore.transproxyMode) {
+                /*when (DataStore.transproxyMode) {
                     1 -> streamSettings = StreamSettingsObject().apply {
                         sockopt = StreamSettingsObject.SockoptObject().apply {
                             tproxy = "tproxy"
                         }
                     }
-                }
+                }*/
             })
+            if (bind == LOCALHOST) {
+                inbounds.add(InboundObject().apply {
+                    tag = TAG_TRANS6
+                    listen = LOCALHOST6
+                    port = DataStore.transproxyPort
+                    protocol = "dokodemo-door"
+                    settings = LazyInboundConfigurationObject(this,
+                        DokodemoDoorInboundConfigurationObject().apply {
+                            // network = "tcp,udp"
+                            network = "tcp"
+                            followRedirect = true
+                        })
+                    if (trafficSniffing || useFakeDns) {
+                        sniffing = InboundObject.SniffingObject().apply {
+                            enabled = true
+                            destOverride = when {
+                                useFakeDns && !trafficSniffing -> listOf("fakedns")
+                                // useFakeDns -> listOf("fakedns", "http", "tls", "quic")
+                                useFakeDns -> listOf("fakedns", "http", "tls")
+                                // else -> listOf("http", "tls", "quic")
+                                else -> listOf("http", "tls")
+                            }
+                            metadataOnly = useFakeDns && !trafficSniffing
+                            routeOnly = !destinationOverride
+                        }
+                        /*when (DataStore.transproxyMode) {
+                            1 -> streamSettings = StreamSettingsObject().apply {
+                                sockopt = StreamSettingsObject.SockoptObject().apply {
+                                    tproxy = "tproxy"
+                                }
+                            }
+                        }*/
+                    }
+                })
+            }
         }
 
         outbounds = mutableListOf()
