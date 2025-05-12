@@ -454,7 +454,7 @@
     <string name="edns_client_ip">IP-адрес клиента EDNS</string>
     <string name="allow_apps_bypass_vpn">Разрешить приложениям обходить VPN</string>
     <string name="update_all_subscriptions">Обновить все подписки</string>
-    <string name="cag_splithttp">Настройки SplitHTTP</string>
+    <string name="cag_splithttp">Настройки XHTTP</string>
     <string name="ech_doh_server">ECH DoH server</string>
     <string name="ws_max_early_data">Максимальный объём данных</string>
     <string name="hijack_dns">Перехват DNS</string>

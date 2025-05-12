@@ -524,7 +524,7 @@
     <string name="allow_apps_bypass_vpn">Allow apps to bypass VPN</string>
     <string name="allow_apps_bypass_vpn_sum">Allow to use methods such as bindProcessToNetwork to bypass VPN.</string>
     <string name="update_all_subscriptions">Update all subscriptions</string>
-    <string name="cag_splithttp">SplitHTTP settings</string>
+    <string name="cag_splithttp">XHTTP settings</string>
     <string name="ech_config">ECH Config</string>
     <string name="ech_doh_server">ECH DoH server</string>
     <string name="splithttp_mode">Mode</string>

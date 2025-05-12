@@ -470,7 +470,7 @@
     <string name="subscription_expire">Caduca: %s</string>
     <string name="allow_apps_bypass_vpn_sum">Permitir el uso de métodos como bindProcessToNetwork para eludir la VPN.</string>
     <string name="update_all_subscriptions">Actualizar todas las suscripciones</string>
-    <string name="cag_splithttp">Ajustes SplitHTTP</string>
+    <string name="cag_splithttp">Ajustes XHTTP</string>
     <string name="naive_no_post_quantum">Desactivar el acuerdo de clave postcuántica</string>
     <string name="connection_test_delete_unavailable">Borrar no disponible</string>
     <string name="hysteria2_provider">Proveedor de Hysteria 2</string>

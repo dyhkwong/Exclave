@@ -499,7 +499,7 @@
     <string name="allow_apps_bypass_vpn">允许应用绕过 VPN</string>
     <string name="allow_apps_bypass_vpn_sum">允许使用 bindProcessToNetwork 等方法绕过 VPN。</string>
     <string name="update_all_subscriptions">更新所有订阅</string>
-    <string name="cag_splithttp">SplitHTTP 设置</string>
+    <string name="cag_splithttp">XHTTP 设置</string>
     <string name="ech_config">ECH 配置</string>
     <string name="ech_doh_server">ECH DoH 服务器</string>
     <string name="splithttp_mode">模式</string>
