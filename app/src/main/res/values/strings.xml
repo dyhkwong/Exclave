@@ -565,4 +565,6 @@
     <string name="network_satellite">Satellite</string>
     <string name="network_invalid">Invalid network type: Android %s is required.</string>
     <string name="require_dns_inbound">Enable DNS inbound</string>
+    <string name="reality_disable_x25519mlkem768">Disable REALITY X25519MLKEM768</string>
+    <string name="reality_disable_x25519mlkem768_summary">Be compatible with REALITY servers that do not support this breaking change. This is a temporary option and will be removed in the future.</string>
 </resources>
