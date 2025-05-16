@@ -537,5 +537,6 @@
     <string name="network_invalid">无效的网络类型：需要 Android %s。</string>
     <string name="require_dns_inbound">启用 DNS 入站</string>
     <string name="reality_disable_x25519mlkem768">禁用 REALITY X25519MLKEM768</string>
-    <string name="reality_disable_x25519mlkem768_summary">兼容不支持此破坏性变更的 REALITY 服务端。这是一个临时性选项，将来会被移除。</string>
+    <string name="reality_reenable_chacha20poly1305">重新启用 REALITY CHACHA20POLY1305</string>
+    <string name="reality_breaking_change_summary">兼容不支持此破坏性变更的 REALITY 服务端。这是一个临时性选项，将来会被移除。</string>
 </resources>
