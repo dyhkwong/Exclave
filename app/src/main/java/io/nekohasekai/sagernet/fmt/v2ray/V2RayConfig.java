@@ -1068,6 +1068,7 @@ public class V2RayConfig {
             public String dialerProxy; // xray compatible
             public FragmentObject fragment;
             public List<NoiseObject> noises;
+            public Integer noiseKeepAlive;
 
             public static class FragmentObject {
 
@@ -1086,6 +1087,7 @@ public class V2RayConfig {
                 public String type;
                 public String packet;
                 public String delay;
+                public String count;
 
             }
 
@@ -1133,7 +1135,6 @@ public class V2RayConfig {
 
     public static class RealityObject {
 
-        public Boolean show;
         public String dest; // String or Integer
         public String target; // String or Integer, alias of dest
         public String type;
@@ -1147,6 +1148,8 @@ public class V2RayConfig {
         public String shortId;
         public String fingerprint;
         public String version;
+        public Boolean disableX25519MLKEM768;
+        public Boolean reenableCHACHA20POLY1305;
 
     }
 

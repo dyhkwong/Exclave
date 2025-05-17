@@ -468,7 +468,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
         bean.utlsFingerprint = utlsFingerprint;
         bean.echConfig = echConfig;
         bean.echDohServer = echDohServer;
-        // bean.realityFingerprint = realityFingerprint; // fuck RPRX's disgusting "fp"
+        bean.realityFingerprint = realityFingerprint;
         bean.hy2DownMbps = hy2DownMbps;
         bean.hy2UpMbps = hy2UpMbps;
         bean.mux = mux;

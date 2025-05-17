@@ -833,6 +833,10 @@ fun buildV2RayConfig(
                                                 if (bean.realityFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.realityFingerprint
                                                 }
+                                                if (!forExport) {
+                                                    disableX25519MLKEM768 = true
+                                                    reenableCHACHA20POLY1305 = true
+                                                }
                                             }
                                         }
                                     }
@@ -1338,6 +1342,10 @@ fun buildV2RayConfig(
                                                 }
                                                 if (bean.realityFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.realityFingerprint
+                                                }
+                                                if (!forExport) {
+                                                    disableX25519MLKEM768 = true
+                                                    reenableCHACHA20POLY1305 = true
                                                 }
                                             }
                                         }
