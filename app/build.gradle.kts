@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.1.20-2.0.1"
+    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
@@ -30,7 +30,6 @@ android {
 }
 
 dependencies {
-
     implementation(fileTree("libs"))
     compileOnly(project(":library:stub"))
     implementation(project(":library:include"))
@@ -47,8 +46,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.4.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.work:work-runtime-ktx:2.10.1")
     implementation("androidx.work:work-multiprocess:2.10.1")
@@ -58,8 +57,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:1.1.0")
 
     implementation("com.google.android.material:material:1.12.0")
-    implementation("cn.hutool:hutool-core:5.8.37")
-    implementation("cn.hutool:hutool-json:5.8.37")
+    implementation("cn.hutool:hutool-core:5.8.38")
+    implementation("cn.hutool:hutool-json:5.8.38")
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.google.zxing:core:3.5.3")
 
@@ -83,9 +82,7 @@ dependencies {
     implementation("com.blacksquircle.ui:editorkit:2.0.0")
     implementation("com.blacksquircle.ui:language-json:2.0.0")
 
-
     implementation(project(":library:proto-stub"))
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
-
