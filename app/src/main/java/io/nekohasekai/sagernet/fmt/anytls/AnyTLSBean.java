@@ -25,6 +25,8 @@ public class AnyTLSBean extends AbstractBean {
     public String realityPublicKey;
     public String realityShortId;
     public String realityFingerprint;
+    public Boolean realityDisableX25519Mlkem768;
+    public Boolean realityReenableChacha20Poly1305;
 
     @Override
     public void initializeDefaultValues() {
@@ -42,11 +44,13 @@ public class AnyTLSBean extends AbstractBean {
         if (realityPublicKey == null) realityPublicKey = "";
         if (realityShortId == null) realityShortId = "";
         if (realityFingerprint == null) realityFingerprint = "chrome";
+        if (realityDisableX25519Mlkem768 == null) realityDisableX25519Mlkem768 = false;
+        if (realityReenableChacha20Poly1305 == null) realityReenableChacha20Poly1305 = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(password);
         output.writeString(security);
@@ -61,7 +65,8 @@ public class AnyTLSBean extends AbstractBean {
         output.writeString(realityPublicKey);
         output.writeString(realityShortId);
         output.writeString(realityFingerprint);
-
+        output.writeBoolean(realityDisableX25519Mlkem768);
+        output.writeBoolean(realityReenableChacha20Poly1305);
     }
 
     @Override
@@ -81,6 +86,10 @@ public class AnyTLSBean extends AbstractBean {
         realityPublicKey = input.readString();
         realityShortId = input.readString();
         realityFingerprint = input.readString();
+        if (version >= 1) {
+            realityDisableX25519Mlkem768 = input.readBoolean();
+            realityReenableChacha20Poly1305 = input.readBoolean();
+        }
     }
 
     @Override
@@ -94,6 +103,8 @@ public class AnyTLSBean extends AbstractBean {
         bean.echConfig = echConfig;
         bean.echDohServer = echDohServer;
         bean.realityFingerprint = realityFingerprint;
+        bean.realityDisableX25519Mlkem768 = realityDisableX25519Mlkem768;
+        bean.realityReenableChacha20Poly1305 = realityReenableChacha20Poly1305;
     }
 
     @NotNull

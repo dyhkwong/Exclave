@@ -383,6 +383,11 @@
             app:key="enableFragmentForDirect"
             app:title="@string/enable_fragment_for_direct" />
         <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
+            app:key="realityDisableX25519Mlkem768"
+            app:summary="@string/reality_breaking_change_summary"
+            app:title="@string/reality_disable_x25519mlkem768" />
+        <SwitchPreference
             app:icon="@drawable/ic_baseline_vpn_key_24"
             app:key="allowAppsBypassVpn"
             app:summary="@string/allow_apps_bypass_vpn_sum"

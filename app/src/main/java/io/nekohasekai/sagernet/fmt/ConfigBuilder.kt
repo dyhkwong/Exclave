@@ -838,6 +838,12 @@ fun buildV2RayConfig(
                                                 if (bean.realityFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.realityFingerprint
                                                 }
+                                                if (DataStore.realityDisableX25519Mlkem768 || bean.realityDisableX25519Mlkem768 && !forExport) {
+                                                    disableX25519MLKEM768 = true
+                                                }
+                                                if (bean.realityReenableChacha20Poly1305 && !forExport) {
+                                                    reenableCHACHA20POLY1305 = true
+                                                }
                                             }
                                         }
                                     }
@@ -1349,6 +1355,15 @@ fun buildV2RayConfig(
                                                 }
                                                 if (bean.realityFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.realityFingerprint
+                                                }
+                                                if (DataStore.realityDisableX25519Mlkem768 && !forExport) {
+                                                    disableX25519MLKEM768 = true
+                                                }
+                                                if (DataStore.realityDisableX25519Mlkem768 || bean.realityDisableX25519Mlkem768 && !forExport) {
+                                                    disableX25519MLKEM768 = true
+                                                }
+                                                if (bean.realityReenableChacha20Poly1305 && !forExport) {
+                                                    reenableCHACHA20POLY1305 = true
                                                 }
                                             }
                                         }

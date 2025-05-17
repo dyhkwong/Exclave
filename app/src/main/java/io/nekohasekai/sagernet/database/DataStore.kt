@@ -139,6 +139,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var enableFragmentForDirect by configurationStore.boolean(Key.ENABLE_FRAGMENT_FOR_DIRECT)
     var fragmentLength by configurationStore.string(Key.FRAGMENT_LENGTH)
     var fragmentInterval by configurationStore.string(Key.FRAGMENT_INTERVAL)
+    var realityDisableX25519Mlkem768 by configurationStore.boolean(Key.REALITY_DISABLE_X25519MLKEM768)
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat
     private val userIndex by lazy { Binder.getCallingUserHandle().hashCode() }
@@ -278,6 +279,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverRealityPublicKey by profileCacheStore.string(Key.SERVER_REALITY_PUBLIC_KEY)
     var serverRealityShortId by profileCacheStore.string(Key.SERVER_REALITY_SHORT_ID)
     var serverRealityFingerprint by profileCacheStore.string(Key.SERVER_REALITY_FINGERPRINT)
+    var serverRealityDisableX25519Mlkem768 by profileCacheStore.boolean(Key.SERVER_REALITY_DISABLE_X25519MLKEM768)
+    var serverRealityReenableChacha20Poly1305 by profileCacheStore.boolean(Key.SERVER_REALITY_REENABLE_CHACHA20POLY1305)
 
     var serverMekyaKcpSeed by profileCacheStore.string(Key.SERVER_MEKYA_KCP_SEED)
     var serverMekyaKcpHeaderType by profileCacheStore.string(Key.SERVER_MEKYA_KCP_HEADER_TYPE)

@@ -207,6 +207,16 @@
             app:key="serverRealityFingerprint"
             app:title="@string/reality_fingerprint"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
+            app:key="serverRealityDisableX25519Mlkem768"
+            app:summary="@string/reality_breaking_change_summary"
+            app:title="@string/reality_disable_x25519mlkem768" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
+            app:key="serverRealityReenableChacha20Poly1305"
+            app:summary="@string/reality_breaking_change_summary"
+            app:title="@string/reality_reenable_chacha20poly1305" />
     </PreferenceCategory>
 
     <PreferenceCategory
