@@ -421,7 +421,7 @@
     <string name="reality_public_key">REALITY public key</string>
     <string name="reality_short_id">REALITY Short ID</string>
     <string name="reality_spider_x">REALITY SpiderX</string>
-    <string name="reality_fingerprint">REALITY uTLS fingerprint</string>
+    <string name="reality_fingerprint">REALITY uTLS отпечаток</string>
     <string name="wireguard_reserved">Резервный</string>
     <string name="brook_udp_over_stream">UDP через поток</string>
     <string name="stun_legacy_test">Тест определения типа NAT</string>
@@ -527,4 +527,7 @@
     <string name="network_usb">USB</string>
     <string name="network_satellite">Спутниковый интернет</string>
     <string name="network_invalid">Неверный тип сети: требуется Android %s.</string>
+    <string name="reality_disable_x25519mlkem768">Отключить REALITY X25519MLKEM768</string>
+    <string name="reality_reenable_chacha20poly1305">Переподключить REALITY CHACHA20POLY1305</string>
+    <string name="reality_breaking_change_summary">Обеспечить совместимость с серверами REALITY, которые не поддерживают это критическое изменение. Это временная опция, которая будет удалена в будущем.</string>
 </resources>
