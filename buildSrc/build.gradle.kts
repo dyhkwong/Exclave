@@ -6,7 +6,7 @@ plugins {
 apply(from = "../repositories.gradle.kts")
 
 dependencies {
-    implementation("com.android.tools.build:gradle:8.9.2")
+    implementation("com.android.tools.build:gradle:8.10.0")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.21")
     implementation("cn.hutool:hutool-http:5.8.38")
     implementation("cn.hutool:hutool-crypto:5.8.38")
