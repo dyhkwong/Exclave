@@ -97,6 +97,7 @@ class SagerNet : Application(),
                 DebugInstance().launch()
             }
 
+            Libcore.setenv("QUIC_GO_DISABLE_CLIENTHELLO_SCRAMBLING", "true") // https://github.com/quic-go/quic-go/releases/tag/v0.52.0
             Libcore.setenv("v2ray.conf.geoloader", "memconservative")
             externalAssets.mkdirs()
             Libcore.initializeV2Ray(
