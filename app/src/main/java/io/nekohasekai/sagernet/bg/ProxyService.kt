@@ -43,12 +43,16 @@ class ProxyService : Service(),
 
     @Volatile
     override var underlyingNetwork: Network? = null
-    var upstreamInterfaceName: String? = null
     override suspend fun preInit() {
         DefaultNetworkListener.start(this) {
             SagerNet.reloadNetwork(it)
             underlyingNetwork = it
         }
+    }
+
+    override suspend fun startProcesses() {
+        data.proxy!!.v2rayPoint.localResolver = this@ProxyService
+        super.startProcesses()
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")

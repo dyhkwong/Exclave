@@ -270,6 +270,8 @@ class VpnService : BaseVpnService(),
         conn = builder.establish() ?: throw NullConnectionException()
         active = true   // possible race condition here?
 
+        data.proxy!!.v2rayPoint.localResolver = this@VpnService
+
         val config = TunConfig().apply {
             fileDescriptor = conn.fd
             protect = needIncludeSelf
@@ -287,7 +289,6 @@ class VpnService : BaseVpnService(),
             trafficStats = DataStore.appTrafficStatistics
             pCap = DataStore.enablePcap
             protector = this@VpnService
-            localResolver = this@VpnService
         }
 
         if (tunImplementation == TunImplementation.SYSTEM &&
