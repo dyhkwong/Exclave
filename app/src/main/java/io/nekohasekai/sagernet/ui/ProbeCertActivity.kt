@@ -9,6 +9,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -17,6 +18,7 @@ import io.nekohasekai.sagernet.databinding.LayoutProbeCertBinding
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.utils.Theme
 import libcore.Libcore
 
 class ProbeCertActivity : ThemedActivity() {
@@ -55,6 +57,20 @@ class ProbeCertActivity : ThemedActivity() {
                 bottom = bars.bottom,
             )
             WindowInsetsCompat.CONSUMED
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            when (Theme.usingNightMode()) {
+                true -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+                else -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+            }
         }
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {

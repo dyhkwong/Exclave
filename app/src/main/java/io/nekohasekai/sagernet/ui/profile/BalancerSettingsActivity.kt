@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.text.format.Formatter
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.component1
@@ -55,6 +56,7 @@ import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
+import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.GroupPreference
 
 class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
@@ -158,6 +160,20 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
                 bottom = bars.bottom + dp2px(4),
             )
             WindowInsetsCompat.CONSUMED
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            when (Theme.usingNightMode()) {
+                true -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+                else -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+            }
         }
         layoutManager = FixedLinearLayoutManager(configurationList)
         configurationList.layoutManager = layoutManager

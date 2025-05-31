@@ -33,6 +33,7 @@ import android.provider.Settings
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
@@ -65,6 +66,7 @@ import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.Theme
 import io.noties.markwon.Markwon
 
 class MainActivity : ThemedActivity(),
@@ -188,6 +190,23 @@ class MainActivity : ThemedActivity(),
         binding.stats.setOnClickListener { if (state == BaseService.State.Connected) binding.stats.testConnection() }
 
         setContentView(binding.root)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // The Android 15 images in Android Emulator might have some bugs that
+            // cause this not working. This should work on real devices.
+            when (Theme.usingNightMode()) {
+                true -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+                else -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+            }
+        }
 
         changeState(BaseService.State.Idle)
         connection.connect(this, this)

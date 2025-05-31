@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.component1
 import androidx.activity.result.component2
@@ -45,6 +46,7 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
+import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.TaskerProfilePreference
 
 class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
@@ -86,6 +88,20 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
                 bottom = bars.bottom,
             )
             WindowInsetsCompat.CONSUMED
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            when (Theme.usingNightMode()) {
+                true -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+                else -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+            }
         }
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {

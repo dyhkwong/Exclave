@@ -26,6 +26,7 @@ import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
@@ -54,6 +55,7 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.DirectBoot
+import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.parcelize.Parcelize
 import kotlin.properties.Delegates
 
@@ -128,6 +130,20 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                 right = bars.right,
             )
             WindowInsetsCompat.CONSUMED
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            when (Theme.usingNightMode()) {
+                true -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+                else -> {
+                    window.insetsController?.setSystemBarsAppearance(
+                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
+                    )
+                }
+            }
         }
 
         setSupportActionBar(findViewById(R.id.toolbar))
