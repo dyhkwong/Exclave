@@ -149,7 +149,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.group_tab)) { v, insets ->
             val bars = insets.getInsets(
@@ -160,7 +160,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         val searchView = toolbar.findViewById<SearchView>(R.id.action_search)
@@ -1211,7 +1211,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                     right = bars.right + dp2px(4),
                     bottom = bars.bottom + dp2px(64),
                 )
-                WindowInsetsCompat.CONSUMED
+                insets
             }
             layoutManager = FixedLinearLayoutManager(configurationListView)
             configurationListView.layoutManager = layoutManager

@@ -78,7 +78,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         groupListView = view.findViewById(R.id.group_list)
@@ -92,7 +92,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 right = bars.right + dp2px(4),
                 bottom = bars.bottom + dp2px(64),
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         layoutManager = FixedLinearLayoutManager(groupListView)

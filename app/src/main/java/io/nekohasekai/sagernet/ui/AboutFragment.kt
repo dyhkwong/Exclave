@@ -70,7 +70,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.layout_about)) { v, insets ->
             val bars = insets.getInsets(
@@ -82,7 +82,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 right = bars.right,
                 bottom = bars.bottom,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         parentFragmentManager.beginTransaction()

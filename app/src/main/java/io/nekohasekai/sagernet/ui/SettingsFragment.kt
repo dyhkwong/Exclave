@@ -42,7 +42,7 @@ class SettingsFragment : ToolbarFragment(R.layout.layout_config_settings) {
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         parentFragmentManager.beginTransaction()

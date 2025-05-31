@@ -27,7 +27,6 @@ import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -66,7 +65,7 @@ class AssetsActivity : ThemedActivity() {
         layout = binding
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
@@ -79,7 +78,7 @@ class AssetsActivity : ThemedActivity() {
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.recycler_view)) { v, insets ->
             val bars = insets.getInsets(
@@ -91,21 +90,10 @@ class AssetsActivity : ThemedActivity() {
                 right = bars.right + dp2px(4),
                 bottom = bars.bottom + dp2px(4),
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            when (Theme.usingNightMode()) {
-                true -> {
-                    window.insetsController?.setSystemBarsAppearance(
-                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
-                    )
-                }
-                else -> {
-                    window.insetsController?.setSystemBarsAppearance(
-                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
-                    )
-                }
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {

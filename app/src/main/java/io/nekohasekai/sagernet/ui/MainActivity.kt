@@ -33,7 +33,6 @@ import android.provider.Settings
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
-import android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
@@ -140,7 +139,7 @@ class MainActivity : ThemedActivity(),
             binding.drawerLayout.removeView(binding.navView)
         }
         navigation.setNavigationItemSelectedListener(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.VANILLA_ICE_CREAM) {
@@ -159,7 +158,7 @@ class MainActivity : ThemedActivity(),
                     right = bars.right,
                     bottom = bars.bottom,
                 )
-                WindowInsetsCompat.CONSUMED
+                insets
             }
         } else {
             ViewCompat.setOnApplyWindowInsetsListener(navigation) { v, insets ->
@@ -172,7 +171,7 @@ class MainActivity : ThemedActivity(),
                     left = bars.left,
                     bottom = bars.bottom,
                 )
-                WindowInsetsCompat.CONSUMED
+                insets
             }
         }
 
@@ -191,21 +190,10 @@ class MainActivity : ThemedActivity(),
 
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // The Android 15 images in Android Emulator might have some bugs that
             // cause this not working. This should work on real devices.
-            when (Theme.usingNightMode()) {
-                true -> {
-                    window.insetsController?.setSystemBarsAppearance(
-                        0, APPEARANCE_LIGHT_NAVIGATION_BARS
-                    )
-                }
-                else -> {
-                    window.insetsController?.setSystemBarsAppearance(
-                        APPEARANCE_LIGHT_NAVIGATION_BARS, APPEARANCE_LIGHT_NAVIGATION_BARS
-                    )
-                }
-            }
+            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
 
         changeState(BaseService.State.Idle)

@@ -45,7 +45,7 @@ class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.tools_tab)) { v, insets ->
             val bars = insets.getInsets(
@@ -56,7 +56,7 @@ class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.tools_pager)) { v, insets ->
             val bars = insets.getInsets(
@@ -68,7 +68,7 @@ class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
                 right = bars.right,
                 bottom = bars.bottom,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         val tools = mutableListOf<NamedFragment>()

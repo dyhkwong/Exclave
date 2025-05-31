@@ -66,7 +66,7 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.traffic_tab)) { v, insets ->
             val bars = insets.getInsets(
@@ -77,7 +77,7 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
                 left = bars.left,
                 right = bars.right,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.traffic_pager)) { v, insets ->
             val bars = insets.getInsets(
@@ -89,7 +89,7 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
                 right = bars.right,
                 bottom = bars.bottom,
             )
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
         binding = LayoutTrafficBinding.bind(view)
