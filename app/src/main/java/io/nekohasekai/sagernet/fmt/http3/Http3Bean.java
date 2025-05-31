@@ -88,7 +88,10 @@ public class Http3Bean extends AbstractBean {
             bean.allowInsecure = true;
         }
         bean.certificates = certificates;
-        bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
+                !pinnedPeerCertificateChainSha256.isEmpty()) {
+            bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
         bean.echConfig = echConfig;
         bean.echDohServer = echDohServer;
     }

@@ -227,6 +227,9 @@ object Key {
     const val SERVER_MIERU_MUX_LEVEL = "serverMieruMuxLevel"
     const val SERVER_WIREGUARD_RESERVED = "serverWireGuardReserved"
     const val SERVER_WIREGUARD_KEEPALIVE_INTERVAL = "serverWireGuardKeepaliveInterval"
+    const val SERVER_ANYTLS_IDLE_SESSION_CHECK_INTERVAL = "serverAnyTLSIdleSessionCheckInterval"
+    const val SERVER_ANYTLS_IDLE_SESSION_TIMEOUT = "serverAnyTLSIdleSessionTimeout"
+    const val SERVER_ANYTLS_MIN_IDLE_SESSION = "serverAnyTLSMinIdleSession"
 
     const val SERVER_PORTS = "serverPorts"
     const val SERVER_HOP_INTERVAL = "serverHopInterval"

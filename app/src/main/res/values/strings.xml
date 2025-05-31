@@ -280,9 +280,8 @@
     <string name="auto">Auto</string>
     <string name="list">List</string>
     <string name="random">Random</string>
-    <string name="probe_interval">Balancer observation interval</string>
+    <string name="probe_interval">Balancer observation interval (s)</string>
     <string name="standard">Standard</string>
-    <string name="v2rayn" translatable="false">V2RayN</string>
     <string name="available" translatable="false">%d ms</string>
     <string name="unavailable">Unavailable</string>
     <string name="always_show_address">Always show address</string>
@@ -479,7 +478,7 @@
     <string name="action_flash_on">Turn on flash</string>
     <string name="action_camera_switch">Switch camera</string>
     <string name="action_flash_off">Turn off flash</string>
-    <string name="hysteria_hop_interval">Hop interval</string>
+    <string name="hysteria_hop_interval">Port hopping interval (s)</string>
     <string name="connection_test_delete_unavailable">Clear unavailable</string>
     <string name="hysteria2_provider">Hysteria 2 provider</string>
     <string name="nat_stun_server_hint">STUN server</string>
@@ -558,7 +557,7 @@
     <string name="acquire_wake_lock">Acquire WakeLock</string>
     <string name="log_level">Log level</string>
     <string name="fab_style">Floating action button style</string>
-    <string name="wireguard_keepalive_interval">Persistent keepalive</string>
+    <string name="wireguard_keepalive_interval">Persistent keepalive (s)</string>
     <string name="language">Language</string>
     <string name="language_system_default">System default</string>
     <string name="network_usb">USB</string>
@@ -568,4 +567,7 @@
     <string name="reality_disable_x25519mlkem768">Disable REALITY X25519MLKEM768</string>
     <string name="reality_reenable_chacha20poly1305">Re-enable REALITY CHACHA20POLY1305</string>
     <string name="reality_breaking_change_summary">Be compatible with REALITY servers that do not support this breaking change. This is a temporary option and will be removed in the future.</string>
+    <string name="anytls_idle_session_check_interval">Idle session check interval (s)</string>
+    <string name="anytls_idle_session_timeout">Idle session timeout (s)</string>
+    <string name="anytls_min_idle_session">Minimal idle sessions</string>
 </resources>

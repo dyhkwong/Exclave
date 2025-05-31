@@ -95,6 +95,16 @@ public class SSHBean extends AbstractBean {
         publicKey = input.readString();
     }
 
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof SSHBean bean)) return;
+        if (bean.publicKey == null || bean.publicKey.isEmpty() && !publicKey.isEmpty()) {
+            bean.publicKey = publicKey;
+        }
+    }
+
+
     @NotNull
     @Override
     public SSHBean clone() {

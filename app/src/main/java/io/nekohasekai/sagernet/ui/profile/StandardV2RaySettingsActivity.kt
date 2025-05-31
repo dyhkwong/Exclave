@@ -262,8 +262,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var pinnedCertificateChain: EditTextPreference
     lateinit var allowInsecure: SwitchPreference
     lateinit var utlsFingerprint: SimpleMenuPreference
-    lateinit var echConfig: EditTextPreference
-    //lateinit var echDohServer: EditTextPreference
 
     lateinit var realityPublicKey: EditTextPreference
     lateinit var realityShortId: EditTextPreference
@@ -328,8 +326,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         xtlsFlow = findPreference(Key.SERVER_FLOW)!!
         alterId = findPreference(Key.SERVER_ALTER_ID)!!
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
-        echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
-        //echDohServer = findPreference(Key.SERVER_ECH_DOH_SERVER)!!
 
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
         realityShortId = findPreference(Key.SERVER_REALITY_SHORT_ID)!!
@@ -691,8 +687,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         utlsFingerprint.isVisible = security == "tls" && (network.value == "tcp" || network.value == "ws"
                 || network.value == "http" || network.value == "meek" || network.value == "httpupgrade"
                 || network.value == "grpc" || network.value == "splithttp" || network.value == "mekya")
-        echConfig.isVisible = security == "tls"
-        //echDohServer.isVisible = security == "tls"
         realityFingerprint.isVisible = security == "reality"
         realityDisableX25519Mlkem768.isVisible = security == "reality"
         realityReenableChacha20Poly1305.isVisible = security == "reality"

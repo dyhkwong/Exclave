@@ -22,6 +22,9 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
         DataStore.serverPassword = password
+        DataStore.serverAnyTLSIdleSessionCheckInterval = idleSessionCheckInterval
+        DataStore.serverAnyTLSIdleSessionTimeout = idleSessionTimeout
+        DataStore.serverAnyTLSMinIdleSession = minIdleSession
         DataStore.serverSecurity = security
         DataStore.serverSNI = sni
         DataStore.serverALPN = alpn
@@ -43,6 +46,9 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         serverAddress = DataStore.serverAddress
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
+        idleSessionCheckInterval = DataStore.serverAnyTLSIdleSessionCheckInterval
+        idleSessionTimeout = DataStore.serverAnyTLSIdleSessionTimeout
+        minIdleSession = DataStore.serverAnyTLSMinIdleSession
         security = DataStore.serverSecurity
         sni = DataStore.serverSNI
         alpn = DataStore.serverALPN
@@ -87,6 +93,15 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         }
 
         password = findPreference(Key.SERVER_PASSWORD)!!
+        findPreference<EditTextPreference>(Key.SERVER_ANYTLS_IDLE_SESSION_CHECK_INTERVAL)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_ANYTLS_IDLE_SESSION_TIMEOUT)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
+        findPreference<EditTextPreference>(Key.SERVER_ANYTLS_MIN_IDLE_SESSION)!!.apply {
+            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        }
         security = findPreference(Key.SERVER_SECURITY)!!
         sni = findPreference(Key.SERVER_SNI)!!
         alpn = findPreference(Key.SERVER_ALPN)!!
@@ -130,8 +145,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         realityPublicKey.isVisible = security == "reality"
         realityShortId.isVisible = security == "reality"
         utlsFingerprint.isVisible = security == "tls"
-        echConfig.isVisible = security == "tls"
-        //echDohServer.isVisible = security == "tls"
         realityFingerprint.isVisible = security == "reality"
         realityDisableX25519Mlkem768.isVisible = security == "reality"
         realityReenableChacha20Poly1305.isVisible = security == "reality"

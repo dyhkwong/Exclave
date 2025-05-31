@@ -13,6 +13,9 @@ import io.nekohasekai.sagernet.fmt.KryoConverters;
 public class AnyTLSBean extends AbstractBean {
 
     public String password;
+    public Integer idleSessionCheckInterval;
+    public Integer idleSessionTimeout;
+    public Integer minIdleSession;
     public String security;
     public String sni;
     public String alpn;
@@ -32,6 +35,9 @@ public class AnyTLSBean extends AbstractBean {
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
         if (password == null) password = "";
+        if (idleSessionCheckInterval == null) idleSessionCheckInterval = 30;
+        if (idleSessionTimeout == null) idleSessionTimeout = 30;
+        if (minIdleSession == null) minIdleSession = 0;
         if (security == null) security = "tls";
         if (sni == null) sni = "";
         if (alpn == null) alpn = "";
@@ -50,9 +56,12 @@ public class AnyTLSBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(password);
+        output.writeInt(idleSessionCheckInterval);
+        output.writeInt(idleSessionTimeout);
+        output.writeInt(minIdleSession);
         output.writeString(security);
         output.writeString(sni);
         output.writeString(alpn);
@@ -74,6 +83,11 @@ public class AnyTLSBean extends AbstractBean {
         int version = input.readInt();
         super.deserialize(input);
         password = input.readString();
+        if (version >= 2) {
+            idleSessionCheckInterval = input.readInt();
+            idleSessionTimeout = input.readInt();
+            minIdleSession = input.readInt();
+        }
         security = input.readString();
         sni = input.readString();
         alpn = input.readString();
@@ -81,8 +95,19 @@ public class AnyTLSBean extends AbstractBean {
         pinnedPeerCertificateChainSha256 = input.readString();
         allowInsecure = input.readBoolean();
         utlsFingerprint = input.readString();
-        echConfig = input.readString();
-        echDohServer = input.readString();
+        if (version <= 1) {
+            if (security.equals("reality")) {
+                echConfig = "";
+                echDohServer = "";
+            } else {
+                echConfig = input.readString();
+                echDohServer = input.readString();
+            }
+        }
+        if (version >= 2) {
+            echConfig = input.readString();
+            echDohServer = input.readString();
+        }
         realityPublicKey = input.readString();
         realityShortId = input.readString();
         realityFingerprint = input.readString();
@@ -99,7 +124,11 @@ public class AnyTLSBean extends AbstractBean {
             bean.allowInsecure = true;
         }
         bean.certificates = certificates;
-        bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
+                !pinnedPeerCertificateChainSha256.isEmpty()) {
+            bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        bean.utlsFingerprint = utlsFingerprint;
         bean.echConfig = echConfig;
         bean.echDohServer = echDohServer;
         bean.realityFingerprint = realityFingerprint;

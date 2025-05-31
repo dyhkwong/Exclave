@@ -838,6 +838,12 @@ fun buildV2RayConfig(
                                                 if (bean.realityFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.realityFingerprint
                                                 }
+                                                if (bean.echConfig.isNotEmpty()) {
+                                                    echConfig = bean.echConfig
+                                                }
+                                                /*if (bean.echDohServer.isNotEmpty()) {
+                                                    echDohServer = bean.echDohServer
+                                                }*/
                                                 if (DataStore.realityDisableX25519Mlkem768 || bean.realityDisableX25519Mlkem768 && !forExport) {
                                                     disableX25519MLKEM768 = true
                                                 }
@@ -1300,6 +1306,9 @@ fun buildV2RayConfig(
                                         address = bean.serverAddress
                                         port = bean.serverPort
                                         if (bean.password.isNotEmpty()) password = bean.password
+                                        idleSessionCheckInterval = bean.idleSessionCheckInterval
+                                        idleSessionTimeout = bean.idleSessionTimeout
+                                        minIdleSession = bean.minIdleSession
                                     }
                                 )
                                 streamSettings = StreamSettingsObject().apply {
@@ -1356,6 +1365,12 @@ fun buildV2RayConfig(
                                                 if (bean.realityFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.realityFingerprint
                                                 }
+                                                if (bean.echConfig.isNotEmpty()) {
+                                                    echConfig = bean.echConfig
+                                                }
+                                                /*if (bean.echDohServer.isNotEmpty()) {
+                                                    echDohServer = bean.echDohServer
+                                                }*/
                                                 if (DataStore.realityDisableX25519Mlkem768 && !forExport) {
                                                     disableX25519MLKEM768 = true
                                                 }

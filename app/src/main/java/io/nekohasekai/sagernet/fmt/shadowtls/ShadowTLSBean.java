@@ -89,6 +89,15 @@ public class ShadowTLSBean extends AbstractBean {
         return "tcp";
     }
 
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof ShadowTLSBean bean)) return;
+        if (allowInsecure) {
+            bean.allowInsecure = true;
+        }
+        bean.certificates = certificates;
+    }
+
     @NonNull
     @Override
     public ShadowTLSBean clone() {

@@ -243,7 +243,7 @@
     <string name="balancer_strategy">策略</string>
     <string name="list">列表</string>
     <string name="random">随机</string>
-    <string name="probe_interval">负载均衡观测间隔</string>
+    <string name="probe_interval">负载均衡观测间隔（秒）</string>
     <string name="standard">标准</string>
     <string name="unavailable">不可用</string>
     <string name="always_show_address">始终显示地址</string>
@@ -455,7 +455,7 @@
     <string name="action_flash_on">开启闪光灯</string>
     <string name="action_camera_switch">切换摄像头</string>
     <string name="action_flash_off">关闭闪光灯</string>
-    <string name="hysteria_hop_interval">端口跳跃间隔</string>
+    <string name="hysteria_hop_interval">端口跳跃间隔（秒）</string>
     <string name="connection_test_delete_unavailable">清理不可用配置</string>
     <string name="hysteria2_provider">Hysteria 2 提供程序</string>
     <string name="nat_stun_server_hint">STUN 服务器</string>
@@ -529,7 +529,7 @@
     <string name="acquire_wake_lock">获取唤醒锁</string>
     <string name="log_level">日志级别</string>
     <string name="fab_style">悬浮操作按钮样式</string>
-    <string name="wireguard_keepalive_interval">连接保活间隔</string>
+    <string name="wireguard_keepalive_interval">连接保活间隔（秒）</string>
     <string name="language">语言</string>
     <string name="language_system_default">系统默认设置</string>
     <string name="network_usb">USB</string>
@@ -539,4 +539,7 @@
     <string name="reality_disable_x25519mlkem768">禁用 REALITY X25519MLKEM768</string>
     <string name="reality_reenable_chacha20poly1305">重新启用 REALITY CHACHA20POLY1305</string>
     <string name="reality_breaking_change_summary">兼容不支持此破坏性变更的 REALITY 服务端。这是一个临时性选项，将来会被移除。</string>
+    <string name="anytls_idle_session_check_interval">空闲会话检查间隔（秒）</string>
+    <string name="anytls_idle_session_timeout">空闲会话超时（秒）</string>
+    <string name="anytls_min_idle_session">最小空闲会话数</string>
 </resources>

@@ -180,16 +180,6 @@
             app:title="@string/utls_fingerprint"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:icon="@drawable/ic_baseline_security_24"
-            app:key="serverEchConfig"
-            app:title="@string/ech_config"
-            app:useSimpleSummaryProvider="true" />
-        <!--EditTextPreference
-            app:icon="@drawable/ic_baseline_nfc_24"
-            app:key="serverEchDohServer"
-            app:title="@string/ech_doh_server"
-            app:useSimpleSummaryProvider="true" /-->
-        <EditTextPreference
             app:dialogLayout="@layout/layout_password_dialog"
             app:icon="@drawable/ic_baseline_vpn_key_24"
             app:key="serverRealityPublicKey"
@@ -207,6 +197,16 @@
             app:key="serverRealityFingerprint"
             app:title="@string/reality_fingerprint"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="serverEchConfig"
+            app:title="@string/ech_config"
+            app:useSimpleSummaryProvider="true" />
+        <!--EditTextPreference
+            app:icon="@drawable/ic_baseline_nfc_24"
+            app:key="serverEchDohServer"
+            app:title="@string/ech_doh_server"
+            app:useSimpleSummaryProvider="true" /-->
         <SwitchPreference
             app:icon="@drawable/baseline_construction_24"
             app:key="serverRealityDisableX25519Mlkem768"

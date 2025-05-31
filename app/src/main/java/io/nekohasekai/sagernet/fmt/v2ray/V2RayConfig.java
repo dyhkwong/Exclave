@@ -1147,6 +1147,8 @@ public class V2RayConfig {
         public String publicKey;
         public String shortId;
         public String fingerprint;
+        public String echConfig;
+        public String echDohServer;
         public String version;
         public Boolean disableX25519MLKEM768;
         public Boolean reenableCHACHA20POLY1305;

@@ -145,7 +145,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(27);
+        output.writeInt(28);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -239,6 +239,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(realityPublicKey);
                 output.writeString(realityShortId);
                 output.writeString(realityFingerprint);
+                output.writeString(echConfig);
+                output.writeString(echDohServer);
                 output.writeBoolean(realityDisableX25519Mlkem768);
                 output.writeBoolean(realityReenableChacha20Poly1305);
                 break;
@@ -415,6 +417,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     }
                     realityFingerprint = input.readString();
                 }
+                if (version >= 28) {
+                    echConfig = input.readString();
+                    echDohServer = input.readString();
+                }
                 if (version >= 27) {
                     realityDisableX25519Mlkem768 = input.readBoolean();
                     realityReenableChacha20Poly1305 = input.readBoolean();
@@ -464,13 +470,22 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (allowInsecure) {
             bean.allowInsecure = true;
         }
-        bean.maxEarlyData = maxEarlyData;
-        bean.earlyDataHeaderName = earlyDataHeaderName;
+        if (bean.maxEarlyData == null || bean.maxEarlyData == 0 && maxEarlyData != 0) {
+            bean.maxEarlyData = maxEarlyData;
+        }
+        if (bean.earlyDataHeaderName == null || bean.earlyDataHeaderName.isEmpty() && !earlyDataHeaderName.isEmpty()) {
+            bean.earlyDataHeaderName = earlyDataHeaderName;
+        }
         bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
         bean.shUseBrowserForwarder = shUseBrowserForwarder;
         bean.certificates = certificates;
-        bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
-        bean.packetEncoding = packetEncoding;
+        if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
+                !pinnedPeerCertificateChainSha256.isEmpty()) {
+            bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        if (bean.packetEncoding == null) {
+            bean.packetEncoding = packetEncoding;
+        }
         bean.utlsFingerprint = utlsFingerprint;
         bean.echConfig = echConfig;
         bean.echDohServer = echDohServer;
