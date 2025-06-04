@@ -174,14 +174,32 @@ class ConfigEditActivity : ThemedActivity() {
         val colorPrimaryDark = getColorAttr(androidx.appcompat.R.attr.colorPrimaryDark)
 
         return ColorScheme(
-            textColor = colorPrimary,
-            backgroundColor = if (Theme.usingNightMode()) Color.BLACK else Color.WHITE,
+            textColor = when (Theme.getTheme()) {
+                R.style.Theme_SagerNet_Black -> Color.WHITE
+                R.style.Theme_SagerNet_LightBlack -> Color.BLACK
+                else -> colorPrimary
+            },
+            backgroundColor = when (Theme.getTheme()) {
+                R.style.Theme_SagerNet_Black -> Color.BLACK
+                R.style.Theme_SagerNet_LightBlack -> Color.WHITE
+                else -> if (Theme.usingNightMode()) Color.BLACK else Color.WHITE
+            },
             gutterColor = colorPrimary,
             gutterDividerColor = if (Theme.usingNightMode()) Color.BLACK else Color.WHITE,
-            gutterCurrentLineNumberColor = Color.WHITE,
-            gutterTextColor = Color.WHITE,
+            gutterCurrentLineNumberColor = when (Theme.getTheme()) {
+                R.style.Theme_SagerNet_LightBlack -> Color.BLACK
+                else -> Color.WHITE
+            },
+            gutterTextColor = when (Theme.getTheme()) {
+                R.style.Theme_SagerNet_LightBlack -> Color.BLACK
+                else -> Color.WHITE
+            },
             selectedLineColor = if (Theme.usingNightMode()) Color.parseColor("#2C2C2C") else Color.parseColor("#D3D3D3"),
-            selectionColor = colorPrimary,
+            selectionColor = when (Theme.getTheme()) {
+                R.style.Theme_SagerNet_Black -> Color.parseColor("#4C4C4C")
+                R.style.Theme_SagerNet_LightBlack -> Color.parseColor("#B3B3B3")
+                else -> colorPrimary
+            },
             suggestionQueryColor = Color.parseColor("#7CE0F3"),
             findResultBackgroundColor = Color.parseColor("#5F5E5A"),
             delimiterBackgroundColor = Color.parseColor("#5F5E5A"),
@@ -194,7 +212,11 @@ class ConfigEditActivity : ThemedActivity() {
                 preprocessorColor = Color.parseColor("#EB347E"),
                 variableColor = Color.parseColor("#7FD0E4"),
                 methodColor = Color.parseColor("#B6E951"),
-                stringColor = colorPrimaryDark,
+                stringColor = when (Theme.getTheme()) {
+                    R.style.Theme_SagerNet_Black -> Color.WHITE
+                    R.style.Theme_SagerNet_LightBlack -> Color.BLACK
+                    else -> colorPrimaryDark
+                },
                 commentColor = Color.parseColor("#89826D"),
                 tagColor = Color.parseColor("#F8F8F8"),
                 tagNameColor = Color.parseColor("#EB347E"),
