@@ -1,7 +1,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.DialogInterface
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.Menu
@@ -11,7 +10,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
@@ -30,7 +28,6 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.parcelize.Parcelize
 import java.io.File
 
@@ -127,9 +124,6 @@ class AssetEditActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -141,9 +135,6 @@ class AssetEditActivity(
                 right = bars.right,
             )
             insets
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
 
         setSupportActionBar(findViewById(R.id.toolbar))

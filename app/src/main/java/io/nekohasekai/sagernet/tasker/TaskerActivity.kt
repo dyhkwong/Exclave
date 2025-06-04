@@ -20,7 +20,6 @@ package io.nekohasekai.sagernet.tasker
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -30,7 +29,6 @@ import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
@@ -39,13 +37,11 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
-import io.nekohasekai.sagernet.ktx.FixedLinearLayoutManager
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
-import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.TaskerProfilePreference
 
 class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
@@ -61,9 +57,6 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -87,9 +80,6 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
                 bottom = bars.bottom,
             )
             insets
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {

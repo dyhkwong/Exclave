@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.text.format.DateFormat
@@ -29,7 +28,6 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -45,7 +43,6 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.databinding.LayoutAssetItemBinding
 import io.nekohasekai.sagernet.databinding.LayoutAssetsBinding
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import libcore.Libcore
 import java.io.File
@@ -65,9 +62,6 @@ class AssetsActivity : ThemedActivity() {
         layout = binding
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -91,9 +85,6 @@ class AssetsActivity : ThemedActivity() {
                 bottom = bars.bottom + dp2px(4),
             )
             insets
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {

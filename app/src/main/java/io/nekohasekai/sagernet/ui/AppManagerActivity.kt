@@ -24,7 +24,6 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.util.SparseBooleanArray
 import android.view.*
@@ -34,7 +33,6 @@ import androidx.annotation.UiThread
 import androidx.core.util.contains
 import androidx.core.util.set
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.core.widget.addTextChangedListener
@@ -54,7 +52,6 @@ import io.nekohasekai.sagernet.ktx.crossFadeFrom
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.PackageCache
-import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
@@ -202,9 +199,6 @@ class AppManagerActivity : ThemedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
         binding = LayoutAppsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -231,9 +225,6 @@ class AppManagerActivity : ThemedActivity() {
                 bottom = bars.bottom,
             )
             insets
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
         setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {

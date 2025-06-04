@@ -36,7 +36,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.EditTextPreference
@@ -63,7 +62,6 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.utils.PackageCache
-import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.AppListPreference
 import kotlinx.parcelize.Parcelize
 
@@ -328,9 +326,6 @@ class RouteSettingsActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -342,9 +337,6 @@ class RouteSettingsActivity(
                 right = bars.right,
             )
             insets
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
 
         setSupportActionBar(findViewById(R.id.toolbar))

@@ -22,7 +22,6 @@ package io.nekohasekai.sagernet.ui.profile
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.format.Formatter
 import android.view.View
@@ -33,7 +32,6 @@ import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
@@ -55,7 +53,6 @@ import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
-import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.GroupPreference
 
 class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
@@ -133,9 +130,6 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
 
         supportActionBar!!.setTitle(R.string.balancer_settings)
         configurationList = findViewById(R.id.configuration_list)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settings)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -158,9 +152,6 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
                 bottom = bars.bottom + dp2px(4),
             )
             insets
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
         }
         layoutManager = FixedLinearLayoutManager(configurationList)
         configurationList.layoutManager = layoutManager

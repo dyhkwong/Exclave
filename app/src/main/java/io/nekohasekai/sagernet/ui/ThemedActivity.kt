@@ -20,11 +20,13 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.WindowCompat
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.utils.Theme
@@ -54,8 +56,22 @@ abstract class ThemedActivity : AppCompatActivity {
         }
         Theme.applyNightTheme()
 
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            // https://stackoverflow.com/questions/79319740/edge-to-edge-doesnt-work-when-activity-recreated-or-appcompatdelegate-setdefaul
+            // BAKLAVA and later VANILLA_ICE_CREAM have fixed this
+            // set this before super.onCreate(savedInstanceState)
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
+
         super.onCreate(savedInstanceState)
         uiMode = resources.configuration.uiMode
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
+        }
     }
 
     override fun setTheme(resId: Int) {
