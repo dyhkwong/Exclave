@@ -46,6 +46,7 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
+import io.nekohasekai.sagernet.utils.Theme
 
 class ConfigEditActivity : ThemedActivity() {
 
@@ -174,19 +175,19 @@ class ConfigEditActivity : ThemedActivity() {
 
         return ColorScheme(
             textColor = colorPrimary,
-            backgroundColor = Color.WHITE,
+            backgroundColor = if (Theme.usingNightMode()) Color.BLACK else Color.WHITE,
             gutterColor = colorPrimary,
-            gutterDividerColor = Color.WHITE,
+            gutterDividerColor = if (Theme.usingNightMode()) Color.BLACK else Color.WHITE,
             gutterCurrentLineNumberColor = Color.WHITE,
             gutterTextColor = Color.WHITE,
-            selectedLineColor = Color.parseColor("#D3D3D3"),
+            selectedLineColor = if (Theme.usingNightMode()) Color.parseColor("#2C2C2C") else Color.parseColor("#D3D3D3"),
             selectionColor = colorPrimary,
             suggestionQueryColor = Color.parseColor("#7CE0F3"),
             findResultBackgroundColor = Color.parseColor("#5F5E5A"),
             delimiterBackgroundColor = Color.parseColor("#5F5E5A"),
             syntaxScheme = SyntaxScheme(
                 numberColor = Color.parseColor("#BB8FF8"),
-                operatorColor = Color.BLACK,
+                operatorColor = if (Theme.usingNightMode()) Color.WHITE else Color.BLACK,
                 keywordColor = Color.parseColor("#EB347E"),
                 typeColor = Color.parseColor("#7FD0E4"),
                 langConstColor = Color.parseColor("#EB347E"),
