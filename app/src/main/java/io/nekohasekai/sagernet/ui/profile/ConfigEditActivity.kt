@@ -47,6 +47,7 @@ import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.Theme
+import androidx.core.graphics.toColorInt
 
 class ConfigEditActivity : ThemedActivity() {
 
@@ -194,35 +195,35 @@ class ConfigEditActivity : ThemedActivity() {
                 R.style.Theme_SagerNet_LightBlack -> Color.BLACK
                 else -> Color.WHITE
             },
-            selectedLineColor = if (Theme.usingNightMode()) Color.parseColor("#2C2C2C") else Color.parseColor("#D3D3D3"),
+            selectedLineColor = if (Theme.usingNightMode()) "#2C2C2C".toColorInt() else "#D3D3D3".toColorInt(),
             selectionColor = when (Theme.getTheme()) {
-                R.style.Theme_SagerNet_Black -> Color.parseColor("#4C4C4C")
-                R.style.Theme_SagerNet_LightBlack -> Color.parseColor("#B3B3B3")
+                R.style.Theme_SagerNet_Black -> "#4C4C4C".toColorInt()
+                R.style.Theme_SagerNet_LightBlack -> "#B3B3B3".toColorInt()
                 else -> colorPrimary
             },
-            suggestionQueryColor = Color.parseColor("#7CE0F3"),
-            findResultBackgroundColor = Color.parseColor("#5F5E5A"),
-            delimiterBackgroundColor = Color.parseColor("#5F5E5A"),
+            suggestionQueryColor = "#7CE0F3".toColorInt(),
+            findResultBackgroundColor = "#5F5E5A".toColorInt(),
+            delimiterBackgroundColor = "#5F5E5A".toColorInt(),
             syntaxScheme = SyntaxScheme(
-                numberColor = Color.parseColor("#BB8FF8"),
+                numberColor = "#BB8FF8".toColorInt(),
                 operatorColor = if (Theme.usingNightMode()) Color.WHITE else Color.BLACK,
-                keywordColor = Color.parseColor("#EB347E"),
-                typeColor = Color.parseColor("#7FD0E4"),
-                langConstColor = Color.parseColor("#EB347E"),
-                preprocessorColor = Color.parseColor("#EB347E"),
-                variableColor = Color.parseColor("#7FD0E4"),
-                methodColor = Color.parseColor("#B6E951"),
+                keywordColor = "#EB347E".toColorInt(),
+                typeColor = "#7FD0E4".toColorInt(),
+                langConstColor = "#EB347E".toColorInt(),
+                preprocessorColor = "#EB347E".toColorInt(),
+                variableColor = "#7FD0E4".toColorInt(),
+                methodColor = "#B6E951".toColorInt(),
                 stringColor = when (Theme.getTheme()) {
                     R.style.Theme_SagerNet_Black -> Color.WHITE
                     R.style.Theme_SagerNet_LightBlack -> Color.BLACK
                     else -> colorPrimaryDark
                 },
-                commentColor = Color.parseColor("#89826D"),
-                tagColor = Color.parseColor("#F8F8F8"),
-                tagNameColor = Color.parseColor("#EB347E"),
-                attrNameColor = Color.parseColor("#B6E951"),
-                attrValueColor = Color.parseColor("#EBE48C"),
-                entityRefColor = Color.parseColor("#BB8FF8")
+                commentColor = "#89826D".toColorInt(),
+                tagColor = "#F8F8F8".toColorInt(),
+                tagNameColor = "#EB347E".toColorInt(),
+                attrNameColor = "#B6E951".toColorInt(),
+                attrValueColor = "#EBE48C".toColorInt(),
+                entityRefColor = "#BB8FF8".toColorInt()
             )
         )
     }
