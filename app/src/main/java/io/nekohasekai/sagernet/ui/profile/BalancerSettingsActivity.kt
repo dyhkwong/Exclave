@@ -130,17 +130,6 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
 
         supportActionBar!!.setTitle(R.string.balancer_settings)
         configurationList = findViewById(R.id.configuration_list)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.settings)) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                left = bars.left,
-                right = bars.right,
-            )
-            insets
-        }
         ViewCompat.setOnApplyWindowInsetsListener(configurationList) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
@@ -197,6 +186,19 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
     }
 
     override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
+        // override the padding in ProfileSettingsActivity
+        ViewCompat.setOnApplyWindowInsetsListener(listView) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                right = bars.right,
+            )
+            insets
+        }
+
         view.rootView.findViewById<RecyclerView>(R.id.recycler_view).apply {
             (layoutParams ?: LinearLayout.LayoutParams(-1, -2)).apply {
                 height = -2
