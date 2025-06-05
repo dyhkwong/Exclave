@@ -28,7 +28,10 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import cn.hutool.core.codec.Base64Decoder
 import cn.hutool.core.codec.Base64Encoder
 import cn.hutool.json.JSONArray
@@ -80,6 +83,18 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = LayoutBackupBinding.bind(view)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                right = bars.right,
+                bottom = bars.bottom + dp2px(64),
+            )
+            insets
+        }
         binding.actionExport.setOnClickListener {
             runOnDefaultDispatcher {
                 content = doBackup(

@@ -21,6 +21,9 @@ package io.nekohasekai.sagernet.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.databinding.LayoutNetworkBinding
 import io.nekohasekai.sagernet.ktx.*
@@ -33,6 +36,18 @@ class NetworkFragment : NamedFragment(R.layout.layout_network) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = LayoutNetworkBinding.bind(view)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left,
+                right = bars.right,
+                bottom = bars.bottom + dp2px(64),
+            )
+            insets
+        }
         binding.stunTest.setOnClickListener {
             startActivity(Intent(requireContext(), StunActivity::class.java))
         }

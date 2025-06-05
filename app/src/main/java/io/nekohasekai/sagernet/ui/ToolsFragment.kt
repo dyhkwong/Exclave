@@ -58,18 +58,6 @@ class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
             )
             insets
         }
-        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.tools_pager)) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                left = bars.left,
-                right = bars.right,
-                bottom = bars.bottom,
-            )
-            insets
-        }
 
         val tools = mutableListOf<NamedFragment>()
         tools.add(NetworkFragment())

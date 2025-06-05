@@ -79,18 +79,6 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
             )
             insets
         }
-        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.traffic_pager)) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                left = bars.left,
-                right = bars.right,
-                bottom = bars.bottom,
-            )
-            insets
-        }
 
         binding = LayoutTrafficBinding.bind(view)
         adapter = TrafficAdapter()

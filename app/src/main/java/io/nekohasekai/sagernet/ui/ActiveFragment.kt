@@ -24,7 +24,10 @@ import android.text.format.Formatter
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import io.nekohasekai.sagernet.Key
@@ -43,6 +46,28 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
     lateinit var adapter: ActiveAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.holder)) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                bottom = bars.bottom + dp2px(64),
+            )
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.traffic_list)) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
+                left = bars.left + dp2px(4),
+                right = bars.right + dp2px(4),
+                bottom = bars.bottom + dp2px(64),
+            )
+            insets
+        }
         binding = LayoutTrafficListBinding.bind(view)
         adapter = ActiveAdapter()
         binding.trafficList.layoutManager = FixedLinearLayoutManager(binding.trafficList)
