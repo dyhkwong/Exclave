@@ -12,13 +12,18 @@
         android:layout_height="wrap_content"
         android:text="@string/no_statistics"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorPrimary" />
+        android:textColor="?android:attr/textColorPrimary"
+        android:paddingBottom="64dp" />
 
     <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
         android:id="@+id/traffic_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="4dp"
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="64dp"
         android:scrollbarSize="0dp"
         android:visibility="gone"
         app:fastScrollAutoHide="true"
