@@ -88,9 +88,7 @@ class MainActivity : ThemedActivity(),
         super.onConfigurationChanged(newConfig)
         // FIXME: on uiMode/navigation changed
         when {
-            navigation.menu.findItem(R.id.nav_tools).isChecked ||
-                    navigation.menu.findItem(R.id.nav_about).isChecked ||
-                    navigation.menu.findItem(R.id.nav_traffic).isChecked -> {
+            navigation.menu.findItem(R.id.nav_traffic).isChecked -> {
                 binding.stats.allowShow = false
                 binding.stats.performHide()
                 binding.fab.hide()
@@ -344,7 +342,7 @@ class MainActivity : ThemedActivity(),
 
 
     fun displayFragment(fragment: ToolbarFragment) {
-        if (fragment is ToolsFragment || fragment is AboutFragment || fragment is TrafficFragment) {
+        if (fragment is TrafficFragment) {
             binding.stats.allowShow = false
             binding.stats.performHide()
             binding.fab.hide()

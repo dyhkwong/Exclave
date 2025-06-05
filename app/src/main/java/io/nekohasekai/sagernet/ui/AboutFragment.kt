@@ -47,6 +47,7 @@ import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
 import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.plugin.PluginManager
@@ -80,7 +81,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             v.updatePadding(
                 left = bars.left,
                 right = bars.right,
-                bottom = bars.bottom,
+                bottom = bars.bottom + dp2px(64),
             )
             insets
         }
