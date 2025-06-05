@@ -323,6 +323,9 @@ class MainActivity : ThemedActivity(),
 
 
     fun displayFragment(fragment: ToolbarFragment) {
+        if (fragment !is LogcatFragment) {
+            binding.fab.show()
+        }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
             .commitAllowingStateLoss()
