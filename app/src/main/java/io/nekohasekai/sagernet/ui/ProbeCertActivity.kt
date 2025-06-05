@@ -79,7 +79,7 @@ class ProbeCertActivity : ThemedActivity() {
         }
         binding.probeCertProtocol.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: AdapterView<*>, view: View, position: Int, id: Long
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
             ) {
                 when (position) {
                     0 -> binding.probeCertAlpn.setText("h2,http/1.1")
