@@ -24,7 +24,6 @@ package io.nekohasekai.sagernet.ui
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.Manifest
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -38,7 +37,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
@@ -65,7 +63,6 @@ import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.utils.Theme
 import io.noties.markwon.Markwon
 
 class MainActivity : ThemedActivity(),
@@ -81,22 +78,6 @@ class MainActivity : ThemedActivity(),
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             displayFragmentWithId(R.id.nav_configuration)
-        }
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // FIXME: on uiMode/navigation changed
-        when {
-            navigation.menu.findItem(R.id.nav_traffic).isChecked -> {
-                binding.stats.allowShow = false
-                binding.stats.performHide()
-                binding.fab.hide()
-            }
-            else -> {
-                binding.stats.allowShow = true
-                binding.fab.show()
-            }
         }
     }
 
@@ -342,14 +323,6 @@ class MainActivity : ThemedActivity(),
 
 
     fun displayFragment(fragment: ToolbarFragment) {
-        if (fragment is TrafficFragment) {
-            binding.stats.allowShow = false
-            binding.stats.performHide()
-            binding.fab.hide()
-        } else {
-            binding.stats.allowShow = true
-            binding.fab.show()
-        }
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_holder, fragment)
             .commitAllowingStateLoss()

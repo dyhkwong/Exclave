@@ -45,13 +45,12 @@ class StatsBar @JvmOverloads constructor(
     private lateinit var txText: TextView
     private lateinit var rxText: TextView
     private lateinit var behavior: YourBehavior
-    var allowShow = true
     override fun getBehavior(): YourBehavior {
-        if (!this::behavior.isInitialized) behavior = YourBehavior { allowShow }
+        if (!this::behavior.isInitialized) behavior = YourBehavior()
         return behavior
     }
 
-    class YourBehavior(val getAllowShow: () -> Boolean) : Behavior() {
+    class YourBehavior : Behavior() {
         override fun onNestedScroll(
             coordinatorLayout: CoordinatorLayout, child: BottomAppBar, target: View,
             dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
@@ -69,16 +68,6 @@ class StatsBar @JvmOverloads constructor(
                 consumed
             )
         }
-
-        override fun slideUp(child: BottomAppBar) {
-            if (!getAllowShow()) return
-            super.slideUp(child)
-        }
-
-        override fun slideDown(child: BottomAppBar) {
-            if (!getAllowShow()) return
-            super.slideDown(child)
-        }
     }
 
 
@@ -95,10 +84,10 @@ class StatsBar @JvmOverloads constructor(
     }
 
     fun changeState(state: BaseService.State) {
-        val activity = context as MainActivity
+        context as MainActivity
         if ((state == BaseService.State.Connected).also { hideOnScroll = it }) {
             doOnPreDraw {
-                if (allowShow) performShow()
+                performShow()
                 setStatus(app.getText(R.string.vpn_connected))
             }
         } else {
