@@ -152,7 +152,7 @@
     <string name="always_show_address">Всегда показывать адрес</string>
     <string name="unavailable">Недоступно</string>
     <string name="standard">Стандарт</string>
-    <string name="probe_interval">Интервал наблюдения балансировщика</string>
+    <string name="probe_interval">Интервал наблюдения балансировщика (с)</string>
     <string name="random">Случайно</string>
     <string name="list">Список</string>
     <string name="auto">Авто</string>
@@ -476,7 +476,7 @@
     <string name="action_flash_on">Включить вспышку</string>
     <string name="action_camera_switch">Изменить камеру</string>
     <string name="action_flash_off">Выключить вспышку</string>
-    <string name="hysteria_hop_interval">Интервал перехода</string>
+    <string name="hysteria_hop_interval">Интервал переключения между портами</string>
     <string name="connection_test_delete_unavailable">Удалить недоступные</string>
     <string name="hysteria2_provider">Реализация Hysteria 2</string>
     <string name="nat_stun_server_hint">STUN сервер</string>
@@ -520,7 +520,7 @@
     <string name="log_level">Тип журнала</string>
     <string name="fab_style">Стиль нижней панели</string>
     <string name="core">ядро</string>
-    <string name="wireguard_keepalive_interval">Постоянное соединение</string>
+    <string name="wireguard_keepalive_interval">Постоянное поддержание активности</string>
     <string name="language">Язык</string>
     <string name="language_system_default">Системные настройки по умолчанию</string>
     <string name="require_dns_inbound">Включить входящий DNS</string>
@@ -530,4 +530,7 @@
     <string name="reality_disable_x25519mlkem768">Отключить REALITY X25519MLKEM768</string>
     <string name="reality_reenable_chacha20poly1305">Переподключить REALITY CHACHA20POLY1305</string>
     <string name="reality_breaking_change_summary">Обеспечить совместимость с серверами REALITY, которые не поддерживают это критическое изменение. Это временная опция, которая будет удалена в будущем.</string>
+    <string name="anytls_idle_session_check_interval">Интервал проверки неадекватных сессий</string>
+    <string name="anytls_idle_session_timeout">Таймаут неактивной сессии</string>
+    <string name="anytls_min_idle_session">Минимальное количество неактивных сессий</string>
 </resources>
