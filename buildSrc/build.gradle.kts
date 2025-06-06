@@ -11,7 +11,7 @@ dependencies {
     implementation("cn.hutool:hutool-http:5.8.38")
     implementation("cn.hutool:hutool-crypto:5.8.38")
     implementation("org.kohsuke:github-api:1.327")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.14")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.16")
     implementation("com.google.protobuf:protobuf-gradle-plugin:0.9.5")
     implementation("com.github.ben-manes:gradle-versions-plugin:0.52.0")
 }
