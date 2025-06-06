@@ -186,7 +186,7 @@ public class HysteriaBean extends AbstractBean {
         if (NetsKt.isIpv6Address(serverAddress)) {
             return "[" + serverAddress + "]:" + serverPorts;
         } else {
-            return serverAddress + ":" + serverPorts;
+            return NetsKt.wrapIDN(serverAddress) + ":" + serverPorts;
         }
     }
 

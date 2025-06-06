@@ -26,6 +26,7 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 fun parseNaive(link: String): NaiveBean {
@@ -37,7 +38,7 @@ fun parseNaive(link: String): NaiveBean {
             "naive+quic" -> "quic"
             else -> error("impossible")
         }
-        serverAddress = url.host
+        serverAddress = url.host.unwrapIDN()
         serverPort = url.port.takeIf { it > 0 } ?: 443
         username = url.username
         password = url.password

@@ -4,6 +4,7 @@ import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 import org.ini4j.Ini
 import java.io.StringReader
@@ -12,7 +13,7 @@ import java.io.StringWriter
 fun parseWireGuard(server: String): WireGuardBean {
     val link = Libcore.parseURL(server)
     return WireGuardBean().apply {
-        serverAddress = link.host
+        serverAddress = link.host.unwrapIDN()
         serverPort = link.port.takeIf { it > 0 } ?: 51820
         if (link.username.isNotEmpty()) {
             // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L126-L148

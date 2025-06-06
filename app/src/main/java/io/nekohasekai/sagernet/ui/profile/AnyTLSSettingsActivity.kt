@@ -12,6 +12,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
 
@@ -43,7 +44,7 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
 
     override fun AnyTLSBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
         idleSessionCheckInterval = DataStore.serverAnyTLSIdleSessionCheckInterval

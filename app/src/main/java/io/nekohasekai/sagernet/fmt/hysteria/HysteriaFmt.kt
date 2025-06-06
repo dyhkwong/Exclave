@@ -34,7 +34,7 @@ fun parseHysteria(url: String): HysteriaBean {
     val link = Libcore.parseURL(url)
 
     return HysteriaBean().apply {
-        serverAddress = link.host
+        serverAddress = link.host.unwrapIDN()
         serverPorts = if (link.port > 0) link.port.toString() else "443"
         name = link.fragment
 

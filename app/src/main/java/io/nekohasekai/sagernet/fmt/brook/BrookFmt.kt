@@ -51,7 +51,7 @@ fun parseBrook(text: String): AbstractBean {
             bean.protocol = ""
             link.queryParameter("server")?.let {
                 Libcore.parseURL("placeholder://$it")?.apply {
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                 } ?: error("Invalid brook server url")
             } ?: error("Invalid brook server url")
@@ -70,14 +70,14 @@ fun parseBrook(text: String): AbstractBean {
                     if (scheme != "ws") {
                         error("Invalid brook wsserver url")
                     }
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                     bean.wsPath = path
                 } ?: error("Invalid brook wsserver url")
             } ?: error("Invalid brook wsserver url")
             link.queryParameter("address")?.let {
                 Libcore.parseURL("placeholder://$it")?.apply {
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                 } ?: error("Invalid brook wsserver address")
             }
@@ -96,7 +96,7 @@ fun parseBrook(text: String): AbstractBean {
                     if (scheme != "wss") {
                         error("Invalid brook wssserver url")
                     }
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                     bean.wsPath = path
                 } ?: error("Invalid brook wssserver url")
@@ -104,7 +104,7 @@ fun parseBrook(text: String): AbstractBean {
             link.queryParameter("address")?.let {
                 bean.sni = bean.serverAddress
                 Libcore.parseURL("placeholder://$it")?.apply {
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                 } ?: error("Invalid brook wssserver address")
             }
@@ -133,14 +133,14 @@ fun parseBrook(text: String): AbstractBean {
                     if (scheme != "quic") {
                         error("Invalid brook quicserver url")
                     }
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                 } ?: error("Invalid brook quicserver url")
             } ?: error("Invalid brook quicserver url")
             link.queryParameter("address")?.let {
                 bean.sni = bean.serverAddress
                 Libcore.parseURL("placeholder://$it")?.apply {
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                 } ?: error("Invalid brook quicserver address")
             }
@@ -167,7 +167,7 @@ fun parseBrook(text: String): AbstractBean {
                     if (scheme != "socks5") {
                         error("Invalid brook socks5 url")
                     }
-                    bean.serverAddress = host
+                    bean.serverAddress = host.unwrapIDN()
                     bean.serverPort = port
                 } ?: error("Invalid brook socks5 url")
             } ?: error("Invalid brook socks5 url")

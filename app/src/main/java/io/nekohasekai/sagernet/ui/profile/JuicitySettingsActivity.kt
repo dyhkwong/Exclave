@@ -7,6 +7,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
 
@@ -26,7 +27,7 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
 
     override fun JuicityBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         uuid = DataStore.serverUserId
         password = DataStore.serverPassword

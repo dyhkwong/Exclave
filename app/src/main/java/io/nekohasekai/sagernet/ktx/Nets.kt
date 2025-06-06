@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.ktx
 import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
 import libcore.URL
+import java.net.IDN
 import java.net.InetSocketAddress
 import java.net.Socket
 import kotlin.math.roundToInt
@@ -40,8 +41,22 @@ fun URL.addPathSegments(vararg segments: String) {
     }
 }
 
+fun String.wrapIDN(): String {
+    if (this.isIpAddress()) {
+        return this
+    }
+    return IDN.toUnicode(this, IDN.ALLOW_UNASSIGNED)
+}
+
+fun String.unwrapIDN(): String {
+    if (this.isIpAddress() || this.all { it.code < 128 }) {
+        return this
+    }
+    return IDN.toASCII(this, IDN.ALLOW_UNASSIGNED)
+}
+
 fun String.isIpAddress(): Boolean {
-    return Validator.isIpv4(this) || Validator.isIpv6(this)
+    return this.isIpv4Address() || this.isIpv6Address()
 }
 
 fun String.isIpv4Address(): Boolean {

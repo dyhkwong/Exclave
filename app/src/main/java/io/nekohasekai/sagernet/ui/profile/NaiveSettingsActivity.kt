@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
 
@@ -47,7 +48,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
 
     override fun NaiveBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         username = DataStore.serverUsername
         password = DataStore.serverPassword

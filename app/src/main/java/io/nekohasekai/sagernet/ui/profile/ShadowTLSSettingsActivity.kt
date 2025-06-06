@@ -26,6 +26,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.shadowtls.ShadowTLSBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
 
@@ -46,7 +47,7 @@ class ShadowTLSSettingsActivity : ProfileSettingsActivity<ShadowTLSBean>() {
 
     override fun ShadowTLSBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
         alpn = DataStore.serverALPN

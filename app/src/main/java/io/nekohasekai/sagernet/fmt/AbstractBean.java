@@ -62,7 +62,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     }
 
     public String displayAddress() {
-        return NetsKt.joinHostPort(this.serverAddress, this.serverPort);
+        return NetsKt.joinHostPort(NetsKt.wrapIDN(this.serverAddress), this.serverPort);
     }
 
     public String network() {

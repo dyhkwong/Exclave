@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
 
@@ -50,7 +51,7 @@ class TuicSettingsActivity : ProfileSettingsActivity<TuicBean>() {
 
     override fun TuicBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         token = DataStore.serverPassword
         alpn = DataStore.serverALPN

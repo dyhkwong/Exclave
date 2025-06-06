@@ -32,6 +32,7 @@ import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 import java.io.File
 import libcore.Libcore
 
@@ -49,7 +50,7 @@ fun parseTuic(server: String): AbstractBean {
     val version = link.queryParameter("version")
     if (version == "4" || (version != "5" && link.password.isEmpty())) {
         return TuicBean().apply {
-            serverAddress = link.host
+            serverAddress = link.host.unwrapIDN()
             serverPort = link.port
             if (link.port == 0) {
                 serverPort = 443
@@ -98,7 +99,7 @@ fun parseTuic(server: String): AbstractBean {
         }
     }
     return Tuic5Bean().apply {
-        serverAddress = link.host
+        serverAddress = link.host.unwrapIDN()
         serverPort = link.port
         if (link.port == 0) {
             serverPort = 443

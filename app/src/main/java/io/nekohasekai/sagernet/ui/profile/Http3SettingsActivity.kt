@@ -8,6 +8,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
 
@@ -29,7 +30,7 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
 
     override fun Http3Bean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         username = DataStore.serverUsername
         password = DataStore.serverPassword

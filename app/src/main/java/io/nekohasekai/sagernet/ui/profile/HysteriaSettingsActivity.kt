@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
 
@@ -56,7 +57,7 @@ class HysteriaSettingsActivity : ProfileSettingsActivity<HysteriaBean>() {
 
     override fun HysteriaBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         obfuscation = DataStore.serverObfs
         authPayloadType = DataStore.serverAuthType

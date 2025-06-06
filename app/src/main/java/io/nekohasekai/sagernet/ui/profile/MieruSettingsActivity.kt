@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class MieruSettingsActivity : ProfileSettingsActivity<MieruBean>() {
 
@@ -45,7 +46,7 @@ class MieruSettingsActivity : ProfileSettingsActivity<MieruBean>() {
 
     override fun MieruBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         protocol = DataStore.serverProtocolVersion
         username = DataStore.serverUsername

@@ -105,7 +105,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
         error("known unsupported format")
     }
 
-    bean.serverAddress = url.host
+    bean.serverAddress = url.host.unwrapIDN()
     bean.serverPort = url.port
     bean.name = url.fragment
 
@@ -379,7 +379,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
 private fun parseV2RayN(json: JSONObject): VMessBean {
     // https://github.com/2dust/v2rayN/wiki/Description-of-VMess-share-link
     val bean = VMessBean().apply {
-        serverAddress = json.getStr("add")?.takeIf { it.isNotEmpty() } ?: error("missing server address")
+        serverAddress = json.getStr("add")?.takeIf { it.isNotEmpty() }?.unwrapIDN() ?: error("missing server address")
         serverPort = json.getInt("port")
             ?: json.getStr("port")?.takeIf { it.isNotEmpty() }?.toIntOrNull() ?: error("invalid port")
         uuid = json.getStr("id")?.takeIf { it.isNotEmpty() }?.let {

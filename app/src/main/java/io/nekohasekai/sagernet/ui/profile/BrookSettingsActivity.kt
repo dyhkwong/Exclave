@@ -31,6 +31,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
 
@@ -58,7 +59,7 @@ class BrookSettingsActivity : ProfileSettingsActivity<BrookBean>() {
 
     override fun BrookBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         password = DataStore.serverPassword
         protocol = DataStore.serverProtocol

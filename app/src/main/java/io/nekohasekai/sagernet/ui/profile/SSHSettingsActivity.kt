@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class SSHSettingsActivity : ProfileSettingsActivity<SSHBean>() {
 
@@ -47,7 +48,7 @@ class SSHSettingsActivity : ProfileSettingsActivity<SSHBean>() {
 
     override fun SSHBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         username = DataStore.serverUsername
         authType = DataStore.serverAuthType

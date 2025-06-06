@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
 
@@ -55,7 +56,7 @@ class WireGuardSettingsActivity : ProfileSettingsActivity<WireGuardBean>() {
         localAddress = DataStore.serverLocalAddress
         privateKey = DataStore.serverPrivateKey
 
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
 
         peerPublicKey = DataStore.serverCertificates

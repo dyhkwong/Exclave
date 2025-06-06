@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
+import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>() {
 
@@ -46,7 +47,7 @@ class ShadowsocksRSettingsActivity : ProfileSettingsActivity<ShadowsocksRBean>()
 
     override fun ShadowsocksRBean.serialize() {
         name = DataStore.profileName
-        serverAddress = DataStore.serverAddress
+        serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
         method = DataStore.serverMethod
         password = DataStore.serverPassword
