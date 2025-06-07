@@ -981,6 +981,7 @@ public class V2RayConfig {
         public String password;
         public String congestionControl;
         public String udpRelayMode;
+        public Integer heartbeat;
         public Boolean zeroRTTHandshake;
         public TLSObject tlsSettings;
         public Boolean disableSNI;
