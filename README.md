@@ -11,7 +11,7 @@ A fork of SagerNet, the universal proxy toolchain for Android written in Kotlin.
 - [Mieru plugin](https://github.com/dyhkwong/Exclave/releases?q=mieru-plugin-3) or [use upstream releases directly](https://github.com/enfein/NekoBoxPlugins/releases)
 - [Brook plugin](https://github.com/dyhkwong/Exclave/releases?q=brook-plugin)
 - [Juicity plugin](https://github.com/dyhkwong/Exclave/releases?q=juicity-plugin)
-- [TUIC v5 plugin](https://github.com/dyhkwong/Exclave/releases?q=tuic5-plugin)
+- [TUIC v5 plugin](https://github.com/dyhkwong/Exclave/releases?q=tuic-plugin-1)
 - [Other obsolute plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
 
 ## Translation
@@ -85,8 +85,8 @@ You should have received a copy of the GNU General Public License along with thi
   - The license of https://github.com/enfein/mieru applies to `libmieru.so` in Mieru plugin.
   - The license of https://github.com/apernet/hysteria applies to `libhysteria2.so` in Hysteria 2 plugin.
   - The license of https://github.com/juicity/juicity applies to `libjuicity.so` in Juicity plugin.
-  - The license of https://github.com/txthinking/brook applies to`libbrook.so` in Brook plugin.
-  - The license of https://github.com/Itsusinn/tuic applies to`libtuic5.so` in TUIC v5 plugin.
+  - The license of https://github.com/txthinking/brook applies to `libbrook.so` in Brook plugin.
+  - The license of https://github.com/Itsusinn/tuic applies to `libtuic5.so` in TUIC v5 plugin.
 - `geosite.dat` and `geoip.dat` in Exclave are data files downloaded from source and bundled directly. They are not part of the code.
   - The license of https://github.com/v2fly/domain-list-community applies to `geosite.dat` in Exclave.
   - The license of https://github.com/v2fly/geoip applies to `geoip.dat` in Exclave.
