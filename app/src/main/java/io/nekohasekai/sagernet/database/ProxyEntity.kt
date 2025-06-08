@@ -401,13 +401,13 @@ data class ProxyEntity(
                             }
                             is TuicBean -> {
                                 append("\n\n")
-                                append(bean.buildTuicConfig(port, null).also {
+                                append(bean.buildTuicConfig(port, forExport = true, null).also {
                                     Logs.d(it)
                                 })
                             }
                             is Tuic5Bean -> {
                                 append("\n\n")
-                                append(bean.buildTuic5Config(port, null).also {
+                                append(bean.buildTuic5Config(port, forExport = true, null).also {
                                     Logs.d(it)
                                 })
                             }

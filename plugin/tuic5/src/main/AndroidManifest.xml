@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:installLocation="internalOnly"
+    tools:ignore="MissingLeanbackLauncher">
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <application
+        android:allowBackup="false"
+        android:extractNativeLibs="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="TUIC v5 Plugin"
+        android:roundIcon="@mipmap/ic_launcher_round">
+        <provider
+            android:name="io.nekohasekai.sagernet.plugin.tuic5.BinaryProvider"
+            android:authorities="com.github.dyhkwong.plugin.tuic5.BinaryProvider"
+            android:directBootAware="true"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider">
+            <intent-filter>
+                <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
+                <data
+                    android:host="com.github.dyhkwong.sagernet"
+                    android:path="/tuic5-plugin"
+                    android:scheme="plugin" />
+            </intent-filter>
+
+            <meta-data
+                android:name="io.nekohasekai.sagernet.plugin.id"
+                android:value="tuic5-plugin" />
+            <meta-data
+                android:name="io.nekohasekai.sagernet.plugin.executable_path"
+                android:value="libtuic5.so" />
+        </provider>
+    </application>
+
+</manifest>

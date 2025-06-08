@@ -143,7 +143,7 @@ abstract class V2RayInstance(
                     }
                     is TuicBean -> {
                         initPlugin("tuic-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildTuicConfig(port) {
+                        pluginConfigs[port] = profile.type to bean.buildTuicConfig(port, forExport = false) {
                             File(
                                 app.noBackupFilesDir,
                                 "tuic_" + SystemClock.elapsedRealtime() + ".ca"
@@ -155,7 +155,7 @@ abstract class V2RayInstance(
                     }
                     is Tuic5Bean -> {
                         initPlugin("tuic5-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildTuic5Config(port) {
+                        pluginConfigs[port] = profile.type to bean.buildTuic5Config(port, forExport = false) {
                             File(
                                 app.noBackupFilesDir,
                                 "tuic5_" + SystemClock.elapsedRealtime() + ".ca"

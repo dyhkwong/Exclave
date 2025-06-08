@@ -63,7 +63,7 @@ fun TuicBean.toUri(): String {
     return builder.string
 }
 
-fun TuicBean.buildTuicConfig(port: Int, cacheFile: (() -> File)?): String {
+fun TuicBean.buildTuicConfig(port: Int, forExport: Boolean, cacheFile: (() -> File)?): String {
     return JSONObject().also {
         it["relay"] = JSONObject().also {
             if (sni.isNotEmpty()) {
@@ -82,7 +82,7 @@ fun TuicBean.buildTuicConfig(port: Int, cacheFile: (() -> File)?): String {
                 it["certificates"] = JSONArray().apply {
                     put(caFile.absolutePath)
                 }
-            } else if (DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
+            } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
                 it["certificates"] = JSONArray().apply {
                     // workaround tuic can't load Android system root certificates without forking it
                     File("/system/etc/security/cacerts").listFiles()?.forEach { put(it) }

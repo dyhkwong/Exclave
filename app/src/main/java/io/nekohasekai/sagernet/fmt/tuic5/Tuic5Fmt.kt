@@ -183,7 +183,7 @@ fun Tuic5Bean.toUri(): String? {
     return builder.string
 }
 
-fun Tuic5Bean.buildTuic5Config(port: Int, cacheFile: (() -> File)?): String {
+fun Tuic5Bean.buildTuic5Config(port: Int, forExport: Boolean, cacheFile: (() -> File)?): String {
     return JSONObject().also {
         it["relay"] = JSONObject().also {
             if (sni.isNotEmpty()) {
@@ -202,7 +202,7 @@ fun Tuic5Bean.buildTuic5Config(port: Int, cacheFile: (() -> File)?): String {
                 it["certificates"] = JSONArray().apply {
                     put(caFile.absolutePath)
                 }
-            } else if (DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
+            } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
                 it["certificates"] = JSONArray().apply {
                     // https://github.com/maskedeken/tuic/commit/88e57f6e41ae8985edd8f620950e3f8e7d29e1cc
                     // workaround tuic can't load Android system root certificates without forking it
@@ -217,6 +217,9 @@ fun Tuic5Bean.buildTuic5Config(port: Int, cacheFile: (() -> File)?): String {
             it["congestion_control"] = congestionControl
             it["disable_sni"] = disableSNI
             it["zero_rtt_handshake"] = zeroRTTHandshake
+            if (allowInsecure) {
+                it["skip_cert_verify"] = true
+            }
         }
         it["local"] = JSONObject().also {
             it["server"] = joinHostPort(LOCALHOST, port)

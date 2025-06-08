@@ -16,3 +16,6 @@
 [submodule "plugin/juicity/src/main/go/juicity"]
 	path = plugin/juicity/src/main/go/juicity
 	url = https://github.com/juicity/juicity
+[submodule "plugin/tuic5/src/main/rust/tuic5"]
+	path = plugin/tuic5/src/main/rust/tuic5
+	url = https://github.com/Itsusinn/tuic
