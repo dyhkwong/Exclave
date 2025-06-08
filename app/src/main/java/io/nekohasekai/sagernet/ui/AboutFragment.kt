@@ -115,13 +115,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
         }
 
         override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList {
-            try {
-                requireContext()
-            } catch (e: Exception) {
-                Logs.w(e)
-                return MaterialAboutList.Builder().build()
-            }
-
             return MaterialAboutList.Builder()
                 .addCard(MaterialAboutCard.Builder()
                     .outline(false)
