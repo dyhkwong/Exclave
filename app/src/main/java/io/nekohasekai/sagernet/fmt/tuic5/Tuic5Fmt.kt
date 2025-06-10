@@ -230,7 +230,7 @@ fun Tuic5Bean.buildTuic5Config(port: Int, forExport: Boolean, cacheFile: (() -> 
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
-            else -> "off"
+            else -> "error"
         }
     }.toStringPretty()
 }
