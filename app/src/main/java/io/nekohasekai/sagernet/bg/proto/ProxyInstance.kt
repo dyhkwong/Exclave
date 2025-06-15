@@ -287,23 +287,22 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
             try {
                 outboundStats()
 
-                val toUpdate = mutableListOf<ProxyEntity>()
                 if (outboundStats.uplinkTotal + outboundStats.downlinkTotal != 0L) {
-                    profile.tx += outboundStats.uplinkTotal
-                    profile.rx += outboundStats.downlinkTotal
-                    toUpdate.add(profile)
+                    SagerDatabase.proxyDao.updateTraffic(
+                        profile.id,
+                        profile.tx + outboundStats.uplinkTotal,
+                        profile.rx + outboundStats.downlinkTotal
+                    )
                 }
 
                 statsOutbounds.values.forEach {
                     if (it.uplinkTotal + it.downlinkTotal != 0L) {
-                        it.proxyEntity.tx += it.uplinkTotal
-                        it.proxyEntity.rx += it.downlinkTotal
-                        toUpdate.add(it.proxyEntity)
+                        SagerDatabase.proxyDao.updateTraffic(
+                            it.proxyEntity.id,
+                            it.proxyEntity.tx + it.uplinkTotal,
+                            it.proxyEntity.rx + it.downlinkTotal
+                        )
                     }
-                }
-
-                if (toUpdate.isNotEmpty()) {
-                    SagerDatabase.proxyDao.updateProxy(toUpdate)
                 }
             } catch (e: IOException) {
                 if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot

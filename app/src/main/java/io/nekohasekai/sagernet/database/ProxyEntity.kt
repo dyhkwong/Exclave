@@ -678,6 +678,20 @@ data class ProxyEntity(
         @Query("DELETE FROM proxy_entities")
         fun reset()
 
+        /**
+         * Though UI disallow edit config when it is running,
+         * but like chain and front/landing proxy still can be edited when running.
+         * This can just update the traffic of a proxy entity when not influence other settings.
+         */
+        @Query(
+            """
+        UPDATE proxy_entities
+           SET tx = CASE WHEN :tx  IS NULL THEN tx  ELSE :tx  END,
+               rx = CASE WHEN :rx  IS NULL THEN rx  ELSE :rx  END
+         WHERE id = :id
+    """
+        )
+        fun updateTraffic(id: Long, tx: Long?, rx: Long?): Int
     }
 
     override fun describeContents(): Int {
