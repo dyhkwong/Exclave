@@ -97,7 +97,10 @@
     <string name="hysteria_upload_mbps">Velocidad de subida máxima (en Mbps)</string>
     <string name="hysteria_auth_payload">Autenticación del Payload</string>
     <string name="hysteria_auth_type">Tipo de autenticación</string>
-    <string name="apps_message">%d Aplicaciones</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d Aplicaciones</item>
+        <item quantity="other">%d Aplicaciones</item>
+    </plurals>
     <string name="select_apps">Seleccionar aplicaciones</string>
     <string name="subscription_used">%s utilizado</string>
     <string name="group_filter_tags_nf">No hay etiquetas en esta suscripción</string>
@@ -203,9 +206,15 @@
     <string name="port_http">Puerto proxy HTTP</string>
     <string name="port_proxy">Puerto proxy SOCKS5</string>
     <string name="service_mode_proxy">Proxy solamente</string>
-    <string name="group_updated">%s: Actualizar %d Proxys</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s: Actualizar %d Proxys</item>
+        <item quantity="other">%s: Actualizar %d Proxys</item>
+    </plurals>
     <string name="group_no_difference">%s: sin diferencia</string>
-    <string name="group_status_proxies">%d Proxys</string>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d Proxys</item>
+        <item quantity="other">%s: Actualizar %d Proxys</item>
+    </plurals>
     <string name="menu_traffic">Tráfico</string>
     <string name="tile_title">Conmutador</string>
     <string name="group_default">Desagrupado</string>
@@ -263,8 +272,14 @@
     <string name="wireguard_psk">Clave precompartida de pares</string>
     <string name="copy_success">¡Copie el éxito!</string>
     <string name="traffic_holder">Abra VPN para registrar estadísticas de tráfico</string>
-    <string name="udp_connections">%d conexiones UDP</string>
-    <string name="tcp_connections">%d conexiones TCP</string>
+    <plurals name="udp_connections">
+        <item quantity="one">%d conexiones UDP</item>
+        <item quantity="other">%d conexiones UDP</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d conexiones TCP</item>
+        <item quantity="other">%d conexiones TCP</item>
+    </plurals>
     <string name="update_settings">Ajustes de actualización</string>
     <plurals name="added">
         <item quantity="one">Adicional</item>
@@ -297,7 +312,10 @@
     <string name="list">Lista</string>
     <string name="auto">Automático</string>
     <string name="follow_system">Seguir el sistema</string>
-    <string name="lines">%d líneas</string>
+    <plurals name="lines">
+        <item quantity="one">%d líneas</item>
+        <item quantity="other">%d líneas</item>
+    </plurals>
     <string name="apply">Solicitar</string>
     <string name="plugin">Complemento</string>
     <string name="plugin_unknown">Complemento desconocido %s</string>
@@ -342,7 +360,10 @@
 \n%s</string>
     <string name="group_deleted">Eliminado:
 \n%s</string>
-    <string name="group_status_proxies_subscription">%d servidores proxy | Actualizado en %s</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d servidores proxy | Actualizado en %s</item>
+        <item quantity="other">%d servidores proxy | Actualizado en %s</item>
+    </plurals>
     <string name="stun_test">Descubrimiento del comportamiento NAT</string>
     <string name="stun_test_summary">Determinar el comportamiento de asignación NAT del cliente y el comportamiento de filtrado NAT definido en RFC 5780 mediante STUN.</string>
     <string name="nat_mapping_behaviour">Comportamiento de mapeo NAT</string>

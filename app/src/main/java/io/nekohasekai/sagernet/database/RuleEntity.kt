@@ -71,8 +71,8 @@ data class RuleEntity(
         if (protocol.isNotEmpty()) summary += "$protocol\n"
         if (attrs.isNotEmpty()) summary += "$attrs\n"
         if (reverse) summary += "$redirect\n"
-        if (packages.isNotEmpty()) summary += app.getString(
-            R.string.apps_message, packages.size
+        if (packages.isNotEmpty()) summary += app.resources.getQuantityString(
+            R.plurals.apps_message, packages.size, packages.size
         ) + "\n"
         if (ssid.isNotEmpty()) summary += "$ssid\n"
         if (networkType.isNotEmpty()) {

@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.text.format.Formatter
 import android.view.MenuItem
 import android.view.View
@@ -49,7 +50,6 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
 import java.util.*
 
 class GroupFragment : ToolbarFragment(R.layout.layout_group),
@@ -501,8 +501,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             return true
         }
 
-
-        @SuppressLint("SimpleDateFormat")
         fun bind(group: ProxyGroup) {
             proxyGroup = group
 
@@ -590,7 +588,11 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                     text += "\n"
                     text += getString(
                         R.string.subscription_expire,
-                        SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date(subscription.expiryDate * 1000))
+                        DateUtils.getRelativeTimeSpanString(context, subscription.expiryDate * 1000)
+                            // hack for Chinese, "1月1日" -> "1 月 1 日","上午0:00" -> 上午 0:00"
+                            .replace("^([1-9]|1[0-2])月([1-9]|1[0-9]|2[0-9]|3[0-1])日+".toRegex(), "$1 月 $2 日")
+                            .replace("^上午(([1-9]|1[0-2]):([0-5][0-9]))+".toRegex(), "上午 $1")
+                            .replace("^下午(([1-9]|1[0-2]):([0-5][0-9]))+".toRegex(), "下午 $1")
                     )
                 }
                 if (text.isNotEmpty()) {
@@ -617,26 +619,29 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             runOnDefaultDispatcher {
                 val size = SagerDatabase.proxyDao.countByGroup(group.id)
                 onMainDispatcher {
-                    @Suppress("DEPRECATION") when (group.type) {
+                    when (group.type) {
                         GroupType.BASIC -> {
                             if (size == 0L) {
                                 groupStatus.setText(R.string.group_status_empty)
                             } else {
-                                groupStatus.text = getString(R.string.group_status_proxies, size)
+                                groupStatus.text = activity.resources.getQuantityString(R.plurals.group_status_proxies, size.toInt(), size)
                             }
                         }
                         GroupType.SUBSCRIPTION -> {
                             groupStatus.text = if (size == 0L) {
                                 getString(R.string.group_status_empty_subscription)
                             } else {
-                                val date = Date(group.subscription!!.lastUpdated * 1000L)
-                                getString(
-                                    R.string.group_status_proxies_subscription,
+                                activity.resources.getQuantityString(
+                                    R.plurals.group_status_proxies_subscription,
+                                    size.toInt(),
                                     size,
-                                    "${date.month + 1} - ${date.date}"
+                                    DateUtils.getRelativeTimeSpanString(context, group.subscription!!.lastUpdated * 1000)
+                                        // hack for Chinese, "1月1日" -> "1 月 1 日","上午0:00" -> 上午 0:00"
+                                        .replace("^([1-9]|1[0-2])月([1-9]|1[0-9]|2[0-9]|3[0-1])日+".toRegex(), "$1 月 $2 日")
+                                        .replace("^上午(([1-9]|1[0-2]):([0-5][0-9]))+".toRegex(), "上午 $1")
+                                        .replace("^下午(([1-9]|1[0-2]):([0-5][0-9]))+".toRegex(), "下午 $1")
                                 )
                             }
-
                         }
                     }
                 }

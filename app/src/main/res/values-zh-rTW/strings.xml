@@ -17,10 +17,16 @@
     <string name="group_edit">編輯</string>
     <string name="group_status_empty">空組</string>
     <string name="group_status_empty_subscription">尚未更新</string>
-    <string name="group_status_proxies">%d 個代理</string>
-    <string name="group_status_proxies_subscription">%d 個代理 | 更新於 %s</string>
+    <plurals name="group_status_proxies">
+        <item quantity="other">%d 個設定檔</item>
+    </plurals>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="other">%d 個設定檔 | 上次更新：%s</item>
+    </plurals>
     <string name="group_no_difference">%s: 沒有變化</string>
-    <string name="group_updated">%s: 更新了 %d 個代理</string>
+    <plurals name="group_updated">
+        <item quantity="other">%s: 更新了 %d 個設定檔</item>
+    </plurals>
     <string name="group_delete_confirm_prompt">您真的希望刪除這個群組嗎？</string>
     <string name="group_added">新增：
 \n%s</string>
@@ -50,7 +56,7 @@
 \n直連： %3$s↑ %4$s↓</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">測試中……</string>
-    <string name="connection_test_available">成功：HTTPS 握手花費 %dms</string>
+    <string name="connection_test_available">成功：HTTPS 握手花費 %d 毫秒</string>
     <string name="connection_test_error">失敗：%s</string>
     <!-- proxy category -->
     <string name="profile_name">設定檔名稱</string>
@@ -119,7 +125,7 @@
         <item quantity="other">已刪除 %d 項</item>
     </plurals>
     <plurals name="added">
-        <item quantity="other">已新增 %d 個配置</item>
+        <item quantity="other">已新增 %d 項</item>
     </plurals>
     <string name="undo">復原</string>
     <!-- tasker -->
@@ -180,7 +186,7 @@
     <string name="group_diff">差異（%s）</string>
     <string name="tile_title">切換器</string>
     <string name="group_default">未分組</string>
-    <string name="version_x">版本 (%s)</string>
+    <string name="version_x">版本（%s）</string>
     <string name="extra_headers">額外標頭</string>
     <string name="config_type">設定類型</string>
     <string name="theme">主題</string>
@@ -240,7 +246,9 @@
     <string name="ss_cat">Shadowsocks 設定</string>
     <string name="restart">重新載入代理服務以套用修改</string>
     <string name="route_warn">請在新增客製化規則前閱讀文件，否則您可能會無法連線至網際網路。</string>
-    <string name="lines">%d 行</string>
+    <plurals name="lines">
+        <item quantity="other">%d 行</item>
+    </plurals>
     <string name="night_mode">夜間模式</string>
     <string name="follow_system">跟隨系統</string>
     <string name="enable">啟用</string>
@@ -250,6 +258,7 @@
     <string name="random">隨機</string>
     <string name="probe_interval">負載平衡器觀測間隔</string>
     <string name="standard">標準</string>
+    <string name="available">%d ms</string>
     <string name="unavailable">無法使用</string>
     <string name="always_show_address">始終顯示位址</string>
     <string name="always_show_address_sum">使用在設定檔卡片中顯示伺服器位址</string>
@@ -306,7 +315,9 @@
     <string name="clear_profiles_message">您確定要清除此群組嗎？</string>
     <string name="apps">應用程式</string>
     <string name="select_apps">選擇應用程式</string>
-    <string name="apps_message">%d 個應用程式</string>
+    <plurals name="apps_message">
+        <item quantity="other">%d 個應用程式</item>
+    </plurals>
     <string name="file_manager_missing">您的裝置缺少 Android 標準檔案選擇器, 請安裝一個, 如 Material Files.</string>
     <string name="menu_traffic">流量</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android 外掛程式)</string>
@@ -330,8 +341,14 @@
     <string name="copy_package_name">複製軟體包名稱</string>
     <string name="copy_label">複製名稱</string>
     <string name="traffic_holder">打開 VPN 以記錄流量統計資料</string>
-    <string name="udp_connections">%d 個 UDP 連線</string>
-    <string name="tcp_connections">%d 個 TCP 連線</string>
+    <plurals name="udp_connections">
+        <item quantity="other">%d 個 UDP 連線</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="other">%d 個 TCP 連線</item>
+    </plurals>
+    <string name="traffic_uplink">%s | %s/s ↑</string>
+    <string name="traffic_downlink">%s | %s/s ↓</string>
     <string name="traffic_stats">統計資料</string>
     <string name="traffic_active">作用中</string>
     <string name="group_order_by_delay">以延遲</string>

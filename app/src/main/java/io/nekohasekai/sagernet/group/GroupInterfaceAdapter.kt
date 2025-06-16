@@ -61,7 +61,7 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
                     )
             ).show()
         } else {
-            context.snackbar(context.getString(R.string.group_updated, group.name, changed)).show()
+            context.snackbar(context.resources.getQuantityString(R.plurals.group_updated, changed, group.name, changed)).show()
 
             var status = ""
             if (added.isNotEmpty()) {

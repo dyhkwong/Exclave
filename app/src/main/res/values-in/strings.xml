@@ -2,8 +2,12 @@
 <resources>
     <string name="port_http">Proksi Port HTTP</string>
     <string name="port_proxy">Proksi Port SOCKS5</string>
-    <string name="group_status_proxies_subscription">%d Proksi | Diperbarui pada %s</string>
-    <string name="group_status_proxies">%d Proksi</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="other">%d Proksi | Diperbarui pada %s</item>
+    </plurals>
+    <plurals name="group_status_proxies">
+        <item quantity="other">%d Proksi</item>
+    </plurals>
     <string name="protocol_param">Param Protokol</string>
     <string name="protocol">Protokol</string>
     <string name="enc_method">Metode Enkrip</string>
@@ -61,7 +65,9 @@
 \n%s</string>
     <string name="group_delete_confirm_prompt">Anda yakin ingin menghapus grup ini\?</string>
     <string name="group_diff">Diff (%s)</string>
-    <string name="group_updated">%s: Diperbarui %d proxy</string>
+    <plurals name="group_updated">
+        <item quantity="other">%s: Diperbarui %d proxy</item>
+    </plurals>
     <string name="group_no_difference">%s: Tidak ada perbedaan</string>
     <string name="group_status_empty">Grup kosong</string>
     <string name="group_status_empty_subscription">Belum diperbarui</string>
@@ -210,7 +216,9 @@
     <string name="delete_confirm_prompt">Anda yakin ingin menghapus profil ini\?</string>
     <string name="action_export">Ekspor</string>
     <string name="error_title">Galat</string>
-    <string name="lines">%d Baris</string>
+    <plurals name="lines">
+        <item quantity="other">%d Baris</item>
+    </plurals>
     <string name="file_manager_missing">Perangkat Anda tidak memiliki pemilih file standar Android, silakan pasang satu, misal Material Files.</string>
     <plurals name="added">
         <item quantity="other">%d proksi ditambahkan</item>
@@ -307,7 +315,9 @@
     <string name="clear_profiles_message">Yakin ingin menghapus grup ini\?</string>
     <string name="apps">Aplikasi</string>
     <string name="select_apps">Pilih Aplikasi</string>
-    <string name="apps_message">%d Aplikasi</string>
+    <plurals name="apps_message">
+        <item quantity="other">%d Aplikasi</item>
+    </plurals>
     <string name="hysteria_obfs">Kata Sandi Pengaburan</string>
     <string name="hysteria_auth_type">Jenis Autentikasi</string>
     <string name="hysteria_auth_payload">Otentikasi Payload</string>
@@ -316,8 +326,12 @@
     <string name="nat_filtering_behaviour">Perilaku penyaringan NAT</string>
     <string name="traffic_active">Aktif</string>
     <string name="traffic_stats">Statistik</string>
-    <string name="tcp_connections">%d Koneksi TCP</string>
-    <string name="udp_connections">%d Koneksi UDP</string>
+    <plurals name="tcp_connections">
+        <item quantity="other">%d Koneksi TCP</item>
+    </plurals>
+    <plurals name="udp_connections">
+        <item quantity="other">%d Koneksi UDP</item>
+    </plurals>
     <string name="traffic_holder">Nyalakan VPN untuk merekam statistik lalu lintas</string>
     <string name="copy_package_name">Salin Nama Paket</string>
     <string name="open_app">Buka Aplikasi</string>

@@ -179,8 +179,8 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
 
             binding.label.text = PackageCache.loadLabel(packageName)
             binding.desc.text = "$packageName (${stats.uid})"
-            binding.tcpConnections.text = getString(R.string.tcp_connections, stats.tcpConnections)
-            binding.udpConnections.text = getString(R.string.udp_connections, stats.udpConnections)
+            binding.tcpConnections.text = resources.getQuantityString(R.plurals.tcp_connections, stats.tcpConnections, stats.tcpConnections)
+            binding.udpConnections.text = resources.getQuantityString(R.plurals.udp_connections, stats.udpConnections, stats.udpConnections)
             binding.trafficUplink.text = getString(
                 R.string.traffic_uplink,
                 Formatter.formatFileSize(requireContext(), stats.uplinkTotal),

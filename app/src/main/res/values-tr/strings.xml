@@ -48,10 +48,19 @@
 \neklendi</string>
     <string name="group_delete_confirm_prompt">Bu grubu silmek istediğinize emin misiniz\?</string>
     <string name="group_diff">Fark (%s)</string>
-    <string name="group_updated">%s: %d vekil sunucu güncellendi</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s: %d vekil sunucu güncellendi</item>
+        <item quantity="other">%s: %d vekil sunucu güncellendi</item>
+    </plurals>
     <string name="group_no_difference">%s: Farklılık yok</string>
-    <string name="group_status_proxies_subscription">%d Vekil Sunucu | %s güncellendi</string>
-    <string name="group_status_proxies">%d Vekil Sunucu</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d Vekil Sunucu | %s güncellendi</item>
+        <item quantity="other">%d Vekil Sunucu | %s güncellendi</item>
+    </plurals>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d Vekil Sunucu</item>
+        <item quantity="other">%d Vekil Sunucu</item>
+    </plurals>
     <string name="group_status_empty_subscription">Henüz güncellenmedi</string>
     <string name="group_status_empty">Boş grup</string>
     <string name="group_edit">Grubu düzenle</string>
@@ -155,8 +164,14 @@
     <string name="copy_package_name">Paket Adını Kopyala</string>
     <string name="copy_label">İsmi Kopyala</string>
     <string name="traffic_holder">Trafik istatistiklerini kaydetmek için VPN\'i açın</string>
-    <string name="udp_connections">%d UDP bağlantı</string>
-    <string name="tcp_connections">%d TCP bağlantı</string>
+    <plurals name="udp_connections">
+        <item quantity="one">%d UDP bağlantı</item>
+        <item quantity="other">%d UDP bağlantı</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d TCP bağlantı</item>
+        <item quantity="other">%d TCP bağlantı</item>
+    </plurals>
     <string name="traffic_stats">İstatistikler</string>
     <string name="traffic_active">Etkin</string>
     <string name="plugin_exists_but_on_shit_system">Profil %s %s eklentisine ihtiyaç duyuyor, ancak kapalı kaynak ekipman sağlayıcınız (genellikle sermaye devleri ve kötü amaçlı yazılım geliştiricileri) Android ile oynamış ve eklenti bu yüzden kullanılamıyor.</string>
@@ -168,7 +183,10 @@
     <string name="hysteria_download_mbps">En Fazla İndirme Hızı (Mbps cinsinden)</string>
     <string name="hysteria_upload_mbps">En Fazla Yükleme Hızı (Mbps cinsinden)</string>
     <string name="hysteria_auth_type">Doğrulama Türü</string>
-    <string name="apps_message">%d Uygulama</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d Uygulama</item>
+        <item quantity="other">%d Uygulama</item>
+    </plurals>
     <string name="select_apps">Uygulama Seç</string>
     <string name="apps">Uygulamalar</string>
     <string name="clear_profiles_message">Bu grubu temizlemek istediğinize emin misiniz\?</string>
@@ -229,7 +247,10 @@
     <string name="enable">Etkinleştir</string>
     <string name="follow_system">Sistemi Takip Et</string>
     <string name="night_mode">Gece Modu</string>
-    <string name="lines">%d Satır</string>
+    <plurals name="lines">
+        <item quantity="one">%d Satır</item>
+        <item quantity="other">%d Satır</item>
+    </plurals>
     <string name="route_warn">Kişisel kurallar eklemeden önce dökümanı okuduğunuza emin olun, yoksa Internet\'e bağlanamayabilirsiniz.</string>
     <string name="license">Lisans</string>
     <string name="restart">Değişiklikleri uygulamak için vekil sunucu servisini yeniden başlatın</string>

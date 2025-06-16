@@ -199,11 +199,11 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
 
             binding.label.text = PackageCache.loadLabel(packageName)
             binding.desc.text = "$packageName (${stats.uid})"
-            binding.tcpConnections.text = getString(
-                R.string.tcp_connections, stats.tcpConnectionsTotal
+            binding.tcpConnections.text = resources.getQuantityString(
+                R.plurals.tcp_connections, stats.tcpConnectionsTotal, stats.tcpConnectionsTotal
             )
-            binding.udpConnections.text = getString(
-                R.string.udp_connections, stats.udpConnectionsTotal
+            binding.udpConnections.text = resources.getQuantityString(
+                R.plurals.udp_connections, stats.udpConnectionsTotal, stats.udpConnectionsTotal
             )
             binding.trafficUplink.text = getString(
                 R.string.traffic_uplink_total,

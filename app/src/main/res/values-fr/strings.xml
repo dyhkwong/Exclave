@@ -14,7 +14,10 @@
     <string name="license">Licence</string>
     <string name="follow_system">Selon le système</string>
     <string name="night_mode">Mode nuit</string>
-    <string name="lines">%d lignes</string>
+    <plurals name="lines">
+        <item quantity="one">%d lignes</item>
+        <item quantity="other">%d lignes</item>
+    </plurals>
     <string name="random">Aléatoire</string>
     <string name="list">Liste</string>
     <string name="delete_group_prompt">Êtes-vous sûr(e) de vouloir supprimer ce groupe \?</string>
@@ -22,7 +25,10 @@
     <string name="profile_requiring_plugin">%s nécessite l\'installation du greffon %s, mais il n\'a pas été trouvé.</string>
     <string name="missing_plugin">Greffon manquant</string>
     <string name="confirm">Confirmer</string>
-    <string name="apps_message">%d applications</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d applications</item>
+        <item quantity="other">%d applications</item>
+    </plurals>
     <string name="select_apps">Sélectionnez les applications</string>
     <string name="apps">Applications</string>
     <string name="clear_profiles_message">Êtes-vous sûr(e) de vouloir supprimer ce groupe \?</string>
@@ -35,10 +41,19 @@
     <string name="service_mode">Mode service</string>
     <string name="group_delete_confirm_prompt">Êtes-vous sûr(e) de vouloir supprimer ce groupe \?</string>
     <string name="group_diff">Diff (%s)</string>
-    <string name="group_updated">%s : %d proxys mis à jour</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s : %d proxys mis à jour</item>
+        <item quantity="other">%s : %d proxys mis à jour</item>
+    </plurals>
     <string name="group_no_difference">%s : aucune différence</string>
-    <string name="group_status_proxies_subscription">%d proxys | Mis à jour le %s</string>
-    <string name="group_status_proxies">%d proxys</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d proxys | Mis à jour le %s</item>
+        <item quantity="other">%d proxys | Mis à jour le %s</item>
+    </plurals>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d proxys</item>
+        <item quantity="other">%d proxys</item>
+    </plurals>
     <string name="group_status_empty_subscription">Pas encore mis à jour</string>
     <string name="group_status_empty">Groupe vide</string>
     <string name="group_edit">Modifier le groupe</string>
@@ -181,8 +196,14 @@
     <string name="group_order_origin">Origine</string>
     <string name="traffic_active">Actif</string>
     <string name="traffic_stats">Statistiques</string>
-    <string name="tcp_connections">%d connexions TCP</string>
-    <string name="udp_connections">%d connexions UDP</string>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d connexions TCP</item>
+        <item quantity="other">%d connexions TCP</item>
+    </plurals>
+    <plurals name="udp_connections">
+        <item quantity="one">%d connexions UDP</item>
+        <item quantity="other">%d connexions UDP</item>
+    </plurals>
     <string name="copy_package_name">Copier le nom du paquet</string>
     <string name="route_for">Règle pour %s</string>
     <string name="no_statistics">Aucune statistique pour l\'instant</string>

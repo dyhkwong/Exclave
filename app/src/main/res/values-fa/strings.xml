@@ -27,10 +27,19 @@
 \n%s</string>
     <string name="group_delete_confirm_prompt">آیا مطمئن هستید که می خواهید این گروه را حذف کنید؟</string>
     <string name="group_diff">تفاوت (%s)</string>
-    <string name="group_updated">%s: %d پروکسی به روز شد</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s: %d پروکسی به روز شد</item>
+        <item quantity="other">%s: %d پروکسی به روز شد</item>
+    </plurals>
     <string name="group_no_difference">%s: تفاوتی ندارد</string>
-    <string name="group_status_proxies_subscription">%d پروکسی | به روز شده در %s</string>
-    <string name="group_status_proxies">%d پروکسی‌ها</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d پروکسی | به روز شده در</item>
+        <item quantity="other">%d پروکسی | به روز شده در</item>
+    </plurals>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d پروکسی‌ها</item>
+        <item quantity="other">%d پروکسی‌ها</item>
+    </plurals>
     <string name="group_status_empty_subscription">هنوز به روز نشده است</string>
     <string name="group_status_empty">گروه خالی</string>
     <string name="group_edit">ویرایش گروه</string>
@@ -139,7 +148,10 @@
     <string name="enable">فعال کردن</string>
     <string name="follow_system">پیروی از سیستم</string>
     <string name="night_mode">حالت شب</string>
-    <string name="lines">%d خطوط</string>
+    <plurals name="lines">
+        <item quantity="one">%d خطوط</item>
+        <item quantity="other">%d خطوط</item>
+    </plurals>
     <string name="route_warn">قبل از افزودن قوانین سفارشی فایروال، مطمئن شوید که مستندات را مطالعه کرده اید، در غیر این صورت ممکن است نتوانید به اینترنت متصل شوید.</string>
     <string name="license">مجوز</string>
     <string name="restart">سرویس پروکسی را دوباره راه اندازی کنید تا تغییرات اعمال شوند</string>
@@ -263,7 +275,10 @@
     <string name="menu_route">مسیر</string>
     <string name="metered_summary">سیستم راهنمایی برای اشاره به اندازه گیری شبکه VPN</string>
     <string name="metered">راهنمای اندازه گیری</string>
-    <string name="apps_message">%d برنامه ها</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d برنامه ها</item>
+        <item quantity="other">%d برنامه ها</item>
+    </plurals>
     <string name="select_apps">انتخاب برنامه ها</string>
     <string name="apps">برنامه‌ها</string>
     <string name="clear_profiles_message">آیا مطمئن هستید که می خواهید این گروه را پاک کنید؟</string>
@@ -317,8 +332,14 @@
     <string name="copy_package_name">کپی نام بسته</string>
     <string name="copy_label">کپی نام</string>
     <string name="traffic_holder">باز کردن VPN برای ثبت آمار ترافیک</string>
-    <string name="udp_connections">%d اتصالات UDP</string>
-    <string name="tcp_connections">%d اتصالات TCP</string>
+    <plurals name="udp_connections">
+        <item quantity="one">%d اتصالات UDP</item>
+        <item quantity="other">%d اتصالات UDP</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d اتصالات TCP</item>
+        <item quantity="other">%d اتصالات TCP</item>
+    </plurals>
     <string name="traffic_stats">آمار</string>
     <string name="traffic_active">فعال</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (پلاگین اندروید شادوساکس)</string>

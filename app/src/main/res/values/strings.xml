@@ -23,10 +23,19 @@
     <string name="group_edit">Edit group</string>
     <string name="group_status_empty">Empty group</string>
     <string name="group_status_empty_subscription">Not updated yet</string>
-    <string name="group_status_proxies">%d Proxies</string>
-    <string name="group_status_proxies_subscription">%d Proxies | Updated on %s</string>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d profile</item>
+        <item quantity="other">%d profiles</item>
+    </plurals>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d profile | Last update: %s</item>
+        <item quantity="other">%d profiles | Last update: %s</item>
+    </plurals>
     <string name="group_no_difference">%s: No change</string>
-    <string name="group_updated">%s: Updated %d proxies</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s: Updated %d profile</item>
+        <item quantity="other">%s: Updated %d profiles</item>
+    </plurals>
     <string name="group_diff">Diff (%s)</string>
     <string name="group_delete_confirm_prompt">Are you sure you want to remove this group?</string>
     <string name="group_added">Added: \n%s</string>
@@ -231,12 +240,12 @@
     <string name="add_profile_methods_scan_qr_code">Scan QR code</string>
     <string name="add_profile_methods_manual_settings">Manual settings</string>
     <plurals name="removed">
-        <item quantity="one">Removed</item>
+        <item quantity="one">%d item removed</item>
         <item quantity="other">%d items removed</item>
     </plurals>
     <plurals name="added">
-        <item quantity="one">Added</item>
-        <item quantity="other">%d proxies added</item>
+        <item quantity="one">%d item added</item>
+        <item quantity="other">%d items added</item>
     </plurals>
     <string name="undo">Undo</string>
     <!-- tasker -->
@@ -272,7 +281,10 @@
     <string name="restart">Reload proxy service to apply changes</string>
     <string name="license">License</string>
     <string name="route_warn">Make sure you have read the documentation before adding custom rules, otherwise you may not be able to connect to the Internet.</string>
-    <string name="lines">%d Lines</string>
+    <plurals name="lines">
+        <item quantity="one">%d line</item>
+        <item quantity="other">%d lines</item>
+    </plurals>
     <string name="night_mode">Night mode</string>
     <string name="follow_system">Follow system</string>
     <string name="enable">Enable</string>
@@ -282,7 +294,7 @@
     <string name="random">Random</string>
     <string name="probe_interval">Balancer observation interval (s)</string>
     <string name="standard">Standard</string>
-    <string name="available" translatable="false">%d ms</string>
+    <string name="available">%d ms</string>
     <string name="unavailable">Unavailable</string>
     <string name="always_show_address">Always show address</string>
     <string name="always_show_address_sum">Always display the server address on the configuration card</string>
@@ -342,7 +354,10 @@
     <string name="clear_profiles_message">Are you sure you want to clear this group?</string>
     <string name="apps">Applications</string>
     <string name="select_apps">Select applications</string>
-    <string name="apps_message">%d applications</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d application</item>
+        <item quantity="other">%d applications</item>
+    </plurals>
     <string name="hysteria_obfs">Obfuscation password</string>
     <string name="hysteria_auth_type">Authentication type</string>
     <string name="hysteria_auth_payload">Authentication payload</string>
@@ -366,14 +381,20 @@
     <string name="plugin_exists_but_on_shit_system">Profile %s requires %s plugin, but your proprietary equipment vendor (usually surveillance capital giants and malware maker) tampered with your Android, making the plugin unusable.</string>
     <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Shadowsocks Android Plugin)</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Plugin)</string>
-    <string name="traffic_uplink" translatable="false">%s | %s/s ↑</string>
-    <string name="traffic_downlink" translatable="false">%s | %s/s ↓</string>
+    <string name="traffic_uplink">%s | %s/s ↑</string>
+    <string name="traffic_downlink">%s | %s/s ↓</string>
     <string name="traffic_uplink_total" translatable="false">%s ↑</string>
     <string name="traffic_downlink_total" translatable="false">%s ↓</string>
     <string name="traffic_active">Active</string>
     <string name="traffic_stats">Statistics</string>
-    <string name="tcp_connections">%d TCP connections</string>
-    <string name="udp_connections">%d UDP connections</string>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d TCP connection</item>
+        <item quantity="other">%d TCP connections</item>
+    </plurals>
+    <plurals name="udp_connections">
+        <item quantity="one">%d UDP connection</item>
+        <item quantity="other">%d UDP connections</item>
+    </plurals>
     <string name="traffic_holder">Turn on VPN to record traffic statistics</string>
     <string name="copy_label">Copy app name</string>
     <string name="copy_package_name">Copy package name</string>

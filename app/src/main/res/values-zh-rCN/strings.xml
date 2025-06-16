@@ -18,17 +18,20 @@
     <string name="group_edit">编辑</string>
     <string name="group_status_empty">空</string>
     <string name="group_status_empty_subscription">从未更新</string>
-    <string name="group_status_proxies">%d 个配置</string>
-    <string name="group_status_proxies_subscription">%d 个配置 | 更新于 %s</string>
+    <plurals name="group_status_proxies">
+        <item quantity="other">%d 个配置</item>
+    </plurals>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="other">%d 个配置 | 上次更新：%s</item>
+    </plurals>
     <string name="group_no_difference">%s：没有变化</string>
-    <string name="group_updated">%s：更新了 %d 个节点</string>
+    <plurals name="group_updated">
+        <item quantity="other">%s：更新了 %d 个配置</item>
+    </plurals>
     <string name="group_delete_confirm_prompt">您确定要删除这个分组吗？</string>
-    <string name="group_added">新增：
-\n%s</string>
-    <string name="group_changed">更新：
-\n%s</string>
-    <string name="group_deleted">删除：
-\n%s</string>
+    <string name="group_added">新增：\n%s</string>
+    <string name="group_changed">更新：\n%s</string>
+    <string name="group_deleted">删除：\n%s</string>
     <!-- misc -->
     <string name="service_mode">服务模式</string>
     <string name="service_mode_proxy">仅代理</string>
@@ -51,7 +54,7 @@
 \n直连：%3$s↑ %4$s↓</string>
     <string name="speed">%s/s</string>
     <string name="connection_test_testing">测试中……</string>
-    <string name="connection_test_available">连接成功：HTTPS 握手耗时 %d ms</string>
+    <string name="connection_test_available">连接成功：HTTPS 握手耗时 %d 毫秒</string>
     <string name="connection_test_error">失败：%s</string>
     <!-- proxy category -->
     <string name="profile_name">配置名称</string>
@@ -125,7 +128,7 @@
         <item quantity="other">已删除 %d 项</item>
     </plurals>
     <plurals name="added">
-        <item quantity="other">已添加 %d 个配置</item>
+        <item quantity="other">已添加 %d 项</item>
     </plurals>
     <string name="undo">还原</string>
     <!-- tasker -->
@@ -171,7 +174,7 @@
     <string name="group_duplicate">重复：
 \n%s</string>
     <string name="deduplication">去重</string>
-    <string name="version_x">版本 (%s)</string>
+    <string name="version_x">版本（%s）</string>
     <string name="ss_cat">Shadowsocks 设置</string>
     <string name="show_direct_speed">显示直连速度</string>
     <string name="show_direct_speed_sum">在通知中显示不经过代理的流量速度</string>
@@ -207,7 +210,7 @@
     <string name="transproxy_mode">透明代理模式</string>
     <string name="port_transproxy">透明代理端口</string>
     <string name="connection_test_url">连接测试 URL</string>
-    <string name="connection_test_available_http">连接成功：HTTP 握手耗时 %d ms</string>
+    <string name="connection_test_available_http">连接成功：HTTP 握手耗时 %d 毫秒</string>
     <string name="route_reverse">反向代理</string>
     <string name="route_reverse_redirect">反向代理地址</string>
     <string name="certificates">证书（链）</string>
@@ -226,7 +229,9 @@
     <string name="allow_insecure_sum">禁用证书验证。启用后该配置安全性相当于明文。</string>
     <string name="config_type">配置类型</string>
     <string name="edit_config">编辑配置</string>
-    <string name="lines">%d 行</string>
+    <plurals name="lines">
+        <item quantity="other">%d 行</item>
+    </plurals>
     <string name="only">仅</string>
     <string name="prefer">优先</string>
     <string name="route_not_asset">不是资源文件：预期 .dat 为扩展名，但 %s</string>
@@ -245,6 +250,7 @@
     <string name="random">随机</string>
     <string name="probe_interval">负载均衡观测间隔（秒）</string>
     <string name="standard">标准</string>
+    <string name="available">%d ms</string>
     <string name="unavailable">不可用</string>
     <string name="always_show_address">始终显示地址</string>
     <string name="always_show_address_sum">始终在配置卡片上显示服务器地址</string>
@@ -313,7 +319,9 @@
     <string name="dns_hosts">域名重写</string>
     <string name="apps">应用</string>
     <string name="select_apps">选择应用</string>
-    <string name="apps_message">%d 个应用</string>
+    <plurals name="apps_message">
+        <item quantity="other">%d 个应用</item>
+    </plurals>
     <string name="hysteria_obfs">混淆密码</string>
     <string name="hysteria_auth_type">认证类型</string>
     <string name="hysteria_auth_payload">认证载荷</string>
@@ -344,8 +352,14 @@
     <string name="copy_package_name">复制包名</string>
     <string name="copy_label">复制应用名</string>
     <string name="traffic_holder">启用 VPN 以统计流量</string>
-    <string name="udp_connections">%d UDP 连接</string>
-    <string name="tcp_connections">%d TCP 连接</string>
+    <plurals name="udp_connections">
+        <item quantity="other">%d UDP 连接</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="other">%d TCP 连接</item>
+    </plurals>
+    <string name="traffic_uplink">%s | %s/s ↑</string>
+    <string name="traffic_downlink">%s | %s/s ↓</string>
     <string name="traffic_stats">统计</string>
     <string name="traffic_active">活动</string>
     <string name="route_need_vpn">路由规则 %s 依赖 VPN 以生效，所以其已被忽略。</string>

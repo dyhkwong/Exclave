@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="apps_message">%d programmer</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d programmer</item>
+        <item quantity="other">%d programmer</item>
+    </plurals>
     <string name="select_apps">Velg programmer</string>
     <string name="apps">Programmer</string>
     <string name="group_filter_groups">Grupper</string>
@@ -44,10 +47,19 @@
     <string name="header_type">Hodetype</string>
     <string name="network">Nettverk</string>
     <string name="group_diff">Forskjell (%s)</string>
-    <string name="group_updated">%s: Oppdaterte %d mellomtjenere</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s: Oppdaterte %d mellomtjenere</item>
+        <item quantity="other">%s: Oppdaterte %d mellomtjenere</item>
+    </plurals>
     <string name="group_no_difference">%s: Ingen forskjell</string>
-    <string name="group_status_proxies_subscription">%d mellomtjenere | Oppdatert %s</string>
-    <string name="group_status_proxies">%d mellomtjenere</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d mellomtjenere | Oppdatert %s</item>
+        <item quantity="other">%d mellomtjenere | Oppdatert %s</item>
+    </plurals>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d mellomtjenere</item>
+        <item quantity="other">%d mellomtjenere</item>
+    </plurals>
     <string name="group_status_empty_subscription">Ikke oppdatert enda</string>
     <string name="group_status_empty">Tom gruppe</string>
     <string name="group_edit">Rediger gruppe</string>
@@ -140,7 +152,10 @@
     <string name="auto">Automatisk</string>
     <string name="disable">Deaktiver</string>
     <string name="enable">Muliggjøre</string>
-    <string name="lines">%d linjer</string>
+    <plurals name="lines">
+        <item quantity="one">%d linjer</item>
+        <item quantity="other">%d linjer</item>
+    </plurals>
     <string name="route_warn">Sørg for at du har lest dokumentasjonen før du legger til egendefinerte regler, hvis ikke kan du ikke koble deg til Internett.</string>
     <string name="restart">Last inn proxy -tjenesten på nytt for å bruke endringer</string>
     <string name="unsaved_changes_prompt">Endringene er ikke lagret. Vil du spare\?</string>
@@ -321,7 +336,10 @@
     <string name="group_order_origin">Opprinnelse</string>
     <string name="group_order">Rekkefølge</string>
     <string name="traffic_holder">Åpne VPN for å registrere trafikkstatistikk</string>
-    <string name="tcp_connections">%d TCP-tilkoblinger</string>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d TCP-tilkoblinger</item>
+        <item quantity="other">%d TCP-tilkoblinger</item>
+    </plurals>
     <string name="traffic_stats">Statistikk</string>
     <string name="group_order_by_delay">Etter forsinkelse</string>
     <string name="group_order_by_name">Etter navn</string>
@@ -343,7 +361,10 @@
     <string name="open_app">Åpne program</string>
     <string name="copy_package_name">Kopier pakkenavn</string>
     <string name="copy_label">Kopier navn</string>
-    <string name="udp_connections">%d UDP-tilkoblinger</string>
+    <plurals name="udp_connections">
+        <item quantity="one">%d UDP-tilkoblinger</item>
+        <item quantity="other">%d UDP-tilkoblinger</item>
+    </plurals>
     <string name="language">Språk</string>
     <string name="language_system_default">Systemstandard</string>
 </resources>

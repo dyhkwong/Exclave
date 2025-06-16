@@ -8,7 +8,14 @@
     <string name="github">مصدر الرمز</string>
     <string name="app_desc">سلسلة أدوات البروکسی العالمية لنظام Android ، مكتوبة بلغة Kotlin.</string>
     <string name="project">مشروع</string>
-    <string name="group_status_proxies">%d البروکسیز</string>
+    <plurals name="group_status_proxies">
+        <item quantity="zero">%d البروکسیز</item>
+        <item quantity="one">%d البروکسیز</item>
+        <item quantity="two">%d البروکسیز</item>
+        <item quantity="few">%d البروکسیز</item>
+        <item quantity="many">%d البروکسیز</item>
+        <item quantity="other">%d البروکسیز</item>
+    </plurals>
     <string name="group_status_empty_subscription">لم يتم تحديثه بعد</string>
     <string name="group_status_empty">مجموعة فارغة</string>
     <string name="group_edit">تحرير المجموعة</string>
@@ -21,8 +28,22 @@
     <string name="group_default">غير مجمعة</string>
     <string name="theme">موضوع</string>
     <string name="menu_about">حول</string>
-    <string name="group_status_proxies_subscription">%d البروکسیز | تم التحديث في %s</string>
-    <string name="group_updated">%s: تم تحديث %d البروکسیز</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="zero">%d البروکسیز | تم التحديث في</item>
+        <item quantity="one">%d البروکسیز | تم التحديث في</item>
+        <item quantity="two">%d البروکسیز | تم التحديث في</item>
+        <item quantity="few">%d البروکسیز | تم التحديث في</item>
+        <item quantity="many">%d البروکسیز | تم التحديث في</item>
+        <item quantity="other">%d البروکسیز | تم التحديث في</item>
+    </plurals>
+    <plurals name="group_updated">
+        <item quantity="zero">%s: تم تحديث %d البروکسیز</item>
+        <item quantity="one">%s: تم تحديث %d البروکسیز</item>
+        <item quantity="two">%s: تم تحديث %d البروکسیز</item>
+        <item quantity="few">%s: تم تحديث %d البروکسیز</item>
+        <item quantity="many">%s: تم تحديث %d البروکسیز</item>
+        <item quantity="other">%s: تم تحديث %d البروکسیز</item>
+    </plurals>
     <string name="port_http">منفذ بروکسی HTTP</string>
     <string name="port_proxy">منفذ بروکسی SOCKS5</string>
     <string name="service_mode_proxy">البروکسی فقط</string>
@@ -200,7 +221,14 @@
     <string name="hysteria_auth_payload">حمولة المصادقة</string>
     <string name="hysteria_auth_type">نوع المصادقة</string>
     <string name="hysteria_obfs">كلمة مرور التشويش</string>
-    <string name="apps_message">%d تطبيقات</string>
+    <plurals name="apps_message">
+        <item quantity="zero">%d تطبيقات</item>
+        <item quantity="one">%d تطبيقات</item>
+        <item quantity="two">%d تطبيقات</item>
+        <item quantity="few">%d تطبيقات</item>
+        <item quantity="many">%d تطبيقات</item>
+        <item quantity="other">%d تطبيقات</item>
+    </plurals>
     <string name="select_apps">حدد التطبيقات</string>
     <string name="apps">التطبيقات</string>
     <string name="clear_profiles_message">هل أنت متأكد أنك تريد مسح هذه المجموعة؟</string>
@@ -265,7 +293,14 @@
     <string name="enable">مكن</string>
     <string name="follow_system">اتبع النظام</string>
     <string name="night_mode">وضع الليل</string>
-    <string name="lines">%d سطور</string>
+    <plurals name="lines">
+        <item quantity="zero">%d سطور</item>
+        <item quantity="one">%d سطور</item>
+        <item quantity="two">%d سطور</item>
+        <item quantity="few">%d سطور</item>
+        <item quantity="many">%d سطور</item>
+        <item quantity="other">%d سطور</item>
+    </plurals>
     <string name="route_warn">تأكد من قراءة الوثائق قبل إضافة القواعد المخصصة، وإلا فقد لا تتمكن من الاتصال بالإنترنت.</string>
     <string name="license">الرخصة</string>
     <string name="restart">أعد تحميل خدمة البروکسی لتطبيق التغييرات</string>
@@ -327,8 +362,22 @@
     <string name="copy_package_name">نسخ اسم الحزمة</string>
     <string name="copy_label">نسخ الاسم</string>
     <string name="traffic_holder">افتح VPN لتسجيل إحصائيات حركة المرور</string>
-    <string name="udp_connections">%d اتصالات UDP</string>
-    <string name="tcp_connections">%d اتصالات TCP</string>
+    <plurals name="udp_connections">
+        <item quantity="zero">%d اتصالات UDP</item>
+        <item quantity="one">%d اتصالات UDP</item>
+        <item quantity="two">%d اتصالات UDP</item>
+        <item quantity="few">%d اتصالات UDP</item>
+        <item quantity="many">%d اتصالات UDP</item>
+        <item quantity="other">%d اتصالات UDP</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="zero">%d اتصالات TCP</item>
+        <item quantity="one">%d اتصالات TCP</item>
+        <item quantity="two">%d اتصالات TCP</item>
+        <item quantity="few">%d اتصالات TCP</item>
+        <item quantity="many">%d اتصالات TCP</item>
+        <item quantity="other">%d اتصالات TCP</item>
+    </plurals>
     <string name="traffic_stats">إحصائيات</string>
     <string name="traffic_active">نشط</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (مكون أندرويد الإضافي Shadowsocks)</string>

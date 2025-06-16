@@ -51,10 +51,25 @@
     <string name="group_added">Добавлено: \n%s</string>
     <string name="group_delete_confirm_prompt">Удалить эту группу?</string>
     <string name="group_diff">Различия (%s)</string>
-    <string name="group_updated">%s: обновлено %d прокси</string>
+    <plurals name="group_updated">
+        <item quantity="one">%s: обновлено %d прокси</item>
+        <item quantity="few">%s: обновлено %d прокси</item>
+        <item quantity="many">%s: обновлено %d прокси</item>
+        <item quantity="other">%s: обновлено %d прокси</item>
+    </plurals>
     <string name="group_no_difference">%s: Не отличаются</string>
-    <string name="group_status_proxies_subscription">%d прокси | Обновлено %s</string>
-    <string name="group_status_proxies">%d прокси</string>
+    <plurals name="group_status_proxies_subscription">
+        <item quantity="one">%d прокси | Обновлено %s</item>
+        <item quantity="few">%d прокси | Обновлено %s</item>
+        <item quantity="many">%d прокси | Обновлено %s</item>
+        <item quantity="other">%d прокси | Обновлено %s</item>
+    </plurals>
+    <plurals name="group_status_proxies">
+        <item quantity="one">%d прокси</item>
+        <item quantity="few">%d прокси</item>
+        <item quantity="many">%d прокси</item>
+        <item quantity="other">%d прокси</item>
+    </plurals>
     <string name="group_status_empty_subscription">Ещё не обновлено</string>
     <string name="group_status_empty">Пустая группа</string>
     <string name="group_edit">Изменить группу</string>
@@ -95,7 +110,12 @@
         <item quantity="other">%d элементов удалено</item>
     </plurals>
     <string name="mux_sum">Mux разработан для уменьшения задержки рукопожатия TCP, а не для увеличения пропускной способности соединения. Использование Mux для просмотра видео, загрузки или проверки скорости, как правило, контрпродуктивно.</string>
-    <string name="apps_message">%d приложений</string>
+    <plurals name="apps_message">
+        <item quantity="one">%d приложений</item>
+        <item quantity="few">%d приложений</item>
+        <item quantity="many">%d приложений</item>
+        <item quantity="other">%d приложений</item>
+    </plurals>
     <string name="select_apps">Выберите приложения</string>
     <string name="apps">Приложения</string>
     <string name="clear_profiles_message">Очистить эту группу?</string>
@@ -152,6 +172,7 @@
     <string name="always_show_address">Всегда показывать адрес</string>
     <string name="unavailable">Недоступно</string>
     <string name="standard">Стандарт</string>
+    <string name="available">%d мс</string>
     <string name="probe_interval">Интервал наблюдения балансировщика (с)</string>
     <string name="random">Случайно</string>
     <string name="list">Список</string>
@@ -160,7 +181,12 @@
     <string name="enable">Включить</string>
     <string name="follow_system">Использовать системную тему</string>
     <string name="night_mode">Ночной режим</string>
-    <string name="lines">%d Строк</string>
+    <plurals name="lines">
+        <item quantity="one">%d Строк</item>
+        <item quantity="few">%d Строк</item>
+        <item quantity="many">%d Строк</item>
+        <item quantity="other">%d Строк</item>
+    </plurals>
     <string name="route_warn">Перед добавлением собственных правил прочтите документацию, иначе подключение к интернету может не получиться.</string>
     <string name="license">Лицензия</string>
     <string name="restart">Перезагрузите прокси-сервис для изменений</string>
@@ -319,8 +345,20 @@
     <string name="copy_package_name">Копировать имя пакета</string>
     <string name="copy_label">Копировать имя</string>
     <string name="traffic_holder">Включите VPN для записи статистики трафика</string>
-    <string name="udp_connections">%d UDP-соединений</string>
-    <string name="tcp_connections">%d TCP-соединений</string>
+    <plurals name="udp_connections">
+        <item quantity="one">%d UDP-соединений</item>
+        <item quantity="few">%d UDP-соединений</item>
+        <item quantity="many">%d UDP-соединений</item>
+        <item quantity="other">%d UDP-соединений</item>
+    </plurals>
+    <plurals name="tcp_connections">
+        <item quantity="one">%d TCP-соединений</item>
+        <item quantity="few">%d TCP-соединений</item>
+        <item quantity="many">%d TCP-соединений</item>
+        <item quantity="other">%d TCP-соединений</item>
+    </plurals>
+    <string name="traffic_uplink">%s | %s/с ↑</string>
+    <string name="traffic_downlink">%s | %s/с ↓</string>
     <string name="traffic_stats">Статистика</string>
     <string name="traffic_active">Активный</string>
     <string name="shadowsocks_plugin_v2ray">V2Ray (плагин Shadowsocks для Android)</string>

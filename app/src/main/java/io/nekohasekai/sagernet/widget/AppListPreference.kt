@@ -48,7 +48,7 @@ class AppListPreference : Preference {
         }
         val count = packages.size
         if (count <= 5) return packages.joinToString("\n")
-        return context.getString(R.string.apps_message, count)
+        return context.resources.getQuantityString(R.plurals.apps_message, count, count)
     }
 
     fun postUpdate() {
