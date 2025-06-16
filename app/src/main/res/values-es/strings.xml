@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedQuantity">
     <string name="github">Código fuente</string>
     <string name="project">Proyecto</string>
     <string name="app_desc">La cadena de herramientas de proxy universal para Android, escrita en Kotlin.</string>
@@ -99,6 +99,7 @@
     <string name="hysteria_auth_type">Tipo de autenticación</string>
     <plurals name="apps_message">
         <item quantity="one">%d Aplicaciones</item>
+        <item quantity="many"/>
         <item quantity="other">%d Aplicaciones</item>
     </plurals>
     <string name="select_apps">Seleccionar aplicaciones</string>
@@ -208,11 +209,13 @@
     <string name="service_mode_proxy">Proxy solamente</string>
     <plurals name="group_updated">
         <item quantity="one">%s: Actualizar %d Proxys</item>
+        <item quantity="many"/>
         <item quantity="other">%s: Actualizar %d Proxys</item>
     </plurals>
     <string name="group_no_difference">%s: sin diferencia</string>
     <plurals name="group_status_proxies">
         <item quantity="one">%d Proxys</item>
+        <item quantity="many"/>
         <item quantity="other">%s: Actualizar %d Proxys</item>
     </plurals>
     <string name="menu_traffic">Tráfico</string>
@@ -274,15 +277,18 @@
     <string name="traffic_holder">Abra VPN para registrar estadísticas de tráfico</string>
     <plurals name="udp_connections">
         <item quantity="one">%d conexiones UDP</item>
+        <item quantity="many"/>
         <item quantity="other">%d conexiones UDP</item>
     </plurals>
     <plurals name="tcp_connections">
         <item quantity="one">%d conexiones TCP</item>
+        <item quantity="many"/>
         <item quantity="other">%d conexiones TCP</item>
     </plurals>
     <string name="update_settings">Ajustes de actualización</string>
     <plurals name="added">
         <item quantity="one">Adicional</item>
+        <item quantity="many"/>
         <item quantity="other">%d proxys agregados</item>
     </plurals>
     <string name="quick_toggle">Alternar</string>
@@ -314,6 +320,7 @@
     <string name="follow_system">Seguir el sistema</string>
     <plurals name="lines">
         <item quantity="one">%d líneas</item>
+        <item quantity="many"/>
         <item quantity="other">%d líneas</item>
     </plurals>
     <string name="apply">Solicitar</string>
@@ -325,6 +332,7 @@
     <string name="undo">Deshacer</string>
     <plurals name="removed">
         <item quantity="one">Remoto</item>
+        <item quantity="many"/>
         <item quantity="other">%d elementos eliminados</item>
     </plurals>
     <string name="add_profile_methods_manual_settings">Ajustes manuales</string>
@@ -362,6 +370,7 @@
 \n%s</string>
     <plurals name="group_status_proxies_subscription">
         <item quantity="one">%d servidores proxy | Actualizado en %s</item>
+        <item quantity="many"/>
         <item quantity="other">%d servidores proxy | Actualizado en %s</item>
     </plurals>
     <string name="stun_test">Descubrimiento del comportamiento NAT</string>

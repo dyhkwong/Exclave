@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedQuantity">
     <string name="action_import_err">Échec de l\'importation.</string>
     <string name="delete_confirm_prompt">Êtes-vous sûr(e) de vouloir retirer ce profil \?</string>
     <string name="delete">Retirer</string>
@@ -16,6 +16,7 @@
     <string name="night_mode">Mode nuit</string>
     <plurals name="lines">
         <item quantity="one">%d lignes</item>
+        <item quantity="many"/>
         <item quantity="other">%d lignes</item>
     </plurals>
     <string name="random">Aléatoire</string>
@@ -27,6 +28,7 @@
     <string name="confirm">Confirmer</string>
     <plurals name="apps_message">
         <item quantity="one">%d applications</item>
+        <item quantity="many"/>
         <item quantity="other">%d applications</item>
     </plurals>
     <string name="select_apps">Sélectionnez les applications</string>
@@ -43,15 +45,18 @@
     <string name="group_diff">Diff (%s)</string>
     <plurals name="group_updated">
         <item quantity="one">%s : %d proxys mis à jour</item>
+        <item quantity="many"/>
         <item quantity="other">%s : %d proxys mis à jour</item>
     </plurals>
     <string name="group_no_difference">%s : aucune différence</string>
     <plurals name="group_status_proxies_subscription">
         <item quantity="one">%d proxys | Mis à jour le %s</item>
+        <item quantity="many"/>
         <item quantity="other">%d proxys | Mis à jour le %s</item>
     </plurals>
     <plurals name="group_status_proxies">
         <item quantity="one">%d proxys</item>
+        <item quantity="many"/>
         <item quantity="other">%d proxys</item>
     </plurals>
     <string name="group_status_empty_subscription">Pas encore mis à jour</string>
@@ -187,6 +192,7 @@
     <string name="share">Partager</string>
     <plurals name="removed">
         <item quantity="one">%d élément supprimé</item>
+        <item quantity="many"/>
         <item quantity="other">%d éléments supprimés</item>
     </plurals>
     <string name="ooc_warning">Notice</string>
@@ -198,10 +204,12 @@
     <string name="traffic_stats">Statistiques</string>
     <plurals name="tcp_connections">
         <item quantity="one">%d connexions TCP</item>
+        <item quantity="many"/>
         <item quantity="other">%d connexions TCP</item>
     </plurals>
     <plurals name="udp_connections">
         <item quantity="one">%d connexions UDP</item>
+        <item quantity="many"/>
         <item quantity="other">%d connexions UDP</item>
     </plurals>
     <string name="copy_package_name">Copier le nom du paquet</string>
