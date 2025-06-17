@@ -19,11 +19,9 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.format.DateUtils
-import android.text.format.Formatter
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -40,6 +38,7 @@ import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.SubscriptionType
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProxyGroup
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -47,6 +46,7 @@ import io.nekohasekai.sagernet.databinding.LayoutGroupItemBinding
 import io.nekohasekai.sagernet.fmt.exportBackup
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 import io.nekohasekai.sagernet.widget.QRCodeDialog
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import kotlinx.coroutines.delay
@@ -571,16 +571,16 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             if (subscription != null && (subscription.bytesUsed > 0L || subscription.bytesRemaining > 0L)) {
                 var text = if (subscription.bytesRemaining > 0L) {
                     getString(
-                        R.string.subscription_traffic, Formatter.formatFileSize(
-                            context, subscription.bytesUsed
-                        ), Formatter.formatFileSize(
-                            context, subscription.bytesRemaining
+                        R.string.subscription_traffic, FormatFileSizeCompat.formatFileSize(
+                            context, subscription.bytesUsed, DataStore.useIECUnit
+                        ), FormatFileSizeCompat.formatFileSize(
+                            context, subscription.bytesRemaining, DataStore.useIECUnit
                         )
                     )
                 } else {
                     getString(
-                        R.string.subscription_used, Formatter.formatFileSize(
-                            context, subscription.bytesUsed
+                        R.string.subscription_used, FormatFileSizeCompat.formatFileSize(
+                            context, subscription.bytesUsed, DataStore.useIECUnit
                         )
                     )
                 }

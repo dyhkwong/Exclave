@@ -23,7 +23,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.Formatter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -53,6 +52,7 @@ import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 import io.nekohasekai.sagernet.widget.GroupPreference
 
 class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
@@ -116,7 +116,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
                 configurationList.isVisible = false
                 itemView.isVisible = false
             }
-        };
+        }
     }
 
     lateinit var itemView: LinearLayout
@@ -375,8 +375,8 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
             if (showTraffic) {
                 trafficText.text = itemView.context.getString(
                     R.string.traffic,
-                    Formatter.formatFileSize(itemView.context, tx),
-                    Formatter.formatFileSize(itemView.context, rx)
+                    FormatFileSizeCompat.formatFileSize(itemView.context, tx, DataStore.useIECUnit),
+                    FormatFileSizeCompat.formatFileSize(itemView.context, rx, DataStore.useIECUnit)
                 )
             }
 

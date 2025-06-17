@@ -29,7 +29,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.PowerManager
-import android.text.format.Formatter
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
@@ -44,6 +43,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.getColorAttr
 import io.nekohasekai.sagernet.ui.SwitchActivity
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 import io.nekohasekai.sagernet.utils.Theme
 
 /**
@@ -77,15 +77,15 @@ class ServiceNotification(
                     if (showDirectSpeed) {
                         val speedDetail = (service as Context).getString(
                             R.string.speed_detail, service.getString(
-                                R.string.speed, Formatter.formatFileSize(service, stats.txRateProxy)
+                                R.string.speed, FormatFileSizeCompat.formatFileSize(service, stats.txRateProxy, DataStore.useIECUnit)
                             ), service.getString(
-                                R.string.speed, Formatter.formatFileSize(service, stats.rxRateProxy)
-                            ), service.getString(
-                                R.string.speed,
-                                Formatter.formatFileSize(service, stats.txRateDirect)
+                                R.string.speed, FormatFileSizeCompat.formatFileSize(service, stats.rxRateProxy, DataStore.useIECUnit)
                             ), service.getString(
                                 R.string.speed,
-                                Formatter.formatFileSize(service, stats.rxRateDirect)
+                                FormatFileSizeCompat.formatFileSize(service, stats.txRateDirect, DataStore.useIECUnit)
+                            ), service.getString(
+                                R.string.speed,
+                                FormatFileSizeCompat.formatFileSize(service, stats.rxRateDirect, DataStore.useIECUnit)
                             )
                         )
                         setStyle(NotificationCompat.BigTextStyle().bigText(speedDetail))
@@ -93,9 +93,9 @@ class ServiceNotification(
                     } else {
                         val speedSimple = (service as Context).getString(
                             R.string.traffic, service.getString(
-                                R.string.speed, Formatter.formatFileSize(service, stats.txRateProxy)
+                                R.string.speed, FormatFileSizeCompat.formatFileSize(service, stats.txRateProxy, DataStore.useIECUnit)
                             ), service.getString(
-                                R.string.speed, Formatter.formatFileSize(service, stats.rxRateProxy)
+                                R.string.speed, FormatFileSizeCompat.formatFileSize(service, stats.rxRateProxy, DataStore.useIECUnit)
                             )
                         )
                         setContentText(speedSimple)
@@ -103,8 +103,8 @@ class ServiceNotification(
                     setSubText(
                         service.getString(
                             R.string.traffic,
-                            Formatter.formatFileSize(service, stats.txTotal),
-                            Formatter.formatFileSize(service, stats.rxTotal)
+                            FormatFileSizeCompat.formatFileSize(service, stats.txTotal, DataStore.useIECUnit),
+                            FormatFileSizeCompat.formatFileSize(service, stats.rxTotal, DataStore.useIECUnit)
                         )
                     )
                 }

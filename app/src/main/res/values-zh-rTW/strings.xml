@@ -451,4 +451,15 @@
     <string name="log_level">日誌等級</string>
     <string name="language">語言</string>
     <string name="language_system_default">系統預設</string>
+    <string name="fileSize_byte">B</string>
+    <string name="fileSize_kilobyte">kB</string>
+    <string name="fileSize_megabyte">MB</string>
+    <string name="fileSize_gigabyte">GB</string>
+    <string name="fileSize_terabyte">TB</string>
+    <string name="fileSize_petabyte">PB</string>
+    <string name="fileSize_kibibyte">KiB</string>
+    <string name="fileSize_mebibyte">MiB</string>
+    <string name="fileSize_gibibyte">GiB</string>
+    <string name="fileSize_tebibyte">TiB</string>
+    <string name="fileSize_pebibyte">PiB</string>
 </resources>

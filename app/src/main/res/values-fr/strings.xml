@@ -321,4 +321,15 @@
     <string name="backup_importing">Importation…</string>
     <string name="language">Langue</string>
     <string name="language_system_default">Paramètre système par défaut</string>
+    <string name="fileSize_byte">octet(s)</string>
+    <string name="fileSize_kilobyte">ko</string>
+    <string name="fileSize_megabyte">Mo</string>
+    <string name="fileSize_gigabyte">Go</string>
+    <string name="fileSize_terabyte">To</string>
+    <string name="fileSize_petabyte">Po</string>
+    <string name="fileSize_kibibyte">Kio</string>
+    <string name="fileSize_mebibyte">Mio</string>
+    <string name="fileSize_gibibyte">Gio</string>
+    <string name="fileSize_tebibyte">Tio</string>
+    <string name="fileSize_pebibyte">Pio</string>
 </resources>

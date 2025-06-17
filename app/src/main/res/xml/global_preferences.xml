@@ -409,7 +409,11 @@
             app:key="fabStyle"
             app:title="@string/fab_style"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_shutter_speed_24"
+            app:key="useIECUnit"
+            app:summary="@string/use_iec_unit_sum"
+            app:title="@string/use_iec_unit" />
     </PreferenceCategory>
-
 
 </PreferenceScreen>

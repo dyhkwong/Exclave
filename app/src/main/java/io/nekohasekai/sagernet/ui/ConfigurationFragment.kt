@@ -79,6 +79,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.zip.ZipInputStream
 import kotlin.concurrent.timerTask
 import androidx.core.net.toUri
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false, val selectedItem: ProxyEntity? = null, val titleRes: Int = 0
@@ -1609,8 +1610,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (showTraffic) {
                     trafficText.text = view.context.getString(
                         R.string.traffic,
-                        Formatter.formatFileSize(view.context, tx),
-                        Formatter.formatFileSize(view.context, rx)
+                        FormatFileSizeCompat.formatFileSize(view.context, tx, DataStore.useIECUnit),
+                        FormatFileSizeCompat.formatFileSize(view.context, rx, DataStore.useIECUnit)
                     )
                 }
 

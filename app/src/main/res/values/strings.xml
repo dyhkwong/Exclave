@@ -591,4 +591,18 @@
     <string name="anytls_idle_session_check_interval">Idle session check interval (s)</string>
     <string name="anytls_idle_session_timeout">Idle session timeout (s)</string>
     <string name="anytls_min_idle_session">Minimal idle sessions</string>
+    <string name="fileSizeSuffix" translatable="false">%1$s %2$s</string>
+    <string name="use_iec_unit">Use binary prefixes</string>
+    <string name="use_iec_unit_sum">Use binary prefixes (1 KiB = 1024 bytes) rather than decimal prefixes (1 kB = 1000 bytes).</string>
+    <string name="fileSize_byte">B</string>
+    <string name="fileSize_kilobyte">kB</string>
+    <string name="fileSize_megabyte">MB</string>
+    <string name="fileSize_gigabyte">GB</string>
+    <string name="fileSize_terabyte">TB</string>
+    <string name="fileSize_petabyte">PB</string>
+    <string name="fileSize_kibibyte">KiB</string>
+    <string name="fileSize_mebibyte">MiB</string>
+    <string name="fileSize_gibibyte">GiB</string>
+    <string name="fileSize_tebibyte">TiB</string>
+    <string name="fileSize_pebibyte">PiB</string>
 </resources>

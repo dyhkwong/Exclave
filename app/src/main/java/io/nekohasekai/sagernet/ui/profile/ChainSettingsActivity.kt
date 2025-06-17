@@ -23,7 +23,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.Formatter
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -49,6 +48,7 @@ import io.nekohasekai.sagernet.databinding.LayoutProfileBinding
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.ProfileSelectActivity
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 
 class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout_chain_settings) {
 
@@ -327,8 +327,8 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
             if (showTraffic) {
                 trafficText.text = itemView.context.getString(
                     R.string.traffic,
-                    Formatter.formatFileSize(itemView.context, tx),
-                    Formatter.formatFileSize(itemView.context, rx)
+                    FormatFileSizeCompat.formatFileSize(itemView.context, tx, DataStore.useIECUnit),
+                    FormatFileSizeCompat.formatFileSize(itemView.context, rx, DataStore.useIECUnit)
                 )
             }
 

@@ -414,4 +414,15 @@
     <string name="group_filter_owners_nf">لا يوجد مالكون في هذا الاشتراك</string>
     <string name="language">اللغة</string>
     <string name="language_system_default">الإعداد التلقائي للنظام</string>
+    <string name="fileSize_byte">بايت</string>
+    <string name="fileSize_kilobyte">كيلوبايت</string>
+    <string name="fileSize_megabyte">ميجابايت</string>
+    <string name="fileSize_gigabyte">جيجابايت</string>
+    <string name="fileSize_terabyte">تيرابايت</string>
+    <string name="fileSize_petabyte">بيتابايت</string>
+    <string name="fileSize_kibibyte">كيبيبايت</string>
+    <string name="fileSize_mebibyte">ميبيبايت</string>
+    <string name="fileSize_gibibyte">جيبيبايت</string>
+    <string name="fileSize_tebibyte">تيبيبايت</string>
+    <string name="fileSize_pebibyte">بيبيبايت</string>
 </resources>

@@ -387,4 +387,15 @@
 \nBunu kullanmanız gerekiyorsa, sorunlarınızı çözüp çözmediğini görmek için önce N=2 değerini deneyin. Burada 4\'ten fazla bağlantı kullanmamanızı şiddetle tavsiye ederiz.</string>
     <string name="language">Dil</string>
     <string name="language_system_default">Sistem varsayılanı</string>
+    <string name="fileSize_byte">B</string>
+    <string name="fileSize_kilobyte">KB</string>
+    <string name="fileSize_megabyte">MB</string>
+    <string name="fileSize_gigabyte">GB</string>
+    <string name="fileSize_terabyte">TB</string>
+    <string name="fileSize_petabyte">PB</string>
+    <string name="fileSize_kibibyte">KiB</string>
+    <string name="fileSize_mebibyte">MiB</string>
+    <string name="fileSize_gibibyte">GiB</string>
+    <string name="fileSize_tebibyte">TiB</string>
+    <string name="fileSize_pebibyte">PiB</string>
 </resources>

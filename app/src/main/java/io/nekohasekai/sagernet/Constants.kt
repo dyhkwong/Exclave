@@ -108,6 +108,7 @@ object Key {
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
     const val STUN_SERVERS = "stunServers"
     const val FAB_STYLE = "fabStyle"
+    const val USE_IEC_UNIT = "useIECUnit"
 
     const val ENABLE_FRAGMENT = "enableFragment"
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"

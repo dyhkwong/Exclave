@@ -23,7 +23,6 @@ package io.nekohasekai.sagernet.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.text.format.Formatter
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
@@ -36,6 +35,7 @@ import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.MainActivity
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 
 class StatsBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -111,12 +111,12 @@ class StatsBar @JvmOverloads constructor(
     fun updateTraffic(txRate: Long, rxRate: Long) {
         txText.text = "▲  ${
             context.getString(
-                R.string.speed, Formatter.formatFileSize(context, txRate)
+                R.string.speed, FormatFileSizeCompat.formatFileSize(context, txRate, DataStore.useIECUnit)
             )
         }"
         rxText.text = "▼  ${
             context.getString(
-                R.string.speed, Formatter.formatFileSize(context, rxRate)
+                R.string.speed, FormatFileSizeCompat.formatFileSize(context, rxRate, DataStore.useIECUnit)
             )
         }"
     }

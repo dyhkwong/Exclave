@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
-import android.text.format.Formatter
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -39,6 +38,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.databinding.LayoutTrafficItemBinding
 import io.nekohasekai.sagernet.databinding.LayoutTrafficListBinding
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 import io.nekohasekai.sagernet.utils.PackageCache
 
 class StatsFragment : Fragment(R.layout.layout_traffic_list) {
@@ -207,11 +207,11 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
             )
             binding.trafficUplink.text = getString(
                 R.string.traffic_uplink_total,
-                Formatter.formatFileSize(requireContext(), stats.uplinkTotal),
+                FormatFileSizeCompat.formatFileSize(requireContext(), stats.uplinkTotal, DataStore.useIECUnit),
             )
             binding.trafficDownlink.text = getString(
                 R.string.traffic_downlink_total,
-                Formatter.formatFileSize(requireContext(), stats.downlinkTotal),
+                FormatFileSizeCompat.formatFileSize(requireContext(), stats.downlinkTotal, DataStore.useIECUnit),
             )
             val info = PackageCache.installedApps[packageName]
             if (info != null) runOnDefaultDispatcher {

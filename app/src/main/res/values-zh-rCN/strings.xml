@@ -556,4 +556,17 @@
     <string name="anytls_idle_session_check_interval">空闲会话检查间隔（秒）</string>
     <string name="anytls_idle_session_timeout">空闲会话超时（秒）</string>
     <string name="anytls_min_idle_session">最小空闲会话数</string>
+    <string name="use_iec_unit">使用二进制词头</string>
+    <string name="use_iec_unit_sum">使用二进制词头（1 KiB = 1024 字节）而不是十进制词头（1 kB = 1000 字节）。</string>
+    <string name="fileSize_byte">B</string>
+    <string name="fileSize_kilobyte">kB</string>
+    <string name="fileSize_megabyte">MB</string>
+    <string name="fileSize_gigabyte">GB</string>
+    <string name="fileSize_terabyte">TB</string>
+    <string name="fileSize_petabyte">PB</string>
+    <string name="fileSize_kibibyte">KiB</string>
+    <string name="fileSize_mebibyte">MiB</string>
+    <string name="fileSize_gibibyte">GiB</string>
+    <string name="fileSize_tebibyte">TiB</string>
+    <string name="fileSize_pebibyte">PiB</string>
 </resources>

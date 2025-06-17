@@ -571,4 +571,15 @@
     <string name="anytls_idle_session_check_interval">Интервал проверки неадекватных сессий</string>
     <string name="anytls_idle_session_timeout">Таймаут неактивной сессии</string>
     <string name="anytls_min_idle_session">Минимальное количество неактивных сессий</string>
+    <string name="fileSize_byte">Б</string>
+    <string name="fileSize_kilobyte">кБ</string>
+    <string name="fileSize_megabyte">МБ</string>
+    <string name="fileSize_gigabyte">ГБ</string>
+    <string name="fileSize_terabyte">ТБ</string>
+    <string name="fileSize_petabyte">ПБ</string>
+    <string name="fileSize_kibibyte">КиБ</string>
+    <string name="fileSize_mebibyte">МиБ</string>
+    <string name="fileSize_gibibyte">ГиБ</string>
+    <string name="fileSize_tebibyte">ТиБ</string>
+    <string name="fileSize_pebibyte">ПиБ</string>
 </resources>

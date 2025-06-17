@@ -134,6 +134,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var acquireWakeLock by configurationStore.boolean(Key.ACQUIRE_WAKE_LOCK)
     var stunServers by configurationStore.string(Key.STUN_SERVERS)
     var fabStyle by configurationStore.stringToInt(Key.FAB_STYLE)
+    var useIECUnit by configurationStore.boolean(Key.USE_IEC_UNIT)
 
     var enableFragment by configurationStore.boolean(Key.ENABLE_FRAGMENT)
     var enableFragmentForDirect by configurationStore.boolean(Key.ENABLE_FRAGMENT_FOR_DIRECT)
