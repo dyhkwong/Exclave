@@ -308,6 +308,9 @@ fun buildV2RayConfig(
                 // dns
                 "1" to PolicyObject.LevelPolicyObject().apply {
                     connIdle = 30
+                },
+                "0" to PolicyObject.LevelPolicyObject().apply {
+                    connIdle = 3600
                 })
 
             if (trafficStatistics) {
@@ -638,6 +641,7 @@ fun buildV2RayConfig(
                                                     address = bean.serverAddress
                                                     port = bean.serverPort
                                                     password = bean.password
+                                                    level = 0
                                                 })
                                         })
                                 } else if (bean is ShadowsocksBean) {
