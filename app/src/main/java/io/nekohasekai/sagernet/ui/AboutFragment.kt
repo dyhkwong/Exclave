@@ -50,6 +50,7 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.snackbar
 import io.nekohasekai.sagernet.plugin.PluginManager
 import libcore.Libcore
 
@@ -130,6 +131,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                         }
                         .setOnLongClickAction {
                             DataStore.enableDebug = !DataStore.enableDebug
+                            snackbar(if (DataStore.enableDebug) "developer mode enabled" else "developer mode disabled").show()
                         }
                         .build())
                     .addItem(MaterialAboutActionItem.Builder()
