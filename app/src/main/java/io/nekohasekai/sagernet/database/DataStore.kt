@@ -133,7 +133,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var allowAppsBypassVpn by configurationStore.boolean(Key.ALLOW_APPS_BYPASS_VPN)
     var acquireWakeLock by configurationStore.boolean(Key.ACQUIRE_WAKE_LOCK)
     var stunServers by configurationStore.string(Key.STUN_SERVERS)
-    var fabStyle by configurationStore.stringToInt(Key.FAB_STYLE)
+    var fabStyle by configurationStore.stringToInt(Key.FAB_STYLE) { 1 }
     var useIECUnit by configurationStore.boolean(Key.USE_IEC_UNIT)
 
     var enableFragment by configurationStore.boolean(Key.ENABLE_FRAGMENT)
