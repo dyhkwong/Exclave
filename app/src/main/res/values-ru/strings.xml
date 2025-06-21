@@ -13,7 +13,7 @@
     <string name="dns_hosts">Перезапись домена</string>
     <string name="fakedns_message">Может вызвать необходимость перезапуска других приложений для повторного подключения к сети после остановки прокси</string>
     <string name="enable_fakedns">Включить FakeDNS</string>
-    <string name="dns_routing_message">Разрешение доменов в обходных маршрутах с помощью Direct DNS. Помните о потенциальных утечках DNS.</string>
+    <string name="dns_routing_message">Разрешение доменов в обходных маршрутах с помощью Direct DNS</string>
     <string name="enable_dns_routing">Включить маршрутизацию DNS</string>
     <string name="direct_dns">Прямой DNS</string>
     <string name="remote_dns">Удаленный DNS</string>
@@ -109,7 +109,6 @@
         <item quantity="many">%d элементов удалено</item>
         <item quantity="other">%d элементов удалено</item>
     </plurals>
-    <string name="mux_sum">Mux разработан для уменьшения задержки рукопожатия TCP, а не для увеличения пропускной способности соединения. Использование Mux для просмотра видео, загрузки или проверки скорости, как правило, контрпродуктивно.</string>
     <plurals name="apps_message">
         <item quantity="one">%d приложений</item>
         <item quantity="few">%d приложений</item>
@@ -157,8 +156,6 @@
     <string name="group_settings">Настройки группы</string>
     <string name="group_basic">Базовая</string>
     <string name="protocol_settings">Настройки протокола</string>
-    <string name="bypass_lan_in_core_only_sum">Если в LineageOS не работает функция \"Разрешить клиентам точки доступа использовать VPN\", попробуйте включить эту настройку.</string>
-    <string name="bypass_lan_in_core_only">Обход LAN только в ядре</string>
     <string name="append_http_proxy_sum">HTTP-прокси будет использоваться напрямую из (браузера / некоторых поддерживаемых приложений), без использования виртуального сетевого интерфейса (Android 10+)</string>
     <string name="append_http_proxy">Добавить HTTP-прокси к VPN</string>
     <string name="connection_test_timeout">Тайм-аут</string>
@@ -171,7 +168,6 @@
     <string name="always_show_address_sum">Отображать адреса серверов в списке профилей</string>
     <string name="always_show_address">Всегда показывать адрес</string>
     <string name="unavailable">Недоступно</string>
-    <string name="standard">Стандарт</string>
     <string name="available">%d мс</string>
     <string name="probe_interval">Интервал наблюдения балансировщика (с)</string>
     <string name="random">Случайно</string>
@@ -195,7 +191,6 @@
     <string name="ss_cat">Настройки Shadowsocks</string>
     <string name="proxy_cat">Настройки сервера</string>
     <string name="plugin_auto_connect_unlock_only">Этот плагин может не работать с автоподключением</string>
-    <string name="plugin_untrusted">Предупреждение: плагин из ненадежного источника.</string>
     <string name="plugin_unknown">Неизвестный плагин %s</string>
     <string name="plugin_disabled">Отключено</string>
     <string name="plugin_configure">Настроить…</string>
@@ -301,8 +296,6 @@
     <string name="menu_route">Маршруты</string>
     <string name="metered_summary">Подсказывать системе, что VPN следует рассматривать как сеть с лимитным тарифным планом</string>
     <string name="metered">Подсказка о соединении с лимитным тарифным планом</string>
-    <string name="only">Только</string>
-    <string name="prefer">Предпочитать</string>
     <string name="ipv6">Маршрут IPv6</string>
     <string name="edit_config">Изменить конфигурацию</string>
     <string name="config_type">Тип конфигурации</string>
@@ -391,7 +384,6 @@
     <string name="enable_pcap">Включить PCAP</string>
     <string name="pcap_summary">Сохранять трафик в файл .pcap</string>
     <string name="destination_override">Переопределять адрес назначения</string>
-    <string name="resolve_destination_summary">Если адрес назначения является доменом, то он передается в соответствии со стратегией IPv6</string>
     <string name="destination_override_summary">Использовать перехваченный домен для переопределения адреса назначения, а не только для маршрутизации</string>
     <string name="pcap_notice">Pcap файлы будут сохранены в %s</string>
     <string name="route_play_store">Использовать сохранённое правило для %s</string>
@@ -458,7 +450,6 @@
     <string name="tuic_zero_rtt_handshake">0-RTT квитирование</string>
     <string name="reality_public_key">REALITY public key</string>
     <string name="reality_short_id">REALITY Short ID</string>
-    <string name="reality_spider_x">REALITY SpiderX</string>
     <string name="reality_fingerprint">REALITY uTLS отпечаток</string>
     <string name="wireguard_reserved">Резервный</string>
     <string name="brook_udp_over_stream">UDP через поток</string>

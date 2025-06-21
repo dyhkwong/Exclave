@@ -90,7 +90,7 @@
     <string name="dns_hosts">إعادة كتابة المجال</string>
     <string name="fakedns_message">قد يتسبب في الحاجة إلى إعادة تشغيل التطبيقات الأخرى لإعادة الاتصال بالشبكة بعد توقف البروکسی</string>
     <string name="enable_fakedns">تفعيل DNS وهمي</string>
-    <string name="dns_routing_message">حل المجالات في مسارات الالتفاف باستخدام Direct DNS. كن على علم بتسريبات DNS المحتملة</string>
+    <string name="dns_routing_message">حل المجالات في مسارات الالتفاف باستخدام Direct DNS</string>
     <string name="enable_dns_routing">تمكين توجيه DNS</string>
     <string name="direct_dns">DNS المباشر</string>
     <string name="remote_dns">DNS البعيد</string>
@@ -144,8 +144,6 @@
     <string name="menu_route">طريق</string>
     <string name="metered_summary">نظام تلميح لمعاملة VPN على أنها محسوبة</string>
     <string name="metered">تلميح مقنن</string>
-    <string name="only">فقط</string>
-    <string name="prefer">يفضل</string>
     <string name="ipv6">مسار IPv6</string>
     <string name="edit_config">تحرير التكوين</string>
     <string name="config_type">نوع التكوين</string>
@@ -209,7 +207,6 @@
     <string name="off">عن</string>
     <string name="proxied_apps_summary">تكوين وضع VPN للتطبيقات المحددة</string>
     <string name="proxied_apps">وضع تطبيقات VPN</string>
-    <string name="mux_sum">تم تصميم Mux لتقليل زمن انتقال مصافحة TCP، وليس لزيادة إنتاجية الاتصال. عادةً ما يؤدي استخدام Mux لمشاهدة مقاطع الفيديو أو التنزيل أو اختبار السرعة إلى نتائج عكسية</string>
     <string name="mux_concurrency">اتصالات مسك المتزامنة</string>
     <string name="enable_mux">تمكين المضاعف</string>
     <string name="traffic_sniffing">تمكين استنشاق حركة المرور</string>
@@ -270,8 +267,6 @@
     <string name="group_settings">إعدادات المجموعة</string>
     <string name="group_basic">أساسي</string>
     <string name="protocol_settings">إعدادات البروتوكول</string>
-    <string name="bypass_lan_in_core_only_sum">إذا لم يعمل Lineage\'s السماح لعملاء نقطة الاتصال باستخدام شبكات VPN، فجرّب ذلك.</string>
-    <string name="bypass_lan_in_core_only">تجاوز LAN في النواة فقط</string>
     <string name="append_http_proxy_sum">سيتم استخدام بروکسی HTTP مباشرة من (المتصفح/ بعض التطبيقات المدعومة)، دون المرور عبر جهاز NIC الافتراضي (Android 10+)</string>
     <string name="append_http_proxy">إلحاق بروکسی HTTP ب VPN</string>
     <string name="connection_test_timeout">نفذ الوقت</string>
@@ -284,7 +279,6 @@
     <string name="always_show_address_sum">اعرض دائمًا عنوان الخادم على بطاقة التكوين</string>
     <string name="always_show_address">اعرض العنوان دائمًا</string>
     <string name="unavailable">غير متوفره</string>
-    <string name="standard">معيار</string>
     <string name="probe_interval">الفاصل الزمني لرصد الموازن</string>
     <string name="random">عشوائي</string>
     <string name="list">قائمة</string>
@@ -309,7 +303,6 @@
     <string name="ss_cat">إعدادات Shadowsocks</string>
     <string name="proxy_cat">اعدادات الخادم</string>
     <string name="plugin_auto_connect_unlock_only">قد لا يعمل هذا المكون الإضافي مع الاتصال التلقائي</string>
-    <string name="plugin_untrusted">تحذير: يبدو أن هذا المكون الإضافي لا يأتي من مصدر موثوق ومعروف.</string>
     <string name="plugin_unknown">مكون إضافي غير معروف %s</string>
     <string name="plugin_disabled">غير مفعّل</string>
     <string name="plugin_configure">تهيئة…</string>

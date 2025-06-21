@@ -23,7 +23,7 @@
     <string name="dns_hosts">Tulis ulang DNS</string>
     <string name="fakedns_message">Dapat menyebabkan aplikasi lain harus dimulai ulang untuk menyambung kembali ke jaringan setelah proksi dihentikan</string>
     <string name="enable_fakedns">Aktifkan FakeDNS</string>
-    <string name="dns_routing_message">Selesaikan domain di rute bypass dengan Direct DNS. Waspadai potensi kebocoran DNS</string>
+    <string name="dns_routing_message">Selesaikan domain di rute bypass dengan Direct DNS</string>
     <string name="enable_dns_routing">Aktifkan DNS Routing</string>
     <string name="direct_dns">Direk DNS</string>
     <string name="remote_dns">Remot DNS</string>
@@ -129,8 +129,6 @@
     <string name="route_block">Blokir</string>
     <string name="route_bypass">Bypass</string>
     <string name="route_proxy">Proksi</string>
-    <string name="only">Hanya</string>
-    <string name="prefer">Lebih menyukai</string>
     <string name="ipv6">Rute IPv6</string>
     <string name="edit_config">Sunting Konfigurasi</string>
     <string name="certificates">Sertifikat</string>
@@ -159,7 +157,6 @@
     <string name="proxied_apps_summary">Konfigurasikan mode VPN untuk aplikasi yang dipilih</string>
     <string name="proxied_apps">Modus aplikasi VPN</string>
     <string name="mux_concurrency">Koneksi Mux Concurrent</string>
-    <string name="mux_sum">Mux dirancang untuk mengurangi latensi handshake TCP, bukan untuk meningkatkan throughput koneksi. Menggunakan Mux untuk menonton video, mengunduh, atau uji kecepatan biasanya kontra produktif</string>
     <string name="domain_strategy">Strategi Resolusi Domain</string>
     <string name="route_opt_bypass_lan">Lewati LAN</string>
     <string name="route_not_asset">Bukan file aset: kecuali .dat, tapi %s</string>
@@ -196,7 +193,6 @@
     <string name="ignore_battery_optimizations">Abaikan Pengoptimalan Baterai</string>
     <string name="ignore_battery_optimizations_sum">Hapus beberapa larangan</string>
     <string name="plugin_disabled">Dimatikan</string>
-    <string name="plugin_untrusted">Peringatan : Plugin ini sepertinya tidak berasal dari sumber tepercaya.</string>
     <string name="plugin_configure">Atur…</string>
     <string name="plugin_unknown">plugin tidak ada %s</string>
     <string name="circular_reference_sum">Rute tidak dapat berisi dirinya sendiri.</string>
@@ -211,7 +207,6 @@
     <string name="update_when_connected_only">Perbarui hanya saat terhubung</string>
     <string name="add_profile_methods_manual_settings">Pengaturan Manual</string>
     <string name="action_export_msg">Ekspor berhasil!</string>
-    <string name="standard">Standar</string>
     <string name="probe_interval">Interval pengamatan pengimbang</string>
     <string name="delete_confirm_prompt">Anda yakin ingin menghapus profil ini\?</string>
     <string name="action_export">Ekspor</string>
@@ -283,8 +278,6 @@
     <string name="clear_traffic_statistics">Bersihkan statistik lalu lintas</string>
     <string name="connection_test_clear_results">Bersihkan hasil tes</string>
     <string name="connection_test_unreachable">Tidak terjangkau</string>
-    <string name="bypass_lan_in_core_only">Lewati LAN hanya di Core saja</string>
-    <string name="bypass_lan_in_core_only_sum">Jika fitur Izinkan klien hotspot untuk menggunakan VPN milik Lineage tidak berfungsi, coba ini.</string>
     <string name="protocol_settings">Pengaturan Protokol</string>
     <string name="subscription">Langganan</string>
     <string name="subscription_settings">Pengaturan Langganan</string>
@@ -413,7 +406,6 @@
     <string name="app_statistics_disabled">Statistik Lalu Lintas Aplikasi dinonaktifkan</string>
     <string name="resolve_destination">Memecahkan(Resolve) Tujuan</string>
     <string name="enable_pcap">Aktifkan Pcap</string>
-    <string name="resolve_destination_summary">Jika alamat tujuan adalah domain, maka alamat tersebut akan diteruskan berdasarkan strategi IPv6.</string>
     <string name="naive_insecure_concurrency">Konkurensi Tidak Aman</string>
     <string name="pcap_summary">Simpan lalu lintas ke file .pcap</string>
     <string name="pcap_notice">File Pcap akan disimpan ke %s</string>

@@ -110,7 +110,6 @@
     <string name="always_show_address">Toujours afficher l\'adresse</string>
     <string name="undo">Annuler</string>
     <string name="enable">Activer</string>
-    <string name="standard">Standard</string>
     <string name="unavailable">Non disponible</string>
     <string name="group_basic">Basique</string>
     <string name="raw">Brut</string>
@@ -130,7 +129,7 @@
     <string name="plugin_disabled">Désactivé</string>
     <string name="connection_test_testing">Essai…</string>
     <string name="action_export_clipboard">Exporter dans le presse-papiers</string>
-    <string name="dns_routing_message">Résoler les domaines dans les routes de contournement avec DNS Direct. Soyez conscient des fuites DNS potentielles</string>
+    <string name="dns_routing_message">Résoler les domaines dans les routes de contournement avec DNS Direct</string>
     <string name="menu_traffic">Trafic</string>
     <string name="connection_test_error">Échec : %s</string>
     <string name="menu_route">Route</string>
@@ -177,7 +176,6 @@
     <string name="certificates">Certificats</string>
     <string name="edit_config">Modifier la configuration</string>
     <string name="ipv6">Route IPv6</string>
-    <string name="prefer">Préférer</string>
     <string name="route_proxy">Proxy</string>
     <string name="route_add">Créer une route</string>
     <string name="route_name">Nom de la route</string>
@@ -223,7 +221,6 @@
     <string name="network">Réseau</string>
     <string name="disable">Désactiver</string>
     <string name="route_asset_no_update">Aucune mise à jour</string>
-    <string name="only">Seulement</string>
     <string name="route_rules_official">Officiel</string>
     <string name="connecting">Connexion…</string>
     <string name="plugin_configure">Configurer…</string>

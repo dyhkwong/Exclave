@@ -78,7 +78,7 @@
     <string name="remote_dns">Remote DNS</string>
     <string name="direct_dns">Direct DNS</string>
     <string name="enable_dns_routing">Enable DNS routing</string>
-    <string name="dns_routing_message">Resolve domains in bypass routes with Direct DNS. Be aware of potential DNS leaks.</string>
+    <string name="dns_routing_message">Resolve domains in bypass routes with direct DNS</string>
     <string name="enable_fakedns">Enable fake DNS</string>
     <string name="fakedns_message">May cause other applications to need to be restarted to reconnect to the network after the proxy is disconnected</string>
     <string name="hijack_dns">Hijack DNS</string>
@@ -125,8 +125,6 @@
     <string name="edit_config">Edit Config</string>
     <!-- feature category -->
     <string name="ipv6">IPv6 route</string>
-    <string name="prefer">Prefer</string>
-    <string name="only">Only</string>
     <string name="metered">Metered Hint</string>
     <string name="metered_summary">Hint system to treat VPN as metered</string>
     <string name="menu_route">Route</string>
@@ -157,10 +155,9 @@
     <string name="domain_strategy">Domain strategy</string>
     <string name="traffic_sniffing">Enable sniffing</string>
     <string name="enable_mux">Enable Mux</string>
-    <string name="mux_sum">Mux is designed to reduce TCP handshake latency, not to increase connection throughput. Using Mux to watch videos, and is usually counterproductive for watching videos, downloading, or speed testing.</string>
     <string name="mux_concurrency">Mux concurrent Connections</string>
     <string name="proxied_apps">Per-app VPN</string>
-    <string name="proxied_apps_summary">Configure VPN mode for selected apps</string>
+    <string name="proxied_apps_summary">Exclude selected apps from VPN or include selected apps in VPN</string>
     <string name="off">Off</string>
     <string name="search_apps">Search…</string>
     <string name="scanning">Scanning…</string>
@@ -169,7 +166,7 @@
     <string name="bypass_apps">Bypass</string>
     <string name="show_system_apps">Show system apps</string>
     <string name="auto_connect">Auto connect</string>
-    <string name="auto_connect_summary">Enable proxy on startup/app update if it was running before</string>
+    <string name="auto_connect_summary">Restore the previous connection status after device boot or app update</string>
     <!-- notification category -->
     <string name="service_vpn">VPN Service</string>
     <string name="service_proxy">Proxy Service</string>
@@ -272,7 +269,6 @@
     <string name="plugin_configure">Configure…</string>
     <string name="plugin_disabled">Disabled</string>
     <string name="plugin_unknown">Unknown plugin: %s</string>
-    <string name="plugin_untrusted">Warning: This plugin does not seem to come from a known trusted source.</string>
     <string name="plugin_auto_connect_unlock_only">This plugin might not work with auto-connect</string>
     <string name="proxy_cat">Server settings</string>
     <string name="ss_cat">Shadowsocks settings</string>
@@ -293,7 +289,6 @@
     <string name="list">List</string>
     <string name="random">Random</string>
     <string name="probe_interval">Balancer observation interval (s)</string>
-    <string name="standard">Standard</string>
     <string name="available">%d ms</string>
     <string name="unavailable">Unavailable</string>
     <string name="always_show_address">Always show address</string>
@@ -307,9 +302,7 @@
     <string name="connection_test_unreachable">Unreachable</string>
     <string name="connection_test_timeout">Timeout</string>
     <string name="append_http_proxy">Append HTTP proxy to VPN</string>
-    <string name="append_http_proxy_sum">HTTP proxy will be used directly by browsers/some supported apps, without going through the virtual NIC device (Android 10+)</string>
-    <string name="bypass_lan_in_core_only">Bypass private addresses in core only</string>
-    <string name="bypass_lan_in_core_only_sum">Try this if LineageOS\'s \"Allow clients to use VPNs\" does not work.</string>
+    <string name="append_http_proxy_sum">Some supported apps will use HTTP proxy directly and their traffic will not go through the VPN interface.</string>
     <string name="protocol_settings">Protocol settings</string>
     <string name="group_basic">Basic</string>
     <string name="group_settings">Group settings</string>
@@ -423,11 +416,10 @@
     <string name="wireguard_local_address">Local address</string>
     <string name="wireguard_public_key">Peer public key</string>
     <string name="wireguard_psk">Peer pre-shared key</string>
-    <string name="tun_implementation">TUN implementation</string>
+    <string name="tun_implementation">TCP/IP stack</string>
     <string name="destination_override">Override destination</string>
-    <string name="destination_override_summary">Use the sniffed domain name to override the destination address, not just for routing</string>
+    <string name="destination_override_summary">Override the destination address with the sniffed domain name, not for routing only</string>
     <string name="resolve_destination">Resolve destination</string>
-    <string name="resolve_destination_summary">If the destination address is a domain name, resolve it to an IP address according to IPv6 strategy</string>
     <string name="pcap" translatable="false">PCAP</string>
     <string name="enable_pcap">Enable PCAP</string>
     <string name="pcap_summary">Save traffic to .pcap file</string>
@@ -488,7 +480,6 @@
     <string name="tuic_zero_rtt_handshake">0-RTT handshake</string>
     <string name="reality_public_key">REALITY public key</string>
     <string name="reality_short_id">REALITY Short ID</string>
-    <string name="reality_spider_x">REALITY SpiderX</string>
     <string name="reality_fingerprint">REALITY uTLS fingerprint</string>
     <string name="wireguard_reserved">Reserved</string>
     <string name="shadowsocks_2022_implementation">Shadowsocks 2022 implementation</string>
@@ -542,7 +533,7 @@
     <string name="resolve_destination_for_direct">Resolve destination (direct)</string>
     <string name="edns_client_ip">EDNS client IP</string>
     <string name="allow_apps_bypass_vpn">Allow apps to bypass VPN</string>
-    <string name="allow_apps_bypass_vpn_sum">Allow to use methods such as bindProcessToNetwork to bypass VPN.</string>
+    <string name="allow_apps_bypass_vpn_sum">Allow apps to bypass VPN using system-provided methods on their own</string>
     <string name="update_all_subscriptions">Update all subscriptions</string>
     <string name="cag_splithttp">XHTTP settings</string>
     <string name="ech_config">ECH Config</string>
@@ -605,4 +596,13 @@
     <string name="fileSize_gibibyte">GiB</string>
     <string name="fileSize_tebibyte">TiB</string>
     <string name="fileSize_pebibyte">PiB</string>
+    <string name="enable_vpn_interface_ipv6_address_sum">Add IPv6 address to VPN interface</string>
+    <string name="bypass_private_sum">Exclude private addresses from VPN</string>
+    <string name="sniffing_sum">Sniff domain name from HTTP Host, TLS SNI and QUIC SNI and sniff protocol type</string>
+    <string name="hosts_sum">Resolve the specified domain name to the specified IP address</string>
+    <string name="domain_strategy_ipv4_only">IPv4 only</string>
+    <string name="domain_strategy_prefer_ipv4">Prefer IPv4</string>
+    <string name="domain_strategy_ipv4_and_ipv6">IPv4 and IPv6</string>
+    <string name="domain_strategy_prefer_ipv6">Prefer IPv6</string>
+    <string name="domain_strategy_ipv6_only">IPv6 only</string>
 </resources>

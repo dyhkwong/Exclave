@@ -39,8 +39,6 @@
     <string name="route_reset">Tilbakestill</string>
     <string name="route_profile">Velg profil …</string>
     <string name="route_proxy">Mellomtjener</string>
-    <string name="only">Kun</string>
-    <string name="prefer">Foretrekk</string>
     <string name="edit_config">Rediger oppsett</string>
     <string name="extra_headers">Ekstra hoder</string>
     <string name="http_path">HTTP-sti</string>
@@ -136,8 +134,6 @@
     <string name="group_settings">Gruppeinnstillinger</string>
     <string name="group_basic">Grunnleggende</string>
     <string name="protocol_settings">Protokollinnstillinger</string>
-    <string name="bypass_lan_in_core_only_sum">Hvis Lineage\'s Tillat hotspot -klienter å bruke VPN -er ikke fungerer, kan du prøve dette.</string>
-    <string name="bypass_lan_in_core_only">Omgå LAN i Core bare</string>
     <string name="append_http_proxy_sum">HTTP -proxy brukes direkte fra (nettleser/ noen støttede apper), uten å gå gjennom den virtuelle NIC -enheten (Android 10+)</string>
     <string name="append_http_proxy">Legg til HTTP -proxy til VPN</string>
     <string name="connection_test_unreachable">Uoppnåelig</string>
@@ -161,7 +157,6 @@
     <string name="unsaved_changes_prompt">Endringene er ikke lagret. Vil du spare\?</string>
     <string name="ss_cat">Innstillinger for Shadowsocks</string>
     <string name="plugin_auto_connect_unlock_only">Denne pluginen fungerer kanskje ikke med Auto Connect</string>
-    <string name="plugin_untrusted">Advarsel: Det ser ikke ut til at denne pluginen kommer fra en kjent klarert kilde.</string>
     <string name="plugin_unknown">Ukjent plugin %s</string>
     <string name="plugin_disabled">Funksjonshemmet</string>
     <string name="plugin">Plugg inn</string>
@@ -208,7 +203,6 @@
     <string name="proxied_apps_summary">Konfigurer VPN -modus for utvalgte apper</string>
     <string name="proxied_apps">Apper VPN -modus</string>
     <string name="mux_concurrency">Mux samtidige tilkoblinger</string>
-    <string name="mux_sum">Mux er designet for å redusere ventetid for TCP -håndtrykk, ikke for å øke tilkoblingsmengden. Å bruke Mux til å se på videoer, nedlasting eller hastighetstest er vanligvis kontraproduktivt</string>
     <string name="enable_mux">Aktiver Multiplexer</string>
     <string name="traffic_sniffing">Aktiver trafikksniff</string>
     <string name="domain_strategy">Domeneløsningsstrategi</string>
@@ -265,7 +259,7 @@
     <string name="dns_hosts">Omskriving av domenet</string>
     <string name="fakedns_message">Kan føre til at andre applikasjoner må startes på nytt for å koble til nettverket igjen etter at proxy er stoppet</string>
     <string name="enable_fakedns">Aktiver FakeDNS</string>
-    <string name="dns_routing_message">Løs domener i bypass -ruter med direkte DNS. Vær oppmerksom på potensielle DNS lekkasjer</string>
+    <string name="dns_routing_message">Løs domener i bypass -ruter med direkte DNS</string>
     <string name="enable_dns_routing">Aktiver DNS -ruting</string>
     <string name="direct_dns">Direkte DNS</string>
     <string name="remote_dns">Ekstern DNS</string>
@@ -309,7 +303,6 @@
     <string name="menu_configuration">Konfigurasjon</string>
     <string name="app_desc">Den universelle proxy -verktøykjeden for Android, skrevet i Kotlin.</string>
     <string name="group_filter">Raffinering</string>
-    <string name="standard">Standard</string>
     <string name="obfs">Obfs</string>
     <string name="speed">%s/s</string>
     <string name="hysteria_obfs">Tilsløringspassord</string>

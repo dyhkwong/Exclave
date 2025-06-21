@@ -718,9 +718,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             plugin.value = pluginConfiguration.selected
             pluginConfigure.isEnabled = selected !is NoPlugin
             pluginConfigure.text = pluginConfiguration.getOptions().toString()
-            if (!selected.trusted) {
-                Snackbar.make(requireView(), R.string.plugin_untrusted, Snackbar.LENGTH_LONG).show()
-            }
         }
         AlertDialogFragment.setResultListener<Empty>(
             this, UnsavedChangesDialogFragment::class.java.simpleName

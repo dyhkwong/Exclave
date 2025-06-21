@@ -49,7 +49,7 @@ object Key {
     const val DIRECT_DNS_QUERY_STRATEGY = "directDnsQueryStrategy"
     const val EDNS_CLIENT_IP = "ednsClientIp"
 
-    const val IPV6_MODE = "ipv6Mode0"
+    const val ENABLE_VPN_INTERFACE_IPV6_ADDRESS = "enableVPNInterfaceIPv6Address"
 
     const val PROXY_APPS = "proxyApps"
     const val BYPASS_MODE = "bypassMode"
@@ -59,11 +59,10 @@ object Key {
     const val DOMAIN_STRATEGY = "domainStrategy"
     const val TRAFFIC_SNIFFING = "trafficSniffing"
     const val DESTINATION_OVERRIDE = "destinationOverride"
-    const val RESOLVE_DESTINATION = "resolveDestination"
-    const val RESOLVE_DESTINATION_FOR_DIRECT = "resolveDestinationForDirect"
+    const val OUTBOUND_DOMAIN_STRATEGY = "outboundDomainStrategy"
+    const val OUTBOUND_DOMAIN_STRATEGY_FOR_DIRECT = "outboundDomainStrategyForDirect"
 
     const val BYPASS_LAN = "bypassLan"
-    const val BYPASS_LAN_IN_CORE_ONLY = "bypassLanInCoreOnly"
 
     const val SOCKS_PORT = "socksPort"
     const val ALLOW_ACCESS = "allowAccess"
@@ -78,7 +77,6 @@ object Key {
     const val HTTP_PORT = "httpPort"
 
     const val REQUIRE_TRANSPROXY = "requireTransproxy"
-    const val TRANSPROXY_MODE = "transproxyMode"
     const val TRANSPROXY_PORT = "transproxyPort"
 
     const val CONNECTION_TEST_URL = "connectionTestURL"
@@ -309,13 +307,6 @@ object RootCAProvider {
     const val MOZILLA = 0
     const val SYSTEM = 1
     const val SYSTEM_AND_USER = 2 // for https://github.com/golang/go/issues/71258
-}
-
-object IPv6Mode {
-    const val DISABLE = 0
-    const val ENABLE = 1
-    const val PREFER = 2
-    const val ONLY = 3
 }
 
 object GroupType {

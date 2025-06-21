@@ -451,13 +451,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="ipv6_mode">
-        <item>@string/disable</item>
-        <item>@string/enable</item>
-        <item>@string/prefer</item>
-        <item>@string/only</item>
-    </string-array>
-
     <string-array name="rules_dat_provider">
         <item>v2fly</item>
         <item>Loyalsoldier/v2ray-rules-dat</item>
@@ -801,8 +794,32 @@
     </string-array>
 
     <string-array name="dns_query_strategy">
+        <item>@string/domain_strategy_ipv4_and_ipv6</item>
+        <item>@string/domain_strategy_ipv4_only</item>
+        <item>@string/domain_strategy_ipv6_only</item>
+    </string-array>
+
+    <string-array name="dns_query_strategy_value">
         <item>UseIP</item>
         <item>UseIPv4</item>
+        <item>UseIPv6</item>
+    </string-array>
+
+    <string-array name="outbound_domain_strategy">
+        <item>@string/disable</item>
+        <item>@string/domain_strategy_ipv4_only</item>
+        <item>@string/domain_strategy_prefer_ipv4</item>
+        <item>@string/domain_strategy_ipv4_and_ipv6</item>
+        <item>@string/domain_strategy_prefer_ipv6</item>
+        <item>@string/domain_strategy_ipv6_only</item>
+    </string-array>
+
+    <string-array name="outbound_domain_strategy_value">
+        <item>AsIs</item>
+        <item>UseIPv4</item>
+        <item>PreferIPv4</item>
+        <item>UseIP</item>
+        <item>PreferIPv6</item>
         <item>UseIPv6</item>
     </string-array>
 

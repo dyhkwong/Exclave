@@ -28,12 +28,10 @@ import android.content.Intent
 import android.content.pm.ComponentInfo
 import android.content.pm.PackageManager
 import android.content.pm.ProviderInfo
-import android.content.pm.Signature
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.system.Os
-import android.util.Base64
 import android.widget.Toast
 import androidx.core.os.bundleOf
 import io.nekohasekai.sagernet.R
@@ -41,7 +39,6 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
-import io.nekohasekai.sagernet.ktx.signaturesCompat
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -49,54 +46,6 @@ object PluginManager {
     class PluginNotFoundException(val plugin: String) : FileNotFoundException(plugin),
             BaseService.ExpectedException {
         override fun getLocalizedMessage() = SagerNet.application.getString(R.string.plugin_unknown, plugin)
-    }
-
-    /**
-     * Trusted signatures by the app. Third-party fork should add their public key to their fork if the developer wishes
-     * to publish or has published plugins for this app. You can obtain your public key by executing:
-     *
-     * $ keytool -export -alias key-alias -keystore /path/to/keystore.jks -rfc
-     *
-     * If you don't plan to publish any plugin but is developing/has developed some, it's not necessary to add your
-     * public key yet since it will also automatically trust packages signed by the same signatures, e.g. debug keys.
-     */
-    val trustedSignatures by lazy {
-        (SagerNet.packageInfo.signaturesCompat?.toSet() ?: emptySet()) +
-                Signature(Base64.decode(  // @Mygod
-                """
-                    |MIIDWzCCAkOgAwIBAgIEUzfv8DANBgkqhkiG9w0BAQsFADBdMQswCQYDVQQGEwJD
-                    |TjEOMAwGA1UECBMFTXlnb2QxDjAMBgNVBAcTBU15Z29kMQ4wDAYDVQQKEwVNeWdv
-                    |ZDEOMAwGA1UECxMFTXlnb2QxDjAMBgNVBAMTBU15Z29kMCAXDTE0MDUwMjA5MjQx
-                    |OVoYDzMwMTMwOTAyMDkyNDE5WjBdMQswCQYDVQQGEwJDTjEOMAwGA1UECBMFTXln
-                    |b2QxDjAMBgNVBAcTBU15Z29kMQ4wDAYDVQQKEwVNeWdvZDEOMAwGA1UECxMFTXln
-                    |b2QxDjAMBgNVBAMTBU15Z29kMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-                    |AQEAjm5ikHoP3w6zavvZU5bRo6Birz41JL/nZidpdww21q/G9APA+IiJMUeeocy0
-                    |L7/QY8MQZABVwNq79LXYWJBcmmFXM9xBPgDqQP4uh9JsvazCI9bvDiMn92mz9HiS
-                    |Sg9V4KGg0AcY0r230KIFo7hz+2QBp1gwAAE97myBfA3pi3IzJM2kWsh4LWkKQMfL
-                    |M6KDhpb4mdDQnHlgi4JWe3SYbLtpB6whnTqjHaOzvyiLspx1tmrb0KVxssry9KoX
-                    |YQzl56scfE/QJX0jJ5qYmNAYRCb4PibMuNSGB2NObDabSOMAdT4JLueOcHZ/x9tw
-                    |agGQ9UdymVZYzf8uqc+29ppKdQIDAQABoyEwHzAdBgNVHQ4EFgQUBK4uJ0cqmnho
-                    |6I72VmOVQMvVCXowDQYJKoZIhvcNAQELBQADggEBABZQ3yNESQdgNJg+NRIcpF9l
-                    |YSKZvrBZ51gyrC7/2ZKMpRIyXruUOIrjuTR5eaONs1E4HI/uA3xG1eeW2pjPxDnO
-                    |zgM4t7EPH6QbzibihoHw1MAB/mzECzY8r11PBhDQlst0a2hp+zUNR8CLbpmPPqTY
-                    |RSo6EooQ7+NBejOXysqIF1q0BJs8Y5s/CaTOmgbL7uPCkzArB6SS/hzXgDk5gw6v
-                    |wkGeOtzcj1DlbUTvt1s5GlnwBTGUmkbLx+YUje+n+IBgMbohLUDYBtUHylRVgMsc
-                    |1WS67kDqeJiiQZvrxvyW6CZZ/MIGI+uAkkj3DqJpaZirkwPgvpcOIrjZy0uFvQM=
-                  """, Base64.DEFAULT)) +
-                Signature(Base64.decode( // @madeye
-                """
-                    |MIICQzCCAaygAwIBAgIETV9OhjANBgkqhkiG9w0BAQUFADBmMQswCQYDVQQGEwJjbjERMA8GA1UE
-                    |CBMIU2hhbmdoYWkxDzANBgNVBAcTBlB1ZG9uZzEUMBIGA1UEChMLRnVkYW4gVW5pdi4xDDAKBgNV
-                    |BAsTA1BQSTEPMA0GA1UEAxMGTWF4IEx2MB4XDTExMDIxOTA1MDA1NFoXDTM2MDIxMzA1MDA1NFow
-                    |ZjELMAkGA1UEBhMCY24xETAPBgNVBAgTCFNoYW5naGFpMQ8wDQYDVQQHEwZQdWRvbmcxFDASBgNV
-                    |BAoTC0Z1ZGFuIFVuaXYuMQwwCgYDVQQLEwNQUEkxDzANBgNVBAMTBk1heCBMdjCBnzANBgkqhkiG
-                    |9w0BAQEFAAOBjQAwgYkCgYEAq6lA8LqdeEI+es9SDX85aIcx8LoL3cc//iRRi+2mFIWvzvZ+bLKr
-                    |4Wd0rhu/iU7OeMm2GvySFyw/GdMh1bqh5nNPLiRxAlZxpaZxLOdRcxuvh5Nc5yzjM+QBv8ECmuvu
-                    |AOvvT3UDmA0AMQjZqSCmxWIxc/cClZ/0DubreBo2st0CAwEAATANBgkqhkiG9w0BAQUFAAOBgQAQ
-                    |Iqonxpwk2ay+Dm5RhFfZyG9SatM/JNFx2OdErU16WzuK1ItotXGVJaxCZv3u/tTwM5aaMACGED5n
-                    |AvHaDGCWynY74oDAopM4liF/yLe1wmZDu6Zo/7fXrH+T03LBgj2fcIkUfN1AA4dvnBo8XWAm9VrI
-                    |1iNuLIssdhDz3IL9Yg==
-                  """, Base64.DEFAULT))
     }
 
     private var receiver: BroadcastReceiver? = null

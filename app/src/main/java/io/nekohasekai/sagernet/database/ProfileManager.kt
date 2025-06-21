@@ -241,6 +241,14 @@ object ProfileManager {
                     outbound = -1
                 ), false
             )
+            createRule(
+                RuleEntity(
+                    enabled = true,
+                    name = app.getString(R.string.route_opt_bypass_lan),
+                    ip = "geoip:private",
+                    outbound = -1
+                ), false
+            )
             rules = SagerDatabase.rulesDao.allRules()
         }
         return rules

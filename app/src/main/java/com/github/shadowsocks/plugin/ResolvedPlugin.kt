@@ -27,7 +27,6 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import com.github.shadowsocks.plugin.PluginManager.loadString
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.ktx.signaturesCompat
 
 abstract class ResolvedPlugin(protected val resolveInfo: ResolveInfo) : Plugin() {
     protected abstract val componentInfo: ComponentInfo
@@ -51,8 +50,6 @@ abstract class ResolvedPlugin(protected val resolveInfo: ResolveInfo) : Plugin()
     override val icon: Drawable get() = resolveInfo.loadIcon(SagerNet.application.packageManager)
     override val defaultConfig by lazy { componentInfo.loadString(PluginContract.METADATA_KEY_DEFAULT_CONFIG) }
     override val packageName: String get() = componentInfo.packageName
-    override val trusted by lazy {
-        SagerNet.application.getPackageInfo(packageName).signaturesCompat?.any(PluginManager.trustedSignatures::contains) == true
-    }
+    override val trusted get() = true
     override val directBootAware get() = Build.VERSION.SDK_INT < 24 || componentInfo.directBootAware
 }

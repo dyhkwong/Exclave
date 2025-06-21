@@ -101,11 +101,10 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var domainStrategy by configurationStore.string(Key.DOMAIN_STRATEGY) { "AsIs" }
     var trafficSniffing by configurationStore.boolean(Key.TRAFFIC_SNIFFING) { true }
     var destinationOverride by configurationStore.boolean(Key.DESTINATION_OVERRIDE)
-    var resolveDestination by configurationStore.boolean(Key.RESOLVE_DESTINATION)
-    var resolveDestinationForDirect by configurationStore.boolean(Key.RESOLVE_DESTINATION_FOR_DIRECT)
+    var outboundDomainStrategy by configurationStore.string(Key.OUTBOUND_DOMAIN_STRATEGY) { "AsIs" }
+    var outboundDomainStrategyForDirect by configurationStore.string(Key.OUTBOUND_DOMAIN_STRATEGY_FOR_DIRECT) { "AsIs" }
 
-    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN)
-    var bypassLanInCoreOnly by configurationStore.boolean(Key.BYPASS_LAN_IN_CORE_ONLY)
+    var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
 
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)
     var speedInterval by configurationStore.stringToInt(Key.SPEED_INTERVAL)
@@ -119,8 +118,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var hijackDns by configurationStore.boolean(Key.HIJACK_DNS)
     var hosts by configurationStore.string(Key.DNS_HOSTS)
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { true }
-    var remoteDnsQueryStrategy by configurationStore.string(Key.REMOTE_DNS_QUERY_STRATEGY) { "UseIPv4" }
-    var directDnsQueryStrategy by configurationStore.string(Key.DIRECT_DNS_QUERY_STRATEGY) { "UseIPv4" }
+    var remoteDnsQueryStrategy by configurationStore.string(Key.REMOTE_DNS_QUERY_STRATEGY) { "UseIP" }
+    var directDnsQueryStrategy by configurationStore.string(Key.DIRECT_DNS_QUERY_STRATEGY) { "UseIP" }
     var ednsClientIp by configurationStore.string(Key.EDNS_CLIENT_IP)
 
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
@@ -148,7 +147,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         get() = getLocalPort(Key.SOCKS_PORT, 2080)
         set(value) = saveLocalPort(Key.SOCKS_PORT, value)
     var localDNSPort: Int
-        get() = getLocalPort(Key.LOCAL_DNS_PORT, 0)
+        get() = getLocalPort(Key.LOCAL_DNS_PORT, 6450)
         set(value) {
             saveLocalPort(Key.LOCAL_DNS_PORT, value)
         }
@@ -195,7 +194,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         configurationStore.putString(key, "$value")
     }
 
-    var ipv6Mode by configurationStore.stringToInt(Key.IPV6_MODE) { IPv6Mode.DISABLE }
+    var enableVPNInterfaceIPv6Address by configurationStore.boolean(Key.ENABLE_VPN_INTERFACE_IPV6_ADDRESS)
 
     var meteredNetwork by configurationStore.boolean(Key.METERED_NETWORK)
     var proxyApps by configurationStore.boolean(Key.PROXY_APPS)
@@ -203,7 +202,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var individual by configurationStore.string(Key.INDIVIDUAL)
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED)
 
-    val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT) { true }
+    val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT)
     val canToggleLocked: Boolean get() = false//configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
     val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
 

@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory app:title="@string/general_settings">
         <SwitchPreference
-            app:defaultValue="true"
             app:icon="@drawable/ic_communication_phonelink_ring"
             app:key="isAutoConnect"
             app:summary="@string/auto_connect_summary"
@@ -54,6 +53,11 @@
             app:title="@string/mtu"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:icon="@drawable/ic_device_data_usage"
+            app:key="meteredNetwork"
+            app:summary="@string/metered_summary"
+            app:title="@string/metered" />
+        <SwitchPreference
             app:icon="@drawable/baseline_save_24"
             app:key="enablePcap"
             app:summary="@string/pcap_summary"
@@ -83,25 +87,6 @@
             app:summary="@string/show_direct_speed_sum"
             app:title="@string/show_direct_speed"
             app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:icon="@drawable/ic_social_emoji_symbols"
-            app:key="showGroupName"
-            app:title="@string/show_group_name_in_notification" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_center_focus_weak_24"
-            app:key="alwaysShowAddress"
-            app:summary="@string/always_show_address_sum"
-            app:title="@string/always_show_address" />
-        <SwitchPreference
-            app:icon="@drawable/ic_device_data_usage"
-            app:key="meteredNetwork"
-            app:summary="@string/metered_summary"
-            app:title="@string/metered" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_nat_24"
-            app:key="allowAccess"
-            app:summary="@string/allow_access_sum"
-            app:title="@string/allow_access" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="2"
             app:icon="@drawable/ic_baseline_bug_report_24"
@@ -110,28 +95,39 @@
             app:key="logLevel"
             app:title="@string/log_level"
             app:useSimpleSummaryProvider="true"/>
-        <EditTextPreference
-            app:defaultValue="127.0.0.1:6060"
-            app:key="pprofServer"
-            app:title="pprof server listen address"
+        <com.takisoft.preferencex.SimpleMenuPreference
+            android:icon="@drawable/ic_baseline_push_pin_24"
+            app:defaultValue="1"
+            app:entries="@array/root_ca_provider_entry"
+            app:entryValues="@array/int_array_3"
+            app:key="providerRootCA"
+            app:title="@string/root_ca_provider"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_route">
+        <SwitchPreference
+            app:icon="@drawable/ic_image_looks_6"
+            app:key="enableVPNInterfaceIPv6Address"
+            app:summary="@string/enable_vpn_interface_ipv6_address_sum"
+            app:title="@string/ipv6"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_navigation_apps"
             app:key="proxyApps"
             app:summary="@string/proxied_apps_summary"
             app:title="@string/proxied_apps" />
         <SwitchPreference
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="allowAppsBypassVpn"
+            app:summary="@string/allow_apps_bypass_vpn_sum"
+            app:title="@string/allow_apps_bypass_vpn" />
+        <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_legend_toggle_24"
             app:key="bypassLan"
+            app:summary="@string/bypass_private_sum"
             app:title="@string/route_opt_bypass_lan" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_legend_toggle_24"
-            app:key="bypassLanInCoreOnly"
-            app:summary="@string/bypass_lan_in_core_only_sum"
-            app:title="@string/bypass_lan_in_core_only" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="AsIs"
             app:entries="@array/domain_strategy"
@@ -144,6 +140,7 @@
             app:defaultValue="true"
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="trafficSniffing"
+            app:summary="@string/sniffing_sum"
             app:title="@string/traffic_sniffing" />
         <SwitchPreference
             app:icon="@drawable/baseline_construction_24"
@@ -155,22 +152,21 @@
             app:key="hijackDns0"
             app:summary="@string/hijack_dns_message"
             app:title="@string/hijack_dns" />
-        <SwitchPreference
-            app:icon="@drawable/baseline_wrap_text_24"
-            app:key="resolveDestination"
-            app:summary="@string/resolve_destination_summary"
-            app:title="@string/resolve_destination" />
-        <SwitchPreference
-            app:icon="@drawable/baseline_wrap_text_24"
-            app:key="resolveDestinationForDirect"
-            app:title="@string/resolve_destination_for_direct" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
-            app:entries="@array/ipv6_mode"
-            app:entryValues="@array/int_array_4"
-            app:icon="@drawable/ic_image_looks_6"
-            app:key="ipv6Mode0"
-            app:title="@string/ipv6"
+            app:defaultValue="AsIs"
+            app:entries="@array/outbound_domain_strategy"
+            app:entryValues="@array/outbound_domain_strategy_value"
+            app:icon="@drawable/baseline_wrap_text_24"
+            app:key="outboundDomainStrategy"
+            app:title="@string/resolve_destination"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="AsIs"
+            app:entries="@array/outbound_domain_strategy"
+            app:entryValues="@array/outbound_domain_strategy_value"
+            app:icon="@drawable/baseline_wrap_text_24"
+            app:key="outboundDomainStrategyForDirect"
+            app:title="@string/resolve_destination_for_direct"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
@@ -195,6 +191,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/protocol_settings">
+        <io.nekohasekai.sagernet.widget.LinkPreference
+            app:defaultValue="https://www.google.com/generate_204"
+            app:icon="@drawable/ic_baseline_cast_connected_24"
+            app:key="connectionTestURL"
+            app:title="@string/connection_test_url"
+            app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             android:icon="@drawable/baseline_flight_takeoff_24"
             app:defaultValue="0"
@@ -225,14 +227,30 @@
             app:key="providerTuic5"
             app:title="@string/tuic_v5_provider"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            android:icon="@drawable/ic_baseline_push_pin_24"
-            app:defaultValue="1"
-            app:entries="@array/root_ca_provider_entry"
-            app:entryValues="@array/int_array_3"
-            app:key="providerRootCA"
-            app:title="@string/root_ca_provider"
+        <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
+            app:key="realityDisableX25519Mlkem768"
+            app:summary="@string/reality_breaking_change_summary"
+            app:title="@string/reality_disable_x25519mlkem768" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="enableFragment"
+            app:summary="@string/enable_fragment_sum"
+            app:title="@string/enable_fragment" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="fragmentLength"
+            app:title="@string/fragment_length"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="fragmentInterval"
+            app:title="@string/fragment_interval"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_texture_24"
+            app:key="enableFragmentForDirect"
+            app:title="@string/enable_fragment_for_direct" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">
@@ -243,9 +261,9 @@
             app:title="@string/remote_dns"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="UseIPv4"
+            app:defaultValue="UseIP"
             app:entries="@array/dns_query_strategy"
-            app:entryValues="@array/dns_query_strategy"
+            app:entryValues="@array/dns_query_strategy_value"
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="remoteDnsQueryStrategy"
             app:title="@string/remote_dns_query_strategy"
@@ -267,9 +285,9 @@
             app:title="@string/direct_dns"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="UseIPv4"
+            app:defaultValue="UseIP"
             app:entries="@array/dns_query_strategy"
-            app:entryValues="@array/dns_query_strategy"
+            app:entryValues="@array/dns_query_strategy_value"
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="directDnsQueryStrategy"
             app:title="@string/direct_dns_query_strategy"
@@ -288,7 +306,7 @@
             app:icon="@drawable/ic_baseline_transform_24"
             app:key="dnsHosts0"
             app:title="@string/dns_hosts"
-            app:useSimpleSummaryProvider="true" />
+            app:summary="@string/hosts_sum" />
         <SwitchPreference
             app:defaultValue="true"
             app:icon="@drawable/ic_baseline_camera_24"
@@ -337,14 +355,6 @@
             app:key="transproxyPort"
             app:title="@string/port_transproxy"
             app:useSimpleSummaryProvider="true" />
-        <!--com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="0"
-            app:entries="@array/transproxy_mode"
-            app:entryValues="@array/int_array_2"
-            app:icon="@drawable/ic_baseline_layers_24"
-            app:key="transproxyMode"
-            app:title="@string/transproxy_mode"
-            app:useSimpleSummaryProvider="true" /-->
         <SwitchPreference
             app:icon="@drawable/ic_action_dns"
             app:key="requireDnsInbound"
@@ -354,44 +364,25 @@
             app:key="portLocalDns"
             app:title="@string/port_local_dns"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_nat_24"
+            app:key="allowAccess"
+            app:summary="@string/allow_access_sum"
+            app:title="@string/allow_access" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/cag_misc">
-        <io.nekohasekai.sagernet.widget.LinkPreference
-            app:defaultValue="https://www.google.com/generate_204"
-            app:icon="@drawable/ic_baseline_cast_connected_24"
-            app:key="connectionTestURL"
-            app:title="@string/connection_test_url"
-            app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory
+        app:title="@string/cag_misc"
+        app:initialExpandedChildrenCount="0">
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_texture_24"
-            app:key="enableFragment"
-            app:summary="@string/enable_fragment_sum"
-            app:title="@string/enable_fragment" />
-        <EditTextPreference
-            app:icon="@drawable/ic_baseline_texture_24"
-            app:key="fragmentLength"
-            app:title="@string/fragment_length"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:icon="@drawable/ic_baseline_texture_24"
-            app:key="fragmentInterval"
-            app:title="@string/fragment_interval"
-            app:useSimpleSummaryProvider="true" />
+            app:icon="@drawable/ic_social_emoji_symbols"
+            app:key="showGroupName"
+            app:title="@string/show_group_name_in_notification" />
         <SwitchPreference
-            app:icon="@drawable/ic_baseline_texture_24"
-            app:key="enableFragmentForDirect"
-            app:title="@string/enable_fragment_for_direct" />
-        <SwitchPreference
-            app:icon="@drawable/baseline_construction_24"
-            app:key="realityDisableX25519Mlkem768"
-            app:summary="@string/reality_breaking_change_summary"
-            app:title="@string/reality_disable_x25519mlkem768" />
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_vpn_key_24"
-            app:key="allowAppsBypassVpn"
-            app:summary="@string/allow_apps_bypass_vpn_sum"
-            app:title="@string/allow_apps_bypass_vpn" />
+            app:icon="@drawable/ic_baseline_center_focus_weak_24"
+            app:key="alwaysShowAddress"
+            app:summary="@string/always_show_address_sum"
+            app:title="@string/always_show_address" />
         <SwitchPreference
             app:icon="@drawable/baseline_developer_board_24"
             app:key="acquireWakeLock"
@@ -414,6 +405,11 @@
             app:key="useIECUnit"
             app:summary="@string/use_iec_unit_sum"
             app:title="@string/use_iec_unit" />
+        <EditTextPreference
+            app:defaultValue="127.0.0.1:6060"
+            app:key="pprofServer"
+            app:title="pprof server listen address"
+            app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>

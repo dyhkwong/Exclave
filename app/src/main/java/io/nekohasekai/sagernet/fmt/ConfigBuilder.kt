@@ -30,7 +30,6 @@ import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.google.gson.JsonSyntaxException
-import io.nekohasekai.sagernet.IPv6Mode
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.SagerNet
@@ -250,18 +249,8 @@ fun buildV2RayConfig(
     var requireSh = false
     val requireHttp = !forTest && DataStore.requireHttp
     val requireTransproxy = if (forTest) false else DataStore.requireTransproxy
-    val ipv6Mode = if (forTest) IPv6Mode.ENABLE else DataStore.ipv6Mode
-    val resolveDestination = DataStore.resolveDestination
     val destinationOverride = DataStore.destinationOverride
     val trafficStatistics = !forTest && DataStore.profileTrafficStatistics
-
-    val outboundDomainStrategy = when {
-        !resolveDestination -> "AsIs"
-        ipv6Mode == IPv6Mode.DISABLE -> "UseIPv4"
-        ipv6Mode == IPv6Mode.PREFER -> "PreferIPv6"
-        ipv6Mode == IPv6Mode.ONLY -> "UseIPv6"
-        else -> "PreferIPv4"
-    }
 
     var dumpUID = false
     val alerts = mutableListOf<Pair<Int, String>>()
@@ -542,7 +531,7 @@ fun buildV2RayConfig(
                         }
                     }
 
-                    var currentDomainStrategy = outboundDomainStrategy
+                    var currentDomainStrategy = DataStore.outboundDomainStrategy
 
                     if (proxyEntity.needExternal()) {
                         val localPort = mkPort()
@@ -1125,12 +1114,7 @@ fun buildV2RayConfig(
                                         })
                                     })
                                 if (currentDomainStrategy == "AsIs") {
-                                    currentDomainStrategy = when (ipv6Mode) {
-                                        IPv6Mode.DISABLE -> "UseIPv4"
-                                        IPv6Mode.PREFER -> "PreferIPv6"
-                                        IPv6Mode.ONLY -> "UseIPv6"
-                                        else -> "PreferIPv4"
-                                    }
+                                    currentDomainStrategy = "UseIP"
                                 }
                             } else if (bean is SSHBean) {
                                 protocol = "ssh"
@@ -1413,16 +1397,13 @@ fun buildV2RayConfig(
                         }
                     }
 
-                    currentOutbound.domainStrategy = currentDomainStrategy
+                    if (currentDomainStrategy != "AsIs") {
+                        currentOutbound.domainStrategy = currentDomainStrategy
+                    }
 
-                    if (bean is JuicityBean && DataStore.enableFakeDns && currentOutbound.domainStrategy == "AsIs") {
+                    if (bean is JuicityBean && DataStore.enableFakeDns && currentDomainStrategy == "AsIs") {
                         // https://github.com/juicity/juicity/issues/140
-                        currentOutbound.domainStrategy = when (ipv6Mode) {
-                            IPv6Mode.DISABLE -> "UseIPv4"
-                            IPv6Mode.PREFER -> "PreferIPv6"
-                            IPv6Mode.ONLY -> "UseIPv6"
-                            else -> "PreferIPv4"
-                        }
+                        currentOutbound.domainStrategy = "UseIP"
                     }
 
                     if (bean is ConfigBean && bean.type == "v2ray_outbound") {
@@ -1755,15 +1736,10 @@ fun buildV2RayConfig(
                     }
                 }
             }
-            if (DataStore.resolveDestinationForDirect) {
+            if (DataStore.outboundDomainStrategyForDirect != "AsIs") {
                 settings = LazyOutboundConfigurationObject(this,
                     FreedomOutboundConfigurationObject().apply {
-                        domainStrategy = when (ipv6Mode) {
-                            IPv6Mode.DISABLE -> "UseIPv4"
-                            IPv6Mode.PREFER -> "PreferIPv6"
-                            IPv6Mode.ONLY -> "UseIPv6"
-                            else -> "PreferIPv4"
-                        }
+                        domainStrategy = DataStore.outboundDomainStrategyForDirect
                     }
                 )
             }
@@ -2042,14 +2018,6 @@ fun buildV2RayConfig(
         }
 
         if (rootBalancer != null) routing.rules.add(rootBalancer)
-
-        if (!forTest && DataStore.bypassLan && (requireHttp || DataStore.bypassLanInCoreOnly)) {
-            routing.rules.add(RoutingObject.RuleObject().apply {
-                type = "field"
-                outboundTag = TAG_BYPASS
-                ip = listOf("geoip:private")
-            })
-        }
 
         if (trafficStatistics) stats = emptyMap()
 

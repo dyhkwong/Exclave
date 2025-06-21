@@ -14,7 +14,6 @@
     <string name="ss_cat">Configuración de Shadowsocks</string>
     <string name="proxy_cat">Configuración del servidor</string>
     <string name="plugin_auto_connect_unlock_only">Es posible que este complemento no funcione con Auto Connect</string>
-    <string name="plugin_untrusted">Advertencia: este complemento no parece provenir de una fuente confiable conocida.</string>
     <string name="plugin_disabled">Desactivado</string>
     <string name="donate_info">Amo el dinero</string>
     <string name="donate">Donar</string>
@@ -129,7 +128,7 @@
     <string name="obfs">Obs.</string>
     <string name="protocol_param">Parámetros de protocolo</string>
     <string name="protocol">Protocolo</string>
-    <string name="dns_routing_message">Resuelva dominios en rutas de bypass con Direct DNS. Tenga en cuenta las posibles fugas de DNS</string>
+    <string name="dns_routing_message">Resuelva dominios en rutas de bypass con Direct DNS</string>
     <string name="enable_dns_routing">Activar el enrutamiento DNS</string>
     <string name="direct_dns">DNS directo</string>
     <string name="remote_dns">DNS remoto</string>
@@ -151,7 +150,6 @@
     <string name="proxied_apps_summary">Configurar el modo VPN para aplicaciones seleccionadas</string>
     <string name="proxied_apps">Modo VPN de aplicaciones</string>
     <string name="mux_concurrency">Conexiones concurrentes de Mux</string>
-    <string name="mux_sum">Mux está diseñado para reducir la latencia del protocolo de enlace de TCP, no para aumentar el rendimiento de la conexión. Usar Mux para ver videos, descargar o realizar pruebas de velocidad suele ser contraproducente</string>
     <string name="enable_mux">Activar multiplexor</string>
     <string name="traffic_sniffing">Activar rastreo de tráfico</string>
     <string name="domain_strategy">Estrategia de resolución de dominio</string>
@@ -166,8 +164,6 @@
     <string name="menu_route">Ruta</string>
     <string name="metered_summary">Sistema de sugerencias para tratar la VPN como medida</string>
     <string name="metered">Sugerencia medida</string>
-    <string name="only">Solamente</string>
-    <string name="prefer">Preferir</string>
     <string name="ipv6">Ruta IPv6</string>
     <string name="edit_config">Editar configuración</string>
     <string name="config_type">Tipo de configuración</string>
@@ -302,8 +298,6 @@
     <string name="group_settings">Configuración de grupo</string>
     <string name="group_basic">Básico</string>
     <string name="protocol_settings">Configuración de protocolo</string>
-    <string name="bypass_lan_in_core_only_sum">Pruebe esto si los clientes llow de LineageOS no funcionan con una VPN.</string>
-    <string name="bypass_lan_in_core_only">Omitir LAN solo en el núcleo</string>
     <string name="append_http_proxy_sum">El proxy HTTP se utilizará directamente desde (navegador / algunas aplicaciones compatibles), sin pasar por el dispositivo NIC virtual (Android 10+)</string>
     <string name="append_http_proxy">Agregar proxy HTTP a VPN</string>
     <string name="connection_test_timeout">Se acabó el tiempo</string>
@@ -312,7 +306,6 @@
     <string name="connection_test">Prueba de conexión</string>
     <string name="clear_traffic_statistics">Limpiar estadísticas de tráfico</string>
     <string name="unavailable">Indisponible</string>
-    <string name="standard">Estándar</string>
     <string name="probe_interval">Intervalo de observación del equilibrador</string>
     <string name="random">Aleatorio</string>
     <string name="list">Lista</string>
@@ -406,7 +399,6 @@
     <string name="app_statistics_disabled">Estadísticas de tráfico de apps desactivado</string>
     <string name="tun_implementation">Implementación de TUN</string>
     <string name="destination_override">Anular destino</string>
-    <string name="resolve_destination_summary">Si la dirección de destino es un dominio, se distribuye en función de la estrategia IPv6.</string>
     <string name="pcap_summary">Guardar tráfico en un archivo .pcap</string>
     <string name="pcap_notice">Los archivos Pcap se guardarán en %s</string>
     <string name="start">Empezar</string>
@@ -471,7 +463,6 @@
     <string name="action_camera_switch">Cambiar de cámara</string>
     <string name="hysteria_hop_interval">Intervalo de salto</string>
     <string name="mux_settings">Configuración de Mux</string>
-    <string name="reality_spider_x">REALITY SpiderX</string>
     <string name="wireguard_reserved">Reservado</string>
     <string name="shadowsocks_2022_implementation">Implementación de Shadowsocks 2022</string>
     <string name="action_open">Abrir</string>

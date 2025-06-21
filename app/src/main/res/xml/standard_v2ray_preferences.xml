@@ -313,7 +313,6 @@
         <SwitchPreference
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="serverMux"
-            app:summary="@string/mux_sum"
             app:title="@string/enable_mux"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference

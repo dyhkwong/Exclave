@@ -37,13 +37,11 @@
     <string name="plugin">Plugin</string>
     <string name="plugin_configure">Configura…</string>
     <string name="plugin_unknown">Plugin sconosciuto %s</string>
-    <string name="plugin_untrusted">Attenzione: Questo plugin non sembra provenire da una fonte affidabile.</string>
     <string name="proxy_cat">Impostazioni del server</string>
     <string name="unsaved_changes_prompt">Modifiche non salvate. Vuoi salvare\?</string>
     <string name="restart">Ricarica il servizio proxy per applicare le modifiche</string>
     <string name="license">Licenza</string>
     <string name="probe_interval">Intervallo Osservazione Balancer</string>
-    <string name="standard">Standard</string>
     <string name="unavailable">Non disponibile</string>
     <string name="always_show_address_sum">Visualizzare sempre l\'indirizzo del server sulla scheda di configurazione</string>
     <string name="connection_test">Test di connessione</string>
@@ -77,7 +75,7 @@
         <item quantity="other">%d Proxy</item>
     </plurals>
     <string name="remote_dns">DNS Remoto</string>
-    <string name="dns_routing_message">Risolvi i domini nei percorsi di bypass con il DNS Diretto. Attenzione ai potenziali DNS leaks</string>
+    <string name="dns_routing_message">Risolvi i domini nei percorsi di bypass con il DNS Diretto</string>
     <string name="security_settings">Impostazioni di Sicurezza</string>
     <string name="allow_insecure">Permetti Non-Sicuro</string>
     <string name="route_add">Crea Percorso</string>
@@ -117,7 +115,6 @@
     <string name="balancer_type">Tipo</string>
     <string name="menu_traffic">Traffico</string>
     <string name="group_no_difference">%s: Invariato</string>
-    <string name="prefer">Preferisci</string>
     <string name="bypass_apps">Bypassa</string>
     <string name="apply">Applica</string>
     <string name="profile_config">Configurazione del profilo</string>
@@ -176,7 +173,6 @@
     <string name="tile_title">Interruttore</string>
     <string name="append_http_proxy_sum">Il proxy HTTP verrà usato direttamente da (browser / app supportate), senza passare tramite il dispositivo NIC virtuale (Android 10+)</string>
     <string name="group_settings">Impostazioni Gruppo</string>
-    <string name="bypass_lan_in_core_only_sum">Se la funzione di Lineage \"Permetti agli utenti hotspot di usare la VPN\" non funziona, prova questo.</string>
     <string name="update_settings">Aggiorna Impostazioni</string>
     <string name="auto_update">Aggiornamento Automatico</string>
     <string name="auto_update_delay">Ritardo Aggiornamento Automatico (in minuti)</string>
@@ -208,7 +204,6 @@
     <string name="config_type">Tipo Configurazione</string>
     <string name="edit_config">Modifica Configurazione</string>
     <string name="ipv6">Instradamento IPv6</string>
-    <string name="only">Solo</string>
     <string name="metered">Indicazione di Utilizzo Misurato</string>
     <string name="metered_summary">Indica il sistema a considerare la VPN come rete a utilizzo misurato</string>
     <string name="menu_route">Percorso</string>
@@ -230,7 +225,6 @@
     <string name="route_not_asset">Non è un file di risorse: serviva un .dat, ma ricevuto %s</string>
     <string name="route_opt_bypass_lan">Bypassa la LAN</string>
     <string name="traffic_sniffing">Abilità Sniffing Traffico</string>
-    <string name="mux_sum">Mux è progettato per ridurre la latenza del TCP Handshake, non per aumentare la velocità di connessione. L\'utilizzo di Mux per guardare video, scaricare e fare speed test è controproducente</string>
     <string name="mux_concurrency">Connessioni Simultanee Mux</string>
     <string name="proxied_apps_summary">Configura la modalità VPN per le app selezionate</string>
     <string name="off">Inattivo</string>
@@ -264,7 +258,6 @@
     <string name="random">Casuale</string>
     <string name="follow_system">Segui Sistema</string>
     <string name="connection_test_unreachable">Non raggiungibile</string>
-    <string name="bypass_lan_in_core_only">Bypassa LAN solamente in Core</string>
     <string name="subscription">Iscrizione</string>
     <string name="subscription_settings">Impostazioni Iscrizione</string>
     <string name="group_type">Tipo Gruppo</string>

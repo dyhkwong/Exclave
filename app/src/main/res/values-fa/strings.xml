@@ -66,7 +66,7 @@
     <string name="dns_hosts">بازنویسی دستی دامنه ها</string>
     <string name="fakedns_message">احتمالا نرم افزارها بعد از متوقف کردن پراکسی نیاز به اجرای دوباره جهت دسترسی به اینترنت خواهند داشت</string>
     <string name="enable_fakedns">فعالسازی DNS جعلی</string>
-    <string name="dns_routing_message">استفاده از DNS مستقیم برای مسیرهای خارج از پراکسی. احتمالا نشت DNS در این حالت وجود دارد</string>
+    <string name="dns_routing_message">استفاده از DNS مستقیم برای مسیرهای خارج از پراکسی</string>
     <string name="enable_dns_routing">فعالسازی مسیریابی DNS</string>
     <string name="remote_dns">DNS پروکسی</string>
     <string name="direct_dns">DNS مسیرهای مستقیم (خارج از پروکسی)</string>
@@ -106,8 +106,6 @@
     <string name="kcp_seed">mKCP دانه(Seed)</string>
     <string name="quic_key">کلید QUIC</string>
     <string name="quic_security">امنیت QUIC</string>
-    <string name="only">صرفا</string>
-    <string name="prefer">ترجیحا</string>
     <string name="ipv6">مسیر IPv6</string>
     <string name="edit_config">ویرایش پیکربندی</string>
     <string name="config_type">نوع پیکربندی</string>
@@ -125,8 +123,6 @@
     <string name="group_settings">تنظیمات گروه</string>
     <string name="group_basic">پایه</string>
     <string name="protocol_settings">تنظیمات پروتکل</string>
-    <string name="bypass_lan_in_core_only_sum">اگر لاین هات‌اسپات برای استفاده کاربرها از VPN کار نمی کند، این را امتحان کنید.</string>
-    <string name="bypass_lan_in_core_only">بای‌پس LAN فقط در هسته</string>
     <string name="append_http_proxy_sum">پروکسی HTTP مستقیماً از (مرورگر/ برخی از برنامه های پشتیبانی شده)، بدون عبور از دستگاه مجازی NIC استفاده می شود (اندروید ۱۰ و بالاتر)</string>
     <string name="append_http_proxy">اضافه کردن پروکسی HTTP به VPN</string>
     <string name="connection_test_timeout">منقضی شده</string>
@@ -139,7 +135,6 @@
     <string name="always_show_address_sum">همیشه آدرس سرور را روی کارت پیکربندی نمایش بده</string>
     <string name="always_show_address">همیشه آدرس را نشان بده</string>
     <string name="unavailable">در دسترس نیست</string>
-    <string name="standard">استاندارد</string>
     <string name="probe_interval">فاصله مشاهده بالانس</string>
     <string name="random">تصادفی</string>
     <string name="list">لیست</string>
@@ -160,7 +155,6 @@
     <string name="ss_cat">تنظیمات شادوساکس</string>
     <string name="proxy_cat">تنظیمات سرور</string>
     <string name="plugin_auto_connect_unlock_only">این افزونه ممکن است با اتصال خودکار کار نکند</string>
-    <string name="plugin_untrusted">هشدار: به نظر نمی رسد که این افزونه از یک منبع معتبر شناخته شده باشد.</string>
     <string name="plugin_unknown">افزونه ناشناخته %s</string>
     <string name="plugin_disabled">غیرفعال شده</string>
     <string name="plugin_configure">پیکربندی…</string>
@@ -245,7 +239,6 @@
     <string name="proxied_apps_summary">پیکربندی حالت VPN برای برنامه های انتخابی</string>
     <string name="proxied_apps">حالت VPN برای برنامه ها</string>
     <string name="mux_concurrency">اتصالات همزمان Mux</string>
-    <string name="mux_sum">تسهیم کننده Mux برای کاهش تأخیر TCP طراحی شده است، قادر به افزایش توان اتصال نیست. استفاده از Mux برای تماشای فیلم، بارگیری یا تست سرعت معمولاً خلاف قوانین تولید است</string>
     <string name="enable_mux">فعالسازی تسهیم کننده</string>
     <string name="traffic_sniffing">فعال کردن استشمام ترافیک</string>
     <string name="domain_strategy">استراتژی حل دامنه</string>
@@ -371,7 +364,6 @@
     <string name="app_statistics_disabled">آمار ترافیک برنامه غیرفعال شده است</string>
     <string name="tun_implementation">پیاده سازی TUN</string>
     <string name="destination_override_summary">از دامنه استشمام شده برای بازنویسی آدرس مقصد استفاده کنید، نه فقط برای مسیریابی</string>
-    <string name="resolve_destination_summary">اگر آدرس مقصد یک دامنه باشد، پس از آن بر اساس استراتژی IPv6 منتقل می شود.</string>
     <string name="enable_pcap">فعال کردن Pcap</string>
     <string name="pcap_summary">ذخیره ترافیک در فایل .pcap</string>
     <string name="group_filter_owners">مالکان</string>

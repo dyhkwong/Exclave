@@ -36,7 +36,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
@@ -159,33 +158,31 @@ class VpnService : BaseVpnService(),
             .setSession(getString(R.string.app_name))
             .setMtu(DataStore.mtu)
 
-        val ipv6Mode = DataStore.ipv6Mode
-
         builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
-        if (ipv6Mode != IPv6Mode.DISABLE) {
+        if (DataStore.enableVPNInterfaceIPv6Address) {
             builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
         }
 
-        if (DataStore.bypassLan && !DataStore.bypassLanInCoreOnly) {
+        if (DataStore.bypassLan) {
             resources.getStringArray(R.array.bypass_private_route).forEach {
                 val subnet = Subnet.fromString(it)!!
                 builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
             }
             builder.addRoute(PRIVATE_VLAN4_GATEWAY, 32)
             // https://issuetracker.google.com/issues/149636790
-            if (ipv6Mode != IPv6Mode.DISABLE) {
+            if (DataStore.enableVPNInterfaceIPv6Address) {
                 builder.addRoute("2000::", 3)
                 builder.addRoute(PRIVATE_VLAN6_GATEWAY, 128)
             }
             if (DataStore.enableFakeDns) {
                 builder.addRoute(FAKEDNS_VLAN4_CLIENT, 15)
-                if (ipv6Mode != IPv6Mode.DISABLE) {
+                if (DataStore.enableVPNInterfaceIPv6Address) {
                     builder.addRoute(FAKEDNS_VLAN6_CLIENT, 18)
                 }
             }
         } else {
             builder.addRoute("0.0.0.0", 0)
-            if (ipv6Mode != IPv6Mode.DISABLE) {
+            if (DataStore.enableVPNInterfaceIPv6Address) {
                 builder.addRoute("::", 0)
             }
         }
@@ -279,7 +276,7 @@ class VpnService : BaseVpnService(),
             v2Ray = data.proxy!!.v2rayPoint
             gateway4 = PRIVATE_VLAN4_GATEWAY
             gateway6 = PRIVATE_VLAN6_GATEWAY
-            iPv6Mode = ipv6Mode
+            enableIPv6 = DataStore.enableVPNInterfaceIPv6Address
             implementation = tunImplementation
             sniffing = DataStore.trafficSniffing
             overrideDestination = DataStore.destinationOverride

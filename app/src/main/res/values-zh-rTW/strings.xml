@@ -143,7 +143,6 @@
     <string name="plugin_configure">設定……</string>
     <string name="plugin_disabled">已停用</string>
     <string name="plugin_unknown">未知外掛程式 %s</string>
-    <string name="plugin_untrusted">警告：此外掛程式並非來自可靠的可信來源。</string>
     <string name="plugin_auto_connect_unlock_only">此外掛程式可能不支援自動連線</string>
     <string name="proxy_cat">伺服器設定</string>
     <string name="unsaved_changes_prompt">要儲存變更嗎？</string>
@@ -169,7 +168,7 @@
     <string name="require_transproxy">啟用透明代理傳入伺服器</string>
     <string name="dns_hosts">網域重寫</string>
     <string name="enable_fakedns">啟用 FakeDNS</string>
-    <string name="dns_routing_message">使用在路由中被略過的直連 DNS 解析網域。請注意潛在的 DNS 洩漏</string>
+    <string name="dns_routing_message">使用在路由中被略過的直連 DNS 解析網域</string>
     <string name="enable_dns_routing">啟用 DNS 路由</string>
     <string name="direct_dns">直連 DNS</string>
     <string name="remote_dns">遠端 DNS</string>
@@ -192,8 +191,6 @@
     <string name="theme">主題</string>
     <string name="edit_config">編輯設定</string>
     <string name="ipv6">IPv6 路由</string>
-    <string name="prefer">優先</string>
-    <string name="only">僅</string>
     <string name="route_add">建立路由規則</string>
     <string name="delete_route_prompt">您真的希望移除此路由規則嗎？</string>
     <string name="route_name">路由名稱</string>
@@ -220,7 +217,6 @@
     <string name="domain_strategy">網域解析策略</string>
     <string name="traffic_sniffing">啟用流量嗅探</string>
     <string name="enable_mux">啟用多工器</string>
-    <string name="mux_sum">多工器被設計用於減少 TCP 握手延遲，而非提高連線的輸送量。使用多工器觀看影片，進行下載或進行網路速度測試通常都有反效果</string>
     <string name="mux_concurrency">多工器同時連線數目</string>
     <string name="service_failed">失敗：</string>
     <string name="select_profile">選擇設定檔</string>
@@ -257,7 +253,6 @@
     <string name="list">列表</string>
     <string name="random">隨機</string>
     <string name="probe_interval">負載平衡器觀測間隔</string>
-    <string name="standard">標準</string>
     <string name="available">%d ms</string>
     <string name="unavailable">無法使用</string>
     <string name="always_show_address">始終顯示位址</string>
@@ -272,8 +267,6 @@
     <string name="connection_test_timeout">逾時</string>
     <string name="append_http_proxy">為 VPN 附加 HTTP 代理</string>
     <string name="append_http_proxy_sum">HTTP 代理將直接被支援的瀏覽器/應用程式使用，而無需經過虛擬網路卡（Android 10+）</string>
-    <string name="bypass_lan_in_core_only">僅在 Core 中繞過區域網路</string>
-    <string name="bypass_lan_in_core_only_sum">如果 LineageOS 的“允許熱點客戶端使用此裝置的 VPN”無法使用，嘗試啟用此選項。</string>
     <string name="protocol_settings">協議設定</string>
     <string name="group_basic">基本</string>
     <string name="group_settings">群組設定</string>
@@ -383,7 +376,6 @@
     <string name="pcap_notice">Pcap 檔案將被儲存至 %s</string>
     <string name="profile_traffic_statistics">設定檔流量統計資料</string>
     <string name="app_traffic_statistics">應用程式流量統計資料</string>
-    <string name="resolve_destination_summary">如果目的地位址是一個網域，則基於 IPv6 策略傳出。</string>
     <string name="destination_override_summary">使用被偵測到的網域複寫目的地位址，而不是僅用於路由</string>
     <string name="probe_url">自定義測試 URL</string>
     <string name="group_filter_owners">所有者</string>
