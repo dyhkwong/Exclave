@@ -264,17 +264,23 @@ fun buildV2RayConfig(
                 for (singleLine in DataStore.hosts.listByLine()) {
                     val key = singleLine.substringBefore(" ")
                     val values = singleLine.substringAfter(" ").split("\\s+".toRegex()).toMutableList()
-                    if (hosts.contains(key) && hosts[key] != null) {
-                        if (hosts[key]!!.valueX.isNotEmpty()) {
+                    if (hosts.contains(key)) {
+                        if (!hosts[key]!!.valueX.isNullOrEmpty()) {
                             values.add(hosts[key]!!.valueX)
-                        } else if (hosts[key]!!.valueY.size > 0) {
+                        } else if (!hosts[key]!!.valueY.isNullOrEmpty()) {
                             values.addAll(hosts[key]!!.valueY)
                         }
                     }
                     if (values.size > 1) {
-                        hosts[key] = DnsObject.StringOrListObject().apply { valueY = values }
+                        hosts[key] = DnsObject.StringOrListObject().apply {
+                            valueX = null
+                            valueY = values
+                        }
                     } else if (values.size == 1) {
-                        hosts[key] = DnsObject.StringOrListObject().apply { valueX = values[0] }
+                        hosts[key] = DnsObject.StringOrListObject().apply {
+                            valueX = values[0]
+                            valueY = null
+                        }
                     }
                 }
             }
