@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    id("com.google.devtools.ksp") version "2.1.21-2.0.2"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
@@ -49,16 +49,16 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.work:work-runtime-ktx:2.10.1")
-    implementation("androidx.work:work-multiprocess:2.10.1")
+    implementation("androidx.work:work-runtime-ktx:2.10.2")
+    implementation("androidx.work:work-multiprocess:2.10.2")
 
     implementation("com.takisoft.preferencex:preferencex:1.1.0")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:1.1.0")
 
     implementation("com.google.android.material:material:1.12.0")
-    implementation("cn.hutool:hutool-core:5.8.38")
-    implementation("cn.hutool:hutool-json:5.8.38")
+    implementation("cn.hutool:hutool-core:5.8.39")
+    implementation("cn.hutool:hutool-json:5.8.39")
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.google.zxing:core:3.5.3")
 
@@ -75,9 +75,9 @@ dependencies {
         exclude(group = "androidx.appcompat")
     }
 
-    implementation("androidx.room:room-runtime:2.7.1")
-    ksp("androidx.room:room-compiler:2.7.1")
-    implementation("androidx.room:room-ktx:2.7.1")
+    implementation("androidx.room:room-runtime:2.7.2")
+    ksp("androidx.room:room-compiler:2.7.2")
+    implementation("androidx.room:room-ktx:2.7.2")
 
     implementation("com.blacksquircle.ui:editorkit:2.0.0")
     implementation("com.blacksquircle.ui:language-json:2.0.0")
