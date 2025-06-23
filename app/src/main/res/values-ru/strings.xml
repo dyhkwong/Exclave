@@ -52,10 +52,10 @@
     <string name="group_delete_confirm_prompt">Удалить эту группу?</string>
     <string name="group_diff">Различия (%s)</string>
     <plurals name="group_updated">
-        <item quantity="one">%s: обновлено %d прокси</item>
-        <item quantity="few">%s: обновлено %d прокси</item>
-        <item quantity="many">%s: обновлено %d прокси</item>
-        <item quantity="other">%s: обновлено %d прокси</item>
+        <item quantity="one">%s: обновлен %d профиль</item>
+        <item quantity="few">%s: обновлено %d профиля</item>
+        <item quantity="many">%s: обновлено %d профилей</item>
+        <item quantity="other">%s: обновлено %d профилей</item>
     </plurals>
     <string name="group_no_difference">%s: Не отличаются</string>
     <plurals name="group_status_proxies_subscription">
@@ -98,10 +98,10 @@
     <string name="project">Проект</string>
     <string name="app_desc">Универсальный набор инструментов прокси для Android, написанный на Kotlin.</string>
     <plurals name="added">
-        <item quantity="one">Добавлен %d прокси</item>
-        <item quantity="few">Добавлено %d прокси</item>
-        <item quantity="many">Добавлено %d прокси</item>
-        <item quantity="other">Добавлено %d прокси</item>
+        <item quantity="one">Добавлен %d элемент</item>
+        <item quantity="few">Добавлено %d элемента</item>
+        <item quantity="many">Добавлено %d элементов</item>
+        <item quantity="other">Добавлено %d элементов</item>
     </plurals>
     <plurals name="removed">
         <item quantity="one">%d элемент удалён</item>
@@ -111,7 +111,7 @@
     </plurals>
     <plurals name="apps_message">
         <item quantity="one">%d приложений</item>
-        <item quantity="few">%d приложений</item>
+        <item quantity="few">%d приложения</item>
         <item quantity="many">%d приложений</item>
         <item quantity="other">%d приложений</item>
     </plurals>
@@ -156,7 +156,7 @@
     <string name="group_settings">Настройки группы</string>
     <string name="group_basic">Базовая</string>
     <string name="protocol_settings">Настройки протокола</string>
-    <string name="append_http_proxy_sum">HTTP-прокси будет использоваться напрямую из (браузера / некоторых поддерживаемых приложений), без использования виртуального сетевого интерфейса (Android 10+)</string>
+    <string name="append_http_proxy_sum">Некоторые поддерживаемые приложения будут использовать HTTP-прокси напрямую, и их трафик не будет проходить через интерфейс VPN.</string>
     <string name="append_http_proxy">Добавить HTTP-прокси к VPN</string>
     <string name="connection_test_timeout">Тайм-аут</string>
     <string name="connection_test_unreachable">Недоступно</string>
@@ -179,7 +179,7 @@
     <string name="night_mode">Ночной режим</string>
     <plurals name="lines">
         <item quantity="one">%d Строк</item>
-        <item quantity="few">%d Строк</item>
+        <item quantity="few">%d Строки</item>
         <item quantity="many">%d Строк</item>
         <item quantity="other">%d Строк</item>
     </plurals>
@@ -255,7 +255,7 @@
     <string name="forward_success">Прокси запущен.</string>
     <string name="service_proxy">Прокси-сервис</string>
     <string name="service_vpn">VPN Сервис</string>
-    <string name="auto_connect_summary">Включить прокси при запуске/обновлении приложения, если он был запущен до этого</string>
+    <string name="auto_connect_summary">Восстановить предыдущее состояние подключения после загрузки устройства или обновления приложения</string>
     <string name="auto_connect">Автоматическое подключение</string>
     <string name="show_system_apps">Системные</string>
     <string name="bypass_apps">Обход</string>
@@ -340,13 +340,13 @@
     <string name="traffic_holder">Включите VPN для записи статистики трафика</string>
     <plurals name="udp_connections">
         <item quantity="one">%d UDP-соединений</item>
-        <item quantity="few">%d UDP-соединений</item>
+        <item quantity="few">%d UDP-соединения</item>
         <item quantity="many">%d UDP-соединений</item>
         <item quantity="other">%d UDP-соединений</item>
     </plurals>
     <plurals name="tcp_connections">
         <item quantity="one">%d TCP-соединений</item>
-        <item quantity="few">%d TCP-соединений</item>
+        <item quantity="few">%d TCP-соединения</item>
         <item quantity="many">%d TCP-соединений</item>
         <item quantity="other">%d TCP-соединений</item>
     </plurals>
@@ -379,12 +379,12 @@
     <string name="app_traffic_statistics">Статистика трафика приложений</string>
     <string name="profile_traffic_statistics_summary">Когда отключено, использованный трафик не будет отображаться</string>
     <string name="app_statistics_disabled">Статистика трафика приложений отключена в настройках</string>
-    <string name="tun_implementation">Реализация TUN</string>
+    <string name="tun_implementation">TCP/IP стек</string>
     <string name="wireguard_local_address">Частный адрес</string>
     <string name="enable_pcap">Включить PCAP</string>
     <string name="pcap_summary">Сохранять трафик в файл .pcap</string>
     <string name="destination_override">Переопределять адрес назначения</string>
-    <string name="destination_override_summary">Использовать перехваченный домен для переопределения адреса назначения, а не только для маршрутизации</string>
+    <string name="destination_override_summary">Переопределить адрес назначения с помощью прослушиваемого доменного имени, не только для маршрутизации</string>
     <string name="pcap_notice">Pcap файлы будут сохранены в %s</string>
     <string name="route_play_store">Использовать сохранённое правило для %s</string>
     <string name="probe_url">Пользовательский URL-адрес проверки подключения</string>
@@ -517,7 +517,7 @@
     <string name="fragment_length">Длина фрагментации</string>
     <string name="probe_cert_summary">Проверка TLS-сертификата сервера.</string>
     <string name="front_proxy">Прямой прокси</string>
-    <string name="allow_apps_bypass_vpn_sum">Разрешить использовать такие методы, как bindProcessToNetwork, для обхода VPN.</string>
+    <string name="allow_apps_bypass_vpn_sum">Разрешить приложениям обходить VPN самостоятельно, используя системные методы</string>
     <string name="ech_config">ECH-конфиг</string>
     <string name="splithttp_mode">Режим</string>
     <string name="tuic_v5_provider">Реализация TUIC v5</string>
@@ -573,4 +573,15 @@
     <string name="fileSize_gibibyte">ГиБ</string>
     <string name="fileSize_tebibyte">ТиБ</string>
     <string name="fileSize_pebibyte">ПиБ</string>
+    <string name="use_iec_unit_sum">Используйте двоичные префиксы (1 KiB = 1024 байта) вместо десятичных префиксов (1 kB = 1000 байт).</string>
+    <string name="use_iec_unit">Использовать двоичные префиксы</string>
+    <string name="enable_vpn_interface_ipv6_address_sum">Добавить адрес IPv6 в интерфейс VPN</string>
+    <string name="bypass_private_sum">Исключить приватные адреса из VPN</string>
+    <string name="sniffing_sum">Прослушивание доменного имени с HTTP-хоста, TLS SNI и QUIC SNI, а также типа протокола</string>
+    <string name="hosts_sum">Преобразовать указанное доменное имя в указанный IP-адрес</string>
+    <string name="domain_strategy_prefer_ipv4">Предпочитать IPv4</string>
+    <string name="domain_strategy_ipv4_and_ipv6">IPv4 и IPv6</string>
+    <string name="domain_strategy_prefer_ipv6">Предпочитать IPv6</string>
+    <string name="domain_strategy_ipv6_only">Только IPv6</string>
+    <string name="domain_strategy_ipv4_only">Только IPv4</string>
 </resources>
