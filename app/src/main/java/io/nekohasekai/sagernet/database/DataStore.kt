@@ -44,6 +44,30 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         if (Build.VERSION.SDK_INT >= 24 && directBootAware && SagerNet.user.isUserUnlocked) {
             DirectBoot.flushTrafficStats()
         }*/
+
+        // migrate from 0.14.10
+        val ipv6Mode0 = configurationStore.getString("ipv6Mode0")?.toIntOrNull()
+        // 0: Disable, 1: Enable, 2: Prefer, 3: Only
+        when (ipv6Mode0) {
+            0 -> enableVPNInterfaceIPv6Address = false
+            1, 2, 3 -> enableVPNInterfaceIPv6Address = true
+        }
+        if (configurationStore.getBoolean("resolveDestination") == true) {
+            when (ipv6Mode0) {
+                0 -> outboundDomainStrategy = "UseIPv4"
+                1 -> outboundDomainStrategy = "PreferIPv4"
+                2 -> outboundDomainStrategy = "PreferIPv6"
+                3 -> outboundDomainStrategy = "UseIPv6"
+            }
+        }
+        if (configurationStore.getBoolean("resolveDestinationForDirect") == true) {
+            when (ipv6Mode0) {
+                0 -> outboundDomainStrategyForDirect = "UseIPv4"
+                1 -> outboundDomainStrategyForDirect = "PreferIPv4"
+                2 -> outboundDomainStrategyForDirect = "PreferIPv6"
+                3 -> outboundDomainStrategyForDirect = "UseIPv6"
+            }
+        }
     }
 
     var selectedProxy by configurationStore.long(Key.PROFILE_ID)
