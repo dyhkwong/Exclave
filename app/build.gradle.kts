@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.1.21-2.0.2"
+    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
