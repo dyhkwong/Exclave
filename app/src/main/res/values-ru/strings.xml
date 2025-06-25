@@ -52,14 +52,14 @@
     <string name="group_delete_confirm_prompt">Удалить эту группу?</string>
     <string name="group_diff">Различия (%s)</string>
     <plurals name="group_updated">
-        <item quantity="one">%s: обновлен %d профиль</item>
-        <item quantity="few">%s: обновлено %d профиля</item>
-        <item quantity="many">%s: обновлено %d профилей</item>
-        <item quantity="other">%s: обновлено %d профилей</item>
+        <item quantity="one">%s: обновлен %d прокси</item>
+        <item quantity="few">%s: обновлено %d прокси</item>
+        <item quantity="many">%s: обновлено %d прокси</item>
+        <item quantity="other">%s: обновлено %d прокси</item>
     </plurals>
     <string name="group_no_difference">%s: Не отличаются</string>
     <plurals name="group_status_proxies_subscription">
-        <item quantity="one">%d прокси | Обновлено %s</item>
+        <item quantity="one">%d прокси | Обновлен %s</item>
         <item quantity="few">%d прокси | Обновлено %s</item>
         <item quantity="many">%d прокси | Обновлено %s</item>
         <item quantity="other">%d прокси | Обновлено %s</item>
@@ -173,7 +173,7 @@
     <string name="random">Случайно</string>
     <string name="list">Список</string>
     <string name="auto">Авто</string>
-    <string name="disable">Отключен</string>
+    <string name="disable">Отключено</string>
     <string name="enable">Включить</string>
     <string name="follow_system">Использовать системную тему</string>
     <string name="night_mode">Ночной режим</string>
@@ -339,13 +339,13 @@
     <string name="copy_label">Копировать имя</string>
     <string name="traffic_holder">Включите VPN для записи статистики трафика</string>
     <plurals name="udp_connections">
-        <item quantity="one">%d UDP-соединений</item>
+        <item quantity="one">%d UDP-соединение</item>
         <item quantity="few">%d UDP-соединения</item>
         <item quantity="many">%d UDP-соединений</item>
         <item quantity="other">%d UDP-соединений</item>
     </plurals>
     <plurals name="tcp_connections">
-        <item quantity="one">%d TCP-соединений</item>
+        <item quantity="one">%d TCP-соединение</item>
         <item quantity="few">%d TCP-соединения</item>
         <item quantity="many">%d TCP-соединений</item>
         <item quantity="other">%d TCP-соединений</item>
@@ -491,9 +491,9 @@
     <string name="alter_id">Изменить ID</string>
     <string name="url">URL</string>
     <string name="ooc_subscription_token">OOCv1 API токен</string>
-    <string name="hysteria_max_stream_receive_window">QUIC max stream receive window</string>
-    <string name="hysteria_init_conn_receive_window">QUIC init connection receive window</string>
-    <string name="hysteria_max_conn_receive_window">QUIC max connection receive window</string>
+    <string name="hysteria_max_stream_receive_window">Максимальное окно приема потока QUIC</string>
+    <string name="hysteria_init_conn_receive_window">Начальное окно приёма соединения QUIC</string>
+    <string name="hysteria_max_conn_receive_window">Максимальное окно приема соединения QUIC</string>
     <string name="utls_fingerprint">uTLS-отпечаток</string>
     <string name="route_need_location_enabled">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **включенное местоположение**</string>
     <string name="route_need_fine_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **разрешение на точное определение местоположения**</string>
@@ -524,7 +524,7 @@
     <string name="backup_all_profiles">Бэкап всех профилей</string>
     <string name="donate_to_original_author">Пожертвовать автору</string>
     <string name="mieru_multiplexing_level">Уровень мультиплексирования</string>
-    <string name="hysteria_init_stream_receive_window">QUIC init stream receive window</string>
+    <string name="hysteria_init_stream_receive_window">Окно приема потока инициализации QUIC</string>
     <string name="route_asset_add_url">Добавить URL-адрес</string>
     <string name="route_asset_invalid_filename">Неверное имя файла: %s</string>
     <string name="route_asset_reserved_filename">Имя файла не может быть %s</string>
@@ -573,12 +573,12 @@
     <string name="fileSize_gibibyte">ГиБ</string>
     <string name="fileSize_tebibyte">ТиБ</string>
     <string name="fileSize_pebibyte">ПиБ</string>
-    <string name="use_iec_unit_sum">Используйте двоичные префиксы (1 KiB = 1024 байта) вместо десятичных префиксов (1 kB = 1000 байт).</string>
+    <string name="use_iec_unit_sum">Используйте двоичные префиксы (1 КиБ = 1024 байта) вместо десятичных префиксов (1 кБ = 1000 байт).</string>
     <string name="use_iec_unit">Использовать двоичные префиксы</string>
     <string name="enable_vpn_interface_ipv6_address_sum">Добавить адрес IPv6 в интерфейс VPN</string>
     <string name="bypass_private_sum">Исключить приватные адреса из VPN</string>
-    <string name="sniffing_sum">Прослушивание доменного имени с HTTP-хоста, TLS SNI и QUIC SNI, а также типа протокола</string>
-    <string name="hosts_sum">Преобразовать указанное доменное имя в указанный IP-адрес</string>
+    <string name="sniffing_sum">Прослушивание доменного имени с HTTP-хоста, TLS SNI и QUIC SNI и определение типа протокола</string>
+    <string name="hosts_sum">Сопоставить указанное доменное имя с указанным IP-адресом</string>
     <string name="domain_strategy_prefer_ipv4">Предпочитать IPv4</string>
     <string name="domain_strategy_ipv4_and_ipv6">IPv4 и IPv6</string>
     <string name="domain_strategy_prefer_ipv6">Предпочитать IPv6</string>
