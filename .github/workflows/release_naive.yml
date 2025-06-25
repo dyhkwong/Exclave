@@ -45,15 +45,6 @@ jobs:
           ./run init action naive
           ./run plugin naive init
           ./run plugin naive ${{ matrix.arch }}
-      - name: Calculate Checksum
-        run: |
-          openssl sha256 plugin/naive/src/main/jniLibs/${{ matrix.arch }}/libnaive.so > sha256sum.txt
-          echo "SHA256SUM=$(cut -d' ' -f2 sha256sum.txt)" >>$GITHUB_ENV
-      - name: Upload Checksum
-        uses: actions/upload-artifact@v4
-        with:
-          name: "NAIVE-SHA256-${{ matrix.arch }}-${{ github.event.inputs.COMMIT_HASH }} ${{ env.SHA256SUM }}"
-          path: sha256sum.txt
   build:
     name: Gradle Build
     runs-on: ubuntu-latest
