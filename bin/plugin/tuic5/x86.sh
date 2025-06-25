@@ -10,6 +10,7 @@ export CC=$ANDROID_X86_CC
 export CXX=$ANDROID_X86_CXX
 export RUST_ANDROID_GRADLE_CC=$ANDROID_X86_CC
 export CARGO_TARGET_I686_LINUX_ANDROID_LINKER=$PROJECT/bin/rust-linker/linker-wrapper.sh
+export RUST_ANDROID_GRADLE_CC_LINK_ARG="-Wl,-z,max-page-size=16384"
 
 cargo build --release -p tuic-client --target i686-linux-android --features jemallocator
 cp target/i686-linux-android/release/tuic-client $DIR/$LIB_OUTPUT
