@@ -1665,7 +1665,13 @@ fun buildV2RayConfig(
                     networkType = rule.networkType.toMutableList()
                 }
                 when {
-                    rule.reverse -> inboundTag = listOf("reverse-${rule.id}")
+                    rule.reverse -> {
+                        inboundTag = listOf("reverse-${rule.id}")
+                        val outId = rule.outbound
+                        outboundTag = if (outId == proxy.id) tagProxy else {
+                            tagMap[outId] ?: error("outbound not found in rule ${rule.displayName()}")
+                        }
+                    }
                     balancerMap.containsKey(rule.outbound) -> {
                         balancerTag = balancerMap[rule.outbound]
                     }
