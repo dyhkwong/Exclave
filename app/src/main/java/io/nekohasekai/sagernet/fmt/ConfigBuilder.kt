@@ -1789,10 +1789,6 @@ fun buildV2RayConfig(
                 DNSOutboundConfigurationObject().apply {
                     userLevel = 1
                 })
-            proxySettings = OutboundObject.ProxySettingsObject().apply {
-                tag = tagProxy // won't fix: v2ray does not support using a balancer tag here
-                transportLayer = true
-            }
         })
 
         val bypassIP = HashSet<String>()
