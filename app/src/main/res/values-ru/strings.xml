@@ -55,20 +55,17 @@
         <item quantity="one">%s: обновлен %d прокси</item>
         <item quantity="few">%s: обновлено %d прокси</item>
         <item quantity="many">%s: обновлено %d прокси</item>
-        <item quantity="other">%s: обновлено %d прокси</item>
     </plurals>
     <string name="group_no_difference">%s: Не отличаются</string>
     <plurals name="group_status_proxies_subscription">
         <item quantity="one">%d прокси | Обновлен %s</item>
         <item quantity="few">%d прокси | Обновлено %s</item>
         <item quantity="many">%d прокси | Обновлено %s</item>
-        <item quantity="other">%d прокси | Обновлено %s</item>
     </plurals>
     <plurals name="group_status_proxies">
         <item quantity="one">%d прокси</item>
         <item quantity="few">%d прокси</item>
         <item quantity="many">%d прокси</item>
-        <item quantity="other">%d прокси</item>
     </plurals>
     <string name="group_status_empty_subscription">Ещё не обновлено</string>
     <string name="group_status_empty">Пустая группа</string>
@@ -101,19 +98,16 @@
         <item quantity="one">Добавлен %d элемент</item>
         <item quantity="few">Добавлено %d элемента</item>
         <item quantity="many">Добавлено %d элементов</item>
-        <item quantity="other">Добавлено %d элементов</item>
     </plurals>
     <plurals name="removed">
         <item quantity="one">%d элемент удалён</item>
         <item quantity="few">%d элемента удалены</item>
         <item quantity="many">%d элементов удалено</item>
-        <item quantity="other">%d элементов удалено</item>
     </plurals>
     <plurals name="apps_message">
         <item quantity="one">%d приложений</item>
         <item quantity="few">%d приложения</item>
         <item quantity="many">%d приложений</item>
-        <item quantity="other">%d приложений</item>
     </plurals>
     <string name="select_apps">Выберите приложения</string>
     <string name="apps">Приложения</string>
@@ -181,7 +175,6 @@
         <item quantity="one">%d Строк</item>
         <item quantity="few">%d Строки</item>
         <item quantity="many">%d Строк</item>
-        <item quantity="other">%d Строк</item>
     </plurals>
     <string name="route_warn">Перед добавлением собственных правил прочтите документацию, иначе подключение к интернету может не получиться.</string>
     <string name="license">Лицензия</string>
@@ -342,13 +335,11 @@
         <item quantity="one">%d UDP-соединение</item>
         <item quantity="few">%d UDP-соединения</item>
         <item quantity="many">%d UDP-соединений</item>
-        <item quantity="other">%d UDP-соединений</item>
     </plurals>
     <plurals name="tcp_connections">
         <item quantity="one">%d TCP-соединение</item>
         <item quantity="few">%d TCP-соединения</item>
         <item quantity="many">%d TCP-соединений</item>
-        <item quantity="other">%d TCP-соединений</item>
     </plurals>
     <string name="traffic_uplink">%s | %s/с ↑</string>
     <string name="traffic_downlink">%s | %s/с ↓</string>
