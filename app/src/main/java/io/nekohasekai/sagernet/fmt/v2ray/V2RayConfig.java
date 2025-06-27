@@ -1112,6 +1112,7 @@ public class V2RayConfig {
         public Boolean allowInsecureIfPinnedPeerCertificate;
         public String echConfig;
         public String echDohServer;
+        public String echQueryDomain;
 
         public static class CertificateObject {
 
