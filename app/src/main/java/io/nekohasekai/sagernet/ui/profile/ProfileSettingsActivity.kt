@@ -39,7 +39,6 @@ import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.SagerDatabase
@@ -178,12 +177,10 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                 finish()
                 return
             }
-            if (entity.id == DataStore.selectedProxy) {
-                SagerNet.stopService()
-            }
             ProfileManager.updateProfile(entity.apply { (requireBean() as T).serialize() })
         }
         if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
+        setResult(RESULT_OK)
         finish()
 
     }

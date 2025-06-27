@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -1655,12 +1656,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 editButton.setOnClickListener {
-                    val intent = proxyEntity.settingIntent(
-                        it.context, proxyGroup.type == GroupType.SUBSCRIPTION
+                    editProfileLauncher.launch(
+                        proxyEntity.settingIntent(
+                            it.context, proxyGroup.type == GroupType.SUBSCRIPTION
+                        )
                     )
-                    if (intent != null) {
-                        it.context.startActivity(intent)
-                    }
                 }
 
                 deleteButton.setOnClickListener {
@@ -1682,7 +1682,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                         ?: DataStore.selectedProxy) == proxyEntity.id
                     val started = selected && SagerNet.started && DataStore.startedProfile == proxyEntity.id
                     onMainDispatcher {
-                        editButton.isEnabled = !started
                         deleteButton.isEnabled = !started
                         selectedView.visibility = if (selected) View.VISIBLE else View.INVISIBLE
                     }
@@ -1765,6 +1764,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                 return true
             }
         }
+
+        private val editProfileLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    if (DataStore.currentProfile == DataStore.editingId) {
+                        needReload()
+                    }
+                }
+            }
 
     }
 
