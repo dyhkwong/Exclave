@@ -388,6 +388,10 @@ class MainActivity : ThemedActivity(),
         when (state) {
             BaseService.State.Connected, BaseService.State.Stopped -> {
                 statsUpdated(emptyList())
+                runOnDefaultDispatcher {
+                    // refresh view
+                    ProfileManager.postUpdate(DataStore.currentProfile)
+                }
             }
             else -> {}
         }
