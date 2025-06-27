@@ -60,11 +60,6 @@
             app:key="serverEchConfig"
             app:title="@string/ech_config"
             app:useSimpleSummaryProvider="true" />
-        <!--EditTextPreference
-            app:icon="@drawable/ic_baseline_nfc_24"
-            app:key="serverEchDohServer"
-            app:title="@string/ech_doh_server"
-            app:useSimpleSummaryProvider="true" /-->
     </PreferenceCategory>
 
 </PreferenceScreen>

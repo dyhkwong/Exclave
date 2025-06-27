@@ -52,7 +52,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public String pinnedPeerCertificateChainSha256;
     public String utlsFingerprint;
     public String echConfig;
-    public String echDohServer;
 
     public Boolean wsUseBrowserForwarder;
     public Boolean shUseBrowserForwarder;
@@ -121,7 +120,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (packetEncoding == null) packetEncoding = "none";
         if (utlsFingerprint == null) utlsFingerprint = "";
         if (echConfig == null) echConfig = "";
-        if (echDohServer == null) echDohServer = "";
 
         if (realityPublicKey == null) realityPublicKey = "";
         if (realityShortId == null) realityShortId = "";
@@ -231,7 +229,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeBoolean(allowInsecure);
                 output.writeString(utlsFingerprint);
                 output.writeString(echConfig);
-                output.writeString(echDohServer);
+                output.writeString(""); // echDohServer, removed
                 break;
             }
             case "reality": {
@@ -240,7 +238,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(realityShortId);
                 output.writeString(realityFingerprint);
                 output.writeString(echConfig);
-                output.writeString(echDohServer);
+                output.writeString(""); // echDohServer, removed
                 output.writeBoolean(realityDisableX25519Mlkem768);
                 output.writeBoolean(realityReenableChacha20Poly1305);
                 break;
@@ -392,7 +390,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 }
                 if (version >= 21) {
                     echConfig = input.readString();
-                    echDohServer = input.readString();
+                    input.readString(); // echDohServer, removed
                 }
                 break;
             }
@@ -419,7 +417,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 }
                 if (version >= 28) {
                     echConfig = input.readString();
-                    echDohServer = input.readString();
+                    input.readString(); // echDohServer, removed
                 }
                 if (version >= 27) {
                     realityDisableX25519Mlkem768 = input.readBoolean();
@@ -488,7 +486,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
         }
         bean.utlsFingerprint = utlsFingerprint;
         bean.echConfig = echConfig;
-        bean.echDohServer = echDohServer;
         bean.realityFingerprint = realityFingerprint;
         bean.realityDisableX25519Mlkem768 = realityDisableX25519Mlkem768;
         bean.realityReenableChacha20Poly1305 = realityReenableChacha20Poly1305;

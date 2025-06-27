@@ -814,9 +814,6 @@ fun buildV2RayConfig(
                                                 if (bean.echConfig.isNotEmpty()) {
                                                     echConfig = bean.echConfig
                                                 }
-                                                /*if (bean.echDohServer.isNotEmpty()) {
-                                                    echDohServer = bean.echDohServer
-                                                }*/
                                             }
                                         }
                                         "reality" -> {
@@ -836,9 +833,6 @@ fun buildV2RayConfig(
                                                 if (bean.echConfig.isNotEmpty()) {
                                                     echConfig = bean.echConfig
                                                 }
-                                                /*if (bean.echDohServer.isNotEmpty()) {
-                                                    echDohServer = bean.echDohServer
-                                                }*/
                                                 if (DataStore.realityDisableX25519Mlkem768 || bean.realityDisableX25519Mlkem768 && !forExport) {
                                                     disableX25519MLKEM768 = true
                                                 }
@@ -1255,9 +1249,6 @@ fun buildV2RayConfig(
                                             if (bean.echConfig.isNotEmpty()) {
                                                 echConfig = bean.echConfig
                                             }
-                                            /*if (bean.echDohServer.isNotEmpty()) {
-                                                echDohServer = bean.echDohServer
-                                            }*/
                                         }
                                     }
                                 )
@@ -1336,9 +1327,6 @@ fun buildV2RayConfig(
                                                 if (bean.echConfig.isNotEmpty()) {
                                                     echConfig = bean.echConfig
                                                 }
-                                                /*if (bean.echDohServer.isNotEmpty()) {
-                                                    echDohServer = bean.echDohServer
-                                                }*/
                                             }
                                         }
                                         "reality" -> {
@@ -1358,9 +1346,6 @@ fun buildV2RayConfig(
                                                 if (bean.echConfig.isNotEmpty()) {
                                                     echConfig = bean.echConfig
                                                 }
-                                                /*if (bean.echDohServer.isNotEmpty()) {
-                                                    echDohServer = bean.echDohServer
-                                                }*/
                                                 if (DataStore.realityDisableX25519Mlkem768 && !forExport) {
                                                     disableX25519MLKEM768 = true
                                                 }

@@ -24,7 +24,6 @@ public class AnyTLSBean extends AbstractBean {
     public Boolean allowInsecure;
     public String utlsFingerprint;
     public String echConfig;
-    public String echDohServer;
     public String realityPublicKey;
     public String realityShortId;
     public String realityFingerprint;
@@ -46,7 +45,6 @@ public class AnyTLSBean extends AbstractBean {
         if (allowInsecure == null) allowInsecure = false;
         if (utlsFingerprint == null) utlsFingerprint = "";
         if (echConfig == null) echConfig = "";
-        if (echDohServer == null) echDohServer = "";
         if (realityPublicKey == null) realityPublicKey = "";
         if (realityShortId == null) realityShortId = "";
         if (realityFingerprint == null) realityFingerprint = "chrome";
@@ -70,7 +68,7 @@ public class AnyTLSBean extends AbstractBean {
         output.writeBoolean(allowInsecure);
         output.writeString(utlsFingerprint);
         output.writeString(echConfig);
-        output.writeString(echDohServer);
+        output.writeString(""); // echDohServer, removed
         output.writeString(realityPublicKey);
         output.writeString(realityShortId);
         output.writeString(realityFingerprint);
@@ -98,15 +96,14 @@ public class AnyTLSBean extends AbstractBean {
         if (version <= 1) {
             if (security.equals("reality")) {
                 echConfig = "";
-                echDohServer = "";
             } else {
                 echConfig = input.readString();
-                echDohServer = input.readString();
+                input.readString(); // echDohServer, removed
             }
         }
         if (version >= 2) {
             echConfig = input.readString();
-            echDohServer = input.readString();
+            input.readString(); // echDohServer, removed
         }
         realityPublicKey = input.readString();
         realityShortId = input.readString();
@@ -130,7 +127,6 @@ public class AnyTLSBean extends AbstractBean {
         }
         bean.utlsFingerprint = utlsFingerprint;
         bean.echConfig = echConfig;
-        bean.echDohServer = echDohServer;
         bean.realityFingerprint = realityFingerprint;
         bean.realityDisableX25519Mlkem768 = realityDisableX25519Mlkem768;
         bean.realityReenableChacha20Poly1305 = realityReenableChacha20Poly1305;

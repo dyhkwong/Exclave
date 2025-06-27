@@ -38,7 +38,6 @@ public class Http3Bean extends AbstractBean {
     public String pinnedPeerCertificateChainSha256;
     public Boolean allowInsecure;
     public String echConfig;
-    public String echDohServer;
 
     @Override
     public void initializeDefaultValues() {
@@ -50,7 +49,6 @@ public class Http3Bean extends AbstractBean {
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
         if (allowInsecure == null) allowInsecure = false;
         if (echConfig == null) echConfig = "";
-        if (echDohServer == null) echDohServer = "";
     }
 
     @Override
@@ -64,7 +62,7 @@ public class Http3Bean extends AbstractBean {
         output.writeString(pinnedPeerCertificateChainSha256);
         output.writeBoolean(allowInsecure);
         output.writeString(echConfig);
-        output.writeString(echDohServer);
+        output.writeString(""); // echDohServer, removed
     }
 
     @Override
@@ -78,7 +76,7 @@ public class Http3Bean extends AbstractBean {
         pinnedPeerCertificateChainSha256 = input.readString();
         allowInsecure = input.readBoolean();
         echConfig = input.readString();
-        echDohServer = input.readString();
+        input.readString(); // echDohServer, removed
     }
 
     @Override
@@ -93,7 +91,6 @@ public class Http3Bean extends AbstractBean {
             bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
         }
         bean.echConfig = echConfig;
-        bean.echDohServer = echDohServer;
     }
 
     @NotNull

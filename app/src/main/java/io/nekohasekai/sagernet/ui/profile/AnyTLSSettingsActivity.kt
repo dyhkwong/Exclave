@@ -33,7 +33,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverUTLSFingerprint = utlsFingerprint
         DataStore.serverEchConfig = echConfig
-        //DataStore.serverEchDohServer = echDohServer
         DataStore.serverRealityPublicKey = realityPublicKey
         DataStore.serverRealityShortId = realityShortId
         DataStore.serverRealityFingerprint = realityFingerprint
@@ -57,7 +56,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         utlsFingerprint = DataStore.serverUTLSFingerprint
         echConfig = DataStore.serverEchConfig
-        //echDohServer = DataStore.serverEchDohServer
         realityPublicKey = DataStore.serverRealityPublicKey
         realityShortId = DataStore.serverRealityShortId
         realityFingerprint = DataStore.serverRealityFingerprint
@@ -76,7 +74,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
     lateinit var allowInsecure: SwitchPreference
     lateinit var utlsFingerprint: SimpleMenuPreference
     lateinit var echConfig: EditTextPreference
-    // lateinit var echDohServer: EditTextPreference
     lateinit var realityPublicKey: EditTextPreference
     lateinit var realityShortId: EditTextPreference
     lateinit var realityFingerprint: SimpleMenuPreference
@@ -112,7 +109,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         allowInsecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
         echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
-        //echDohServer = findPreference(Key.SERVER_ECH_DOH_SERVER)!!
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
         realityShortId = findPreference(Key.SERVER_REALITY_SHORT_ID)!!
         realityFingerprint = findPreference(Key.SERVER_REALITY_FINGERPRINT)!!

@@ -132,7 +132,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverSplithttpExtra = splithttpExtra
         DataStore.serverUTLSFingerprint = utlsFingerprint
         DataStore.serverEchConfig = echConfig
-        //DataStore.serverEchDohServer = echDohServer
 
         DataStore.serverRealityPublicKey = realityPublicKey
         DataStore.serverRealityShortId = realityShortId
@@ -219,7 +218,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         splithttpExtra = DataStore.serverSplithttpExtra
         utlsFingerprint = DataStore.serverUTLSFingerprint
         echConfig = DataStore.serverEchConfig
-        //echDohServer = DataStore.serverEchDohServer
 
         realityPublicKey = DataStore.serverRealityPublicKey
         realityShortId = DataStore.serverRealityShortId

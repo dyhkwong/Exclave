@@ -24,7 +24,6 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         DataStore.serverCertificates = certificates
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverEchConfig = echConfig
-        //DataStore.serverEchDohServer = echDohServer
         DataStore.serverAllowInsecure = allowInsecure
     }
 
@@ -38,7 +37,6 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         echConfig = DataStore.serverEchConfig
-        //echDohServer = DataStore.serverEchDohServer
         allowInsecure = DataStore.serverAllowInsecure
     }
 

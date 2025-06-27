@@ -303,7 +303,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverPacketEncoding by profileCacheStore.string(Key.SERVER_PACKET_ENCODING)
     var serverUTLSFingerprint by profileCacheStore.string(Key.SERVER_UTLS_FINGERPRINT)
     var serverEchConfig by profileCacheStore.string(Key.SERVER_ECH_CONFIG)
-    //var serverEchDohServer by profileCacheStore.string(Key.SERVER_ECH_DOH_SERVER)
     var serverRealityPublicKey by profileCacheStore.string(Key.SERVER_REALITY_PUBLIC_KEY)
     var serverRealityShortId by profileCacheStore.string(Key.SERVER_REALITY_SHORT_ID)
     var serverRealityFingerprint by profileCacheStore.string(Key.SERVER_REALITY_FINGERPRINT)
