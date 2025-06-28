@@ -569,4 +569,6 @@
     <string name="domain_strategy_ipv4_and_ipv6">IPv4 和 IPv6</string>
     <string name="domain_strategy_prefer_ipv6">偏好 IPv6</string>
     <string name="domain_strategy_ipv6_only">仅 IPv6</string>
+    <string name="disable_all">禁用所有</string>
+    <string name="enable_all">启用所有</string>
 </resources>

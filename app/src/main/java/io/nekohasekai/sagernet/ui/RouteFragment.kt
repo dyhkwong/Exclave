@@ -151,6 +151,18 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             R.id.action_new_route -> {
                 startActivity(Intent(context, RouteSettingsActivity::class.java))
             }
+            R.id.action_disable_all -> {
+                runOnDefaultDispatcher {
+                    SagerDatabase.rulesDao.enableAll(enabled = false)
+                    ruleAdapter.reload()
+                }
+            }
+            R.id.action_enable_all -> {
+                runOnDefaultDispatcher {
+                    SagerDatabase.rulesDao.enableAll()
+                    ruleAdapter.reload()
+                }
+            }
             R.id.action_reset_route -> {
                 runOnDefaultDispatcher {
                     SagerDatabase.rulesDao.reset()

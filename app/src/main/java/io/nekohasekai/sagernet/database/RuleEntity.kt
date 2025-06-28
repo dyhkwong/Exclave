@@ -148,6 +148,9 @@ data class RuleEntity(
         @Insert
         fun insert(rules: List<RuleEntity>)
 
+        @Query("UPDATE rules SET enabled = :enabled")
+        fun enableAll(enabled: Boolean = true)
+
     }
 
 

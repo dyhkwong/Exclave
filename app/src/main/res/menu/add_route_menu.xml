@@ -7,6 +7,14 @@
         android:title="@string/route_add"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_disable_all"
+        android:title="@string/disable_all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_enable_all"
+        android:title="@string/enable_all"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_reset_route"
         android:title="@string/route_reset"
         app:showAsAction="never" />
