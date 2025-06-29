@@ -575,4 +575,6 @@
     <string name="domain_strategy_prefer_ipv6">Предпочитать IPv6</string>
     <string name="domain_strategy_ipv6_only">Только IPv6</string>
     <string name="domain_strategy_ipv4_only">Только IPv4</string>
+    <string name="disable_all">Отключить все</string>
+    <string name="enable_all">Включить все</string>
 </resources>
