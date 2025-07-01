@@ -1986,7 +1986,7 @@ fun buildV2RayConfig(
             })
         }
 
-        if (!forTest && hasDnsTagDirect) {
+        if (hasDnsTagDirect) {
             routing.rules.add(0, RoutingObject.RuleObject().apply {
                 type = "field"
                 inboundTag = listOf(TAG_DNS_DIRECT)
