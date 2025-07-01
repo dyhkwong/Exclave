@@ -358,6 +358,7 @@ public class V2RayConfig {
         public Integer timeout;
         public Integer userLevel;
         public String packetEncoding;
+        public Boolean deferLastReply;
 
         public static class AccountObject {
 
@@ -496,6 +497,7 @@ public class V2RayConfig {
         public Integer userLevel;
         public Boolean allowTransparent;
         public String packetEncoding;
+        public Boolean deferLastReply;
 
         public static class AccountObject {
 
