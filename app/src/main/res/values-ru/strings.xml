@@ -370,7 +370,7 @@
     <string name="app_traffic_statistics">Статистика трафика приложений</string>
     <string name="profile_traffic_statistics_summary">Когда отключено, использованный трафик не будет отображаться</string>
     <string name="app_statistics_disabled">Статистика трафика приложений отключена в настройках</string>
-    <string name="tun_implementation">TCP/IP стек</string>
+    <string name="tun_implementation">Стек TCP/IP</string>
     <string name="wireguard_local_address">Частный адрес</string>
     <string name="enable_pcap">Включить PCAP</string>
     <string name="pcap_summary">Сохранять трафик в файл .pcap</string>
