@@ -50,27 +50,33 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         // 0: Disable, 1: Enable, 2: Prefer, 3: Only
         if (configurationStore.getBoolean("enableVPNInterfaceIPv6Address") == null) {
             when (ipv6Mode0) {
-                0 -> enableVPNInterfaceIPv6Address = false
-                1, 2, 3 -> enableVPNInterfaceIPv6Address = true
+                0 -> configurationStore.putBoolean("enableVPNInterfaceIPv6Address", false)
+                1, 2, 3 -> configurationStore.putBoolean("enableVPNInterfaceIPv6Address", true)
             }
         }
         if (configurationStore.getBoolean("resolveDestination") == true
             && configurationStore.getString("outboundDomainStrategy") == null) {
             when (ipv6Mode0) {
-                0 -> outboundDomainStrategy = "UseIPv4"
-                1 -> outboundDomainStrategy = "PreferIPv4"
-                2 -> outboundDomainStrategy = "PreferIPv6"
-                3 -> outboundDomainStrategy = "UseIPv6"
+                0 -> configurationStore.putString("outboundDomainStrategy", "UseIPv4")
+                1 -> configurationStore.putString("outboundDomainStrategy", "PreferIPv4")
+                2 -> configurationStore.putString("outboundDomainStrategy", "PreferIPv6")
+                3 -> configurationStore.putString("outboundDomainStrategy", "UseIPv6")
             }
         }
         if (configurationStore.getBoolean("resolveDestinationForDirect") == true
             && configurationStore.getString("outboundDomainStrategyForDirect") == null) {
             when (ipv6Mode0) {
-                0 -> outboundDomainStrategyForDirect = "UseIPv4"
-                1 -> outboundDomainStrategyForDirect = "PreferIPv4"
-                2 -> outboundDomainStrategyForDirect = "PreferIPv6"
-                3 -> outboundDomainStrategyForDirect = "UseIPv6"
+                0 -> configurationStore.putString("outboundDomainStrategyForDirect", "UseIPv4")
+                1 -> configurationStore.putString("outboundDomainStrategyForDirect", "PreferIPv4")
+                2 -> configurationStore.putString("outboundDomainStrategyForDirect", "PreferIPv6")
+                3 -> configurationStore.putString("outboundDomainStrategyForDirect", "UseIPv6")
             }
+        }
+        // migrate from 0.14.14
+        val outboundDomainStrategy = configurationStore.getString("outboundDomainStrategy")
+        if (outboundDomainStrategy != null && outboundDomainStrategy != "AsIs"
+            && configurationStore.getString("outboundDomainStrategyForServer") == null) {
+            configurationStore.putString("outboundDomainStrategyForServer", outboundDomainStrategy)
         }
     }
 
@@ -132,6 +138,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var outboundDomainStrategy by configurationStore.string(Key.OUTBOUND_DOMAIN_STRATEGY) { "AsIs" }
     var outboundDomainStrategyForDirect by configurationStore.string(Key.OUTBOUND_DOMAIN_STRATEGY_FOR_DIRECT) { "AsIs" }
 
+    var outboundDomainStrategyForServer by configurationStore.string(Key.OUTBOUND_DOMAIN_STRATEGY_FOR_SERVER) { "AsIs" }
     var bypassLan by configurationStore.boolean(Key.BYPASS_LAN) { true }
 
     var allowAccess by configurationStore.boolean(Key.ALLOW_ACCESS)

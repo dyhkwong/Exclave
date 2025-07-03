@@ -1397,6 +1397,12 @@ fun buildV2RayConfig(
                         currentOutbound.domainStrategy = "UseIP"
                     }
 
+                    if (!(currentOutbound.domainStrategy == null && DataStore.outboundDomainStrategyForServer == "AsIs")
+                        && !(currentOutbound.domainStrategy == "AsIs" && DataStore.outboundDomainStrategyForServer == "AsIs")
+                        && currentOutbound.domainStrategy != DataStore.outboundDomainStrategyForServer) {
+                        currentOutbound.dialDomainStrategy = DataStore.outboundDomainStrategyForServer
+                    }
+
                     if (bean is ConfigBean && bean.type == "v2ray_outbound") {
                         currentOutbound = gson.fromJson(bean.content, OutboundObject::class.java).apply { init() }
                     }

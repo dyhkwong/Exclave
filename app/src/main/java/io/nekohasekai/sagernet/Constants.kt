@@ -61,6 +61,7 @@ object Key {
     const val DESTINATION_OVERRIDE = "destinationOverride"
     const val OUTBOUND_DOMAIN_STRATEGY = "outboundDomainStrategy"
     const val OUTBOUND_DOMAIN_STRATEGY_FOR_DIRECT = "outboundDomainStrategyForDirect"
+    const val OUTBOUND_DOMAIN_STRATEGY_FOR_SERVER = "outboundDomainStrategyForServer"
 
     const val BYPASS_LAN = "bypassLan"
 

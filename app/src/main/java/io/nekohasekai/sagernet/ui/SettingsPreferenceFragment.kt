@@ -272,6 +272,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         findPreference<SimpleMenuPreference>(Key.OUTBOUND_DOMAIN_STRATEGY)!!.onPreferenceChangeListener = reloadListener
         findPreference<SimpleMenuPreference>(Key.OUTBOUND_DOMAIN_STRATEGY_FOR_DIRECT)!!.onPreferenceChangeListener = reloadListener
+        findPreference<SimpleMenuPreference>(Key.OUTBOUND_DOMAIN_STRATEGY_FOR_SERVER)!!.onPreferenceChangeListener = reloadListener
 
         val rulesProvider = findPreference<SimpleMenuPreference>(Key.RULES_PROVIDER)!!
         val rulesGeositeUrl = findPreference<LinkOrContentPreference>(Key.RULES_GEOSITE_URL)!!

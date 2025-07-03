@@ -571,4 +571,5 @@
     <string name="domain_strategy_ipv6_only">仅 IPv6</string>
     <string name="disable_all">禁用所有</string>
     <string name="enable_all">启用所有</string>
+    <string name="resolve_destination_for_server">解析目标地址（服务器地址）</string>
 </resources>

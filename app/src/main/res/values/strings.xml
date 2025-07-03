@@ -607,4 +607,5 @@
     <string name="domain_strategy_ipv6_only">IPv6 only</string>
     <string name="disable_all">Disable all</string>
     <string name="enable_all">Enable all</string>
+    <string name="resolve_destination_for_server">Resolve destination (server address)</string>
 </resources>

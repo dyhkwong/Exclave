@@ -169,6 +169,14 @@
             app:title="@string/resolve_destination_for_direct"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="AsIs"
+            app:entries="@array/outbound_domain_strategy"
+            app:entryValues="@array/outbound_domain_strategy_value"
+            app:icon="@drawable/baseline_wrap_text_24"
+            app:key="outboundDomainStrategyForServer"
+            app:title="@string/resolve_destination_for_server"
+            app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
             app:entries="@array/rules_dat_provider"
             app:entryValues="@array/int_array_4"
