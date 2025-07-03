@@ -136,6 +136,10 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                                 } ?: tls.getString("alpn")?.also {
                                     v2rayBean.alpn = it
                                 }
+                                if (v2rayBean.alpn == null && v2rayBean.type == "quic") {
+                                    // https://github.com/SagerNet/sing-box/pull/1934
+                                    v2rayBean.alpn = "h3"
+                                }
                                 tls.getObject("reality")?.also { reality ->
                                     reality.getBoolean("enabled")?.also { enabled ->
                                         if (enabled) {
