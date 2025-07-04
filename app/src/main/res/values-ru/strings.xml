@@ -13,7 +13,7 @@
     <string name="dns_hosts">Перезапись домена</string>
     <string name="fakedns_message">Может вызвать необходимость перезапуска других приложений для повторного подключения к сети после остановки прокси</string>
     <string name="enable_fakedns">Включить FakeDNS</string>
-    <string name="dns_routing_message">Разрешение доменов в обходных маршрутах с помощью Direct DNS</string>
+    <string name="dns_routing_message">Резолвить домены в обходных маршрутах с помощью прямого DNS</string>
     <string name="enable_dns_routing">Включить маршрутизацию DNS</string>
     <string name="direct_dns">Прямой DNS</string>
     <string name="remote_dns">Удаленный DNS</string>
@@ -577,4 +577,5 @@
     <string name="domain_strategy_ipv4_only">Только IPv4</string>
     <string name="disable_all">Отключить все</string>
     <string name="enable_all">Включить все</string>
+    <string name="resolve_destination_for_server">Резолвить адрес назначения (адрес сервера)</string>
 </resources>
