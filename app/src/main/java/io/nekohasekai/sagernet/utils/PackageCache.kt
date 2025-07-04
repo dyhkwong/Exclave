@@ -49,7 +49,7 @@ object PackageCache {
 
     @SuppressLint("InlinedApi")
     fun reload() {
-        installedPackages = app.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS)
+        installedPackages = app.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
             .filter {
                 when (it.packageName) {
                     "android" -> true
