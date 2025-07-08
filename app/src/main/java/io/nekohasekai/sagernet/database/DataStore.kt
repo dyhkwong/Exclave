@@ -321,7 +321,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverMekyaUrl by profileCacheStore.string(Key.SERVER_MEKYA_URL)
 
     var serverPorts by profileCacheStore.string(Key.SERVER_PORTS)
-    var serverHopInterval by profileCacheStore.stringToInt(Key.SERVER_HOP_INTERVAL)
+    var serverHopInterval by profileCacheStore.stringToLong(Key.SERVER_HOP_INTERVAL)
 
     var serverVMessExperimentalAuthenticatedLength by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_AUTHENTICATED_LENGTH)
     var serverVMessExperimentalNoTerminationSignal by profileCacheStore.boolean(Key.SERVER_VMESS_EXPERIMENTAL_NO_TERMINATION_SIGNAL)
@@ -331,8 +331,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverMuxPacketEncoding by profileCacheStore.string(Key.SERVER_MUX_PACKET_ENCODING)
 
     var serverAuthType by profileCacheStore.stringToInt(Key.SERVER_AUTH_TYPE)
-    var serverUploadSpeed by profileCacheStore.stringToInt(Key.SERVER_UPLOAD_SPEED)
-    var serverDownloadSpeed by profileCacheStore.stringToInt(Key.SERVER_DOWNLOAD_SPEED)
+    var serverUploadSpeed by profileCacheStore.stringToLong(Key.SERVER_UPLOAD_SPEED)
+    var serverDownloadSpeed by profileCacheStore.stringToLong(Key.SERVER_DOWNLOAD_SPEED)
     var serverStreamReceiveWindow by profileCacheStore.stringToIntIfExists(Key.SERVER_STREAM_RECEIVE_WINDOW)
     var serverConnectionReceiveWindow by profileCacheStore.stringToIntIfExists(Key.SERVER_CONNECTION_RECEIVE_WINDOW)
     var serverDisableMtuDiscovery by profileCacheStore.boolean(Key.SERVER_DISABLE_MTU_DISCOVERY)

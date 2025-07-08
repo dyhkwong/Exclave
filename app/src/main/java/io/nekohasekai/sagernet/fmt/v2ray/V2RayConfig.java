@@ -422,7 +422,7 @@ public class V2RayConfig {
             public String alpn;
             public String path;
             public String dest; // fxxk
-            public Integer xver;
+            public Long xver;
             public String name;
             public String type;
 
@@ -481,7 +481,7 @@ public class V2RayConfig {
             public String path;
             public String type;
             public String dest; // fxxk
-            public Integer xver;
+            public Long xver;
 
         }
 
@@ -1065,13 +1065,13 @@ public class V2RayConfig {
             public Integer tcpKeepAliveIdle;
             public Integer tcpFastOpenQueueLength;
             public String bindToDevice;
-            public Integer rxBufSize;
-            public Integer txBufSize;
+            public Long rxBufSize;
+            public Long txBufSize;
             public Boolean forceBufSize;
             public String dialerProxy; // xray compatible
             public FragmentObject fragment;
             public List<NoiseObject> noises;
-            public Integer noiseKeepAlive;
+            public Long noiseKeepAlive;
 
             public static class FragmentObject {
 
@@ -1142,7 +1142,7 @@ public class V2RayConfig {
         public String dest; // String or Integer
         public String target; // String or Integer, alias of dest
         public String type;
-        public Integer xver;
+        public Long xver;
         public List<String> serverNames;
         public String password; // alias of privateKey
         public String privateKey;
@@ -1302,12 +1302,12 @@ public class V2RayConfig {
         public OBFSObject obfs;
         public List<String> passwords;
         public String hopPorts;
-        public Integer hopInterval;
+        public Long hopInterval;
 
         public static class CongestionObject {
             public String type; // invalid option
-            public Integer up_mbps;
-            public Integer down_mbps;
+            public Long up_mbps;
+            public Long down_mbps;
         }
 
         public static class OBFSObject {

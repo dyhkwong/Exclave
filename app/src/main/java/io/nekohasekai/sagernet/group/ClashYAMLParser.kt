@@ -450,13 +450,11 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                     authPayloadType = HysteriaBean.TYPE_BASE64
                     authPayload = it
                 }
-                uploadMbps = (proxy["up"]?.toString())?.toMegaBitsPerSecond() ?: proxy["up-speed"]?.toString()?.toIntOrNull()
-                downloadMbps = (proxy["down"]?.toString())?.toMegaBitsPerSecond() ?: proxy["down-speed"]?.toString()?.toIntOrNull()
                 sni = proxy["sni"]?.toString()
                 alpn = (proxy["alpn"] as? List<Any>)?.get(0)?.toString()
                 allowInsecure = proxy["skip-cert-verify"] as? Boolean == true
                 obfuscation = proxy["obfs"]?.toString()?.takeIf { it.isNotEmpty() }
-                hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()?.takeIf { it > 0 }
+                hopInterval = proxy["hop-interval"]?.toString()?.toLongOrNull()?.takeIf { it > 0 }
                 name = proxy["name"]?.toString()
             })
         }
@@ -480,7 +478,7 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                         else -> return listOf()
                     }
                 }
-                hopInterval = proxy["hop-interval"]?.toString()?.toIntOrNull()?.takeIf { it > 0 }
+                hopInterval = proxy["hop-interval"]?.toString()?.toLongOrNull()?.takeIf { it > 0 }
                 name = proxy["name"]?.toString()
             })
         }

@@ -75,10 +75,10 @@ fun parseHysteria(url: String): HysteriaBean {
             }
         }
         link.queryParameter("upmbps")?.also {
-            uploadMbps = it.toIntOrNull()
+            uploadMbps = it.toLongOrNull()
         }
         link.queryParameter("downmbps")?.also {
-            downloadMbps = it.toIntOrNull()
+            downloadMbps = it.toLongOrNull()
         }
     }
 }
@@ -113,10 +113,10 @@ fun HysteriaBean.toUri(): String? {
         }
     }
 
-    if (uploadMbps != 0) {
+    if (uploadMbps != 0L) {
         builder.addQueryParameter("upmbps", "$uploadMbps")
     }
-    if (downloadMbps != 0) {
+    if (downloadMbps != 0L) {
         builder.addQueryParameter("downmbps", "$downloadMbps")
     }
     if (alpn.isNotEmpty()) {

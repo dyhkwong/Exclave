@@ -285,7 +285,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 outbound.getString("hop_interval")?.also { interval ->
                     try {
                         val duration = Duration.parse(interval)
-                        hopInterval = duration.toInt(DurationUnit.SECONDS).takeIf { it > 0 }
+                        hopInterval = duration.toLong(DurationUnit.SECONDS).takeIf { it > 0 }
                     } catch (_: Exception) {}
                 }
                 outbound.getString("password")?.also {
@@ -343,7 +343,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 outbound.getString("hop_interval")?.also { interval ->
                     try {
                         val duration = Duration.parse(interval)
-                        hopInterval = duration.toInt(DurationUnit.SECONDS).takeIf { it > 0 }
+                        hopInterval = duration.toLong(DurationUnit.SECONDS).takeIf { it > 0 }
                     } catch (_: Exception) {}
                 }
                 if (outbound.getString("auth")?.isNotEmpty() == true) {
@@ -380,16 +380,6 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                         allowInsecure = it
                     }
                 } ?: return listOf()
-                outbound.getInt("up_mbps")?.also {
-                    uploadMbps = it
-                } ?: outbound.getString("up")?.toMegaBits()?.also {
-                    uploadMbps = it
-                }
-                outbound.getInt("down_mbps")?.also {
-                    downloadMbps = it
-                } ?: outbound.getString("down")?.toMegaBits()?.also {
-                    downloadMbps = it
-                }
             }
             return listOf(hysteriaBean)
         }

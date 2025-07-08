@@ -64,8 +64,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Boolean realityDisableX25519Mlkem768;
     public Boolean realityReenableChacha20Poly1305;
 
-    public Integer hy2DownMbps;
-    public Integer hy2UpMbps;
+    public Long hy2DownMbps;
+    public Long hy2UpMbps;
     public String hy2Password;
 
     public String mekyaKcpSeed;
@@ -127,8 +127,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (realityDisableX25519Mlkem768 == null) realityDisableX25519Mlkem768 = false;
         if (realityReenableChacha20Poly1305 == null) realityReenableChacha20Poly1305 = false;
 
-        if (hy2DownMbps == null) hy2DownMbps = 0;
-        if (hy2UpMbps == null) hy2UpMbps = 0;
+        if (hy2DownMbps == null) hy2DownMbps = 0L;
+        if (hy2UpMbps == null) hy2UpMbps = 0L;
         if (hy2Password == null) hy2Password = "";
 
         if (mekyaKcpSeed == null) mekyaKcpSeed = "";
@@ -143,7 +143,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(28);
+        output.writeInt(29);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -205,8 +205,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 break;
             }
             case "hysteria2": {
-                output.writeInt(hy2DownMbps);
-                output.writeInt(hy2UpMbps);
+                output.writeLong(hy2DownMbps);
+                output.writeLong(hy2UpMbps);
                 output.writeString(hy2Password);
                 break;
             }
@@ -229,7 +229,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeBoolean(allowInsecure);
                 output.writeString(utlsFingerprint);
                 output.writeString(echConfig);
-                output.writeString(""); // echDohServer, removed
                 break;
             }
             case "reality": {
@@ -238,7 +237,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(realityShortId);
                 output.writeString(realityFingerprint);
                 output.writeString(echConfig);
-                output.writeString(""); // echDohServer, removed
                 output.writeBoolean(realityDisableX25519Mlkem768);
                 output.writeBoolean(realityReenableChacha20Poly1305);
                 break;
@@ -336,8 +334,16 @@ public abstract class StandardV2RayBean extends AbstractBean {
             }
             case "hysteria2": {
                 if (version >= 14) {
-                    hy2DownMbps = input.readInt();
-                    hy2UpMbps = input.readInt();
+                    if (version <= 28) {
+                        hy2DownMbps = (long) input.readInt();
+                    } else {
+                        hy2DownMbps = input.readLong();
+                    }
+                    if (version <= 28) {
+                        hy2UpMbps = (long) input.readInt();
+                    } else {
+                        hy2UpMbps = input.readLong();
+                    }
                     if (version < 26) {
                         input.readString(); // hy2ObfsPassword, removed
                     }
@@ -390,7 +396,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 }
                 if (version >= 21) {
                     echConfig = input.readString();
-                    input.readString(); // echDohServer, removed
+                    if (version <= 28) {
+                        input.readString(); // echDohServer, removed
+                    }
                 }
                 break;
             }
@@ -417,7 +425,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 }
                 if (version >= 28) {
                     echConfig = input.readString();
-                    input.readString(); // echDohServer, removed
+                    if (version == 28) {
+                        input.readString(); // echDohServer, removed
+                    }
                 }
                 if (version >= 27) {
                     realityDisableX25519Mlkem768 = input.readBoolean();

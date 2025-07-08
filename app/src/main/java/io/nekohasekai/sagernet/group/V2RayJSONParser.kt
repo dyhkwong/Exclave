@@ -652,7 +652,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                                 hy2Settings.getString("hopPorts")?.takeIf { it.isValidHysteriaMultiPort() }?.also {
                                     hysteria2Bean.serverPorts = it
                                 }
-                                hy2Settings.getInteger("hopInterval")?.also {
+                                hy2Settings.getLongInteger("hopInterval")?.also {
                                     hysteria2Bean.hopInterval = it.takeIf { it > 0 }
                                 }
                             }

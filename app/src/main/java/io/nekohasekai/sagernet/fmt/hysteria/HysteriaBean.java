@@ -51,15 +51,15 @@ public class HysteriaBean extends AbstractBean {
     public String alpn;
     public String caText;
 
-    public Integer uploadMbps;
-    public Integer downloadMbps;
+    public Long uploadMbps;
+    public Long downloadMbps;
     public Boolean allowInsecure;
     public Integer streamReceiveWindow;
     public Integer connectionReceiveWindow;
     public Boolean disableMtuDiscovery;
 
     public String serverPorts;
-    public Integer hopInterval;
+    public Long hopInterval;
 
     @Override
     public boolean canMapping() {
@@ -96,8 +96,8 @@ public class HysteriaBean extends AbstractBean {
         if (alpn == null) alpn = "";
         if (caText == null) caText = "";
 
-        if (uploadMbps == null) uploadMbps = 10;
-        if (downloadMbps == null) downloadMbps = 50;
+        if (uploadMbps == null) uploadMbps = 10L;
+        if (downloadMbps == null) downloadMbps = 50L;
         if (allowInsecure == null) allowInsecure = false;
 
         if (streamReceiveWindow == null) streamReceiveWindow = 0;
@@ -105,12 +105,12 @@ public class HysteriaBean extends AbstractBean {
         if (disableMtuDiscovery == null) disableMtuDiscovery = false;
 
         if (serverPorts == null) serverPorts = "1080";
-        if (hopInterval == null) hopInterval = 10;
+        if (hopInterval == null) hopInterval = 10L;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(6);
+        output.writeInt(7);
         super.serialize(output);
         output.writeInt(authPayloadType);
         output.writeString(authPayload);
@@ -119,8 +119,8 @@ public class HysteriaBean extends AbstractBean {
         output.writeString(sni);
         output.writeString(alpn);
 
-        output.writeInt(uploadMbps);
-        output.writeInt(downloadMbps);
+        output.writeLong(uploadMbps);
+        output.writeLong(downloadMbps);
         output.writeBoolean(allowInsecure);
 
         output.writeString(caText);
@@ -129,7 +129,7 @@ public class HysteriaBean extends AbstractBean {
         output.writeBoolean(disableMtuDiscovery);
 
         output.writeString(serverPorts);
-        output.writeInt(hopInterval);
+        output.writeLong(hopInterval);
     }
 
     @Override
@@ -146,8 +146,16 @@ public class HysteriaBean extends AbstractBean {
         if (version >= 2) {
             alpn = input.readString();
         }
-        uploadMbps = input.readInt();
-        downloadMbps = input.readInt();
+        if (version <= 6) {
+            uploadMbps = (long) input.readInt();
+        } else {
+            uploadMbps = input.readLong();
+        }
+        if (version <= 6) {
+            downloadMbps = (long) input.readInt();
+        } else {
+            downloadMbps = input.readLong();
+        }
         allowInsecure = input.readBoolean();
         if (version >= 1) {
             caText = input.readString();
@@ -162,7 +170,11 @@ public class HysteriaBean extends AbstractBean {
         }
         if (version >= 6) {
             serverPorts = input.readString();
-            hopInterval = input.readInt();
+            if (version == 6) {
+                hopInterval = (long) input.readInt();
+            } else {
+                hopInterval = input.readLong();
+            }
         }
     }
 

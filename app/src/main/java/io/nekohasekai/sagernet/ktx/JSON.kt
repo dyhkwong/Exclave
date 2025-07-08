@@ -51,6 +51,18 @@ fun JSONObject.getInteger(key: String): Int? {
     return null
 }
 
+fun JSONObject.getLongInteger(key: String): Long? {
+    (this[key] as? Long)?.also {
+        return it
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return it.value as? Long
+        }
+    }
+    return null
+}
+
 fun JSONObject.getBoolean(key: String): Boolean? {
     (this[key] as? Boolean)?.also {
         return it
