@@ -439,8 +439,6 @@
     <string name="route_need_background_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **разрешение на фоновое определение местоположения**</string>
     <string name="route_need_coarse_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **грубое разрешение на определение местоположения**</string>
     <string name="tuic_zero_rtt_handshake">0-RTT квитирование</string>
-    <string name="reality_public_key"></string>
-    <string name="reality_short_id"></string>
     <string name="reality_fingerprint">REALITY uTLS отпечаток</string>
     <string name="wireguard_reserved">Резервный</string>
     <string name="brook_udp_over_stream">UDP через поток</string>
