@@ -482,7 +482,8 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
         "tls", "reality" -> {
             bean.security = security
             bean.name = json.getStr("ps")?.takeIf { it.isNotEmpty() }
-            bean.sni = json.getStr("sni")?.takeIf { it.isNotEmpty() } ?: bean.host
+            // See https://github.com/2dust/v2rayNG/blob/5db2df77a01144b8f3d40116f8c183153f181d05/V2rayNG/app/src/main/java/com/v2ray/ang/handler/V2rayConfigManager.kt#L1077-L1242
+            bean.sni = json.getStr("sni")?.takeIf { it.isNotEmpty() } ?: host?.split(",")?.get(0)
             bean.alpn = json.getStr("alpn")?.takeIf { it.isNotEmpty() }?.split(",")?.joinToString("\n")
             // bad format from where?
             json.getStr("allowInsecure")?.let { // Boolean or Int or String
