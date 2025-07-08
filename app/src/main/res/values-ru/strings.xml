@@ -385,7 +385,7 @@
     <string name="naive_insecure_concurrency_summary">Использовать N параллельных соединений для повышения отказоустойчивости в условиях ненадёжной сети. Большее число соединений увеличивает риск обнаружения туннелей и снижает безопасность. Этот проект стремится к максимальной защите от анализа трафика, следовательно, использование его небезопасным образом противоречит данной цели.
 \n
 \nЕсли придётся использовать данную функцию, попробуйте N=2, чтобы проверить, решит ли это проблему. Настоятельно не рекомендуется использовать более 4 соединений.</string>
-    <string name="resolve_destination">Разрешать доменное имя адреса назначения</string>
+    <string name="resolve_destination">Резолвить адрес назначения (прокси)</string>
     <string name="start">Старт</string>
     <string name="stun_attest_loading">Это может занять несколько минут…</string>
     <string name="stun_test">Обнаружение поведения NAT</string>
@@ -439,8 +439,8 @@
     <string name="route_need_background_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **разрешение на фоновое определение местоположения**</string>
     <string name="route_need_coarse_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **грубое разрешение на определение местоположения**</string>
     <string name="tuic_zero_rtt_handshake">0-RTT квитирование</string>
-    <string name="reality_public_key">REALITY public key</string>
-    <string name="reality_short_id">REALITY Short ID</string>
+    <string name="reality_public_key"></string>
+    <string name="reality_short_id"></string>
     <string name="reality_fingerprint">REALITY uTLS отпечаток</string>
     <string name="wireguard_reserved">Резервный</string>
     <string name="brook_udp_over_stream">UDP через поток</string>
@@ -475,7 +475,7 @@
     <string name="allow_apps_bypass_vpn">Разрешить приложениям обходить VPN</string>
     <string name="update_all_subscriptions">Обновить все подписки</string>
     <string name="cag_splithttp">Настройки XHTTP</string>
-    <string name="ech_doh_server">ECH DoH server</string>
+    <string name="ech_doh_server">ECH DoH сервер</string>
     <string name="ws_max_early_data">Максимальный объём данных</string>
     <string name="hijack_dns">Перехват DNS</string>
     <string name="connection_test_url_test">URL test</string>
@@ -577,5 +577,5 @@
     <string name="domain_strategy_ipv4_only">Только IPv4</string>
     <string name="disable_all">Отключить все</string>
     <string name="enable_all">Включить все</string>
-    <string name="resolve_destination_for_server">Резолвить адрес назначения (адрес сервера)</string>
+    <string name="resolve_destination_for_server">Резолвить адрес назначения (сервер)</string>
 </resources>
