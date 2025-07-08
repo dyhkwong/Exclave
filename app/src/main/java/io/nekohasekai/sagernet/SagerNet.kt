@@ -139,7 +139,7 @@ class SagerNet : Application(),
     override fun getUIDInfo(uid: Int): UIDInfo {
         PackageCache.awaitLoadSync()
 
-        if (uid <= 1000L) {
+        if (uid == 1000) {
             val uidInfo = UIDInfo()
             uidInfo.label = PackageCache.loadLabel("android")
             uidInfo.packageName = "android"
@@ -154,7 +154,10 @@ class SagerNet : Application(),
             return uidInfo
         }
 
-        error("unknown UID $uid")
+        return UIDInfo().apply {
+            label = "$uid"
+            packageName = "$uid"
+        }
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(

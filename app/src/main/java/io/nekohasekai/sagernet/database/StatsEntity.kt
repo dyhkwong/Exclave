@@ -43,7 +43,7 @@ class StatsEntity(
     fun toStats(): AppStats {
         return AppStats(
             packageName,
-            PackageCache[packageName] ?: 1000,
+            PackageCache[packageName] ?: packageName.toIntOrNull() ?: 1000,
             0,
             0,
             tcpConnections,

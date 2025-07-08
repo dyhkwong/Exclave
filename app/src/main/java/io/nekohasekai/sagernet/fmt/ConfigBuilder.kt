@@ -1584,7 +1584,7 @@ fun buildV2RayConfig(
                     continue
                 }
                 for (pkg in rule.packages) {
-                    PackageCache[pkg]?.takeIf { it >= 1000 }?.let {
+                    PackageCache[pkg]?.let {
                         uidList.add(it)
                     }
                 }

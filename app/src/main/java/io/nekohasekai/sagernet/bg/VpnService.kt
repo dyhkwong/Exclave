@@ -281,7 +281,6 @@ class VpnService : BaseVpnService(),
             sniffing = DataStore.trafficSniffing
             overrideDestination = DataStore.destinationOverride
             fakeDNS = DataStore.enableFakeDns
-            debug = DataStore.logLevel == LogLevel.DEBUG
             dumpUID = data.proxy!!.config.dumpUID
             trafficStats = DataStore.appTrafficStatistics
             pCap = DataStore.enablePcap
@@ -311,10 +310,9 @@ class VpnService : BaseVpnService(),
         val toUpdate = mutableListOf<StatsEntity>()
         val all = SagerDatabase.statsDao.all().associateBy { it.packageName }
         for (stats in appStats) {
-            val packageName = if (stats.uid >= 10000) {
-                PackageCache.uidMap[stats.uid]?.iterator()?.next() ?: "android"
-            } else {
-                "android"
+            val packageName = when (val uid = stats.uid) {
+                1000 -> "android"
+                else -> PackageCache.uidMap[uid]?.iterator()?.next() ?: "$uid"
             }
             if (!all.containsKey(packageName)) {
                 SagerDatabase.statsDao.create(

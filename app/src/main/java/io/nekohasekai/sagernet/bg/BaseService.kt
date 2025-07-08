@@ -197,11 +197,10 @@ class BaseService {
                 tun.readAppTraffics(this)
 
                 val statsList = AppStatsList(appStats.map {
-                    val uid = if (it.uid >= 10000) it.uid else 1000
-                    val packageName = if (uid != 1000) {
-                        PackageCache.uidMap[it.uid]?.iterator()?.next() ?: "android"
-                    } else {
-                        "android"
+                    val uid = it.uid
+                    val packageName = when (uid) {
+                        1000 -> "android"
+                        else -> PackageCache.uidMap[uid]?.iterator()?.next() ?: "$uid"
                     }
                     AidlAppStats(
                         packageName,

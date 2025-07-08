@@ -180,10 +180,9 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
             this.stats = stats
             PackageCache.awaitLoadSync()
 
-            val packageName = if (stats.uid > 1000) {
-                PackageCache.uidMap[stats.uid]?.iterator()?.next() ?: "android"
-            } else {
-                "android"
+            val packageName = when (stats.uid) {
+                1000 -> "android"
+                else -> PackageCache.uidMap[stats.uid]?.iterator()?.next()
             }
 
             binding.menu.setOnClickListener {
@@ -197,8 +196,12 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
                 popup.show()
             }
 
-            binding.label.text = PackageCache.loadLabel(packageName)
-            binding.desc.text = "$packageName (${stats.uid})"
+            binding.label.text = packageName?.let {
+                PackageCache.loadLabel(it)
+            } ?: "UID ${stats.uid}"
+            binding.desc.text = packageName?.let {
+                "$packageName (${stats.uid})"
+            } ?: "UID ${stats.uid} (${stats.uid})"
             binding.tcpConnections.text = resources.getQuantityString(
                 R.plurals.tcp_connections, stats.tcpConnectionsTotal, stats.tcpConnectionsTotal
             )
@@ -213,7 +216,9 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
                 R.string.traffic_downlink_total,
                 FormatFileSizeCompat.formatFileSize(requireContext(), stats.downlinkTotal, DataStore.useIECUnit),
             )
-            val info = PackageCache.installedApps[packageName]
+            val info = packageName?.let {
+                PackageCache.installedApps[packageName]
+            } ?: PackageCache.installedApps["android"]
             if (info != null) runOnDefaultDispatcher {
                 try {
                     val icon = info.loadIcon(app.packageManager)

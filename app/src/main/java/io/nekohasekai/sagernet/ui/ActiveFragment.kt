@@ -160,10 +160,9 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
         fun bind(stats: AppStats) {
             PackageCache.awaitLoadSync()
 
-            val packageName = if (stats.uid > 1000) {
-                PackageCache.uidMap[stats.uid]?.iterator()?.next() ?: "android"
-            } else {
-                "android"
+            val packageName = when (stats.uid) {
+                1000 -> "android"
+                else -> PackageCache.uidMap[stats.uid]?.iterator()?.next()
             }
 
             binding.menu.setOnClickListener {
@@ -177,8 +176,12 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
                 popup.show()
             }
 
-            binding.label.text = PackageCache.loadLabel(packageName)
-            binding.desc.text = "$packageName (${stats.uid})"
+            binding.label.text = packageName?.let {
+                PackageCache.loadLabel(it)
+            } ?: "UID ${stats.uid}"
+            binding.desc.text = packageName?.let {
+                "$packageName (${stats.uid})"
+            } ?: "UID ${stats.uid} (${stats.uid})"
             binding.tcpConnections.text = resources.getQuantityString(R.plurals.tcp_connections, stats.tcpConnections, stats.tcpConnections)
             binding.udpConnections.text = resources.getQuantityString(R.plurals.udp_connections, stats.udpConnections, stats.udpConnections)
             binding.trafficUplink.text = getString(
@@ -191,14 +194,16 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
                 FormatFileSizeCompat.formatFileSize(requireContext(), stats.downlinkTotal, DataStore.useIECUnit),
                 FormatFileSizeCompat.formatFileSize(requireContext(), stats.downlink, DataStore.useIECUnit)
             )
-            val info = PackageCache.installedApps[packageName]
+            val info = packageName?.let {
+                PackageCache.installedApps[packageName]
+            } ?: PackageCache.installedApps["android"]
             if (info != null) runOnDefaultDispatcher {
                 try {
                     val icon = info.loadIcon(app.packageManager)
                     onMainDispatcher {
                         binding.icon.setImageDrawable(icon)
                     }
-                } catch (ignored: Exception) {
+                } catch (_: Exception) {
                 }
             }
         }
