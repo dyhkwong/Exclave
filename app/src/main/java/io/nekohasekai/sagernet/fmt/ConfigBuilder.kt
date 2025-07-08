@@ -923,12 +923,10 @@ fun buildV2RayConfig(
                                         }
                                         "quic" -> {
                                             quicSettings = QuicObject().apply {
-                                                security = bean.quicSecurity.takeIf { it.isNotEmpty() }
-                                                    ?: "none"
+                                                security = bean.quicSecurity
                                                 key = bean.quicKey
                                                 header = QuicObject.HeaderObject().apply {
-                                                    type = bean.headerType.takeIf { it.isNotEmpty() }
-                                                        ?: "none"
+                                                    type = bean.headerType
                                                 }
                                             }
                                         }
@@ -1578,20 +1576,27 @@ fun buildV2RayConfig(
         val isVpn = DataStore.serviceMode == Key.MODE_VPN
 
         for (rule in extraRules) {
+            val uidList = mutableListOf<Int>()
             if (rule.packages.isNotEmpty()) {
                 dumpUID = true
                 if (!isVpn) {
                     alerts.add(Alerts.ROUTE_ALERT_NOT_VPN to rule.displayName())
                     continue
                 }
+                for (pkg in rule.packages) {
+                    PackageCache[pkg]?.takeIf { it >= 10000 }?.let {
+                        uidList.add(it)
+                    }
+                }
+                if (uidList.isEmpty()) {
+                    alerts.add(Alerts.ROUTE_ALERT_ALL_PACKAGES_UNINSTALLED to rule.displayName())
+                    continue
+                }
             }
             routing.rules.add(RoutingObject.RuleObject().apply {
                 type = "field"
-                if (rule.packages.isNotEmpty()) {
-                    PackageCache.awaitLoadSync()
-                    uid = rule.packages.map {
-                        PackageCache[it]?.takeIf { uid -> uid >= 10000 } ?: 1000
-                    }.toHashSet().toList()
+                if (uidList.isNotEmpty()) {
+                    uid = uidList
                 }
 
                 if (rule.ssid.isNotEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

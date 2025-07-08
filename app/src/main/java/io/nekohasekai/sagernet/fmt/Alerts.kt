@@ -26,6 +26,8 @@ object Alerts {
     const val ROUTE_ALERT_NEED_FINE_LOCATION_ACCESS = 4
     const val ROUTE_ALERT_LOCATION_DISABLED = 2
 
+    const val ROUTE_ALERT_ALL_PACKAGES_UNINSTALLED = 5
+
     class RouteAlertException(val alert: Int, val routeName: String) : Exception()
 }
 

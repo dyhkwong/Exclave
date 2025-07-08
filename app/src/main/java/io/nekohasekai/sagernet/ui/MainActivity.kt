@@ -491,6 +491,10 @@ class MainActivity : ThemedActivity(),
                     .setPositiveButton(android.R.string.ok, null)
                     .show()
             }
+            Alerts.ROUTE_ALERT_ALL_PACKAGES_UNINSTALLED -> {
+                val message = markwon.toMarkdown("Ignored $routeName because all packages are uninstalled.")
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
