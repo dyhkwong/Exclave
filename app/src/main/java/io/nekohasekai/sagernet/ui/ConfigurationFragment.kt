@@ -753,6 +753,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 close()
                 cancel()
             }
+            .setNeutralButton(" ", null)
             .setCancelable(false)
         lateinit var cancel: () -> Unit
         val results = ArrayList<ProxyEntity>()
@@ -871,6 +872,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     fun urlTest() {
         val test = TestDialog()
         val dialog = test.builder.show()
+        dialog.getButton(DialogInterface.BUTTON_NEUTRAL).isEnabled = false
         val testJobs = mutableListOf<Job>()
 
         val mainJob = runOnDefaultDispatcher {
@@ -902,6 +904,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
+
+            val profileCount = profilesUnfiltered.size
+            var finishedProfileCount = 0
             stopService()
 
             val link = DataStore.connectionTestURL
@@ -927,6 +932,18 @@ class ConfigurationFragment @JvmOverloads constructor(
                         } catch (e: Exception) {
                             profile.status = 3
                             profile.error = e.readableMessage
+                        }
+                        onMainDispatcher {
+                            finishedProfileCount++
+                            test.binding.progressCircular.apply {
+                                isVisible = true
+                                setProgressCompat(
+                                    ((finishedProfileCount.toDouble() / profileCount.toDouble()) * 100).toInt(),
+                                    true
+                                )
+                            }
+                            // TODO: fix l10n
+                            dialog.getButton(DialogInterface.BUTTON_NEUTRAL).text = "$finishedProfileCount/$profileCount"
                         }
 
                         test.update(profile)
