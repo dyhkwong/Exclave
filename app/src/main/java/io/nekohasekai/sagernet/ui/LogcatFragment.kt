@@ -342,6 +342,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
     }
 
     override fun onScroll(offset: Int) {
+        if (context == null) return
         val activity = requireActivity() as MainActivity
         val topRow = binding.terminalView.topRow
         if (offset < 0) {
