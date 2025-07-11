@@ -56,7 +56,6 @@ import io.nekohasekai.sagernet.database.RuleEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
@@ -83,7 +82,7 @@ class RouteSettingsActivity(
         RuleEntity().apply {
             if (!packageName.isNullOrEmpty()) {
                 packages = listOf(packageName)
-                name = app.getString(R.string.route_for, PackageCache.loadLabel(packageName))
+                name = getString(R.string.route_for, PackageCache.loadLabel(packageName))
             }
         }.init()
     }
@@ -240,15 +239,15 @@ class RouteSettingsActivity(
 
         fun updateNetwork(newValues: Set<String> = networkType.values) {
             networkType.summary = if (newValues.isEmpty()) {
-                app.getString(androidx.preference.R.string.not_set)
+                getString(androidx.preference.R.string.not_set)
             } else {
                 val types = mutableListOf<String>()
-                if (newValues.contains("data")) types.add(app.getString(R.string.network_data))
-                if (newValues.contains("wifi")) types.add(app.getString(R.string.network_wifi))
-                if (newValues.contains("bluetooth")) types.add(app.getString(R.string.network_bt))
-                if (newValues.contains("ethernet")) types.add(app.getString(R.string.network_eth))
-                if (newValues.contains("usb")) types.add(app.getString(R.string.network_usb))
-                if (newValues.contains("satellite")) types.add(app.getString(R.string.network_satellite))
+                if (newValues.contains("data")) types.add(getString(R.string.network_data))
+                if (newValues.contains("wifi")) types.add(getString(R.string.network_wifi))
+                if (newValues.contains("bluetooth")) types.add(getString(R.string.network_bt))
+                if (newValues.contains("ethernet")) types.add(getString(R.string.network_eth))
+                if (newValues.contains("usb")) types.add(getString(R.string.network_usb))
+                if (newValues.contains("satellite")) types.add(getString(R.string.network_satellite))
                 types.joinToString("\n")
             }
             ssid.isVisible = newValues.contains("wifi")

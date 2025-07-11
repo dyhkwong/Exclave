@@ -282,12 +282,13 @@ class BaseService {
                 Logs.w(e)
                 var msg = e.readableMessage
                 val msgL = msg.lowercase()
+                val context = data!!.proxy!!.service as Context
                 when {
                     msgL.contains("timeout") || msg.contains("deadline") -> {
-                        msg = app.getString(R.string.connection_test_timeout)
+                        msg = context.getString(R.string.connection_test_timeout)
                     }
                     msg.contains("refused") || msgL.contains("closed pipe") -> {
-                        msg = app.getString(R.string.connection_test_refused)
+                        msg = context.getString(R.string.connection_test_refused)
                     }
                 }
                 error(msg)
