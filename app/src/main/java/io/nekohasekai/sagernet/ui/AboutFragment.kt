@@ -115,7 +115,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 .commitAllowingStateLoss()
         }
 
-        override fun getMaterialAboutList(activityContext: Context): MaterialAboutList {
+        override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList {
+            if (activityContext == null) {
+                return MaterialAboutList.Builder().build()
+            }
             return MaterialAboutList.Builder()
                 .addCard(MaterialAboutCard.Builder()
                     .outline(false)
