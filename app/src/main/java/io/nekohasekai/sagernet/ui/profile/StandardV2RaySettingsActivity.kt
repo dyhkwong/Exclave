@@ -65,11 +65,7 @@ import kotlinx.coroutines.launch
 abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV2RayBean>(),
     Preference.OnPreferenceChangeListener {
 
-    var bean: StandardV2RayBean? = null
-
     override fun StandardV2RayBean.init() {
-        bean = this
-
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort

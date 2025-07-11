@@ -34,6 +34,7 @@ import androidx.core.view.updatePadding
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
+import com.esotericsoftware.kryo.io.ByteBufferInput
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.takisoft.preferencex.PreferenceFragmentCompat
@@ -46,11 +47,13 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.byteBuffer
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.parcelize.Parcelize
+import java.io.ByteArrayOutputStream
 import kotlin.properties.Delegates
 
 @Suppress("UNCHECKED_CAST")
@@ -99,15 +102,22 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
     companion object {
         const val EXTRA_PROFILE_ID = "id"
         const val EXTRA_IS_SUBSCRIPTION = "sub"
+        const val KEY_TEMP_BEAN_BYTES = "temp_bean_bytes"
     }
 
     abstract fun createEntity(): T
     abstract fun T.init()
     abstract fun T.serialize()
 
+    protected var bean: T? = null
     protected var isSubscription by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        savedInstanceState?.getByteArray(KEY_TEMP_BEAN_BYTES)?.let {
+            bean = createEntity().apply {
+                deserialize(ByteBufferInput(it))
+            }
+        }
         super.onCreate(savedInstanceState)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar)) { v, insets ->
@@ -130,39 +140,47 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null) runOnDefaultDispatcher {
             val editingId = intent.getLongExtra(EXTRA_PROFILE_ID, 0L)
             isSubscription = intent.getBooleanExtra(EXTRA_IS_SUBSCRIPTION, false)
             DataStore.editingId = editingId
-            runOnDefaultDispatcher {
-                if (editingId == 0L) {
-                    DataStore.editingGroup = DataStore.selectedGroupForImport()
-                    createEntity().applyDefaultValues().init()
-                } else {
-                    val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
-                    if (proxyEntity == null) {
-                        onMainDispatcher {
-                            finish()
-                        }
-                        return@runOnDefaultDispatcher
+            bean = if (editingId == 0L) {
+                DataStore.editingGroup = DataStore.selectedGroupForImport()
+                createEntity().applyDefaultValues()
+            } else {
+                val proxyEntity = SagerDatabase.proxyDao.getById(editingId)
+                if (proxyEntity == null) {
+                    onMainDispatcher {
+                        finish()
                     }
-                    DataStore.editingGroup = proxyEntity.groupId
-                    (proxyEntity.requireBean() as T).init()
+                    return@runOnDefaultDispatcher
                 }
-
-                onMainDispatcher {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
-                            activity = this@ProfileSettingsActivity
-                        })
-                        .commit()
-                }
+                DataStore.editingGroup = proxyEntity.groupId
+                (proxyEntity.requireBean() as T)
+            }
+            bean!!.init()
+            onMainDispatcher {
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.settings, MyPreferenceFragmentCompat())
+                    .commit()
             }
 
         }
 
         onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        bean?.let {
+            val output = ByteArrayOutputStream()
+            val buffer = output.byteBuffer()
+            it.serializeToBuffer(buffer)
+            buffer.flush()
+            buffer.close()
+            outState.putByteArray(KEY_TEMP_BEAN_BYTES, output.toByteArray())
+        }
     }
 
     open suspend fun saveAndExit() {
@@ -244,12 +262,13 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
-        var activity: ProfileSettingsActivity<*>? = null
+        val activity: ProfileSettingsActivity<*>
+            get() = requireActivity() as ProfileSettingsActivity<*>
 
         override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             try {
-                activity = (requireActivity() as ProfileSettingsActivity<*>).apply {
+                activity.apply {
                     createPreferences(savedInstanceState, rootKey)
                 }
             } catch (e: Exception) {
@@ -273,7 +292,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                 insets
             }
 
-            activity?.apply {
+            activity.apply {
                 viewCreated(view, savedInstanceState)
                 DataStore.dirty = false
                 DataStore.profileCacheStore.registerChangeListener(this)
@@ -281,7 +300,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
         }
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
-            activity?.apply {
+            activity.apply {
                 if (displayPreferenceDialog(preference)) return
             }
             super.onDisplayPreferenceDialog(preference)
