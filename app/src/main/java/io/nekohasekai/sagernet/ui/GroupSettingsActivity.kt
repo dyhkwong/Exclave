@@ -296,9 +296,7 @@ class GroupSettingsActivity(
 
                 onMainDispatcher {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
-                            activity = this@GroupSettingsActivity
-                        })
+                        .replace(R.id.settings, MyPreferenceFragmentCompat())
                         .commit()
 
                     DataStore.dirty = false
@@ -375,12 +373,13 @@ class GroupSettingsActivity(
 
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
-        var activity: GroupSettingsActivity? = null
+        val activity: GroupSettingsActivity
+            get() = requireActivity() as GroupSettingsActivity
 
         override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             try {
-                activity = (requireActivity() as GroupSettingsActivity).apply {
+                activity.apply {
                     createPreferences(savedInstanceState, rootKey)
                 }
             } catch (e: Exception) {

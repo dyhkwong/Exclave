@@ -89,7 +89,7 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
         }
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.settings, MyPreferenceFragmentCompat().also { it.activity = this })
+            .replace(R.id.settings, MyPreferenceFragmentCompat())
             .commit()
 
         DataStore.dirty = false
@@ -183,12 +183,13 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
 
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
-        var activity: TaskerActivity? = null
+        val activity: TaskerActivity
+            get() = requireActivity() as TaskerActivity
 
         override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             try {
-                activity = (requireActivity() as TaskerActivity).apply {
+                activity.apply {
                     createPreferences(savedInstanceState, rootKey)
                 }
             } catch (e: Exception) {

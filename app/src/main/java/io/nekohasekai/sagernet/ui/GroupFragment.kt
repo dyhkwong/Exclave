@@ -55,7 +55,6 @@ import java.util.*
 class GroupFragment : ToolbarFragment(R.layout.layout_group),
     Toolbar.OnMenuItemClickListener {
 
-    lateinit var activity: MainActivity
     lateinit var groupListView: RecyclerView
     lateinit var layoutManager: LinearLayoutManager
     lateinit var groupAdapter: GroupAdapter
@@ -63,7 +62,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity = requireActivity() as MainActivity
 
         toolbar.setTitle(R.string.menu_group)
         toolbar.inflateMenu(R.menu.add_group_menu)
@@ -101,7 +99,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         GroupManager.addListener(groupAdapter)
         groupListView.adapter = groupAdapter
 
-        undoManager = UndoSnackbarManager(activity, groupAdapter)
+        undoManager = UndoSnackbarManager(requireActivity() as ThemedActivity, groupAdapter)
 
         ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.START
@@ -414,7 +412,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
 
             fun export(link: String) {
                 val success = SagerNet.trySetPrimaryClip(link)
-                (activity).snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
+                (requireActivity() as ThemedActivity).snackbar(if (success) R.string.action_export_msg else R.string.action_export_err)
                     .show()
             }
 
@@ -624,14 +622,14 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                             if (size == 0L) {
                                 groupStatus.setText(R.string.group_status_empty)
                             } else {
-                                groupStatus.text = activity.resources.getQuantityString(R.plurals.group_status_proxies, size.toInt(), size)
+                                groupStatus.text = (requireActivity() as ThemedActivity).resources.getQuantityString(R.plurals.group_status_proxies, size.toInt(), size)
                             }
                         }
                         GroupType.SUBSCRIPTION -> {
                             groupStatus.text = if (size == 0L) {
                                 getString(R.string.group_status_empty_subscription)
                             } else {
-                                activity.resources.getQuantityString(
+                                (requireActivity() as ThemedActivity).resources.getQuantityString(
                                     R.plurals.group_status_proxies_subscription,
                                     size.toInt(),
                                     size,

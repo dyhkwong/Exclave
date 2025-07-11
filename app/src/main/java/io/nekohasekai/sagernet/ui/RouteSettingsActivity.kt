@@ -364,9 +364,7 @@ class RouteSettingsActivity(
 
                 onMainDispatcher {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
-                            activity = this@RouteSettingsActivity
-                        })
+                        .replace(R.id.settings, MyPreferenceFragmentCompat())
                         .commit()
 
                     DataStore.dirty = false
@@ -457,12 +455,13 @@ class RouteSettingsActivity(
 
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
-        var activity: RouteSettingsActivity? = null
+        val activity: RouteSettingsActivity
+            get() = requireActivity() as RouteSettingsActivity
 
         override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             try {
-                activity = (requireActivity() as RouteSettingsActivity).apply {
+                activity.apply {
                     createPreferences(savedInstanceState, rootKey)
                 }
             } catch (e: Exception) {
@@ -485,13 +484,13 @@ class RouteSettingsActivity(
                 )
                 insets
             }
-            activity?.apply {
+            activity.apply {
                 viewCreated(view, savedInstanceState)
             }
         }
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
-            activity?.apply {
+            activity.apply {
                 if (displayPreferenceDialog(preference)) return
             }
             super.onDisplayPreferenceDialog(preference)

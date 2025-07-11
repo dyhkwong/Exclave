@@ -163,9 +163,7 @@ class AssetEditActivity(
 
                 onMainDispatcher {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.settings, MyPreferenceFragmentCompat().apply {
-                            activity = this@AssetEditActivity
-                        })
+                        .replace(R.id.settings, MyPreferenceFragmentCompat())
                         .commit()
 
                     DataStore.dirty = false
@@ -252,12 +250,13 @@ class AssetEditActivity(
 
     class MyPreferenceFragmentCompat : PreferenceFragmentCompat() {
 
-        var activity: AssetEditActivity? = null
+        val activity: AssetEditActivity
+            get() = requireActivity() as AssetEditActivity
 
         override fun onCreatePreferencesFix(savedInstanceState: Bundle?, rootKey: String?) {
             preferenceManager.preferenceDataStore = DataStore.profileCacheStore
             try {
-                activity = (requireActivity() as AssetEditActivity).apply {
+                activity.apply {
                     createPreferences(savedInstanceState, rootKey)
                 }
             } catch (e: Exception) {
