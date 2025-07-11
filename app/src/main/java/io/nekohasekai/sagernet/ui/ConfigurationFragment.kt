@@ -25,7 +25,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.text.format.Formatter
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -336,6 +335,26 @@ class ConfigurationFragment @JvmOverloads constructor(
     }
 
     suspend fun import(proxies: List<AbstractBean>) {
+        if (proxies.size <= 32) {
+            finishImport(proxies)
+        } else {
+            val name = SagerDatabase.groupDao.getById(DataStore.selectedGroupForImport())!!.displayName()
+            onMainDispatcher {
+                MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.subscription_import)
+                    .setTitle(R.string.profile_import)
+                    .setMessage(resources.getQuantityString(R.plurals.profile_multi_import_message, proxies.size, proxies.size, name))
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        runOnDefaultDispatcher {
+                            finishImport(proxies)
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+        }
+    }
+
+    private suspend fun finishImport(proxies: List<AbstractBean>) {
         val targetId = DataStore.selectedGroupForImport()
         val targetIndex = adapter.groupList.indexOfFirst { it.id == targetId }
 
@@ -733,13 +752,15 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
             }
             R.id.action_update_subscription -> {
-                val currentGroup = DataStore.currentGroup()
-                if (currentGroup.type == GroupType.SUBSCRIPTION) {
-                    if (currentGroup.id !in GroupUpdater.updating) {
-                        GroupUpdater.startUpdate(currentGroup, true)
+                runOnDefaultDispatcher {
+                    val currentGroup = DataStore.currentGroup()
+                    if (currentGroup.type == GroupType.SUBSCRIPTION) {
+                        if (currentGroup.id !in GroupUpdater.updating) {
+                            GroupUpdater.startUpdate(currentGroup, true)
+                        }
+                    } else {
+                        snackbar(R.string.group_not_a_subscription).show()
                     }
-                } else {
-                    snackbar(R.string.group_not_a_subscription).show()
                 }
             }
         }

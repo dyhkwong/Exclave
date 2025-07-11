@@ -608,4 +608,8 @@
     <string name="disable_all">Disable all</string>
     <string name="enable_all">Enable all</string>
     <string name="resolve_destination_for_server">Resolve destination (server address)</string>
+    <plurals name="profile_multi_import_message">
+        <item quantity="one">Are you sure you want to import %d profile to %s?</item>
+        <item quantity="other">Are you sure you want to import %d profiles to %s?</item>
+    </plurals>
 </resources>

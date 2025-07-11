@@ -572,4 +572,7 @@
     <string name="disable_all">禁用所有</string>
     <string name="enable_all">启用所有</string>
     <string name="resolve_destination_for_server">解析目标地址（服务器地址）</string>
+    <plurals name="profile_multi_import_message">
+        <item quantity="other">确认要导入 %d 个配置到 %s？</item>
+    </plurals>
 </resources>
