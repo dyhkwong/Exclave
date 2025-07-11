@@ -115,7 +115,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                 .commitAllowingStateLoss()
         }
 
-        override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList {
+        override fun getMaterialAboutList(activityContext: Context): MaterialAboutList {
             return MaterialAboutList.Builder()
                 .addCard(MaterialAboutCard.Builder()
                     .outline(false)
@@ -170,8 +170,8 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                     }
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            val pm = app.getSystemService(Context.POWER_SERVICE) as PowerManager
-                            if (!pm.isIgnoringBatteryOptimizations(app.packageName)) {
+                            val pm = activityContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+                            if (!pm.isIgnoringBatteryOptimizations(activityContext.packageName)) {
                                 addItem(MaterialAboutActionItem.Builder()
                                     .icon(R.drawable.ic_baseline_running_with_errors_24)
                                     .text(R.string.ignore_battery_optimizations)
@@ -180,7 +180,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                         requestIgnoreBatteryOptimizations.launch(
                                             Intent(
                                                 Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                                                "package:${app.packageName}".toUri()
+                                                "package:${activityContext.packageName}".toUri()
                                             )
                                         )
                                     }
