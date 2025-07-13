@@ -74,7 +74,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     }
 
     if (url.scheme == "vmess" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
-        val decoded = url.host.decodeBase64UrlSafe()
+        val decoded = link.removePrefix("vmess://").substringBefore("#").decodeBase64UrlSafe()
         val json = try {
             JSONUtil.parse(decoded)
         } catch (_: Exception) {
@@ -291,13 +291,15 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 bean.host = it
             }
             url.queryParameter("path")?.let { path ->
-                // RPRX's smart-assed invention. This of course will break under some conditions.
                 bean.path = path
-                val u = Libcore.parseURL(path)
-                u.queryParameter("ed")?.let {
-                    u.deleteQueryParameter("ed")
-                    bean.path = u.string
-                }
+                try {
+                    // RPRX's smart-assed invention. This of course will break under some conditions.
+                    val u = Libcore.parseURL(path)
+                    u.queryParameter("ed")?.let {
+                        u.deleteQueryParameter("ed")
+                        bean.path = u.string
+                    }
+                } catch (_: Exception) {}
             }
             url.queryParameter("eh")?.let {
                 bean.earlyDataHeaderName = it // non-standard, invented by SagerNet and adopted by some other software
@@ -313,15 +315,17 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 bean.host = it
             }
             url.queryParameter("path")?.let { path ->
-                // RPRX's smart-assed invention. This of course will break under some conditions.
                 bean.path = path
-                val u = Libcore.parseURL(path)
-                u.queryParameter("ed")?.let { ed ->
-                    u.deleteQueryParameter("ed")
-                    bean.path = u.string
-                    bean.maxEarlyData = ed.toIntOrNull()
-                    bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
-                }
+                try {
+                    // RPRX's smart-assed invention. This of course will break under some conditions.
+                    val u = Libcore.parseURL(path)
+                    u.queryParameter("ed")?.let { ed ->
+                        u.deleteQueryParameter("ed")
+                        bean.path = u.string
+                        bean.maxEarlyData = ed.toIntOrNull()
+                        bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                    }
+                } catch (_: Exception) {}
             }
             url.queryParameter("eh")?.let {
                 bean.earlyDataHeaderName = it // non-standard, invented by SagerNet and adopted by some other software
@@ -428,24 +432,28 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
         "ws" -> {
             bean.host = host
             bean.path = path
-            // RPRX's smart-assed invention. This of course will break under some conditions.
-            val u = Libcore.parseURL(bean.path)
-            u.queryParameter("ed")?.let { ed ->
-                u.deleteQueryParameter("ed")
-                bean.path = u.string
-                bean.maxEarlyData = ed.toIntOrNull()
-                bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
-            }
+            try {
+                // RPRX's smart-assed invention. This of course will break under some conditions.
+                val u = Libcore.parseURL(bean.path)
+                u.queryParameter("ed")?.let { ed ->
+                    u.deleteQueryParameter("ed")
+                    bean.path = u.string
+                    bean.maxEarlyData = ed.toIntOrNull()
+                    bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
+                }
+            } catch (_: Exception) {}
         }
         "httpupgrade" -> {
             bean.host = host
             bean.path = path
-            // RPRX's smart-assed invention. This of course will break under some conditions.
-            val u = Libcore.parseURL(bean.path)
-            u.queryParameter("ed")?.let {
-                u.deleteQueryParameter("ed")
-                bean.path = u.string
-            }
+            try {
+                // RPRX's smart-assed invention. This of course will break under some conditions.
+                val u = Libcore.parseURL(bean.path)
+                u.queryParameter("ed")?.let {
+                    u.deleteQueryParameter("ed")
+                    bean.path = u.string
+                }
+            } catch (_: Exception) {}
         }
         "http" -> {
             bean.host = host?.split(",")?.joinToString("\n") // "http(tcp)->host中间逗号(,)隔开"

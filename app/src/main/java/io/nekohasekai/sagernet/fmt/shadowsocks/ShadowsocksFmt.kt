@@ -67,7 +67,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
     if (link.port == 0 && link.username.isEmpty() && link.password.isEmpty()) {
         // pre-SIP002, https://shadowsocks.org/doc/configs.html#uri-and-qr-code
         // example: ss://YmYtY2ZiOnRlc3QvIUAjOkAxOTIuMTY4LjEwMC4xOjg4ODg#example-server
-        val plainUri = link.host.decodeBase64UrlSafe()
+        val plainUri = url.removePrefix("ss://").substringBefore("#").decodeBase64UrlSafe()
 
         return ShadowsocksBean().apply {
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")

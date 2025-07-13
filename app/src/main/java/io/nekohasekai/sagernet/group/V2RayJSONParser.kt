@@ -168,16 +168,18 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                                 }
                                 wsSettings.getString("path")?.also { path ->
                                     v2rayBean.path = path
-                                    // RPRX's smart-assed invention. This of course will break under some conditions.
-                                    val u = Libcore.parseURL(path)
-                                    u.queryParameter("ed")?.also { ed ->
-                                        u.deleteQueryParameter("ed")
-                                        v2rayBean.path = u.string
-                                        (ed.toIntOrNull())?.also {
-                                            v2rayBean.maxEarlyData = it
+                                    try {
+                                        // RPRX's smart-assed invention. This of course will break under some conditions.
+                                        val u = Libcore.parseURL(path)
+                                        u.queryParameter("ed")?.also { ed ->
+                                            u.deleteQueryParameter("ed")
+                                            v2rayBean.path = u.string
+                                            (ed.toIntOrNull())?.also {
+                                                v2rayBean.maxEarlyData = it
+                                            }
+                                            v2rayBean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
                                         }
-                                        v2rayBean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
-                                    }
+                                    } catch (_: Exception) {}
                                 }
                             }
                         }
@@ -235,12 +237,14 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                                 }
                                 httpupgradeSettings.getString("path")?.also {
                                     v2rayBean.path = it
-                                    // RPRX's smart-assed invention. This of course will break under some conditions.
-                                    val u = Libcore.parseURL(it)
-                                    u.queryParameter("ed")?.also {
-                                        u.deleteQueryParameter("ed")
-                                        v2rayBean.path = u.string
-                                    }
+                                    try {
+                                        // RPRX's smart-assed invention. This of course will break under some conditions.
+                                        val u = Libcore.parseURL(it)
+                                        u.queryParameter("ed")?.also {
+                                            u.deleteQueryParameter("ed")
+                                            v2rayBean.path = u.string
+                                        }
+                                    } catch (_: Exception) {}
                                 }
                                 httpupgradeSettings.getInteger("maxEarlyData")?.also {
                                     v2rayBean.maxEarlyData = it

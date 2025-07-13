@@ -327,15 +327,17 @@ fun parseClashProxies(proxy: Map<String, Any?>): List<AbstractBean> {
                         }
                     }
                     if (!bean.path.isNullOrEmpty()) {
-                        val u = Libcore.parseURL(bean.path)
-                        u.queryParameter("ed")?.also { ed ->
-                            u.deleteQueryParameter("ed")
-                            bean.path = u.string
-                            (ed.toIntOrNull())?.also {
-                                bean.maxEarlyData = it
+                        try {
+                            val u = Libcore.parseURL(bean.path)
+                            u.queryParameter("ed")?.also { ed ->
+                                u.deleteQueryParameter("ed")
+                                bean.path = u.string
+                                (ed.toIntOrNull())?.also {
+                                    bean.maxEarlyData = it
+                                }
+                                bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
                             }
-                            bean.earlyDataHeaderName = "Sec-WebSocket-Protocol"
-                        }
+                        } catch (_: Exception) {}
                     }
                 }
             }
