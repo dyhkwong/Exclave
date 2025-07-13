@@ -51,54 +51,52 @@ data class ProxyGroup(
 
     override fun serializeToBuffer(output: ByteBufferOutput) {
         if (export) {
-
             output.writeInt(0)
             output.writeString(name)
             output.writeInt(type)
             val subscription = subscription!!
             subscription.serializeForShare(output)
-
         } else {
-            output.writeInt(0)
+            output.writeInt(1)
             output.writeLong(id)
             output.writeLong(userOrder)
             output.writeBoolean(ungrouped)
             output.writeString(name)
             output.writeInt(type)
-
             if (type == GroupType.SUBSCRIPTION) {
                 subscription?.serializeToBuffer(output)
             }
             output.writeInt(order)
+            output.writeLong(frontProxy)
+            output.writeLong(landingProxy)
         }
     }
 
     override fun deserializeFromBuffer(input: ByteBufferInput) {
         if (export) {
             val version = input.readInt()
-
             name = input.readString()
             type = input.readInt()
             val subscription = SubscriptionBean()
             this.subscription = subscription
-
             subscription.deserializeFromShare(input)
         } else {
             val version = input.readInt()
-
             id = input.readLong()
             userOrder = input.readLong()
             ungrouped = input.readBoolean()
             name = input.readString()
             type = input.readInt()
-
             if (type == GroupType.SUBSCRIPTION) {
                 val subscription = SubscriptionBean()
                 this.subscription = subscription
-
                 subscription.deserializeFromBuffer(input)
             }
             order = input.readInt()
+            if (version >= 1) {
+                frontProxy = input.readLong()
+                landingProxy = input.readLong()
+            }
         }
     }
 
