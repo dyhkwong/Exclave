@@ -724,6 +724,7 @@ public class V2RayConfig {
         public Integer userLevel;
         public Boolean overrideResponseTTL;
         public Integer responseTTL;
+        public String nonIPQuery;
 
     }
 
@@ -1417,6 +1418,61 @@ public class V2RayConfig {
             }
         }
 
+    }
+
+    public static class TLSMirrorObject {
+        public String forwardAddress;
+        public Integer forwardPort;
+        public String forwardTag;
+        public String carrierConnectionTag;
+        public EmbeddedTrafficGeneratorConfigObject embeddedTrafficGenerator;
+        public String primaryKey;
+        public List<Integer> explicitNonceCiphersuites;
+        public TLSMirrorTimeSpecConfigObject deferInstanceDerivedWriteTime;
+        public TransportLayerPaddingConfigObject transportLayerPadding;
+        public EnrollmentConfigObject connectionEnrollment;
+        public Boolean sequenceWatermarkingEnabled;
+        public static class EnrollmentConfigObject {
+            public Long primaryIngressOutbound;
+            public Long primaryEgressOutbound;
+        }
+        public static class TLSMirrorTimeSpecConfigObject {
+            public Long baseNanoseconds;
+            public Long uniformRandomMultiplierNanoseconds;
+        }
+        public static class TransportLayerPaddingConfigObject {
+            public Boolean enabled;
+        }
+        public static class EmbeddedTrafficGeneratorConfigObject {
+            public List<StepObject> steps;
+            public TLSObject tlsSettings;
+            public UTLSObject utlsSettings;
+            public static class StepObject {
+                public String name;
+                public String host;
+                public String path;
+                public String method;
+                public List<NextStepObject> nextStep;
+                public Boolean connectionReady;
+                public List<HeaderObject> headers;
+                public Boolean connectionRecallExit;
+                public TrafficGeneratorTimeSpecConfigObject waitTime;
+                public Boolean h2DoNotWaitForDownloadFinish;
+                public static class TrafficGeneratorTimeSpecConfigObject {
+                    public Long baseNanoseconds;
+                    public Long uniformRandomMultiplierNanoseconds;
+                }
+                public static class NextStepObject {
+                    public Integer weight;
+                    public Integer gotoLocation;
+                }
+                public static class HeaderObject {
+                    public String name;
+                    public String value;
+                    public List<String> values;
+                }
+            }
+        }
     }
 
     public Map<String, Object> stats;
