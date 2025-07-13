@@ -573,4 +573,9 @@
     <string name="disable_all">Desactivar todo</string>
     <string name="enable_all">Activar todo</string>
     <string name="resolve_destination_for_server">Resolver destino (dirección del servidor)</string>
+    <plurals name="profile_multi_import_message">
+        <item quantity="one">¿Realmente quieres importar %d perfil a %s?</item>
+        <item quantity="many">¿Realmente quieres importar %d perfiles a %s?</item>
+        <item quantity="other">¿Realmente quieres importar %d perfiles a %s?</item>
+    </plurals>
 </resources>
