@@ -33,6 +33,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -99,6 +100,7 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
     }
 
     lateinit var profile: TaskerProfilePreference
+    lateinit var action: SimpleMenuPreference
 
     fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -116,6 +118,8 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
             }
             true
         }
+        action = findPreference(Key.TASKER_ACTION)!!
+        profile.isEnabled = action.value == "0"
     }
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
