@@ -167,8 +167,11 @@ fun buildV2RayConfig(
     val outboundTagsAll = HashMap<String, ProxyEntity>()
     val globalOutbounds = ArrayList<String>()
 
-    fun ProxyEntity.resolveChain(): MutableList<ProxyEntity> {
+    fun ProxyEntity.resolveChainRecursively(): MutableList<ProxyEntity> {
         val bean = requireBean()
+        if (bean is BalancerBean) {
+            error("Chain is incompatible with balancer")
+        }
         if (bean is ChainBean) {
             val beans = SagerDatabase.proxyDao.getEntities(bean.proxies)
             val beansMap = beans.associateBy { it.id }
@@ -181,16 +184,21 @@ fun buildV2RayConfig(
                 if (item.type == ProxyEntity.TYPE_WG && index != bean.proxies.size - 1) {
                     error("Configuration ${item.displayName()} can be the landing proxy only.")
                 }
-                beanList.addAll(item.resolveChain())
+                beanList.addAll(item.resolveChainRecursively())
             }
-            return beanList.asReversed()
-        } else if (bean is BalancerBean) {
+            return beanList
+        }
+        return mutableListOf(this)
+    }
+
+    fun ProxyEntity.resolveChain(): MutableList<ProxyEntity> {
+        val bean = requireBean()
+        if (bean is BalancerBean) {
             val beans = if (bean.type == BalancerBean.TYPE_LIST) {
                 SagerDatabase.proxyDao.getEntities(bean.proxies)
             } else {
                 SagerDatabase.proxyDao.getByGroup(bean.groupId)
             }
-
             val beansMap = beans.associateBy { it.id }
             val beanList = ArrayList<ProxyEntity>()
             for (proxyId in beansMap.keys) {
@@ -204,17 +212,24 @@ fun buildV2RayConfig(
             }
             return beanList
         }
-
-        val list = mutableListOf(this)
+        val list = resolveChainRecursively().asReversed()
         SagerDatabase.groupDao.getById(groupId)?.let { group ->
             group.frontProxy.takeIf { it > 0L }?.let { id ->
                 SagerDatabase.proxyDao.getById(id)?.let {
-                    list.add(it)
+                    when (it.requireBean()) {
+                        is BalancerBean -> error("Front proxy is incompatible with balancer")
+                        is ChainBean -> error("Front proxy is incompatible with chain")
+                        else -> list.add(it)
+                    }
                 } ?: error("front proxy set but not found for group ${group.displayName()}")
             }
             group.landingProxy.takeIf { it > 0L }?.let { id ->
                 SagerDatabase.proxyDao.getById(id)?.let {
-                    list.add(0, it)
+                    when (it.requireBean()) {
+                        is BalancerBean -> error("Landing proxy is incompatible with balancer")
+                        is ChainBean -> error("Landing proxy is incompatible with chain")
+                        else -> list.add(0, it)
+                    }
                 } ?: error("landing proxy set but not found for group ${group.displayName()}")
             }
         }
