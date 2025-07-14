@@ -90,3 +90,12 @@ You should have received a copy of the GNU General Public License along with thi
 - `geosite.dat` and `geoip.dat` in Exclave are data files downloaded from source and bundled directly. They are not part of the code.
   - The license of https://github.com/v2fly/domain-list-community applies to `geosite.dat` in Exclave.
   - The license of https://github.com/v2fly/geoip applies to `geoip.dat` in Exclave.
+
+## Acknowledgment
+
+- [Shadowsocks](https://github.com/shadowsocks/shadowsocks-android) by [Mygod](https://github.com/Mygod), [madeye](https://github.com/madeye), et al.
+- [SagerNet](https://github.com/SagerNet/SagerNet) by [nekohasekai](https://github.com/nekohasekai) et al.
+- [AnXray](https://github.com/XTLS/AnXray) by [nekohasekai](https://github.com/nekohasekai) et al.
+- [Matsuri](https://github.com/MatsuriDayo/Matsuri) by [arm64v8a](https://github.com/arm64v8a) et al.
+- [NekoBox](https://github.com/MatsuriDayo/NekoBoxForAndroid) by [arm64v8a](https://github.com/arm64v8a) et al.
+- [husi](https://github.com/xchacha20-poly1305/husi) by [xchacha20-poly1305](https://github.com/xchacha20-poly1305) et al.
