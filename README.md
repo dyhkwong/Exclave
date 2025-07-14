@@ -81,15 +81,15 @@ You should have received a copy of the GNU General Public License along with thi
 ```
 
 - Native libraries in plugins are executables that run in separate processes and therefore not subject to the restrictions of the GNU General Public License.
-  - The license of https://github.com/klzgrad/naiveproxy applies to `libnaive.so` in Naïve plugin.
-  - The license of https://github.com/enfein/mieru applies to `libmieru.so` in Mieru plugin.
-  - The license of https://github.com/apernet/hysteria applies to `libhysteria2.so` in Hysteria 2 plugin.
-  - The license of https://github.com/juicity/juicity applies to `libjuicity.so` in Juicity plugin.
-  - The license of https://github.com/txthinking/brook applies to `libbrook.so` in Brook plugin.
-  - The license of https://github.com/Itsusinn/tuic applies to `libtuic5.so` in TUIC v5 plugin.
-- `geosite.dat` and `geoip.dat` in Exclave are data files downloaded from source and bundled directly. They are not part of the code.
-  - The license of https://github.com/v2fly/domain-list-community applies to `geosite.dat` in Exclave.
-  - The license of https://github.com/v2fly/geoip applies to `geoip.dat` in Exclave.
+  - The license of [naiveproxy](https://github.com/klzgrad/naiveproxy) applies to `libnaive.so` in Naïve plugin.
+  - The license of [mieru](https://github.com/enfein/mieru) applies to `libmieru.so` in Mieru plugin.
+  - The license of [hysteria](https://github.com/apernet/hysteria) applies to `libhysteria2.so` in Hysteria 2 plugin.
+  - The license of [juicity](https://github.com/juicity/juicity) applies to `libjuicity.so` in Juicity plugin.
+  - The license of [brook](https://github.com/txthinking/brook) applies to `libbrook.so` in Brook plugin.
+  - The license of [tuic](https://github.com/Itsusinn/tuic) applies to `libtuic5.so` in TUIC v5 plugin.
+- `geosite.dat` and `geoip.dat` are data files downloaded and bundled directly. They are not part of the code.
+  - The license of `dlc.dat` released by [domain-list-community](https://github.com/v2fly/domain-list-community) applies to the bundled `geosite.dat` in Exclave.
+  - The license of `geoip.dat` released by [geoip](https://github.com/v2fly/geoip) applies to the bundled `geoip.dat` in Exclave.
 
 ## Acknowledgment
 
