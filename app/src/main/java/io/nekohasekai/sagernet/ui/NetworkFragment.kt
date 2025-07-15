@@ -30,8 +30,6 @@ import io.nekohasekai.sagernet.ktx.*
 
 class NetworkFragment : NamedFragment(R.layout.layout_network) {
 
-    override fun name0() = app.getString(R.string.tools_network)
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

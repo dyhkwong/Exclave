@@ -67,7 +67,10 @@ class ToolsFragment : ToolbarFragment(R.layout.layout_tools) {
         binding.toolsPager.adapter = ToolsAdapter(tools)
 
         TabLayoutMediator(binding.toolsTab, binding.toolsPager) { tab, position ->
-            tab.text = tools[position].name()
+            tab.text = when (position) {
+                0 -> getString(R.string.tools_network)
+                else -> getString(R.string.backup)
+            }
             tab.view.setOnLongClickListener { // clear toast
                 true
             }

@@ -53,8 +53,6 @@ import java.util.*
 
 class BackupFragment : NamedFragment(R.layout.layout_backup) {
 
-    override fun name0() = app.getString(R.string.backup)
-
     var content = ""
     private val exportSettings = registerForActivityResult(ActivityResultContracts.CreateDocument()) { data ->
         if (data != null) {
