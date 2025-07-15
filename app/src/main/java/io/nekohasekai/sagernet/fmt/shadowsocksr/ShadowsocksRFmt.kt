@@ -22,7 +22,6 @@ package io.nekohasekai.sagernet.fmt.shadowsocksr
 import cn.hutool.core.codec.Base64
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 import java.util.*
 
@@ -52,7 +51,7 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
     val params = url.substringAfter("ssr://").decodeBase64UrlSafe().split(":")
 
     val bean = ShadowsocksRBean().apply {
-        serverAddress = params[0].unwrapIDN()
+        serverAddress = params[0]
         serverPort = params[1].toIntOrNull() ?: error("invalid port")
         protocol = params[2].takeIf { it in supportedShadowsocksRProtocol } ?: error("unsupported protocol")
         method = params[3].takeIf { it in supportedShadowsocksRMethod } ?: error("unsupported method")

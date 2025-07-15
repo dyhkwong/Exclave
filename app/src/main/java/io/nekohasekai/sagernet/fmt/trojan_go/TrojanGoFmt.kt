@@ -25,14 +25,13 @@ import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 fun parseTrojanGo(server: String): TrojanGoBean {
     val link = Libcore.parseURL(server)
 
     return TrojanGoBean().apply {
-        serverAddress = link.host.unwrapIDN()
+        serverAddress = link.host
         serverPort = link.port
         password = link.username
         link.queryParameter("sni")?.let {

@@ -15,7 +15,7 @@ fun parseJuicity(url: String): JuicityBean {
     return JuicityBean().apply {
         name = link.fragment
 
-        serverAddress = link.host.unwrapIDN()
+        serverAddress = link.host
         serverPort = link.port
         uuid = link.username
         password = link.password

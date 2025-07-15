@@ -1,7 +1,6 @@
 package io.nekohasekai.sagernet.fmt.http3
 
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 fun parseHttp3(link: String): Http3Bean {
@@ -9,7 +8,7 @@ fun parseHttp3(link: String): Http3Bean {
     if (url.path != "/" && url.path != "") error("Not http3 proxy")
 
     return Http3Bean().apply {
-        serverAddress = url.host.unwrapIDN()
+        serverAddress = url.host
         serverPort = url.port.takeIf { it > 0 } ?: 443
         username = url.username
         password = url.password

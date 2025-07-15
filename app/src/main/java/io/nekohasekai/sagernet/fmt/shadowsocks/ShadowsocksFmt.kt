@@ -25,7 +25,6 @@ import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 val supportedShadowsocksMethod = arrayOf(
@@ -71,7 +70,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
 
         return ShadowsocksBean().apply {
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")
-                .removePrefix("[").removeSuffix("]").unwrapIDN()
+                .removePrefix("[").removeSuffix("]")
             serverPort = plainUri.substringAfterLast("@").substringAfterLast(":")
                 .toIntOrNull() ?: error("invalid port")
             method = when (val m = plainUri.substringBeforeLast("@").substringBefore(":").lowercase()) {
@@ -92,7 +91,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         // example: ss://2022-blake3-aes-256-gcm:YctPZ6U7xPPcU%2Bgp3u%2B0tx%2FtRizJN9K8y%2BuKlW2qjlI%3D@192.168.100.1:8888#Example3
         // example: ss://none:@192.168.100.1:8888#example
         return ShadowsocksBean().apply {
-            serverAddress = link.host.unwrapIDN()
+            serverAddress = link.host
             serverPort = link.port
             method = when (val m = link.username?.lowercase()) {
                 in supportedShadowsocksMethod -> m
@@ -110,7 +109,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
     return ShadowsocksBean().apply {
         // SIP002, user info encoded with Base64URL
         // example: ss://YWVzLTEyOC1nY206dGVzdA@127.0.0.1:8888#Example1
-        serverAddress = link.host.unwrapIDN()
+        serverAddress = link.host
         serverPort = link.port
         method = when (val m = link.username?.decodeBase64UrlSafe()?.substringBefore(":")?.lowercase()) {
             in supportedShadowsocksMethod -> m

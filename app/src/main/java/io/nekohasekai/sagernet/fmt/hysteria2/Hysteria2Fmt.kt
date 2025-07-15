@@ -28,7 +28,6 @@ import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.isValidHysteriaPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
@@ -51,7 +50,7 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
     val link = Libcore.parseURL(url)
     return Hysteria2Bean().apply {
         name = link.fragment
-        serverAddress = link.host.unwrapIDN()
+        serverAddress = link.host
         serverPorts = if (port.isNotEmpty() && port.isValidHysteriaMultiPort()) {
             port
         } else if (link.port > 0) {

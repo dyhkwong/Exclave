@@ -7,7 +7,7 @@ fun parseAnyTLS(url: String): AnyTLSBean {
     val link = Libcore.parseURL(url)
     return AnyTLSBean().apply {
         name = link.fragment
-        serverAddress = link.host.unwrapIDN()
+        serverAddress = link.host
         serverPort = link.port.takeIf { it > 0 } ?: 443
         password = link.username
         security = "tls"

@@ -25,7 +25,6 @@ import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 import java.io.File
 

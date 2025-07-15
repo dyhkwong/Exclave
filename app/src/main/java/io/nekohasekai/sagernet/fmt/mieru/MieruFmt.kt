@@ -23,13 +23,12 @@ import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 fun parseMieru(link: String): MieruBean {
     val url = Libcore.parseURL(link)
     return MieruBean().apply {
-        serverAddress = url.host.unwrapIDN()
+        serverAddress = url.host
         username = url.username
         password = url.password
         url.queryParameter("profile")?.let {

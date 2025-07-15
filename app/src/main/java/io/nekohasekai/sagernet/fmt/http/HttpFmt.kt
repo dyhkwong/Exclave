@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.fmt.http
 
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 fun parseHttp(link: String): HttpBean {
@@ -28,7 +27,7 @@ fun parseHttp(link: String): HttpBean {
     if (url.path != "/" && url.path != "") error("Not http proxy")
 
     return HttpBean().apply {
-        serverAddress = url.host.unwrapIDN()
+        serverAddress = url.host
         serverPort = url.port.takeIf { it > 0 } ?: if (url.scheme == "https") 443 else 80
         username = url.username
         password = url.password

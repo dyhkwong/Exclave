@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.fmt.socks
 
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.unwrapIDN
 import libcore.Libcore
 
 fun parseSOCKS(link: String): SOCKSBean {
@@ -33,7 +32,7 @@ fun parseSOCKS(link: String): SOCKSBean {
         return SOCKSBean().apply {
             protocol = SOCKSBean.PROTOCOL_SOCKS5
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")
-                .removeSuffix("/").removePrefix("[").removeSuffix("]").unwrapIDN()
+                .removeSuffix("/").removePrefix("[").removeSuffix("]")
             serverPort = plainUri.substringAfterLast("@").substringAfterLast(":")
                 .removeSuffix("/").toIntOrNull()
             username = plainUri.substringBeforeLast("@").substringBefore(":").takeIf { it != "null" } ?: ""
@@ -46,7 +45,7 @@ fun parseSOCKS(link: String): SOCKSBean {
         // This format is broken if username and/or password contains ":".
         return SOCKSBean().apply {
             protocol = SOCKSBean.PROTOCOL_SOCKS5
-            serverAddress = url.host.unwrapIDN()
+            serverAddress = url.host
             serverPort = url.port
             username = url.username.decodeBase64UrlSafe().substringBefore(":")
             password = url.username.decodeBase64UrlSafe().substringAfter(":")
@@ -61,7 +60,7 @@ fun parseSOCKS(link: String): SOCKSBean {
             "socks+tls" -> SOCKSBean.PROTOCOL_SOCKS5 // Who TF invent this?
             else -> error("impossible")
         }
-        serverAddress = url.host.unwrapIDN()
+        serverAddress = url.host
         serverPort = url.port.takeIf { it > 0 } ?: 1080
         username = url.username
         password = url.password
