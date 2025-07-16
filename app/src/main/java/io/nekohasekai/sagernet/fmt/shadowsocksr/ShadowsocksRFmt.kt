@@ -24,6 +24,7 @@ import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 import java.util.*
+import kotlin.collections.joinToString
 
 val supportedShadowsocksRMethod = arrayOf(
     "rc4","rc4-md5","rc4-md5-6",
@@ -47,22 +48,23 @@ val supportedShadowsocksRObfs = arrayOf(
 )
 
 fun parseShadowsocksR(url: String): ShadowsocksRBean {
-
+    // https://github.com/shadowsocksrr/shadowsocks-rss/wiki/SSR-QRcode-scheme
     val params = url.substringAfter("ssr://").decodeBase64UrlSafe().split(":")
+    if (params.size < 6) error("invalid url")
 
     val bean = ShadowsocksRBean().apply {
-        serverAddress = params[0]
-        serverPort = params[1].toIntOrNull() ?: error("invalid port")
-        protocol = params[2].takeIf { it in supportedShadowsocksRProtocol } ?: error("unsupported protocol")
-        method = params[3].takeIf { it in supportedShadowsocksRMethod } ?: error("unsupported method")
-        obfs = when (val it = params[4]) {
+        serverAddress = params.subList(0, params.size - 5).joinToString(":") // serverAddress contains `:` if it is IPv6
+        serverPort = params[params.size - 5].toIntOrNull() ?: error("invalid port")
+        protocol = params[params.size - 4].takeIf { it in supportedShadowsocksRProtocol } ?: error("unsupported protocol")
+        method = params[params.size - 3].takeIf { it in supportedShadowsocksRMethod } ?: error("unsupported method")
+        obfs = when (val it = params[params.size - 2]) {
             "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
             else -> it.takeIf { it in supportedShadowsocksRObfs } ?: error("unsupported obfs")
         }
-        password = params[5].substringBefore("/").decodeBase64UrlSafe()
+        password = params[params.size - 1].substringBefore("/").decodeBase64UrlSafe()
     }
 
-    val httpUrl = Libcore.parseURL("https://localhost" + params[5].substringAfter("/"))
+    val httpUrl = Libcore.parseURL("https://localhost" + params[params.size - 1].substringAfter("/", ""))
 
     httpUrl.queryParameter("obfsparam")?.let {
         bean.obfsParam = it.decodeBase64UrlSafe()
@@ -77,7 +79,6 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
     }
 
     return bean
-
 }
 
 fun ShadowsocksRBean.toUri(): String {
