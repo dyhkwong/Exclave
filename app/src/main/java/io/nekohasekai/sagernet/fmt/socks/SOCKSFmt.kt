@@ -31,12 +31,10 @@ fun parseSOCKS(link: String): SOCKSBean {
         val plainUri = link.removePrefix("socks://").substringBefore("#").decodeBase64UrlSafe()
         return SOCKSBean().apply {
             protocol = SOCKSBean.PROTOCOL_SOCKS5
-            serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")
-                .removeSuffix("/").removePrefix("[").removeSuffix("]")
-            serverPort = plainUri.substringAfterLast("@").substringAfterLast(":")
-                .removeSuffix("/").toIntOrNull()
-            username = plainUri.substringBeforeLast("@").substringBefore(":").takeIf { it != "null" } ?: ""
-            password = plainUri.substringBeforeLast("@").substringAfter(":").takeIf { it != "null" } ?: ""
+            serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":").removePrefix("[").removeSuffix("]")
+            serverPort = plainUri.substringAfterLast("@").substringAfterLast(":").toIntOrNull()
+            username = plainUri.substringBeforeLast("@").substringBefore(":")
+            password = plainUri.substringBeforeLast("@").substringAfter(":")
             name = url.fragment
         }
     }
