@@ -910,4 +910,10 @@
         <item>zh-Hans-CN</item>
         <item>zh-Hant-TW</item>
     </string-array>
+
+    <string-array name="route_mode">
+        <item>@string/route_mode_rule</item>
+        <item>@string/route_mode_global</item>
+        <item>@string/route_mode_direct</item>
+    </string-array>
 </resources>

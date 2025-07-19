@@ -32,6 +32,7 @@ import com.github.shadowsocks.plugin.PluginManager
 import com.google.gson.JsonSyntaxException
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.LogLevel
+import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.Shadowsocks2022Implementation
 import io.nekohasekai.sagernet.TunImplementation
@@ -236,8 +237,9 @@ fun buildV2RayConfig(
         return list
     }
 
+    val routeMode = DataStore.routeMode
     val proxies = proxy.resolveChain()
-    val extraRules = if (forTest) listOf() else SagerDatabase.rulesDao.enabledRules()
+    val extraRules = if (forTest || routeMode != RouteMode.RULE) listOf() else SagerDatabase.rulesDao.enabledRules()
     val extraProxies = if (forTest) mapOf() else SagerDatabase.proxyDao.getEntities(extraRules.mapNotNull { rule ->
         rule.outbound.takeIf { it > 0 && it != proxy.id }
     }.toHashSet().toList()).associate {
@@ -249,12 +251,15 @@ fun buildV2RayConfig(
     val allowAccess = DataStore.allowAccess
     val bind = if (!forTest && allowAccess) "0.0.0.0" else LOCALHOST
 
-    val remoteDns = DataStore.remoteDns.listByLineOrComma().filter { !it.startsWith("#") }
     var directDNS = DataStore.directDns.listByLineOrComma().filter { !it.startsWith("#") }
-    var bootstrapDNS = DataStore.bootstrapDns.listByLineOrComma().filter { !it.startsWith("#") }
     if (DataStore.useLocalDnsAsDirectDns) directDNS = listOf("localhost")
+    val remoteDNS = if (routeMode == RouteMode.DIRECT) {
+        directDNS
+    } else {
+        DataStore.remoteDns.listByLineOrComma().filter { !it.startsWith("#") }
+    }
+    var bootstrapDNS = DataStore.bootstrapDns.listByLineOrComma().filter { !it.startsWith("#") }
     if (DataStore.useLocalDnsAsBootstrapDns) bootstrapDNS = listOf("localhost")
-    val enableDnsRouting = DataStore.enableDnsRouting
     val useFakeDns = DataStore.enableFakeDns
     val remoteDnsQueryStrategy = DataStore.remoteDnsQueryStrategy
     val directDnsQueryStrategy = DataStore.directDnsQueryStrategy
@@ -1847,7 +1852,7 @@ fun buildV2RayConfig(
             })
         }
 
-        if (enableDnsRouting) {
+        if (DataStore.enableDnsRouting) {
             for (bypassRule in extraRules.filter { it.isBypassRule() }) {
                 if (bypassRule.domains.isNotEmpty()) {
                     bypassDomain.addAll(bypassRule.domains.listByLineOrComma())
@@ -1860,7 +1865,7 @@ fun buildV2RayConfig(
             }
         }
 
-        remoteDns.forEach { dns ->
+        remoteDNS.forEach { dns ->
             dns.toUri().host?.takeIf { !it.isIpAddress() }?.also {
                 bypassDomainSkipFakeDns.add("full:$it")
             }
@@ -1880,7 +1885,7 @@ fun buildV2RayConfig(
 
         var hasDnsTagDirect = false
         if (bypassDomain.isNotEmpty() || bypassDomainSkipFakeDns.isNotEmpty() || bootstrapDomain.isNotEmpty()) {
-            dns.servers.addAll(remoteDns.map {
+            dns.servers.addAll(remoteDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
                         address = it
@@ -1980,7 +1985,7 @@ fun buildV2RayConfig(
                 })
             }
         } else {
-            dns.servers.addAll(remoteDns.map {
+            dns.servers.addAll(remoteDNS.map {
                 DnsObject.StringOrServerObject().apply {
                     valueY = DnsObject.ServerObject().apply {
                         address = it
@@ -2009,6 +2014,14 @@ fun buildV2RayConfig(
                         }
                     }
                 }
+            })
+        }
+
+        if (routeMode == RouteMode.DIRECT) {
+            routing.rules.add(0, RoutingObject.RuleObject().apply {
+                type = "field"
+                port = "0-65535"
+                outboundTag = TAG_BYPASS
             })
         }
 

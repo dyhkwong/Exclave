@@ -612,4 +612,8 @@
         <item quantity="one">Are you sure you want to import %d profile to %s?</item>
         <item quantity="other">Are you sure you want to import %d profiles to %s?</item>
     </plurals>
+    <string name="route_mode">Route mode</string>
+    <string name="route_mode_rule">rule</string>
+    <string name="route_mode_global">global</string>
+    <string name="route_mode_direct">direct</string>
 </resources>

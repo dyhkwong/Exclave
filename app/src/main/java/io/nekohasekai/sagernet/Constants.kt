@@ -84,6 +84,8 @@ object Key {
     const val PROBE_URL = "probeUrl"
     const val PROBE_INTERVAL = "probeInterval"
 
+    const val ROUTE_MODE = "routeMode"
+
     const val RULES_PROVIDER = "rulesProvider"
     const val RULES_GEOSITE_URL = "rulesGeositeUrl"
     const val RULES_GEOIP_URL = "rulesGeoipUrl"
@@ -352,4 +354,10 @@ object LogLevel {
 object FabStyle {
     const val SagerNet = 0
     const val Shadowsocks = 1
+}
+
+object RouteMode {
+    const val RULE = 0
+    const val GLOBAL = 1
+    const val DIRECT = 2
 }

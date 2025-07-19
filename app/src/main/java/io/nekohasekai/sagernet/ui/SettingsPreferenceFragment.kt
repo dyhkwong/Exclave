@@ -241,6 +241,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         // route settings
+        findPreference<Preference>(Key.ROUTE_MODE)!!.onPreferenceChangeListener = reloadListener
         isProxyApps.isEnabled = serviceMode.value == MODE_VPN
         isProxyApps.setOnPreferenceChangeListener { _, newValue ->
             startActivity(Intent(activity, AppManagerActivity::class.java))

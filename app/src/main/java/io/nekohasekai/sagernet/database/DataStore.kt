@@ -157,6 +157,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var directDnsQueryStrategy by configurationStore.string(Key.DIRECT_DNS_QUERY_STRATEGY) { "UseIP" }
     var ednsClientIp by configurationStore.string(Key.EDNS_CLIENT_IP)
 
+    var routeMode by configurationStore.stringToInt(Key.ROUTE_MODE)
     var rulesProvider by configurationStore.stringToInt(Key.RULES_PROVIDER)
     var rulesGeositeUrl by configurationStore.string(Key.RULES_GEOSITE_URL) { "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat" }
     var rulesGeoipUrl by configurationStore.string(Key.RULES_GEOIP_URL) { "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat" }

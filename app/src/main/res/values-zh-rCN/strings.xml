@@ -575,4 +575,8 @@
     <plurals name="profile_multi_import_message">
         <item quantity="other">确认要导入 %d 个配置到 %s？</item>
     </plurals>
+    <string name="route_mode">路由模式</string>
+    <string name="route_mode_rule">规则</string>
+    <string name="route_mode_global">全局</string>
+    <string name="route_mode_direct">直连</string>
 </resources>
