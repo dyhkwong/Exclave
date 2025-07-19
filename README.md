@@ -24,7 +24,7 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
 
 - Encrypt with [this GPG public key](https://github.com/dyhkwong.gpg) before posting if the issue contains sensitive information.
 - For crashes, log file is required. Switch to "debug" level before logging.
-- For memory leak and high system resource usage, pprof profile is required. Long press "about" and restart the app to trigger pprof settings.
+- For memory leak and high system resource usage, pprof profile is required. Long press "About" - "Version" to enable pprof HTTP server settings. Kill and restart the app to take effect.
 
 ## FAQs and explanation of terms
 
