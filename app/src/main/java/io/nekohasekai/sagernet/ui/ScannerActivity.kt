@@ -176,7 +176,7 @@ class ScannerActivity : ThemedActivity() {
             try {
                 val results = RawUpdater.parseRaw(value)
                 if (results.isNullOrEmpty()) {
-                    if (isUrl(value)) {
+                    if (value.listByLine().size == 1 && isUrl(value)) {
                         val builder = Libcore.newURL("exclave").apply {
                             host = "subscription"
                         }
@@ -272,7 +272,7 @@ class ScannerActivity : ThemedActivity() {
                                     }
                                 }
                             } else {
-                                if (isUrl(result.text)) {
+                                if (result.text.listByLine().size == 1 && isUrl(result.text)) {
                                     val builder = Libcore.newURL("exclave").apply {
                                         host = "subscription"
                                     }

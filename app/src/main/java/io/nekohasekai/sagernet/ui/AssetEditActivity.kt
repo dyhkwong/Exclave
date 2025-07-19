@@ -26,6 +26,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import kotlinx.parcelize.Parcelize
@@ -75,7 +76,7 @@ class AssetEditActivity(
         if (DataStore.assetName != DataStore.editingAssetName && SagerDatabase.assetDao.get(DataStore.assetName) != null) {
             error(getString(R.string.route_asset_duplicate_filename,  DataStore.assetName))
         }
-        if (!isUrl(DataStore.assetUrl)) {
+        if (DataStore.assetUrl.listByLine().size > 1 || !isUrl(DataStore.assetUrl)) {
             error(getString(R.string.route_asset_invalid_url,  DataStore.assetUrl))
         }
     }

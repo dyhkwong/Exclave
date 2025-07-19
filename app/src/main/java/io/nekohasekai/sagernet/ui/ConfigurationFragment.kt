@@ -311,7 +311,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 if (proxies.isEmpty()) {
-                    if (isUrl(fileText)) {
+                    if (fileText.listByLine().size == 1 && isUrl(fileText)) {
                         val builder = Libcore.newURL("exclave").apply {
                             host = "subscription"
                         }
@@ -397,7 +397,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         try {
                             val proxies = RawUpdater.parseRaw(text)
                             if (proxies.isNullOrEmpty()) {
-                                if (isUrl(text)) {
+                                if (text.listByLine().size == 1 && isUrl(text)) {
                                     val builder = Libcore.newURL("exclave").apply {
                                         host = "subscription"
                                     }
