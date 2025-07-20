@@ -578,4 +578,8 @@
         <item quantity="many">¿Realmente quieres importar %d perfiles a %s?</item>
         <item quantity="other">¿Realmente quieres importar %d perfiles a %s?</item>
     </plurals>
+    <string name="route_mode">Modo de ruta</string>
+    <string name="route_mode_rule">regla</string>
+    <string name="route_mode_global">global</string>
+    <string name="route_mode_direct">directo</string>
 </resources>
