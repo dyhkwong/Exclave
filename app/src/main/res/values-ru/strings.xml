@@ -437,8 +437,8 @@
     <string name="route_need_background_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **разрешение на фоновое определение местоположения**</string>
     <string name="route_need_coarse_location">Правило маршрутизации `%s` требует доступа к вашему **Wi-Fi SSID**, но для этого требуется **грубое разрешение на определение местоположения**</string>
     <string name="tuic_zero_rtt_handshake">0-RTT квитирование</string>
-    <string name="reality_fingerprint">REALITY uTLS отпечаток</string>
-    <string name="wireguard_reserved">Резервный</string>
+    <string name="reality_fingerprint">REALITY uTLS fingerprint (отпечаток uTLS)</string>
+    <string name="wireguard_reserved">Reserved (зарезервированное поле)</string>
     <string name="brook_udp_over_stream">UDP через поток</string>
     <string name="stun_legacy_test">Тест определения типа NAT</string>
     <string name="stun_legacy_test_summary">Определение типа NAT клиента, определенный в RFC 3489, с помощью STUN.</string>
@@ -574,4 +574,16 @@
     <string name="disable_all">Отключить все</string>
     <string name="enable_all">Включить все</string>
     <string name="resolve_destination_for_server">Резолвить адрес назначения (сервер)</string>
+    <plurals name="profile_multi_import_message">
+        <item quantity="one">Вы уверены, что хотите импортировать %d профиль в %s?</item>
+        <item quantity="few">Вы уверены, что хотите импортировать %d профиля в %s?</item>
+        <item quantity="many">Вы уверены, что хотите импортировать %d профилей в %s?</item>
+        <item quantity="other">Вы уверены, что хотите импортировать %d профилей в %s?</item>
+    </plurals>
+    <string name="route_mode">Режим маршрута</string>
+    <string name="route_mode_rule">правило</string>
+    <string name="route_mode_global">глобальный</string>
+    <string name="route_mode_direct">прямой</string>
+    <string name="reality_public_key">REALITY public key (публичный, открытый ключ)</string>
+    <string name="reality_short_id">REALITY Short ID (короткий идентификатор)</string>
 </resources>
