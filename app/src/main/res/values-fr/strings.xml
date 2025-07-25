@@ -225,7 +225,6 @@
     <string name="connecting">Connexion…</string>
     <string name="plugin_configure">Configurer…</string>
     <string name="ss_cat">Préférences Shadowsocks</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (greffon Android pour Shadowsocks)</string>
     <string name="group_order_by_name">Par nom</string>
     <string name="wireguard_local_address">Adresse locale</string>
     <string name="proxy_cat">Préférences du serveur</string>

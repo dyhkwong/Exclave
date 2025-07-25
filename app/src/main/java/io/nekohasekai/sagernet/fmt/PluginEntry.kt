@@ -25,23 +25,17 @@ import io.nekohasekai.sagernet.R
 enum class PluginEntry(
     val pluginId: String,
     @StringRes val nameId: Int,
-    val packageName: String,
 ) {
-    // sagernet plugins
-    TrojanGo("trojan-go-plugin", R.string.action_trojan_go, "io.nekohasekai.sagernet.plugin.trojan_go"),
-    NaiveProxy("naive-plugin", R.string.action_naive, "io.nekohasekai.sagernet.plugin.naive"),
-    Brook("brook-plugin", R.string.action_brook, "com.github.dyhkwong.sagernet.plugin.brook"),
-    Hysteria("hysteria-plugin", R.string.action_hysteria, "io.nekohasekai.sagernet.plugin.hysteria"),
-    Hysteria2("hysteria2-plugin", R.string.action_hysteria2, "com.github.dyhkwong.sagernet.plugin.hysteria2"),
-    Mieru("mieru-plugin", R.string.action_mieru, "com.github.dyhkwong.sagernet.sagernet.plugin.mieru"),
-    TUIC("tuic-plugin", R.string.action_tuic, "io.nekohasekai.sagernet.plugin.tuic"),
-    TUIC5("tuic5-plugin", R.string.action_tuic5, "io.nekohasekai.sagernet.plugin.tuic5"),
-    Juicity("juicity-plugin", R.string.action_juicity, "com.github.dyhkwong.sagernet.plugin.juicity"),
-    ShadowQUIC("shadowquic-plugin", R.string.action_shadowquic, "com.github.dyhkwong.sagernet.plugin.shadowquic"),
-
-    // shadowsocks plugins
-
-    ObfsLocal("shadowsocks-obfs-local", R.string.shadowsocks_plugin_simple_obfs, "com.github.shadowsocks.plugin.obfs_local");
+    TrojanGo("trojan-go-plugin", R.string.action_trojan_go),
+    NaiveProxy("naive-plugin", R.string.action_naive),
+    Brook("brook-plugin", R.string.action_brook),
+    Hysteria("hysteria-plugin", R.string.action_hysteria),
+    Hysteria2("hysteria2-plugin", R.string.action_hysteria2),
+    Mieru("mieru-plugin", R.string.action_mieru),
+    TUIC("tuic-plugin", R.string.action_tuic),
+    TUIC5("tuic5-plugin", R.string.action_tuic5),
+    Juicity("juicity-plugin", R.string.action_juicity),
+    ShadowQUIC("shadowquic-plugin", R.string.action_shadowquic);
 
     companion object {
 

@@ -326,8 +326,6 @@
     <string name="group_order_by_name">Per Nome</string>
     <string name="group_order_by_delay">Per Delay</string>
     <string name="plugin_exists_but_on_shit_system">Il profilo %s richiede il plugin %s, ma il produttore del tuo dispositivo (solitamente qualche campione dello spionaggio e produttore di malware) ha manomesso il vostro Android, rendendo il plugin inutilizzabile.</string>
-    <string name="shadowsocks_plugin_simple_obfs">Obfs Semplice (Shadowsocks Android Plugin)</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Plugin)</string>
     <string name="copy_package_name">Copia Nome Pacchetto</string>
     <string name="create_rule">Crea Regola</string>
     <string name="copy_success">Copiato!</string>

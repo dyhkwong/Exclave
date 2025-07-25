@@ -242,8 +242,6 @@
     <string name="group_order_origin">Por orden original</string>
     <string name="group_order_by_name">Alfabéticamente</string>
     <string name="group_order_by_delay">Por latencia</string>
-    <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Plugin de Shadowsocks para Android)</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (Plugin de Shadowsocks para Android)</string>
     <string name="traffic_active">Activo</string>
     <string name="traffic_stats">Estadísticas</string>
     <string name="copy_label">Copiar nombre de la app</string>

@@ -335,8 +335,6 @@
     </plurals>
     <string name="traffic_stats">آمار</string>
     <string name="traffic_active">فعال</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (پلاگین اندروید شادوساکس)</string>
-    <string name="shadowsocks_plugin_simple_obfs">Obfs ساده (پلاگین اندروید شادوساکس)</string>
     <string name="group_order_origin">بر اساس سرآغاز</string>
     <string name="group_order">چیدمان</string>
     <string name="group_order_by_delay">بر اساس تأخیر</string>

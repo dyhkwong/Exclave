@@ -372,8 +372,6 @@
     <string name="group_order_by_name">Alphabetically</string>
     <string name="group_order_by_delay">By latency</string>
     <string name="plugin_exists_but_on_shit_system">Profile %s requires %s plugin, but your proprietary equipment vendor (usually surveillance capital giants and malware maker) tampered with your Android, making the plugin unusable.</string>
-    <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Shadowsocks Android Plugin)</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android Plugin)</string>
     <string name="traffic_uplink">%s | %s/s ↑</string>
     <string name="traffic_downlink">%s | %s/s ↓</string>
     <string name="traffic_uplink_total" translatable="false">%s ↑</string>

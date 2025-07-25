@@ -329,8 +329,6 @@
     <string name="group_order_by_name">名称</string>
     <string name="group_order_by_delay">延时</string>
     <string name="plugin_exists_but_on_shit_system">配置 %s 需要插件 %s，但由于定制 Android 系统关联启动权限的限制，该插件无法启动，请允许相关权限。</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray（Shadowsocks Android 插件）</string>
-    <string name="shadowsocks_plugin_simple_obfs">Simple Obfs（Shadowsocks Android 插件）</string>
     <string name="experimental_no_termination_signal">通过 VMess 传输时，不为 TCP 连接发送连接单双工终止信号。这将破坏与一些应用程序的兼容性。</string>
     <string name="experimental_authenticated_length">让每个有效载荷段的长度不再具有可塑性。这个实验要求服务器和客户端使用相同版本的 v2ray-core。预计会有更多关于这个实验的破坏性更新。</string>
     <string name="menu_traffic">流量</string>

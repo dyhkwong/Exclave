@@ -313,8 +313,6 @@
     </plurals>
     <string name="file_manager_missing">您的裝置缺少 Android 標準檔案選擇器, 請安裝一個, 如 Material Files.</string>
     <string name="menu_traffic">流量</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (Shadowsocks Android 外掛程式)</string>
-    <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (Shadowsocks Android 外掛程式)</string>
     <string name="plugin_exists_but_on_shit_system">設定檔 %s 需要外掛程式 %s，但是您的專有設備提供商（通常也是監視資本主義巨頭和惡意軟體製造商）篡改了你的 Android 系統，使此外掛程式不可用。</string>
     <string name="ssh_private_key_passphrase">私密金鑰複雜密碼</string>
     <string name="ssh_private_key">私密金鑰</string>

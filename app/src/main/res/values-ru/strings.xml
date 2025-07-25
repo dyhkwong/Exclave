@@ -345,8 +345,6 @@
     <string name="traffic_downlink">%s | %s/с ↓</string>
     <string name="traffic_stats">Статистика</string>
     <string name="traffic_active">Активный</string>
-    <string name="shadowsocks_plugin_v2ray">V2Ray (плагин Shadowsocks для Android)</string>
-    <string name="shadowsocks_plugin_simple_obfs">Simple Obfs (плагин Shadowsocks для Android)</string>
     <string name="plugin_exists_but_on_shit_system">Профиль %s требует плагин %s, но поставщик вашего проприетарного оборудования (обычно это большие компании, занимающиеся слежкой и производители вредоносного ПО) изменил ваш Android, сделав плагин непригодным для использования.</string>
     <string name="group_order_by_delay">По задержке</string>
     <string name="group_order_by_name">По имени</string>
