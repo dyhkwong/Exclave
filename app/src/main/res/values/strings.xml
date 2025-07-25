@@ -616,4 +616,5 @@
     <string name="route_mode_rule">rule</string>
     <string name="route_mode_global">global</string>
     <string name="route_mode_direct">direct</string>
+    <string name="action_shadowquic" translatable="false">ShadowQUIC</string>
 </resources>

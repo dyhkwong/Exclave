@@ -1,0 +1,79 @@
+name: ShadowQUIC Plugin Release Build
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Release (y/n)'
+        required: false
+      tag:
+        description: 'Release Tag'
+        required: false
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout Submodule
+        run: |
+          git submodule update --init plugin/shadowquic/src/main/rust/shadowquic
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: 'gradle'
+      - name: Setup Android NDK
+        id: setup-ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+      - name: Setup Rust
+        run: |
+          rustup toolchain install 1.88.0
+          rustup override set 1.88.0
+          rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
+      - name: Native Build
+        env:
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: |
+          ./run plugin shadowquic
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
+      - name: Gradle Build
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          ./gradlew :plugin:shadowquic:assembleOssRelease
+          APK=$(find plugin/shadowquic/build/outputs/apk -name '*arm64-v8a*.apk')
+          APK=$(dirname "$APK")
+          echo "APK=$APK" >> $GITHUB_ENV
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: APKs
+          path: ${{ env.APK }}
+  publish:
+    name: Publish Release
+    if: github.event.inputs.release == 'y' && github.event.inputs.tag != ''
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: APKs
+          path: artifacts
+      - name: Publish Release
+        run: |
+          mkdir apks
+          find artifacts -name "*.apk" -exec cp {} apks \;
+          gh release create --latest=false ${{ github.event.inputs.tag }} --notes="" ./apks/*

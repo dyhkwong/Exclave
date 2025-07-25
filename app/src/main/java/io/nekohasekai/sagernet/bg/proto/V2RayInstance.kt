@@ -51,6 +51,8 @@ import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
+import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
+import io.nekohasekai.sagernet.fmt.shadowquic.buildshadowQUICConfig
 import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
 import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
 import io.nekohasekai.sagernet.fmt.tuic.TuicBean
@@ -168,6 +170,10 @@ abstract class V2RayInstance(
                     is JuicityBean -> {
                         initPlugin("juicity-plugin")
                         pluginConfigs[port] = profile.type to bean.buildJuicityConfig(port)
+                    }
+                    is ShadowQUICBean -> {
+                        initPlugin("shadowquic-plugin")
+                        pluginConfigs[port] = profile.type to bean.buildshadowQUICConfig(port)
                     }
                     is ConfigBean -> {
                         when (bean.type) {
@@ -402,6 +408,21 @@ abstract class V2RayInstance(
                             configFile.absolutePath,
                         )
                         
+                        processes.start(commands, env)
+                    }
+                    bean is ShadowQUICBean -> {
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "shadowquic_" + SystemClock.elapsedRealtime() + ".yaml"
+                        )
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
+                        val commands = mutableListOf(
+                            initPlugin("shadowquic-plugin").path,
+                            "-c",
+                            configFile.absolutePath,
+                        )
                         processes.start(commands, env)
                     }
                 }

@@ -58,6 +58,8 @@ import io.nekohasekai.sagernet.fmt.mieru.toUri
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
+import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
+import io.nekohasekai.sagernet.fmt.shadowquic.buildshadowQUICConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -121,6 +123,7 @@ data class ProxyEntity(
     var juicityBean: JuicityBean? = null,
     var http3Bean: Http3Bean? = null,
     var anytlsBean: AnyTLSBean? = null,
+    var shadowquicBean: ShadowQUICBean? = null,
     var configBean: ConfigBean? = null,
     var chainBean: ChainBean? = null,
     var balancerBean: BalancerBean? = null
@@ -148,6 +151,7 @@ data class ProxyEntity(
         const val TYPE_JUICITY = 25
         const val TYPE_HTTP3 = 26
         const val TYPE_ANYTLS = 27
+        const val TYPE_SHADOWQUIC = 28
 
         const val TYPE_CHAIN = 8
         const val TYPE_BALANCER = 14
@@ -244,6 +248,7 @@ data class ProxyEntity(
             TYPE_JUICITY -> juicityBean = KryoConverters.juicityDeserialize(byteArray)
             TYPE_HTTP3 -> http3Bean = KryoConverters.http3Deserialize(byteArray)
             TYPE_ANYTLS -> anytlsBean = KryoConverters.anytlsDeserialize(byteArray)
+            TYPE_SHADOWQUIC -> shadowquicBean = KryoConverters.shadowquicDeserialize(byteArray)
 
             TYPE_CONFIG -> configBean = KryoConverters.configDeserialize(byteArray)
             TYPE_CHAIN -> chainBean = KryoConverters.chainDeserialize(byteArray)
@@ -273,6 +278,7 @@ data class ProxyEntity(
         TYPE_JUICITY -> "Juicity"
         TYPE_HTTP3 -> "HTTP3"
         TYPE_ANYTLS -> "AnyTLS"
+        TYPE_SHADOWQUIC -> "ShadowQUIC"
 
         TYPE_CHAIN -> chainName
         TYPE_CONFIG -> configName
@@ -306,6 +312,7 @@ data class ProxyEntity(
             TYPE_JUICITY -> juicityBean
             TYPE_HTTP3 -> http3Bean
             TYPE_ANYTLS -> anytlsBean
+            TYPE_SHADOWQUIC -> shadowquicBean
 
             TYPE_CONFIG -> configBean
             TYPE_CHAIN -> chainBean
@@ -324,7 +331,7 @@ data class ProxyEntity(
 
     fun hasShareLink(): Boolean {
         return when (type) {
-            TYPE_SSH, TYPE_WG, TYPE_SHADOWTLS -> false
+            TYPE_SSH, TYPE_WG, TYPE_SHADOWTLS, TYPE_SHADOWQUIC -> false
             TYPE_CONFIG, TYPE_CHAIN, TYPE_BALANCER -> false
             else -> true
         }
@@ -423,6 +430,12 @@ data class ProxyEntity(
                                     Logs.d(it)
                                 })
                             }
+                            is ShadowQUICBean -> {
+                                append("\n\n")
+                                append(bean.buildshadowQUICConfig(port).also {
+                                    Logs.d(it)
+                                })
+                            }
                         }
                     }
                 }
@@ -449,6 +462,7 @@ data class ProxyEntity(
             TYPE_MIERU -> true
             TYPE_TUIC -> true
             TYPE_JUICITY -> true
+            TYPE_SHADOWQUIC -> true
 
             else -> false
         }
@@ -476,6 +490,7 @@ data class ProxyEntity(
         juicityBean = null
         http3Bean = null
         anytlsBean = null
+        shadowquicBean = null
 
         configBean = null
         chainBean = null
@@ -566,6 +581,10 @@ data class ProxyEntity(
                 type = TYPE_ANYTLS
                 anytlsBean = bean
             }
+            is ShadowQUICBean -> {
+                type = TYPE_SHADOWQUIC
+                shadowquicBean = bean
+            }
 
             is ConfigBean -> {
                 type = TYPE_CONFIG
@@ -607,6 +626,7 @@ data class ProxyEntity(
             TYPE_JUICITY -> JuicitySettingsActivity::class.java
             TYPE_HTTP3 -> Http3SettingsActivity::class.java
             TYPE_ANYTLS -> AnyTLSSettingsActivity::class.java
+            TYPE_SHADOWQUIC -> ShadowQUICSettingsActivity::class.java
 
             TYPE_CONFIG -> ConfigSettingsActivity::class.java
             TYPE_CHAIN -> ChainSettingsActivity::class.java

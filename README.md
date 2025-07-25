@@ -47,9 +47,9 @@ ALIAS_PASS=your_alias_pass
   - Compile the app: `./gradlew :app:assembleOssRelease`.
   - APK files are located in `app/build/outputs/apk/`.
 - Build a plugin:
-  - Compile `lib[brook|hysteria2|juicity|mieru|tuic5|naive].so`: `./run plugin [brook|hysteria2|juicity|mieru|naive]`.
-  - Compile the plugin:`./gradlew :plugin:[brook|hysteria2|juicity|mieru|tuic5|naive]:assembleOssRelease`.
-  - Plugin APK files are located in `plugin/[brook|hysteria2|juicity|mieru|tuic5|naive]/build/outputs/apk/`.
+  - Compile `lib[brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive].so`: `./run plugin [brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive]`.
+  - Compile the plugin:`./gradlew :plugin:[brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive]:assembleOssRelease`.
+  - Plugin APK files are located in `plugin/[brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive]/build/outputs/apk/`.
 
 ## License
 
@@ -87,6 +87,7 @@ You should have received a copy of the GNU General Public License along with thi
   - The license of [juicity](https://github.com/juicity/juicity) applies to `libjuicity.so` in Juicity plugin.
   - The license of [brook](https://github.com/txthinking/brook) applies to `libbrook.so` in Brook plugin.
   - The license of [tuic](https://github.com/Itsusinn/tuic) applies to `libtuic5.so` in TUIC v5 plugin.
+  - The license of [shadowquic](https://github.com/spongebob888/shadowquic) applies to `libshadowquic.so` in ShadowQUIC plugin.
 - `geosite.dat` and `geoip.dat` are data files downloaded and bundled directly. They are not part of the code.
   - The license of `dlc.dat` released by [domain-list-community](https://github.com/v2fly/domain-list-community) applies to the bundled `geosite.dat` in Exclave.
   - The license of `geoip.dat` released by [geoip](https://github.com/v2fly/geoip) applies to the bundled `geoip.dat` in Exclave.

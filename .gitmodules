@@ -19,3 +19,6 @@
 [submodule "plugin/tuic5/src/main/rust/tuic5"]
 	path = plugin/tuic5/src/main/rust/tuic5
 	url = https://github.com/Itsusinn/tuic
+[submodule "plugin/shadowquic/src/main/rust/shadowquic"]
+	path = plugin/shadowquic/src/main/rust/shadowquic
+	url = https://github.com/spongebob888/shadowquic

@@ -69,6 +69,9 @@
                         android:id="@+id/action_new_juicity"
                         android:title="@string/action_juicity" />
                     <item
+                        android:id="@+id/action_new_shadowquic"
+                        android:title="@string/action_shadowquic" />
+                    <item
                         android:id="@+id/action_new_config"
                         android:title="@string/custom_config" />
                     <item

@@ -182,6 +182,7 @@ object PluginManager {
             "trojan-go-plugin" -> "libtrojan-go.so"
             "tuic-plugin" -> "libtuic.so"
             "tuic5-plugin" -> "libtuic5.so"
+            "shadowquic-plugin" -> "libshadowquic.so"
             else -> return null
         }.let {
             File(SagerNet.application.applicationInfo.nativeLibraryDir, it).apply {
