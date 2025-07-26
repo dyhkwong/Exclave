@@ -1152,9 +1152,6 @@ public class V2RayConfig {
         public String publicKey;
         public String shortId;
         public String fingerprint;
-        public String echConfig;
-        public String echDohServer;
-        public String echQueryDomain;
         public String version;
         public Boolean disableX25519MLKEM768;
         public Boolean reenableCHACHA20POLY1305;
@@ -1430,9 +1427,9 @@ public class V2RayConfig {
         public List<Integer> explicitNonceCiphersuites;
         public TLSMirrorTimeSpecConfigObject deferInstanceDerivedWriteTime;
         public TransportLayerPaddingConfigObject transportLayerPadding;
-        public EnrollmentConfigObject connectionEnrollment;
+        public EnrolmentConfigObject connectionEnrolment;
         public Boolean sequenceWatermarkingEnabled;
-        public static class EnrollmentConfigObject {
+        public static class EnrolmentConfigObject {
             public Long primaryIngressOutbound;
             public Long primaryEgressOutbound;
         }

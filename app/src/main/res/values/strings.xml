@@ -575,7 +575,6 @@
     <string name="network_invalid">Invalid network type: Android %s is required.</string>
     <string name="require_dns_inbound">Enable DNS inbound</string>
     <string name="reality_disable_x25519mlkem768">Disable REALITY X25519MLKEM768</string>
-    <string name="reality_reenable_chacha20poly1305">Re-enable REALITY CHACHA20POLY1305</string>
     <string name="reality_breaking_change_summary">Be compatible with REALITY servers that do not support this breaking change. This is a temporary option and will be removed in the future.</string>
     <string name="anytls_idle_session_check_interval">Idle session check interval (s)</string>
     <string name="anytls_idle_session_timeout">Idle session timeout (s)</string>

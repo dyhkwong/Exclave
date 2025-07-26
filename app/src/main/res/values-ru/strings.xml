@@ -544,7 +544,6 @@
     <string name="network_satellite">Спутниковый интернет</string>
     <string name="network_invalid">Неверный тип сети: требуется Android %s.</string>
     <string name="reality_disable_x25519mlkem768">Отключить REALITY X25519MLKEM768</string>
-    <string name="reality_reenable_chacha20poly1305">Переподключить REALITY CHACHA20POLY1305</string>
     <string name="reality_breaking_change_summary">Обеспечить совместимость с серверами REALITY, которые не поддерживают это критическое изменение. Это временная опция, которая будет удалена в будущем.</string>
     <string name="anytls_idle_session_check_interval">Интервал проверки неадекватных сессий</string>
     <string name="anytls_idle_session_timeout">Таймаут неактивной сессии</string>

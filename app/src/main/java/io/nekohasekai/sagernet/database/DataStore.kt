@@ -315,8 +315,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverRealityShortId by profileCacheStore.string(Key.SERVER_REALITY_SHORT_ID)
     var serverRealityFingerprint by profileCacheStore.string(Key.SERVER_REALITY_FINGERPRINT)
     var serverRealityDisableX25519Mlkem768 by profileCacheStore.boolean(Key.SERVER_REALITY_DISABLE_X25519MLKEM768)
-    var serverRealityReenableChacha20Poly1305 by profileCacheStore.boolean(Key.SERVER_REALITY_REENABLE_CHACHA20POLY1305)
-
     var serverMekyaKcpSeed by profileCacheStore.string(Key.SERVER_MEKYA_KCP_SEED)
     var serverMekyaKcpHeaderType by profileCacheStore.string(Key.SERVER_MEKYA_KCP_HEADER_TYPE)
     var serverMekyaUrl by profileCacheStore.string(Key.SERVER_MEKYA_URL)

@@ -62,7 +62,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public String realityShortId;
     public String realityFingerprint;
     public Boolean realityDisableX25519Mlkem768;
-    public Boolean realityReenableChacha20Poly1305;
 
     public Long hy2DownMbps;
     public Long hy2UpMbps;
@@ -125,7 +124,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (realityShortId == null) realityShortId = "";
         if (realityFingerprint == null) realityFingerprint = "chrome";
         if (realityDisableX25519Mlkem768 == null) realityDisableX25519Mlkem768 = false;
-        if (realityReenableChacha20Poly1305 == null) realityReenableChacha20Poly1305 = false;
 
         if (hy2DownMbps == null) hy2DownMbps = 0L;
         if (hy2UpMbps == null) hy2UpMbps = 0L;
@@ -143,7 +141,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(29);
+        output.writeInt(30);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -236,9 +234,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(realityPublicKey);
                 output.writeString(realityShortId);
                 output.writeString(realityFingerprint);
-                output.writeString(echConfig);
                 output.writeBoolean(realityDisableX25519Mlkem768);
-                output.writeBoolean(realityReenableChacha20Poly1305);
                 break;
             }
         }
@@ -418,20 +414,22 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     sni = input.readString();
                     realityPublicKey = input.readString();
                     realityShortId = input.readString();
-                    if (version < 26) {
+                    if (version <= 25) {
                         input.readString(); // realitySpiderX, removed
                     }
                     realityFingerprint = input.readString();
-                }
-                if (version >= 28) {
-                    echConfig = input.readString();
+                    if (version == 28 || version == 29) {
+                        input.readString(); // echConfig, removed
+                    }
                     if (version == 28) {
                         input.readString(); // echDohServer, removed
                     }
-                }
-                if (version >= 27) {
-                    realityDisableX25519Mlkem768 = input.readBoolean();
-                    realityReenableChacha20Poly1305 = input.readBoolean();
+                    if (version >= 27) {
+                        realityDisableX25519Mlkem768 = input.readBoolean();
+                    }
+                    if (version >= 27 && version <= 29) {
+                        input.readBoolean(); // realityReenableChacha20Poly1305, removed
+                    }
                 }
                 break;
             }
@@ -498,7 +496,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
         bean.echConfig = echConfig;
         bean.realityFingerprint = realityFingerprint;
         bean.realityDisableX25519Mlkem768 = realityDisableX25519Mlkem768;
-        bean.realityReenableChacha20Poly1305 = realityReenableChacha20Poly1305;
         bean.hy2DownMbps = hy2DownMbps;
         bean.hy2UpMbps = hy2UpMbps;
         bean.mux = mux;

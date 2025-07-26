@@ -37,7 +37,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         DataStore.serverRealityShortId = realityShortId
         DataStore.serverRealityFingerprint = realityFingerprint
         DataStore.serverRealityDisableX25519Mlkem768 = realityDisableX25519Mlkem768
-        DataStore.serverRealityReenableChacha20Poly1305 = realityReenableChacha20Poly1305
         DataStore.serverAllowInsecure = allowInsecure
     }
 
@@ -60,7 +59,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         realityShortId = DataStore.serverRealityShortId
         realityFingerprint = DataStore.serverRealityFingerprint
         realityDisableX25519Mlkem768 = DataStore.serverRealityDisableX25519Mlkem768
-        realityReenableChacha20Poly1305 = DataStore.serverRealityReenableChacha20Poly1305
         allowInsecure = DataStore.serverAllowInsecure
     }
 
@@ -78,7 +76,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
     lateinit var realityShortId: EditTextPreference
     lateinit var realityFingerprint: SimpleMenuPreference
     lateinit var realityDisableX25519Mlkem768: SwitchPreference
-    lateinit var realityReenableChacha20Poly1305: SwitchPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -113,7 +110,6 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         realityShortId = findPreference(Key.SERVER_REALITY_SHORT_ID)!!
         realityFingerprint = findPreference(Key.SERVER_REALITY_FINGERPRINT)!!
         realityDisableX25519Mlkem768 = findPreference(Key.SERVER_REALITY_DISABLE_X25519MLKEM768)!!
-        realityReenableChacha20Poly1305 = findPreference(Key.SERVER_REALITY_REENABLE_CHACHA20POLY1305)!!
         password.apply {
             summaryProvider = PasswordSummaryProvider
         }
@@ -139,12 +135,12 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         allowInsecure.isVisible = security == "tls"
         sni.isVisible = security == "tls" || security == "reality"
         alpn.isVisible = security == "tls"
+        echConfig.isVisible = security == "tls"
         realityPublicKey.isVisible = security == "reality"
         realityShortId.isVisible = security == "reality"
         utlsFingerprint.isVisible = security == "tls"
         realityFingerprint.isVisible = security == "reality"
         realityDisableX25519Mlkem768.isVisible = security == "reality"
-        realityReenableChacha20Poly1305.isVisible = security == "reality"
     }
 
 }

@@ -552,7 +552,6 @@
     <string name="network_invalid">Tipo de red no válido: Se requiere Android %s.</string>
     <string name="require_dns_inbound">Activar DNS de entrada</string>
     <string name="reality_disable_x25519mlkem768">Desactivar REALITY X25519MLKEM768</string>
-    <string name="reality_reenable_chacha20poly1305">Reactivar REALITY CHACHA20POLY1305</string>
     <string name="reality_breaking_change_summary">Compatible con servidores REALITY que no soportan este cambio importante. Esta es una opción temporal y será eliminada en el futuro.</string>
     <string name="anytls_idle_session_check_interval">Intervalo de comprobación de sesión inactiva (s)</string>
     <string name="anytls_idle_session_timeout">Tiempo de espera de sesión inactiva (s)</string>

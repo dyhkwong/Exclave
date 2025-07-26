@@ -171,7 +171,6 @@ object Key {
     const val SERVER_REALITY_SHORT_ID = "serverRealityShortId"
     const val SERVER_REALITY_FINGERPRINT = "serverRealityFingerprint"
     const val SERVER_REALITY_DISABLE_X25519MLKEM768 = "serverRealityDisableX25519Mlkem768"
-    const val SERVER_REALITY_REENABLE_CHACHA20POLY1305 = "serverRealityReenableChacha20Poly1305"
 
     const val SERVER_MEKYA_KCP_SEED = "serverMekyaKcpSeed"
     const val SERVER_MEKYA_KCP_HEADER_TYPE = "serverMekyaKcpHeaderType"
