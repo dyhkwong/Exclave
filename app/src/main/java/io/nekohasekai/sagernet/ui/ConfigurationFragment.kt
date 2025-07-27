@@ -1663,9 +1663,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 var address = proxyEntity.displayAddress()
-                if (showTraffic && address.length >= 30) {
-                    address = address.substring(0, 27) + "..."
-                }
 
                 if (proxyEntity.requireBean().name.isEmpty() || !parent.alwaysShowAddress) {
                     address = ""
