@@ -69,8 +69,8 @@
                                 android:id="@+id/probe_cert_server"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:inputType="text"
+                                android:inputType="text|textMultiLine"
+                                android:singleLine="false"
                                 tools:ignore="LabelFor" />
 
                         <TextView
@@ -83,8 +83,8 @@
                                 android:id="@+id/probe_cert_server_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="10"
-                                android:inputType="text"
+                                android:inputType="text|textMultiLine"
+                                android:singleLine="false"
                                 tools:ignore="LabelFor" />
 
                         <TextView
@@ -97,8 +97,8 @@
                             android:id="@+id/probe_cert_alpn"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ems="10"
-                            android:inputType="text"
+                            android:inputType="text|textMultiLine"
+                            android:singleLine="false"
                             tools:ignore="LabelFor" />
 
                         <TextView
