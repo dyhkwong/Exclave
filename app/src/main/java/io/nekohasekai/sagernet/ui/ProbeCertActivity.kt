@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.ListPopupWindow
 import androidx.core.view.ViewCompat
@@ -123,7 +124,11 @@ class ProbeCertActivity : ThemedActivity() {
                     binding.root,
                     R.string.probe_cert_success,
                     Snackbar.LENGTH_SHORT
-                ).show()
+                ).apply {
+                    view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
+                        maxLines = 10
+                    }
+                }.show()
 
                 onMainDispatcher {
                     binding.waitLayout.isVisible = false
