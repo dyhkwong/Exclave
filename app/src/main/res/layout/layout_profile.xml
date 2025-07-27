@@ -148,23 +148,19 @@
 
                 <TextView
                     android:id="@+id/profile_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?attr/accentOrTextSecondary" />
-
-                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?colorAccent" />
 
                 <TextView
                     android:id="@+id/profile_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="8dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?attr/accentOrTextSecondary" />
+                    android:textColor="?colorAccent" />
 
             </LinearLayout>
 
