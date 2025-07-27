@@ -108,6 +108,7 @@
         android:layout_gravity="start"
         app:itemIconTint="@color/navigation_icon"
         app:itemTextColor="@color/navigation_icon"
+        app:itemMaxLines="10"
         app:menu="@menu/main_drawer_menu" />
 
     <com.google.android.material.navigation.NavigationView
@@ -120,6 +121,7 @@
         app:itemShapeAppearance="@style/ShapeAppearance.MaterialComponents.MediumComponent"
         app:itemShapeFillColor="@color/navigation_item"
         app:itemTextColor="@color/navigation_icon"
+        app:itemMaxLines="10"
         app:menu="@menu/main_drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
