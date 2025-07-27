@@ -5,7 +5,7 @@
     <item
         android:icon="@drawable/ic_action_note_add"
         android:title="@string/route_asset_add"
-        app:showAsAction="always" >
+        app:showAsAction="ifRoom" >
         <menu>
             <item
                 android:id="@+id/action_import_file"

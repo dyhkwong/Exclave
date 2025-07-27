@@ -10,5 +10,5 @@
           android:title="@string/apply"
           android:icon="@drawable/ic_action_done"
           android:alphabeticShortcut="s"
-          app:showAsAction="always"/>
+          app:showAsAction="ifRoom"/>
 </menu>

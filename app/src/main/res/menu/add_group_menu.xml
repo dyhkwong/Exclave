@@ -5,10 +5,10 @@
         android:id="@+id/action_update_all_subscriptions"
         android:icon="@drawable/ic_baseline_update_24"
         android:title="@string/update_all_subscriptions"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_new_group"
         android:icon="@drawable/ic_av_playlist_add"
         android:title="@string/group_create"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

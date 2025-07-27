@@ -17,5 +17,5 @@
         android:id="@+id/action_import_clipboard"
         android:icon="?attr/actionModePasteDrawable"
         android:title="@string/action_import"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>
