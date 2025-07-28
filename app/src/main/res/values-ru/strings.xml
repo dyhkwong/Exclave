@@ -19,8 +19,8 @@
     <string name="remote_dns">Удаленный DNS</string>
     <string name="cag_dns">Настройки DNS</string>
     <string name="connection_test_error">Ошибка: %s</string>
-    <string name="connection_test_available_http">HTTP-соединение установлено за %d мс</string>
-    <string name="connection_test_available">HTTPS-соединение установлено за %d мс</string>
+    <string name="connection_test_available_http">Время отклика по HTTP %d мс</string>
+    <string name="connection_test_available">Время отклика по HTTPS %d мс</string>
     <string name="connection_test_testing">Тест…</string>
     <string name="speed_detail">Прокси ： %1$s↑ %2$s↓
 \nПрямой ： %3$s↑%4$s↓</string>
@@ -579,7 +579,7 @@
         <item quantity="many">Вы уверены, что хотите импортировать %d профилей в %s?</item>
         <item quantity="other">Вы уверены, что хотите импортировать %d профилей в %s?</item>
     </plurals>
-    <string name="route_mode">Режим маршрута</string>
+    <string name="route_mode">Режим маршрутов</string>
     <string name="route_mode_rule">правило</string>
     <string name="route_mode_global">глобальный</string>
     <string name="route_mode_direct">прямой</string>
