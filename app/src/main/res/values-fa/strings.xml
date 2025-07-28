@@ -72,8 +72,8 @@
     <string name="direct_dns">DNS مسیرهای مستقیم (خارج از پروکسی)</string>
     <string name="cag_dns">تنظیمات DNS</string>
     <string name="connection_test_error">ناموفق: %s</string>
-    <string name="connection_test_available_http">موفق: اتصال HTTPS طی %d میلی ثانیه انجام شد</string>
-    <string name="connection_test_available">موفقیت: ارتباط با HTTPS\t%d میلی ثانیه طول کشید</string>
+    <string name="connection_test_available_http">موفقیت: ارتباط HTTPS انجام شد %dمیلی ثانیه</string>
+    <string name="connection_test_available">موفقیت: ارتباط با HTTP انجام شد %dمیلی ثانیه</string>
     <string name="connection_test_testing">در حال بررسی…</string>
     <string name="speed">%s/ثانیه</string>
     <string name="speed_detail">پروکسی:\t%1$s↑ %2$s↓
