@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.SystemClock
 import android.view.*
 import android.widget.PopupWindow
@@ -62,9 +63,11 @@ class TextSelectionHandleView(
         mHandle!!.height = ViewGroup.LayoutParams.WRAP_CONTENT
         mHandle!!.setBackgroundDrawable(null)
         mHandle!!.animationStyle = 0
-        mHandle!!.windowLayoutType = WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL
-        mHandle!!.enterTransition = null
-        mHandle!!.exitTransition = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mHandle!!.windowLayoutType = WindowManager.LayoutParams.TYPE_APPLICATION_SUB_PANEL
+            mHandle!!.enterTransition = null
+            mHandle!!.exitTransition = null
+        }
         mHandle!!.contentView = this
     }
 

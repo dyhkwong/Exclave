@@ -1012,7 +1012,15 @@ class TerminalView(context: Context, attributes: AttributeSet?) : View(context, 
     /**
      * Define functions required for long hold toolbar.
      */
-    private val mShowFloatingToolbar: Runnable = Runnable { textSelectionActionMode?.hide(0) }
+    private val mShowFloatingToolbar: Runnable = Runnable {
+        if (textSelectionActionMode != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                textSelectionActionMode!!.hide(0)
+            } else {
+                textSelectionActionMode!!.finish()
+            }
+        }
+    }
 
     init { // NO_UCD (unused code)
         mGestureRecognizer = GestureAndScaleRecognizer(context, object : GestureAndScaleRecognizer.Listener {
@@ -1140,7 +1148,11 @@ class TerminalView(context: Context, attributes: AttributeSet?) : View(context, 
     fun hideFloatingToolbar() {
         if (textSelectionActionMode != null) {
             removeCallbacks(mShowFloatingToolbar)
-            textSelectionActionMode!!.hide(-1)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                textSelectionActionMode!!.hide(-1)
+            } else {
+                textSelectionActionMode!!.finish();
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package com.termux.view.textselection
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Rect
+import android.os.Build
 import android.text.TextUtils
 import android.view.*
 import com.termux.terminal.TerminalBuffer
@@ -147,43 +148,65 @@ class TextSelectionCursorController(private val terminalView: TerminalView) : Cu
 
             override fun onDestroyActionMode(mode: ActionMode) {}
         }
-        actionMode = terminalView.startActionMode(object : ActionMode.Callback2() {
-            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-                return callback.onCreateActionMode(mode, menu)
-            }
-
-            override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
-                return false
-            }
-
-            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
-                return callback.onActionItemClicked(mode, item)
-            }
-
-            override fun onDestroyActionMode(mode: ActionMode) {
-                // Ignore.
-            }
-
-            override fun onGetContentRect(mode: ActionMode, view: View, outRect: Rect) {
-                var x1 = (mSelX1 * terminalView.mRenderer!!.fontWidth).roundToInt()
-                var x2 = (mSelX2 * terminalView.mRenderer!!.fontWidth).roundToInt()
-                val y1 = ((mSelY1 - 1 - terminalView.topRow) * terminalView.mRenderer!!.fontLineSpacing).toFloat()
-                    .roundToInt()
-                val y2 = ((mSelY2 + 1 - terminalView.topRow) * terminalView.mRenderer!!.fontLineSpacing).toFloat()
-                    .roundToInt()
-                if (x1 > x2) {
-                    val tmp = x1
-                    x1 = x2
-                    x2 = tmp
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            actionMode = terminalView.startActionMode(object : ActionMode.Callback2() {
+                override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                    return callback.onCreateActionMode(mode, menu)
                 }
-                val terminalBottom = terminalView.bottom
-                var top = y1 + mHandleHeight
-                var bottom = y2 + mHandleHeight
-                if (top > terminalBottom) top = terminalBottom
-                if (bottom > terminalBottom) bottom = terminalBottom
-                outRect[x1, top, x2] = bottom
-            }
-        }, ActionMode.TYPE_FLOATING)
+
+                override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+                    return false
+                }
+
+                override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                    return callback.onActionItemClicked(mode, item)
+                }
+
+                override fun onDestroyActionMode(mode: ActionMode) {
+                    // Ignore.
+                }
+
+                override fun onGetContentRect(mode: ActionMode, view: View, outRect: Rect) {
+                    var x1 = (mSelX1 * terminalView.mRenderer!!.fontWidth).roundToInt()
+                    var x2 = (mSelX2 * terminalView.mRenderer!!.fontWidth).roundToInt()
+                    val y1 = ((mSelY1 - 1 - terminalView.topRow) * terminalView.mRenderer!!.fontLineSpacing).toFloat()
+                        .roundToInt()
+                    val y2 = ((mSelY2 + 1 - terminalView.topRow) * terminalView.mRenderer!!.fontLineSpacing).toFloat()
+                        .roundToInt()
+                    if (x1 > x2) {
+                        val tmp = x1
+                        x1 = x2
+                        x2 = tmp
+                    }
+                    val terminalBottom = terminalView.bottom
+                    var top = y1 + mHandleHeight
+                    var bottom = y2 + mHandleHeight
+                    if (top > terminalBottom) top = terminalBottom
+                    if (bottom > terminalBottom) bottom = terminalBottom
+                    outRect[x1, top, x2] = bottom
+                }
+            }, ActionMode.TYPE_FLOATING)
+        } else {
+            terminalView.startActionMode(object : ActionMode.Callback {
+                    override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                        return callback.onCreateActionMode(mode, menu)
+                    }
+
+                    override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+                        return false
+                    }
+
+                    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                        return callback.onActionItemClicked(mode, item)
+                    }
+
+                    override fun onDestroyActionMode(mode: ActionMode) {
+                        // Ignore.
+                    }
+                }
+            )
+        }
+
     }
 
     override fun updatePosition(handle: TextSelectionHandleView?, x: Int, y: Int) {
