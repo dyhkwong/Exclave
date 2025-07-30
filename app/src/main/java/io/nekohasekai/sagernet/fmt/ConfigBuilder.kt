@@ -272,7 +272,7 @@ fun buildV2RayConfig(
     val destinationOverride = DataStore.destinationOverride
     val trafficStatistics = !forTest && DataStore.profileTrafficStatistics
 
-    var dumpUID = false
+    val shouldDumpUID = extraRules.any { it.packages.isNotEmpty() }
     val alerts = mutableListOf<Pair<Int, String>>()
 
     lateinit var result: V2rayBuildResult
@@ -356,6 +356,7 @@ fun buildV2RayConfig(
                     routeOnly = !destinationOverride
                 }
             }
+            if (shouldDumpUID) dumpUID = true
         })
 
         if (requireHttp) {
@@ -380,6 +381,7 @@ fun buildV2RayConfig(
                         routeOnly = !destinationOverride
                     }
                 }
+                if (shouldDumpUID) dumpUID = true
             })
         }
 
@@ -416,6 +418,7 @@ fun buildV2RayConfig(
                         }
                     }
                 }*/
+                if (shouldDumpUID) dumpUID = true
             })
             if (bind == LOCALHOST) {
                 inbounds.add(InboundObject().apply {
@@ -450,6 +453,7 @@ fun buildV2RayConfig(
                             }
                         }*/
                     }
+                    if (shouldDumpUID) dumpUID = true
                 })
             }
         }
@@ -1583,7 +1587,6 @@ fun buildV2RayConfig(
         for (rule in extraRules) {
             val uidList = mutableListOf<Int>()
             if (rule.packages.isNotEmpty()) {
-                dumpUID = true
                 if (!isVpn) {
                     alerts.add(Alerts.ROUTE_ALERT_NOT_VPN to rule.displayName())
                     continue
@@ -1780,6 +1783,7 @@ fun buildV2RayConfig(
                         port = 53 // placeholder, all queries are handled internally
                     }
                 )
+                if (shouldDumpUID) dumpUID = true
             })
         }
 
@@ -2052,7 +2056,7 @@ fun buildV2RayConfig(
             TAG_BYPASS,
             rootObserver?.tag ?: "",
             rootObserver?.settings?.get("subjectSelector") as? Set<String> ?: HashSet(),
-            dumpUID,
+            shouldDumpUID,
             alerts
         )
     }

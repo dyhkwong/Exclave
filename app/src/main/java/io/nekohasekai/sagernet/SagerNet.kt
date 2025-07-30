@@ -28,7 +28,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.location.LocationManager
@@ -61,13 +60,12 @@ import io.nekohasekai.sagernet.utils.Theme
 import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
-import libcore.UIDDumper
-import libcore.UIDInfo
+import libcore.UidDumper
 import java.net.InetSocketAddress
 import androidx.work.Configuration as WorkConfiguration
 
 class SagerNet : Application(),
-    UIDDumper,
+    UidDumper,
     WorkConfiguration.Provider {
 
     override fun attachBaseContext(base: Context) {
@@ -93,7 +91,7 @@ class SagerNet : Application(),
         val isMainProcess = ActivityThread.currentProcessName() == BuildConfig.APPLICATION_ID
 
         if (!isMainProcess) {
-            Libcore.setUIDDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+            Libcore.setUidDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
             if (DataStore.enableDebug && DataStore.pprofServer.isNotEmpty()) {
                 DebugInstance().launch()
             }
@@ -128,7 +126,7 @@ class SagerNet : Application(),
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    override fun dumpUID(
+    override fun dumpUid(
         ipProto: Int, srcIp: String, srcPort: Int, destIp: String, destPort: Int
     ): Int {
         return connectivity.getConnectionOwnerUid(
@@ -136,28 +134,16 @@ class SagerNet : Application(),
         )
     }
 
-    override fun getUIDInfo(uid: Int): UIDInfo {
+    override fun getPackageName(uid: Int): String? {
         PackageCache.awaitLoadSync()
-
         if (uid == 1000) {
-            val uidInfo = UIDInfo()
-            uidInfo.label = PackageCache.loadLabel("android")
-            uidInfo.packageName = "android"
-            return uidInfo
+            return "android"
         }
-
         val packageNames = PackageCache.uidMap[uid]
         if (!packageNames.isNullOrEmpty()) for (packageName in packageNames) {
-            val uidInfo = UIDInfo()
-            uidInfo.label = PackageCache.loadLabel(packageName)
-            uidInfo.packageName = packageName
-            return uidInfo
+            return packageName
         }
-
-        return UIDInfo().apply {
-            label = "$uid"
-            packageName = "$uid"
-        }
+        return null
     }
 
     fun getPackageInfo(packageName: String) = packageManager.getPackageInfo(
@@ -216,7 +202,6 @@ class SagerNet : Application(),
         val wifi by lazy { application.getSystemService<WifiManager>()!! }
         val location by lazy { application.getSystemService<LocationManager>()!! }
 
-        val packageInfo: PackageInfo by lazy { application.getPackageInfo(application.packageName) }
         val directBootSupported by lazy {
             Build.VERSION.SDK_INT >= 24 && try {
                 app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus == DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER

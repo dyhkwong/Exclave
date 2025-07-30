@@ -236,6 +236,7 @@ public class V2RayConfig {
         public String tag;
         public SniffingObject sniffing;
         public AllocateObject allocate;
+        public Boolean dumpUID;
 
         public void init() {
             if (settings != null) {
