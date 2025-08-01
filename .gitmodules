@@ -1,9 +1,6 @@
 [submodule "plugin/naive/src/main/jni/naiveproxy"]
 	path = plugin/naive/src/main/jni/naiveproxy
 	url = https://github.com/klzgrad/naiveproxy
-[submodule "plugin/brook/src/main/go/brook"]
-	path = plugin/brook/src/main/go/brook
-	url = https://github.com/txthinking/brook
 [submodule "plugin/hysteria2/src/main/go/hysteria2"]
 	path = plugin/hysteria2/src/main/go/hysteria2
 	url = https://github.com/apernet/hysteria

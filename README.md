@@ -9,7 +9,6 @@ A fork of SagerNet, the universal proxy toolchain for Android written in Kotlin.
 - [NaïveProxy plugin](https://github.com/klzgrad/naiveproxy/releases) (use upstream releases directly)
 - [Hysteria 2 plugin](https://github.com/dyhkwong/Exclave/releases?q=hysteria-plugin-2)
 - [Mieru plugin](https://github.com/dyhkwong/Exclave/releases?q=mieru-plugin-3) or [use upstream releases directly](https://github.com/enfein/NekoBoxPlugins/releases)
-- [Brook plugin](https://github.com/dyhkwong/Exclave/releases?q=brook-plugin)
 - [Juicity plugin](https://github.com/dyhkwong/Exclave/releases?q=juicity-plugin)
 - [TUIC v5 plugin](https://github.com/dyhkwong/Exclave/releases?q=tuic-plugin-1)
 - [Other obsolute plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
@@ -47,9 +46,9 @@ ALIAS_PASS=your_alias_pass
   - Compile the app: `./gradlew :app:assembleOssRelease`.
   - APK files are located in `app/build/outputs/apk/`.
 - Build a plugin:
-  - Compile `lib[brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive].so`: `./run plugin [brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive]`.
-  - Compile the plugin:`./gradlew :plugin:[brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive]:assembleOssRelease`.
-  - Plugin APK files are located in `plugin/[brook|hysteria2|juicity|mieru|tuic5|shadowquic|naive]/build/outputs/apk/`.
+  - Compile `lib[hysteria2|juicity|mieru|tuic5|shadowquic|naive].so`: `./run plugin [hysteria2|juicity|mieru|tuic5|shadowquic|naive]`.
+  - Compile the plugin:`./gradlew :plugin:[hysteria2|juicity|mieru|tuic5|shadowquic|naive]:assembleOssRelease`.
+  - Plugin APK files are located in `plugin/[hysteria2|juicity|mieru|tuic5|shadowquic|naive]/build/outputs/apk/`.
 
 ## License
 
@@ -85,7 +84,6 @@ You should have received a copy of the GNU General Public License along with thi
   - The license of [mieru](https://github.com/enfein/mieru) applies to `libmieru.so` in Mieru plugin.
   - The license of [hysteria](https://github.com/apernet/hysteria) applies to `libhysteria2.so` in Hysteria 2 plugin.
   - The license of [juicity](https://github.com/juicity/juicity) applies to `libjuicity.so` in Juicity plugin.
-  - The license of [brook](https://github.com/txthinking/brook) applies to `libbrook.so` in Brook plugin.
   - The license of [tuic](https://github.com/Itsusinn/tuic) applies to `libtuic5.so` in TUIC v5 plugin.
   - The license of [shadowquic](https://github.com/spongebob888/shadowquic) applies to `libshadowquic.so` in ShadowQUIC plugin.
 - `geosite.dat` and `geoip.dat` are data files downloaded and bundled directly. They are not part of the code.
