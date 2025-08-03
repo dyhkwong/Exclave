@@ -263,16 +263,12 @@ fun Project.setupApp() {
         }
 
         tasks.register("downloadAssets") {
-            doLast {
-                downloadAssets(false)
-            }
+            downloadAssets(update = false)
         }
 
         tasks.register("updateAssets") {
-            doLast {
-                downloadRootCAList()
-                downloadAssets(true)
-            }
+            downloadRootCAList()
+            downloadAssets(update = true)
         }
     }
 
