@@ -18,8 +18,15 @@ import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.parseShareLinks
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import org.yaml.snakeyaml.DumperOptions
+import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
+import org.yaml.snakeyaml.nodes.Tag
+import org.yaml.snakeyaml.representer.Representer
+import org.yaml.snakeyaml.resolver.Resolver
+import java.util.regex.Pattern
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object RawUpdater : GroupUpdater() {
@@ -236,7 +243,19 @@ object RawUpdater : GroupUpdater() {
     fun parseRaw(text: String): List<AbstractBean>? {
         if (text.contains("proxies")) {
             try {
-                (Yaml().apply {
+                val options = DumperOptions()
+                val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
+                    override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
+                        // Stupid config providers write ambiguous strings without quoting.
+                        when (tag) {
+                            Tag.FLOAT, Tag.BINARY, Tag.TIMESTAMP -> null // Clash/Mihomo does not use these types for `proxies`
+                            Tag.INT -> null // Treat as str
+                            Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
+                            else -> super.addImplicitResolver(tag, regexp, first, limit)
+                        }
+                    }
+                })
+                (yaml.apply {
                     addTypeDescription(TypeDescription(String::class.java, "str"))
                 }.loadAs(text, Map::class.java)["proxies"] as? List<Map<String, Any?>>)?.let { proxies ->
                     val beans = mutableListOf<AbstractBean>()
