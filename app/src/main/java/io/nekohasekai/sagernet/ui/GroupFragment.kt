@@ -66,18 +66,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         toolbar.setTitle(R.string.menu_group)
         toolbar.inflateMenu(R.menu.add_group_menu)
         toolbar.setOnMenuItemClickListener(this)
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
-                top = bars.top,
-                left = bars.left,
-                right = bars.right,
-            )
-            insets
-        }
 
         groupListView = view.findViewById(R.id.group_list)
         ViewCompat.setOnApplyWindowInsetsListener(groupListView) { v, insets ->

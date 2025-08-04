@@ -26,9 +26,14 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.utils.Theme
 
 abstract class ThemedActivity : AppCompatActivity {
@@ -71,6 +76,20 @@ abstract class ThemedActivity : AppCompatActivity {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightNavigationBars = !Theme.usingNightMode()
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            findViewById<AppBarLayout>(R.id.appbar)?.apply {
+                updatePadding(
+                    top = bars.top,
+                    left = bars.left,
+                    right = bars.right,
+                )
+            }
+            insets
         }
     }
 
