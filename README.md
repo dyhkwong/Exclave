@@ -11,7 +11,7 @@ A fork of SagerNet, the universal proxy toolchain for Android written in Kotlin.
 - [Mieru plugin](https://github.com/dyhkwong/Exclave/releases?q=mieru-plugin-3) or [use upstream releases directly](https://github.com/enfein/NekoBoxPlugins/releases)
 - [Juicity plugin](https://github.com/dyhkwong/Exclave/releases?q=juicity-plugin)
 - [TUIC v5 plugin](https://github.com/dyhkwong/Exclave/releases?q=tuic-plugin-1)
-- [Other obsolute plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
+- [Other obsolete plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
 
 ## Translation
 
