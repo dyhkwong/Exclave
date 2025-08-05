@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import android.net.Uri
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.ExtraType
 import io.nekohasekai.sagernet.R
@@ -32,6 +31,7 @@ import io.nekohasekai.sagernet.ktx.USER_AGENT
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import libcore.Libcore
+import androidx.core.net.toUri
 
 object SIP008Updater : GroupUpdater() {
 
@@ -45,7 +45,7 @@ object SIP008Updater : GroupUpdater() {
         val link = subscription.link
         val sip008Response: JSONObject
         if (link.startsWith("content://")) {
-            val contentText = app.contentResolver.openInputStream(Uri.parse(link))
+            val contentText = app.contentResolver.openInputStream(link.toUri())
                 ?.bufferedReader()
                 ?.readText()
 
@@ -80,7 +80,7 @@ object SIP008Updater : GroupUpdater() {
 
         val pattern = Regex(subscription.nameFilter)
         for (profile in servers) {
-            val bean = profile.parseShadowsocksConfig() ?: continue
+            val bean = parseShadowsocksConfig(profile) ?: continue
             appendExtraInfo(profile, bean)
             if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
                 profiles.add(bean)

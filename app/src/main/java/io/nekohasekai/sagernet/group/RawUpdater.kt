@@ -241,38 +241,25 @@ object RawUpdater : GroupUpdater() {
 
     @Suppress("UNCHECKED_CAST")
     fun parseRaw(text: String): List<AbstractBean>? {
-        if (text.contains("proxies")) {
-            try {
-                val options = DumperOptions()
-                val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
-                    override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
-                        // Stupid config providers write ambiguous strings without quoting.
-                        when (tag) {
-                            Tag.FLOAT, Tag.BINARY, Tag.TIMESTAMP -> null // Clash/Mihomo does not use these types for `proxies`
-                            Tag.INT -> null // Treat as str
-                            Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
-                            else -> super.addImplicitResolver(tag, regexp, first, limit)
-                        }
+        try {
+            val options = DumperOptions()
+            val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
+                override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
+                    // Stupid config providers write ambiguous strings without quoting.
+                    when (tag) {
+                        Tag.FLOAT, Tag.BINARY, Tag.TIMESTAMP -> null // Clash does not use these types for `proxies`
+                        Tag.INT -> null // Treat as str
+                        Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
+                        else -> super.addImplicitResolver(tag, regexp, first, limit)
                     }
-                })
-                (yaml.apply {
-                    addTypeDescription(TypeDescription(String::class.java, "str"))
-                }.loadAs(text, Map::class.java)["proxies"] as? List<Map<String, Any?>>)?.let { proxies ->
-                    val beans = mutableListOf<AbstractBean>()
-                    proxies.forEach {
-                        beans.addAll(parseClashProxies(it))
-                    }
-                    return beans.takeIf { it.isNotEmpty() }
                 }
-            } catch (_: Exception) {}
-        }
-        if (text.contains("[Interface]")) {
-            try {
-                parseWireGuardConfig(text).takeIf { it.isNotEmpty() }?.let {
-                    return it
-                }
-            } catch (_: Exception) {}
-        }
+            }).apply {
+                addTypeDescription(TypeDescription(String::class.java, "str"))
+            }.loadAs(text, Map::class.java)
+            (yaml["proxies"] as? List<Map<String, Any?>>)?.let {
+                return parseClashProxies(it)
+            }
+        } catch (_: Exception) {}
         try {
             JSONUtil.parse(Libcore.stripJSON(text))?.let { json ->
                 if (json !is JSONObject) return null
@@ -293,25 +280,30 @@ object RawUpdater : GroupUpdater() {
         } catch (e: SubscriptionFoundException) {
             throw(e)
         } catch (_: Exception) {}
+        try {
+            parseWireGuardConfig(text).takeIf { it.isNotEmpty() }?.let {
+                return it
+            }
+        } catch (_: Exception) {}
         return null
     }
 
     @Suppress("UNCHECKED_CAST")
     private fun parseJSONConfig(json: JSONObject): List<AbstractBean> {
         when {
+            json.containsKey("proxies") -> {
+                // Clash YAML
+                return listOf()
+            }
             json.getInt("version") != null && json.containsKey("servers") -> {
+                // SIP008
                 val beans = ArrayList<AbstractBean>()
-                (json.getJSONArray("servers") as? List<JSONObject>)?.forEach { server ->
-                    server.parseShadowsocksConfig()?.let {
+                (json["servers"] as? List<Map<String, Any?>>)?.forEach { server ->
+                    parseShadowsocksConfig(server)?.let {
                         beans.add(it)
                     }
                 }
                 return beans
-            }
-            json.containsKey("method") -> {
-                json.parseShadowsocksConfig()?.let {
-                    return listOf(it)
-                } ?: return ArrayList()
             }
             json.contains("type") -> {
                 return parseSingBoxEndpoint(json).takeIf { it.isNotEmpty() }
@@ -323,10 +315,10 @@ object RawUpdater : GroupUpdater() {
             }
             else -> {
                 val beans = ArrayList<AbstractBean>()
-                json.getArray("endpoints")?.filterIsInstance<JSONObject>()?.forEach { endpoint ->
+                json.getArray("endpoints")?.forEach { endpoint ->
                     beans.addAll(parseSingBoxEndpoint(endpoint))
                 }
-                json.getArray("outbounds")?.filterIsInstance<JSONObject>()?.forEach { outbound ->
+                json.getArray("outbounds")?.forEach { outbound ->
                     when {
                         outbound.contains("protocol") -> {
                             beans.addAll(

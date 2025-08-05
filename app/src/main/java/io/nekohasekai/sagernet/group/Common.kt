@@ -1,9 +1,6 @@
-package io.nekohasekai.sagernet.ktx
+package io.nekohasekai.sagernet.group
 
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
-
-fun JSONObject.contains(key: String): Boolean {
+fun Map<String, Any?>.contains(key: String): Boolean {
     if (this.containsKey(key)) {
         return true
     }
@@ -15,7 +12,7 @@ fun JSONObject.contains(key: String): Boolean {
     return false
 }
 
-fun JSONObject.getAny(key: String): Any? {
+fun Map<String, Any?>.getAny(key: String): Any? {
     this[key]?.also {
         return it
     }
@@ -27,7 +24,7 @@ fun JSONObject.getAny(key: String): Any? {
     return null
 }
 
-fun JSONObject.getString(key: String): String? {
+fun Map<String, Any?>.getString(key: String): String? {
     (this[key] as? String)?.also {
         return it
     }
@@ -39,7 +36,7 @@ fun JSONObject.getString(key: String): String? {
     return null
 }
 
-fun JSONObject.getInteger(key: String): Int? {
+fun Map<String, Any?>.getInteger(key: String): Int? {
     (this[key] as? Int)?.also {
         return it
     }
@@ -51,7 +48,7 @@ fun JSONObject.getInteger(key: String): Int? {
     return null
 }
 
-fun JSONObject.getLongInteger(key: String): Long? {
+fun Map<String, Any?>.getLongInteger(key: String): Long? {
     (this[key] as? Long)?.also {
         return it
     }
@@ -63,7 +60,7 @@ fun JSONObject.getLongInteger(key: String): Long? {
     return null
 }
 
-fun JSONObject.getBoolean(key: String): Boolean? {
+fun Map<String, Any?>.getBoolean(key: String): Boolean? {
     (this[key] as? Boolean)?.also {
         return it
     }
@@ -75,7 +72,7 @@ fun JSONObject.getBoolean(key: String): Boolean? {
     return null
 }
 
-fun JSONObject.getIntFromStringOrInt(key: String): Int? {
+fun Map<String, Any?>.getIntFromStringOrInt(key: String): Int? {
     (this[key]?.toString()?.toInt())?.also {
         return it
     }
@@ -87,26 +84,52 @@ fun JSONObject.getIntFromStringOrInt(key: String): Int? {
     return null
 }
 
-fun JSONObject.getObject(key: String): JSONObject? {
-    (this[key] as? JSONObject)?.also {
+@Suppress("UNCHECKED_CAST")
+fun Map<String, Any?>.getObject(key: String): Map<String, Any?>? {
+    (this[key] as? Map<String, Any?>)?.also {
         return it
     }
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
-            return it.value as? JSONObject
+            return it.value as? Map<String, Any?>
         }
     }
     return null
 }
 
-fun JSONObject.getArray(key: String): JSONArray? {
-    (this[key] as? JSONArray)?.also {
+@Suppress("UNCHECKED_CAST")
+fun Map<String, Any?>.getArray(key: String): List<Map<String, Any?>>? {
+    (this[key] as? List<Map<String, Any?>>)?.also {
         return it
     }
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
-            return it.value as? JSONArray
+            return it.value as? List<Map<String, Any?>>
         }
     }
     return null
+}
+
+fun String.toUIntOrNull(): Int? {
+    // Clash's custom int parser
+    if (this.contains(":")) return null
+    if (this.contains("-")) return null
+    val newStr = this.lowercase().removePrefix("+")
+    if (newStr.contains("+")) return null
+    if (newStr.startsWith("0x")) {
+        return newStr.removePrefix("0x").replace("_", "").toIntOrNull(16)
+    }
+    if (newStr.startsWith("0b")) {
+        return newStr.removePrefix("0b").replace("_", "").toIntOrNull(2)
+    }
+    if (newStr.startsWith("0o")) {
+        return newStr.removePrefix("0o").replace("_", "").toIntOrNull(8)
+    }
+    if (newStr.startsWith("0")) {
+        return newStr.removePrefix("0").replace("_", "").toIntOrNull(8)
+    }
+    if (newStr.startsWith("_")) {
+        return null
+    }
+    return newStr.replace("_", "").toIntOrNull()
 }

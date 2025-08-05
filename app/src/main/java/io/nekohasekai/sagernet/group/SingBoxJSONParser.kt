@@ -2,7 +2,6 @@ package io.nekohasekai.sagernet.group
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.lang.UUID
-import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
@@ -30,7 +29,7 @@ import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
 @Suppress("UNCHECKED_CAST")
-fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
+fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
     when (val type = outbound["type"]) {
         "shadowsocks", "trojan", "vmess", "vless", "socks", "http" -> {
             val v2rayBean = when (type) {
@@ -603,7 +602,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 beanList.add(bean)
             }
             outbound.getArray("peers")?.forEach { json ->
-                val peer = json as? JSONObject
+                val peer = json as? Map<String, Any?>
                 beanList.add(bean.applyDefaultValues().clone().apply {
                     peer?.getString("server")?.also {
                         serverAddress = it
@@ -638,7 +637,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun parseSingBoxEndpoint(endpoint: JSONObject): List<AbstractBean> {
+fun parseSingBoxEndpoint(endpoint: Map<String, Any?>): List<AbstractBean> {
     when (endpoint["type"]) {
         "wireguard" -> {
             val beanList = mutableListOf<WireGuardBean>()
@@ -664,7 +663,7 @@ fun parseSingBoxEndpoint(endpoint: JSONObject): List<AbstractBean> {
                 } ?: return listOf()
             }
             endpoint.getArray("peers")?.forEach { json ->
-                val peer = json as? JSONObject
+                val peer = json as? Map<String, Any?>
                 beanList.add(bean.applyDefaultValues().clone().apply {
                     peer?.getString("address")?.also {
                         serverAddress = it

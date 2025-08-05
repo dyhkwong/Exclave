@@ -1,6 +1,5 @@
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
@@ -12,10 +11,9 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedQuicSecurity
-import io.nekohasekai.sagernet.ktx.*
 
 @Suppress("UNCHECKED_CAST")
-fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
+fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
     when (val type = outbound.getString("protocol")) {
         "shadowsocks", "trojan", "vmess", "vless", "socks", "http", "shadowsocks2022" -> {
             val v2rayBean = when (type) {
@@ -48,8 +46,8 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                             val tls = if (security == "tls") {
                                 securitySettings
                             } else {
-                                securitySettings?.get("tlsConfig") as? JSONObject
-                                    ?: securitySettings?.get("tls_config") as? JSONObject
+                                securitySettings?.get("tlsConfig") as? Map<String, Any?>
+                                    ?: securitySettings?.get("tls_config") as? Map<String, Any?>
                             }
                             tls?.also { tlsConfig ->
                                 (tlsConfig["serverName"]?.toString() ?: tlsConfig["server_name"]?.toString())?.also {
@@ -79,12 +77,12 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                         "tcp" -> {
                             v2rayBean.type = "tcp"
                             streamSettings.getObject("transportSettings")?.also { transportSettings ->
-                                (transportSettings["headerSettings"] as? JSONObject)
-                                    ?: (transportSettings["header_settings"] as? JSONObject)?.also { headerSettings ->
+                                (transportSettings["headerSettings"] as? Map<String, Any?>)
+                                    ?: (transportSettings["header_settings"] as? Map<String, Any?>)?.also { headerSettings ->
                                         when (headerSettings["@type"] as? String) {
                                             "v2ray.core.transport.internet.headers.http.Config" -> {
                                                 v2rayBean.headerType = "http"
-                                                (headerSettings["request"] as? JSONObject)?.also { request ->
+                                                (headerSettings["request"] as? Map<String, Any?>)?.also { request ->
                                                     (request["uri"] as? List<String>)?.also {
                                                         v2rayBean.path = it.joinToString("\n")
                                                     }
@@ -107,8 +105,8 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                 transportSettings["seed"]?.toString()?.also {
                                     v2rayBean.mKcpSeed = it
                                 }
-                                when ((transportSettings["headerConfig"] as? JSONObject)?.get("@type") as? String
-                                    ?: (transportSettings["header_config"] as? JSONObject)?.get("@type") as? String) {
+                                when ((transportSettings["headerConfig"] as? Map<String, Any?>)?.get("@type") as? String
+                                    ?: (transportSettings["header_config"] as? Map<String, Any?>)?.get("@type") as? String) {
                                     null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
                                     "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
                                     "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
@@ -164,7 +162,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                 transportSettings["key"]?.toString()?.also {
                                     v2rayBean.quicKey = it
                                 }
-                                when ((transportSettings["header"] as? JSONObject)?.get("@type") as? String) {
+                                when ((transportSettings["header"] as? Map<String, Any?>)?.get("@type") as? String) {
                                     null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
                                     "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
                                     "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
@@ -218,12 +216,12 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                 transportSettings["url"]?.toString()?.also {
                                     v2rayBean.mekyaUrl = it
                                 }
-                                (transportSettings["kcp"] as? JSONObject)?.also { kcp ->
+                                (transportSettings["kcp"] as? Map<String, Any?>)?.also { kcp ->
                                     kcp["seed"]?.toString()?.also {
                                         v2rayBean.mekyaKcpSeed = it
                                     }
-                                    when ((kcp["headerConfig"] as? JSONObject)?.get("@type") as? String
-                                        ?: (kcp["header_config"] as? JSONObject)?.get("@type") as? String) {
+                                    when ((kcp["headerConfig"] as? Map<String, Any?>)?.get("@type") as? String
+                                        ?: (kcp["header_config"] as? Map<String, Any?>)?.get("@type") as? String) {
                                         null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
                                         "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
                                         "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.mekyaKcpHeaderType = "srtp"
@@ -242,7 +240,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                 transportSettings["password"]?.toString()?.also {
                                     v2rayBean.hy2Password = it
                                 }
-                                /*(transportSettings["congestion"] as? JSONObject)?.also { congestion ->
+                                /*(transportSettings["congestion"] as? Map<String, Any?>)?.also { congestion ->
                                     (congestion["up_mbps"] as? Int ?: congestion["upMbps"] as? Int)?.also {
                                         v2rayBean.hy2UpMbps = it
                                     }
@@ -257,7 +255,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                 }
             }
 
-            (outbound["settings"] as? JSONObject)?.also { settings ->
+            (outbound["settings"] as? Map<String, Any?>)?.also { settings ->
                 if (settings.contains("servers") || settings.contains("vnext")) { // jsonv4
                     return listOf()
                 }
@@ -345,7 +343,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                     transportSettings["password"]?.toString()?.also {
                         hysteria2Bean.auth = it
                     }
-                    /*(transportSettings["congestion"] as? JSONObject)?.also { congestion ->
+                    /*(transportSettings["congestion"] as? Map<String, Any?>)?.also { congestion ->
                         (congestion["up_mbps"]?.toString()?.toInt()?: congestion["upMbps"]?.toString()?.toInt())?.also {
                             hysteria2Bean.uploadMbps = it
                         }
@@ -356,7 +354,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                 }
             }
             outbound.getObject("settings")?.also { settings ->
-                (settings["server"] as? List<JSONObject>)?.forEach { server ->
+                (settings["server"] as? List<Map<String, Any?>>)?.forEach { server ->
 
                     server["address"]?.toString()?.also {
                         hysteria2Bean.serverAddress = it

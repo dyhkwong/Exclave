@@ -31,7 +31,7 @@ import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 
 @Suppress("UNCHECKED_CAST")
-fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
+fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
     // v2ray JSONv4 config, Xray config and JSONv4 config of Exclave's v2ray fork only
     when (val proto = outbound.getString("protocol")?.lowercase()) {
         "vmess", "vless", "trojan", "shadowsocks", "socks", "http", "shadowsocks2022", "shadowsocks-2022" -> {
@@ -299,7 +299,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                                 }
                                 // fuck RPRX `extra`
                                 var extra = JSONObject()
-                                splithttpSettings.getObject("extra")?.also {
+                                (splithttpSettings.getObject("extra") as? JSONObject)?.also {
                                     extra = it
                                 }
                                 if (!extra.contains("scMaxEachPostBytes")) {
@@ -372,14 +372,14 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                             "packet" -> "packet"
                             else -> "none"
                         }
-                        (settings.getArray("vnext")?.get(0) as? JSONObject)?.also { vnext ->
+                        settings.getArray("vnext")?.get(0)?.also { vnext ->
                             vnext.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
                             vnext.getIntFromStringOrInt("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
-                            (vnext.getArray("users")?.get(0) as? JSONObject)?.also { user ->
+                            vnext.getArray("users")?.get(0)?.also { user ->
                                 user.getString("id")?.takeIf { it.isNotEmpty() }?.also {
                                     v2rayBean.uuid = try {
                                         UUID.fromString(it).toString()
@@ -417,14 +417,14 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                             "packet" -> "packet"
                             else -> "none"
                         }
-                        (settings.getArray("vnext")?.get(0) as? JSONObject)?.also { vnext ->
+                        settings.getArray("vnext")?.get(0)?.also { vnext ->
                             vnext.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
                             vnext.getIntFromStringOrInt("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
-                            (vnext.getArray("users")?.get(0) as? JSONObject)?.also { user ->
+                            vnext.getArray("users")?.get(0)?.also { user ->
                                 user.getString("id")?.takeIf { it.isNotEmpty() }?.also {
                                     v2rayBean.uuid = try {
                                         UUID.fromString(it).toString()
@@ -452,7 +452,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                         v2rayBean.name = it
                     }
                     outbound.getObject("settings")?.also { settings ->
-                        (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
+                        settings.getArray("servers")?.get(0)?.also { server ->
                             settings.getString("plugin")?.also { pluginId ->
                                 v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
                             }
@@ -543,7 +543,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                         v2rayBean.name = it
                     }
                     outbound.getObject("settings")?.also { settings ->
-                        (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
+                        settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
@@ -568,14 +568,14 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                             "", "5" -> SOCKSBean.PROTOCOL_SOCKS5
                             else -> return listOf()
                         }
-                        (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
+                        settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
                             server.getIntFromStringOrInt("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
-                            (server.getArray("users")?.get(0) as? JSONObject)?.also { user ->
+                            server.getArray("users")?.get(0)?.also { user ->
                                 user.getString("username")?.also {
                                     v2rayBean.username = it
                                 }
@@ -592,14 +592,14 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                         v2rayBean.name = it
                     }
                     outbound.getObject("settings")?.also { settings ->
-                        (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
+                        settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
                             server.getIntFromStringOrInt("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
-                            (server.getArray("users")?.get(0) as? JSONObject)?.also { user ->
+                            server.getArray("users")?.get(0)?.also { user ->
                                 user.getString("username")?.also {
                                     v2rayBean.username = it
                                 }
@@ -619,7 +619,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                 hysteria2Bean.name = it
             }
             outbound.getObject("settings")?.also { settings ->
-                (settings.getArray("servers")?.get(0) as? JSONObject)?.also { server ->
+                settings.getArray("servers")?.get(0)?.also { server ->
                     server.getString("address")?.also {
                         hysteria2Bean.serverAddress = it
                     } ?: return listOf()
@@ -902,17 +902,17 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                 }
                 (settings.getArray("peers"))?.forEach { peer ->
                     beanList.add(wireguardBean.applyDefaultValues().clone().apply {
-                        (peer as? JSONObject)?.getString("endpoint")?.also { endpoint ->
+                        peer.getString("endpoint")?.also { endpoint ->
                             serverAddress = endpoint.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
                             serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: return listOf()
                         }
-                        (peer as? JSONObject)?.getString("publicKey")?.also {
+                        peer.getString("publicKey")?.also {
                             peerPublicKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
                         }
-                        (peer as? JSONObject)?.getString("preSharedKey")?.also {
+                        peer.getString("preSharedKey")?.also {
                             peerPreSharedKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
                         }
-                        (peer as? JSONObject)?.getInt("keepAlive")?.takeIf { it > 0 }?.also {
+                        peer.getInteger("keepAlive")?.takeIf { it > 0 }?.also {
                             keepaliveInterval = it
                         }
                     })

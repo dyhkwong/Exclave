@@ -108,10 +108,10 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.getAny
-import io.nekohasekai.sagernet.ktx.getBoolean
-import io.nekohasekai.sagernet.ktx.getInteger
-import io.nekohasekai.sagernet.ktx.getString
+import io.nekohasekai.sagernet.group.getAny
+import io.nekohasekai.sagernet.group.getBoolean
+import io.nekohasekai.sagernet.group.getInteger
+import io.nekohasekai.sagernet.group.getString
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.joinHostPort

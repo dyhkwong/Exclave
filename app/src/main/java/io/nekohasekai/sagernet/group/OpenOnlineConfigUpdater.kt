@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.group
 
 import cn.hutool.core.util.CharUtil
 import cn.hutool.json.JSONObject
-import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.ExtraType
 import io.nekohasekai.sagernet.R
@@ -29,7 +28,6 @@ import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
-import io.nekohasekai.sagernet.fmt.shadowsocks.fixInvalidParams
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import libcore.URL

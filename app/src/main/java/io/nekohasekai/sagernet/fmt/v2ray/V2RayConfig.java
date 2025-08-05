@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import cn.hutool.json.JSONObject;
 import io.nekohasekai.sagernet.fmt.gson.JsonLazyInterface;
 import io.nekohasekai.sagernet.fmt.gson.JsonOr;
 
@@ -1540,7 +1539,7 @@ public class V2RayConfig {
         public static class MultiObservatoryItem {
             public String type;
             public String tag;
-            public JSONObject settings; // ObservatoryObject or BurstObservatoryObject, WTF
+            public Map<String, Object> settings; // ObservatoryObject or BurstObservatoryObject, WTF
         }
 
     }

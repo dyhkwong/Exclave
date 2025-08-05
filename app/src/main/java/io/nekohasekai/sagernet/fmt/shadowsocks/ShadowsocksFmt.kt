@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.fmt.shadowsocks
 
 import cn.hutool.core.codec.Base64
-import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
@@ -161,13 +160,13 @@ fun ShadowsocksBean.toUri(): String? {
 
 }
 
-fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
+fun parseShadowsocksConfig(config: Map<String, Any?>): ShadowsocksBean? {
     return ShadowsocksBean().apply {
-        serverAddress = getStr("server") ?: return null
-        serverPort = getInt("server_port") ?: return null
-        password = getStr("password")
+        serverAddress = config["server"] as? String ?: return null
+        serverPort = config["server_port"] as? Int ?: return null
+        password = config["password"] as? String
 
-        var m = getStr("method")?.lowercase()
+        var m = (config["method"] as? String)?.lowercase()
         if (!m.isNullOrEmpty() && m.contains("_") && !m.contains("-")) {
             m = m.replace("_", "-")
         }
@@ -182,13 +181,13 @@ fun JSONObject.parseShadowsocksConfig(): ShadowsocksBean? {
             "", null -> error("unsupported method") // different impl has different default value
             else -> error("unsupported method")
         }
-        val pluginId = when (val id = getStr("plugin")) {
+        val pluginId = when (val id = config["plugin"] as? String) {
             "simple-obfs" -> "obfs-local"
             else -> id
         }
         if (!pluginId.isNullOrEmpty()) {
-            plugin = PluginOptions(pluginId, getStr("plugin_opts")).toString(trimId = false)
+            plugin = PluginOptions(pluginId, config["plugin_opts"] as? String).toString(trimId = false)
         }
-        name = getStr("remarks", "")
+        name = config["remarks"] as? String
     }
 }
