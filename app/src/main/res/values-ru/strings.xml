@@ -585,4 +585,6 @@
     <string name="route_mode_direct">прямой</string>
     <string name="reality_public_key">REALITY public key (публичный, открытый ключ)</string>
     <string name="reality_short_id">REALITY Short ID (короткий идентификатор)</string>
+    <string name="debug_log_sum">Текущая конфигурация будет записана в системный журнал и будет содержать секретные ключи, используемые для подключения к серверам. Этот уровень журнала необходим для сообщения о проблемах. Удалите конфиденциальную информацию перед публикацией файлов журнала.</string>
+    <string name="do_not_show_again">Больше не показывать</string>
 </resources>
