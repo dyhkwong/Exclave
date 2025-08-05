@@ -579,4 +579,6 @@
     <string name="route_mode_rule">regla</string>
     <string name="route_mode_global">global</string>
     <string name="route_mode_direct">directo</string>
+    <string name="debug_log_sum">La configuración en ejecución se imprimirá en el registro del sistema, por lo que el registro contendrá las claves secretas utilizadas para conectarse a los servidores. Este nivel de registro es necesario para informar de problemas. Elimine la información confidencial antes de publicar los archivos de registro.</string>
+    <string name="do_not_show_again">No volver a mostrar</string>
 </resources>
