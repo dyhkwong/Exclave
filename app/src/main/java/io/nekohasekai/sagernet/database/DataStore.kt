@@ -162,6 +162,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var rulesGeositeUrl by configurationStore.string(Key.RULES_GEOSITE_URL) { "https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat" }
     var rulesGeoipUrl by configurationStore.string(Key.RULES_GEOIP_URL) { "https://github.com/v2fly/geoip/releases/latest/download/geoip.dat" }
     var logLevel by configurationStore.stringToInt(Key.LOG_LEVEL) { 2 }
+    var logLevelDebugWarningDisable by configurationStore.boolean(Key.LOG_LEVEL_DEBUG_WARNING_DISABLE)
     var enableDebug by configurationStore.boolean(Key.ENABLE_DEBUG) { BuildConfig.DEBUG }
     var pprofServer by configurationStore.string(Key.PPROF_SERVER)
     var enablePcap by configurationStore.boolean(Key.ENABLE_PCAP)

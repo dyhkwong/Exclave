@@ -14,8 +14,6 @@ import io.nekohasekai.sagernet.database.SubscriptionBean
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardConfig
-import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
-import io.nekohasekai.sagernet.ktx.parseShareLinks
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import org.yaml.snakeyaml.DumperOptions
@@ -128,7 +126,6 @@ object RawUpdater : GroupUpdater() {
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
-            Logs.d("Before deduplication: ${proxies.size}")
             val uniqueProxies = LinkedHashSet<Protocols.Deduplication>()
             val uniqueNames = HashMap<Protocols.Deduplication, String>()
             for (p in proxies) {
@@ -151,13 +148,9 @@ object RawUpdater : GroupUpdater() {
             proxies = uniqueProxies.toList().map { it.bean }
         }
 
-        Logs.d("New profiles: ${proxies.size}")
-
         val nameMap = proxies.associateBy { bean ->
             bean.displayName()
         }
-
-        Logs.d("Unique profiles: ${nameMap.size}")
 
         val toDelete = ArrayList<ProxyEntity>()
         val toReplace = exists.mapNotNull { entity ->
@@ -167,9 +160,6 @@ object RawUpdater : GroupUpdater() {
                 null
             }
         }.toMap()
-
-        Logs.d("toDelete profiles: ${toDelete.size}")
-        Logs.d("toReplace profiles: ${toReplace.size}")
 
         val toUpdate = ArrayList<ProxyEntity>()
         val added = mutableListOf<String>()
@@ -189,18 +179,11 @@ object RawUpdater : GroupUpdater() {
                         entity.putBean(bean)
                         toUpdate.add(entity)
                         updated[entity.displayName()] = name
-
-                        Logs.d("Updated profile: $name")
                     }
                     entity.userOrder != userOrder -> {
                         entity.putBean(bean)
                         toUpdate.add(entity)
                         entity.userOrder = userOrder
-
-                        Logs.d("Reordered profile: $name")
-                    }
-                    else -> {
-                        Logs.d("Ignored profile: $name")
                     }
                 }
             } else {
@@ -211,24 +194,12 @@ object RawUpdater : GroupUpdater() {
                     putBean(bean)
                 })
                 added.add(name)
-                Logs.d("Inserted profile: $name")
             }
             userOrder++
         }
 
-        SagerDatabase.proxyDao.updateProxy(toUpdate).also {
-            Logs.d("Updated profiles: $it")
-        }
-
-        SagerDatabase.proxyDao.deleteProxy(toDelete).also {
-            Logs.d("Deleted profiles: $it")
-        }
-
-        val existCount = SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
-
-        if (existCount != proxies.size) {
-            Logs.e("Exist profiles: $existCount, new profiles: ${proxies.size}")
-        }
+        SagerDatabase.proxyDao.updateProxy(toUpdate)
+        SagerDatabase.proxyDao.deleteProxy(toDelete)
 
         subscription.lastUpdated = System.currentTimeMillis() / 1000
         SagerDatabase.groupDao.updateGroup(proxyGroup)

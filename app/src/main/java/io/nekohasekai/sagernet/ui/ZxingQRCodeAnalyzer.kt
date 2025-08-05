@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.ui
 
-import io.nekohasekai.sagernet.ktx.Logs
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.zxing.BinaryBitmap
@@ -57,7 +56,6 @@ class ZxingQRCodeAnalyzer(
                     return
                 }
             }
-            Logs.d("ZxingQRCodeAnalyzer: barcode decode success: ${result.text}")
             onSuccess(result.text)
         } catch (_: Exception) {
         } finally {

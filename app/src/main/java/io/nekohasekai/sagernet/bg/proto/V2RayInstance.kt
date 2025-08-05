@@ -254,28 +254,19 @@ abstract class V2RayInstance(
                         processes.start(commands, env)
                     }
                     bean is BrookBean -> {
-                        val commands = mutableListOf(initPlugin("brook-plugin").path)
+                        val configFile = File(
+                            context.noBackupFilesDir,
+                            "brook_" + SystemClock.elapsedRealtime()
+                        )
 
-                        when (bean.protocol) {
-                            "ws" -> {
-                                commands.add("wsclient")
-                            }
-                            "wss" -> {
-                                commands.add("wssclient")
-                            }
-                            "quic" -> {
-                                commands.add("quicclient")
-                            }
-                            else -> {
-                                commands.add("client")
-                            }
-                        }
+                        configFile.parentFile?.mkdirs()
+                        configFile.writeText(config)
+                        cacheFiles.add(configFile)
 
-                        commands.add("--link")
-                        commands.add(bean.toInternalUri())
-
-                        commands.add("--socks5")
-                        commands.add(joinHostPort(LOCALHOST, port))
+                        val commands = mutableListOf(
+                            initPlugin("brook-plugin").path,
+                            configFile.absolutePath
+                        )
 
                         processes.start(commands, env)
                     }

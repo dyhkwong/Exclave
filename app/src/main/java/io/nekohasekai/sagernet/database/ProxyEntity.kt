@@ -83,7 +83,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.toUri
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ui.profile.*
@@ -378,63 +377,43 @@ data class ProxyEntity(
                         when (val bean = profile.requireBean()) {
                             is TrojanGoBean -> {
                                 append("\n\n")
-                                append(bean.buildTrojanGoConfig(port).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildTrojanGoConfig(port))
                             }
                             is NaiveBean -> {
                                 append("\n\n")
-                                append(bean.buildNaiveConfig(port).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildNaiveConfig(port))
                             }
                             is HysteriaBean -> {
                                 append("\n\n")
-                                append(bean.buildHysteriaConfig(port, null).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildHysteriaConfig(port, null))
                             }
                             is Hysteria2Bean -> {
                                 append("\n\n")
-                                append(bean.buildHysteria2Config(port, false, null).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildHysteria2Config(port, false, null))
                             }
                             is MieruBean -> {
                                 append("\n\n")
-                                append(bean.buildMieruConfig(port).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildMieruConfig(port))
                             }
                             is TuicBean -> {
                                 append("\n\n")
-                                append(bean.buildTuicConfig(port, forExport = true, null).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildTuicConfig(port, forExport = true, null))
                             }
                             is Tuic5Bean -> {
                                 append("\n\n")
-                                append(bean.buildTuic5Config(port, forExport = true, null).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildTuic5Config(port, forExport = true, null))
                             }
                             is JuicityBean -> {
                                 append("\n\n")
-                                append(bean.buildJuicityConfig(port).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildJuicityConfig(port))
                             }
                             is BrookBean -> {
                                 append("\n\n")
-                                append(bean.buildBrookConfig(port).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildBrookConfig(port))
                             }
                             is ShadowQUICBean -> {
                                 append("\n\n")
-                                append(bean.buildshadowQUICConfig(port).also {
-                                    Logs.d(it)
-                                })
+                                append(bean.buildshadowQUICConfig(port))
                             }
                         }
                     }

@@ -316,6 +316,9 @@ fun buildV2RayConfig(
                 LogLevel.ERROR -> "error"
                 else -> "none"
             }
+            if (DataStore.logLevel == LogLevel.NONE) {
+                access = "none"
+            }
         }
 
         policy = PolicyObject().apply {

@@ -232,7 +232,19 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         showDirectSpeed.isEnabled = profileTrafficStatistics.isChecked
         showDirectSpeed.onPreferenceChangeListener = reloadListener
 
-        findPreference<SimpleMenuPreference>(Key.LOG_LEVEL)!!.onPreferenceChangeListener = reloadListener
+        findPreference<SimpleMenuPreference>(Key.LOG_LEVEL)!!.setOnPreferenceChangeListener { _, newValue ->
+            if ((newValue as String).toInt() == LogLevel.DEBUG && !DataStore.logLevelDebugWarningDisable) {
+                MaterialAlertDialogBuilder(requireContext()).apply {
+                    setMessage(R.string.debug_log_sum)
+                    setPositiveButton(android.R.string.ok, null)
+                    setNeutralButton(R.string.do_not_show_again, { _, _ ->
+                        DataStore.logLevelDebugWarningDisable = true
+                    })
+                }.show()
+            }
+            needReload()
+            true
+        }
 
         findPreference<SimpleMenuPreference>(Key.PROVIDER_ROOT_CA)!!.setOnPreferenceChangeListener { _, newValue ->
             Libcore.updateSystemRoots((newValue as String).toInt())

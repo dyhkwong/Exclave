@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.bg.proto
 
 import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.app.observatory.OutboundStatus
+import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.BaseService
 import io.nekohasekai.sagernet.database.DataStore
@@ -47,10 +48,12 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
     override fun init(isVpn: Boolean) {
         super.init(isVpn)
 
-        Logs.d(config.config)
-        pluginConfigs.forEach { (_, plugin) ->
-            val (_, content) = plugin
-            Logs.d(content)
+        if (DataStore.logLevel == LogLevel.DEBUG) {
+            Logs.d(config.config)
+            pluginConfigs.forEach { (_, plugin) ->
+                val (_, content) = plugin
+                Logs.d(content)
+            }
         }
     }
 

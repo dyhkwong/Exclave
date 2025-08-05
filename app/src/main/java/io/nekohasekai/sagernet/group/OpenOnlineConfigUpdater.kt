@@ -86,7 +86,6 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 }
             }
         } catch (e: Exception) {
-            Logs.v("ooc token check failed, token = ${subscription.token}", e)
             error(app.getString(R.string.ooc_subscription_token_invalid))
         }
 
@@ -156,7 +155,6 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
         if (subscription.deduplication) {
-            Logs.d("Before deduplication: ${profiles.size}")
             val uniqueProfiles = LinkedHashSet<AbstractBean>()
             val uniqueNames = HashMap<AbstractBean, String>()
             for (proxy in profiles) {
@@ -178,8 +176,6 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
             profiles = uniqueProfiles.toMutableList()
         }
 
-        Logs.d("New profiles: ${profiles.size}")
-
         val profileMap = profiles.associateBy { it.profileId }
         val toDelete = ArrayList<ProxyEntity>()
         val toReplace = exists.mapNotNull { entity ->
@@ -189,9 +185,6 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 null
             }
         }.toMap()
-
-        Logs.d("toDelete profiles: ${toDelete.size}")
-        Logs.d("toReplace profiles: ${toReplace.size}")
 
         val toUpdate = ArrayList<ProxyEntity>()
         val added = mutableListOf<String>()
@@ -212,18 +205,11 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                         entity.putBean(bean)
                         toUpdate.add(entity)
                         updated[entity.displayName()] = name
-
-                        Logs.d("Updated profile: [$profileId] $name")
                     }
                     entity.userOrder != userOrder -> {
                         entity.putBean(bean)
                         toUpdate.add(entity)
                         entity.userOrder = userOrder
-
-                        Logs.d("Reordered profile: [$profileId] $name")
-                    }
-                    else -> {
-                        Logs.d("Ignored profile: [$profileId] $name")
                     }
                 }
             } else {
@@ -234,24 +220,12 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                     putBean(bean)
                 })
                 added.add(name)
-                Logs.d("Inserted profile: $name")
             }
             userOrder++
         }
 
-        SagerDatabase.proxyDao.updateProxy(toUpdate).also {
-            Logs.d("Updated profiles: $it")
-        }
-
-        SagerDatabase.proxyDao.deleteProxy(toDelete).also {
-            Logs.d("Deleted profiles: $it")
-        }
-
-        val existCount = SagerDatabase.proxyDao.countByGroup(proxyGroup.id).toInt()
-
-        if (existCount != profileMap.size) {
-            Logs.e("Exist profiles: $existCount, new profiles: ${profileMap.size}")
-        }
+        SagerDatabase.proxyDao.updateProxy(toUpdate)
+        SagerDatabase.proxyDao.deleteProxy(toDelete)
 
         subscription.lastUpdated = System.currentTimeMillis() / 1000
         SagerDatabase.groupDao.updateGroup(proxyGroup)

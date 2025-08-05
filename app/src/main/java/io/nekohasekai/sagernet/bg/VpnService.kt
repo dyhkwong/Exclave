@@ -233,10 +233,10 @@ class VpnService : BaseVpnService(),
                 try {
                     if (bypass) {
                         builder.addDisallowedApplication(it)
-                        Logs.d("Add bypass: $it")
+                        // Logs.d("Add bypass: $it")
                     } else {
                         builder.addAllowedApplication(it)
-                        Logs.d("Add allow: $it")
+                        // Logs.d("Add allow: $it")
                     }
                 } catch (ex: PackageManager.NameNotFoundException) {
                     Logs.w(ex)

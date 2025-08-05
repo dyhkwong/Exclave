@@ -90,6 +90,8 @@ object Key {
     const val RULES_GEOSITE_URL = "rulesGeositeUrl"
     const val RULES_GEOIP_URL = "rulesGeoipUrl"
     const val LOG_LEVEL = "logLevel"
+
+    const val LOG_LEVEL_DEBUG_WARNING_DISABLE = "logLevelDebugWarningDisable"
     const val ENABLE_DEBUG = "enableDebug"
     const val PPROF_SERVER = "pprofServer"
 

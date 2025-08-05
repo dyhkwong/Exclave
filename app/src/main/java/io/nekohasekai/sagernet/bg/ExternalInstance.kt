@@ -19,7 +19,9 @@
 
 package io.nekohasekai.sagernet.bg
 
+import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.bg.proto.V2RayInstance
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.buildCustomConfig
 import io.nekohasekai.sagernet.ktx.Logs
@@ -31,10 +33,12 @@ class ExternalInstance(
     override fun init(isVpn: Boolean) {
         super.init(isVpn)
 
-        Logs.d(config.config)
-        pluginConfigs.forEach { (_, plugin) ->
-            val (_, content) = plugin
-            Logs.d(content)
+        if (DataStore.logLevel == LogLevel.DEBUG) {
+            Logs.d(config.config)
+            pluginConfigs.forEach { (_, plugin) ->
+                val (_, content) = plugin
+                Logs.d(content)
+            }
         }
     }
 
