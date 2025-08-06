@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2022 by nekohasekai <contact-git@sekai.icu>                  *
+ * Copyright (C) 2023 by dyhkwong                                             *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
