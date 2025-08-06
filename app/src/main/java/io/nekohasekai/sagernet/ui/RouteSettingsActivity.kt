@@ -184,6 +184,8 @@ class RouteSettingsActivity(
     lateinit var ssid: EditTextPreference
 
     fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
+        findPreference<EditTextPreference>(Key.ROUTE_SOURCE_PORT)!!.dialogMessage = getString(R.string.format, "53,443,1000-2000")
+        findPreference<EditTextPreference>(Key.ROUTE_PORT)!!.dialogMessage = getString(R.string.format, "53,443,1000-2000")
         outbound = findPreference(Key.ROUTE_OUTBOUND)!!
         reverse = findPreference(Key.ROUTE_REVERSE)!!
         redirect = findPreference(Key.ROUTE_REDIRECT)!!

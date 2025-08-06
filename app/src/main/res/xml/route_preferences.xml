@@ -42,13 +42,11 @@
             app:icon="@drawable/ic_maps_directions_boat"
             app:key="routePort"
             app:title="port"
-            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_home_24"
             app:key="routeSourcePort"
             app:title="sourcePort"
-            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/route_protocol_entry"
@@ -56,7 +54,6 @@
             app:icon="@drawable/ic_baseline_compare_arrows_24"
             app:key="routeNetwork"
             app:title="network"
-            app:dialogMessage="@string/one_per_line"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_local_bar_24"

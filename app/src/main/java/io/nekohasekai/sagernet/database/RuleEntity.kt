@@ -65,6 +65,7 @@ data class RuleEntity(
         var summary = ""
         if (domains.isNotEmpty()) summary += "$domains\n"
         if (ip.isNotEmpty()) summary += "$ip\n"
+        if (port.isNotEmpty()) summary += "$port\n"
         if (sourcePort.isNotEmpty()) summary += "$sourcePort\n"
         if (network.isNotEmpty()) summary += "$network\n"
         if (source.isNotEmpty()) summary += "$source\n"
