@@ -282,5 +282,20 @@
 
     <color name="fab_color_progress">@color/material_light_black</color>
 
-
+    <color name="ansi_black">#1d1f21</color>
+    <color name="ansi_red">#CC342B</color>
+    <color name="ansi_green">#198844</color>
+    <color name="ansi_yellow">#FBA922</color>
+    <color name="ansi_blue">#3971ED</color>
+    <color name="ansi_magenta">#A36AC7</color>
+    <color name="ansi_cyan">#3971ED</color>
+    <color name="ansi_white">#c5c8c6</color>
+    <color name="ansi_bright_black">#969896</color>
+    <color name="ansi_bright_red">#CC342B</color>
+    <color name="ansi_bright_green">#198844</color>
+    <color name="ansi_bright_yellow">#FBA922</color>
+    <color name="ansi_bright_blue">#3971ED</color>
+    <color name="ansi_bright_magenta">#A36AC7</color>
+    <color name="ansi_bright_cyan">#3971ED</color>
+    <color name="ansi_bright_white">#ffffff</color>
 </resources>

@@ -47,7 +47,6 @@ jobs:
           cache: 'gradle'
       - name: Setup Android NDK
         # Pin NDK version for `gomobile`.
-        # For `libtermux.so`, NDK version is defined in `library/termux/terminal-emulator/build.gradle.kts`. Always keep them identical.
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:

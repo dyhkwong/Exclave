@@ -28,88 +28,62 @@ import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.drawerlayout.widget.DrawerLayout
-import cn.hutool.core.util.RuntimeUtil
-import com.termux.terminal.TerminalColors
-import com.termux.terminal.TerminalSession
-import com.termux.terminal.TerminalSessionClient
-import com.termux.view.TerminalViewClient
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.databinding.LayoutLogcatBinding
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.ColorUtils
 import io.nekohasekai.sagernet.utils.CrashHandler
+import java.io.BufferedReader
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
-import kotlin.math.max
-import kotlin.math.min
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
-    TerminalSessionClient,
-    TerminalViewClient,
     Toolbar.OnMenuItemClickListener {
 
     lateinit var binding: LayoutLogcatBinding
-    var fontSize = dp2px(8)
 
-    @SuppressLint("RestrictedApi")
+    companion object {
+        private const val MAX_BUFFERED_LINES = (1 shl 14) - 1
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = LayoutLogcatBinding.bind(view)
         toolbar.setTitle(R.string.menu_log)
 
         toolbar.inflateMenu(R.menu.logcat_menu)
         toolbar.setOnMenuItemClickListener(this)
-        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.layout_terminal)) { v, insets ->
+
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.logsScrollView)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
             )
             v.updatePadding(
+                top = dp2px(8),
                 left = bars.left + dp2px(8),
                 right = bars.right + dp2px(8),
-                bottom = bars.bottom + dp2px(8),
+                bottom = bars.bottom + dp2px(64),
             )
             insets
         }
 
-        binding = LayoutLogcatBinding.bind(view)
-        val terminalView = binding.terminalView;
-
-        // Make it divisible by 2 since that is the minimal adjustment step:
-        if (fontSize % 2 == 1) fontSize--
-
-        terminalView.setTerminalViewClient(this)
-        terminalView.setTextSize(fontSize)
-
-        reloadSession()
-
-        registerForContextMenu(terminalView)
-
         (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+
+        runOnIoDispatcher {
+            streamingLog()
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        binding.terminalView.showContextMenu()
-    }
-
-    fun reloadSession() {
-        val terminalView = binding.terminalView
-        terminalView.currentSession?.also {
-            it.finishIfRunning()
-        }
-        val args = mutableListOf("-C")
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            args += arrayOf(
-                "-v",
-                "tag,color",
-            )
-        }
-
-        args += arrayOf(
+    @SuppressLint("SetTextI18n")
+    private suspend fun streamingLog() = onIoDispatcher {
+        val format = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) "tag,color" else "tag"
+        val filter = arrayOf(
             "AndroidRuntime:D",
             "ProxyInstance:D",
             "GuardedProcessPool:D",
@@ -133,42 +107,88 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
             "libjuicity:D",
             "libshadowquic:D",
             "*:S",
-        )
+        ).joinToString(",")
 
-        val session = TerminalSession(
-            "/system/bin/logcat",
-            app.cacheDir.absolutePath,
-            args.toTypedArray(),
-            arrayOf(),
-            3000,
-            this
-        )
+        val builder = ProcessBuilder(listOf("logcat", "-v", format, "-s", filter))
+        builder.environment()["LC_ALL"] = "C"
+        var process: Process? = null
+        try {
+            process = try {
+                builder.start()
+            } catch (_: Exception) {
+                return@onIoDispatcher
+            }
 
-        terminalView.attachSession(session)
-        terminalView.updateSize()
+            val stdout = BufferedReader(
+                InputStreamReader(process!!.inputStream, StandardCharsets.UTF_8)
+            )
+            val bufferedLogLines = arrayListOf<String>()
+
+            var timeLastNotify = System.nanoTime()
+            // The timeout is initially small so that the view gets populated immediately.
+            var timeout = 1000000000L / 2
+
+
+            while (true) {
+                val line = stdout.readLine() ?: break
+                bufferedLogLines.add(line)
+                val timeNow = System.nanoTime()
+
+                if (
+                    bufferedLogLines.size < MAX_BUFFERED_LINES &&
+                    (timeNow - timeLastNotify) < timeout && stdout.ready()
+                ) continue
+
+                // Increase the timeout after the initial view has something in it.
+                timeout = 1000000000L * 5 / 2
+                timeLastNotify = timeNow
+
+                onMainDispatcher {
+                    binding.logsTextView.append(
+                        ColorUtils.ansiEscapeToSpannable(
+                            binding.root.context,
+                            bufferedLogLines.joinToString(
+                                separator = "\n",
+                                postfix = "\n"
+                            )
+                        )
+                    )
+                    bufferedLogLines.clear()
+                    binding.logsScrollView.post {
+                        val height = binding.logsTextView.height
+                        binding.logsScrollView.smoothScrollTo(0, height)
+                    }
+                }
+            }
+        } finally {
+            process?.destroy()
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_clear_logcat -> {
-                runOnDefaultDispatcher {
-                    try {
-                        RuntimeUtil.exec("/system/bin/logcat", "-c").waitFor()
-                    } catch (e: Exception) {
-                        onMainDispatcher {
-                            snackbar(e.readableMessage).show()
-                        }
-                        return@runOnDefaultDispatcher
-                    }
+                runOnIoDispatcher {
+                    val command = listOf("logcat", "-c")
+                    val process = ProcessBuilder(command).start()
+                    process.waitFor()
                     onMainDispatcher {
-                        reloadSession()
+                        binding.logsTextView.text = ""
                     }
                 }
-
+            }
+            R.id.action_copy_logcat -> {
+                val text = binding.logsTextView.text.toString()
+                if (text.isNotEmpty()) {
+                    runOnDefaultDispatcher {
+                        onMainDispatcher {
+                            SagerNet.trySetPrimaryClip(text)
+                        }
+                    }
+                }
             }
             R.id.action_send_logcat -> {
                 val context = requireContext()
-
                 runOnDefaultDispatcher {
                     val logFile = File.createTempFile("Exclave ",
                         ".log",
@@ -206,179 +226,5 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
             }
         }
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        if (::binding.isInitialized) {
-            binding.terminalView.currentSession?.finishIfRunning()
-        }
-    }
-
-    override fun onTextChanged(changedSession: TerminalSession) {
-    }
-
-    override fun onTitleChanged(changedSession: TerminalSession) {
-    }
-
-    override fun onSessionFinished(finishedSession: TerminalSession) {
-    }
-
-    override fun onCopyTextToClipboard(session: TerminalSession, text: String?) {
-        if (text.isNullOrBlank()) {
-            return
-        }
-
-        SagerNet.trySetPrimaryClip(text)
-        snackbar(R.string.copy_success).show()
-    }
-
-    override fun onPasteTextFromClipboard(session: TerminalSession?) {
-    }
-
-    override fun onBell(session: TerminalSession) {
-    }
-
-    override fun onColorsChanged(session: TerminalSession) {
-    }
-
-    override fun onTerminalCursorStateChange(state: Boolean) {
-    }
-
-    override fun setTerminalShellPid(session: TerminalSession, pid: Int) {
-    }
-
-    override val terminalCursorStyle: Int
-        get() = 0
-
-    override fun onScale(scale: Float): Float {
-        if (scale < 0.9f || scale > 1.1f) {
-            val increase = scale > 1f
-            changeFontSize(increase)
-            return 1.0f
-        }
-
-        return scale
-    }
-
-    override fun onSingleTapUp(e: MotionEvent?) {
-    }
-
-    override val shouldBackButtonBeMappedToEscape: Boolean
-        get() = false
-
-    override val shouldEnforceCharBasedInput: Boolean
-        get() = false
-
-    override val shouldUseCtrlSpaceWorkaround: Boolean
-        get() = false
-
-    override val isTerminalViewSelected: Boolean
-        get() = true
-
-    override fun copyModeChanged(copyMode: Boolean) {
-        val activity = requireActivity() as MainActivity
-
-        activity.binding.drawerLayout.setDrawerLockMode(
-            if (copyMode) DrawerLayout.LOCK_MODE_LOCKED_CLOSED else DrawerLayout.LOCK_MODE_UNLOCKED
-        )
-    }
-
-    override fun onKeyDown(keyCode: Int, e: KeyEvent?, session: TerminalSession?): Boolean {
-        return false
-    }
-
-    override fun onKeyUp(keyCode: Int, e: KeyEvent?): Boolean {
-        return false
-    }
-
-    override fun onLongPress(event: MotionEvent?): Boolean {
-        return false
-    }
-
-    override fun readControlKey(): Boolean {
-        return false
-    }
-
-    override fun readAltKey(): Boolean {
-        return false
-    }
-
-    override fun readShiftKey(): Boolean {
-        return false
-    }
-
-    override fun readFnKey(): Boolean {
-        return false
-    }
-
-    override fun onCodePoint(codePoint: Int, ctrlDown: Boolean, session: TerminalSession?): Boolean {
-        return false
-    }
-
-    override fun disableInput(): Boolean {
-        return true
-    }
-
-    override fun onEmulatorSet() {
-        val props = Properties()
-        props.load(requireContext().assets.open("terminal.properties"))
-        TerminalColors.COLOR_SCHEME.updateWith(props)
-
-        val emulator = binding.terminalView.currentSession!!.emulator
-        emulator!!.mColors.reset()
-    }
-
-    override fun onScroll(offset: Int) {
-        if (context == null) return
-        val activity = requireActivity() as MainActivity
-        val topRow = binding.terminalView.topRow
-        if (offset < 0) {
-            activity.binding.stats.apply {
-                if (isShown) performHide()
-            }
-        }
-
-        val screen = binding.terminalView.mEmulator!!.screen
-
-        if (topRow == 0 && screen.activeTranscriptRows > 0) activity.binding.fab.apply {
-            if (isShown) hide()
-        } else activity.binding.fab.apply {
-            if (!isShown) show()
-        }
-    }
-
-    override fun logError(tag: String?, message: String?) {
-    }
-
-    override fun logWarn(tag: String?, message: String?) {
-    }
-
-    override fun logInfo(tag: String?, message: String?) {
-    }
-
-    override fun logDebug(tag: String?, message: String?) {
-    }
-
-    override fun logVerbose(tag: String?, message: String?) {
-    }
-
-    override fun logStackTraceWithMessage(tag: String?, message: String?, e: Exception?) {
-    }
-
-    override fun logStackTrace(tag: String?, e: Exception?) {
-    }
-
-    private fun changeFontSize(increase: Boolean) {
-        val terminalView = binding.terminalView
-        fontSize += if (increase) 1 else -1
-        fontSize = max(MIN_FONTSIZE, min(fontSize, MAX_FONTSIZE))
-        terminalView.setTextSize(fontSize)
-    }
-
-    companion object {
-        private val MIN_FONTSIZE = dp2px(4)
-        private val MAX_FONTSIZE = dp2px(12)
     }
 }

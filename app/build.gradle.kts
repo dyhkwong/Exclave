@@ -33,8 +33,6 @@ dependencies {
     implementation(fileTree("libs"))
     compileOnly(project(":library:stub"))
     implementation(project(":library:include"))
-    implementation(project(":library:termux:terminal-view"))
-    implementation(project(":library:termux:terminal-emulator"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
     implementation("androidx.core:core-ktx:1.16.0")

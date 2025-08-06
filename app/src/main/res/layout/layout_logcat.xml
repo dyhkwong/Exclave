@@ -3,29 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.ToolsFragment">
+    android:orientation="vertical">
 
     <include
         layout="@layout/layout_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:id="@+id/layout_terminal"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/logsScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:paddingTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="64dp" >
 
-        <com.termux.view.TerminalView
-            android:id="@+id/terminal_view"
+        <TextView
+            android:id="@+id/logsTextView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:autofillHints="password"
-            android:focusableInTouchMode="true"
-            android:scrollbarThumbVertical="@drawable/terminal_scroll_shape"
-            android:scrollbars="vertical" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:textIsSelectable="true"
+            android:textSize="8sp"
+            tools:ignore="SmallSp" />
 
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

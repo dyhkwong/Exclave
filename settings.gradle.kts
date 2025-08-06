@@ -13,7 +13,4 @@ include(":plugin:naive")
 
 include(":app")
 
-include(":library:termux:terminal-emulator")
-include(":library:termux:terminal-view")
-
 rootProject.name = "Exclave"
