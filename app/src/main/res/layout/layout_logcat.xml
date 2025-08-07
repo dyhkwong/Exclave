@@ -18,6 +18,7 @@
         android:clipToPadding="false"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:scrollbars="vertical"
         android:paddingTop="8dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"

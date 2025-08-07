@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
@@ -24,14 +23,7 @@
             android:background="@null"
             android:completionThreshold="2"
             android:importantForAutofill="no"
-            android:scrollbars="none" />
-
-        <com.blacksquircle.ui.editorkit.widget.TextScroller
-            android:id="@+id/scroller"
-            android:layout_width="30dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            app:thumbTint="?colorPrimary" />
+            android:scrollbars="vertical|horizontal" />
 
     </FrameLayout>
 
