@@ -37,21 +37,24 @@ import com.blacksquircle.ui.language.base.model.SyntaxScheme
 import com.blacksquircle.ui.language.json.JsonLanguage
 import com.github.shadowsocks.plugin.Empty
 import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutEditConfigBinding
 import io.nekohasekai.sagernet.ktx.getColorAttr
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.Theme
 import androidx.core.graphics.toColorInt
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.readableMessage
 
 class ConfigEditActivity : ThemedActivity() {
+
+    companion object {
+        private const val KEY_CONFIG = "config"
+    }
 
     private lateinit var binding: LayoutEditConfigBinding
 
@@ -128,6 +131,9 @@ class ConfigEditActivity : ThemedActivity() {
 
         runOnDefaultDispatcher {
             config = DataStore.serverConfig
+            savedInstanceState?.getString(KEY_CONFIG)?.takeIf { it.isNotEmpty() }?.let {
+                config = it
+            }
 
             onMainDispatcher {
                 binding.editor.setTextContent(config)
@@ -137,16 +143,20 @@ class ConfigEditActivity : ThemedActivity() {
         onBackPressedDispatcher.addCallback(this, callback)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_CONFIG, config)
+    }
+
     fun saveAndExit() {
-        config = try {
-            JSONObject(config).toStringPretty()
+        try {
+            DataStore.serverConfig = JSONObject(config).toStringPretty()
         } catch (e: Exception) {
-            MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
+            DataStore.serverConfig = config
+                MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
                 .setMessage(e.readableMessage).show()
             return
         }
-
-        DataStore.serverConfig = config
         finish()
     }
 
