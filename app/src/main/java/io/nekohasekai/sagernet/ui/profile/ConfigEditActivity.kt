@@ -48,17 +48,30 @@ import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.Theme
 import androidx.core.graphics.toColorInt
+import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.ktx.Logs
 
 class ConfigEditActivity : ThemedActivity() {
+
+    private lateinit var binding: LayoutEditConfigBinding
 
     var config = ""
     var dirty = false
 
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
-            UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
+            if (ViewCompat.getRootWindowInsets(binding.editor)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+                /* this also works on Android Emulator Android 5.0 anyway */
+                ) {
+                this@ConfigEditActivity.currentFocus?.windowToken?.let {
+                    SagerNet.ime.hideSoftInputFromWindow(it, 0)
+                }
+            } else {
+                UnsavedChangesDialogFragment().apply {
+                    key()
+                }.show(supportFragmentManager, null)
+            }
         }
     }
 
@@ -77,7 +90,7 @@ class ConfigEditActivity : ThemedActivity() {
     @SuppressLint("InlinedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = LayoutEditConfigBinding.inflate(layoutInflater)
+        binding = LayoutEditConfigBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
 

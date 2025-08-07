@@ -39,6 +39,7 @@ import android.os.Build
 import android.os.PowerManager
 import android.os.StrictMode
 import android.os.UserManager
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
@@ -195,6 +196,8 @@ class SagerNet : Application(),
         val activity by lazy { application.getSystemService<ActivityManager>()!! }
         val clipboard by lazy { application.getSystemService<ClipboardManager>()!! }
         val connectivity by lazy { application.getSystemService<ConnectivityManager>()!! }
+
+        val ime by lazy { application.getSystemService<InputMethodManager>()!! }
         val notification by lazy { application.getSystemService<NotificationManager>()!! }
         val user by lazy { application.getSystemService<UserManager>()!! }
         val uiMode by lazy { application.getSystemService<UiModeManager>()!! }
