@@ -104,6 +104,15 @@ class ConfigEditActivity : ThemedActivity() {
             )
             v.updatePadding(
                 left = bars.left,
+            )
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.editor) { v, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars()
+                        or WindowInsetsCompat.Type.displayCutout()
+            )
+            v.updatePadding(
                 right = bars.right,
                 bottom = bars.bottom,
             )
