@@ -103,12 +103,14 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
         const val EXTRA_PROFILE_ID = "id"
         const val EXTRA_IS_SUBSCRIPTION = "sub"
         const val KEY_TEMP_BEAN_BYTES = "temp_bean_bytes"
+        const val KEY_DIRTY = "dirty"
     }
 
     abstract fun createEntity(): T
     abstract fun T.init()
     abstract fun T.serialize()
 
+    protected var dirty = false
     protected var bean: T? = null
     protected var isSubscription by Delegates.notNull<Boolean>()
 
@@ -156,6 +158,10 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
         }
 
         onBackPressedDispatcher.addCallback(this, callback)
+        savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
+            dirty = it
+            callback.isEnabled = it
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -168,6 +174,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             buffer.close()
             outState.putByteArray(KEY_TEMP_BEAN_BYTES, output.toByteArray())
         }
+        outState.putBoolean(KEY_DIRTY, dirty)
     }
 
     open suspend fun saveAndExit() {
@@ -230,7 +237,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
     }
@@ -281,7 +288,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
             activity.apply {
                 viewCreated(view, savedInstanceState)
-                DataStore.dirty = false
                 DataStore.profileCacheStore.registerChangeListener(this)
             }
         }

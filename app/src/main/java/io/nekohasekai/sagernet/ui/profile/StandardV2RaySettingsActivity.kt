@@ -697,7 +697,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 pluginConfiguration.pluginsOptions, override ?: selected.id
             )
             DataStore.serverPlugin = pluginConfiguration.toString()
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
             plugin.value = pluginConfiguration.selected
             pluginConfigure.isEnabled = selected !is NoPlugin
@@ -739,7 +739,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             ))).toMutableMap(), selected
         )
         DataStore.serverPlugin = pluginConfiguration.toString()
-        DataStore.dirty = true
+        dirty = true
         callback.isEnabled = true
         true
     } catch (exc: RuntimeException) {

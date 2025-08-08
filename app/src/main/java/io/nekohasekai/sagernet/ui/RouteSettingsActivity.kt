@@ -70,6 +70,8 @@ class RouteSettingsActivity(
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
+    var dirty = false
+
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             UnsavedChangesDialogFragment().apply {
@@ -139,7 +141,7 @@ class RouteSettingsActivity(
     }
 
     fun needSave(): Boolean {
-        if (!DataStore.dirty) return false
+        if (!dirty) return false
         if (DataStore.routePackages.isEmpty() && DataStore.routeDomain.isEmpty() && DataStore.routeIP.isEmpty() && DataStore.routePort.isEmpty() && DataStore.routeSourcePort.isEmpty() && DataStore.routeNetwork.isEmpty() && DataStore.routeSource.isEmpty() && DataStore.routeProtocol.isEmpty() && DataStore.routeAttrs.isEmpty() && !(DataStore.routeReverse && DataStore.routeRedirect.isEmpty()) && DataStore.routeNetworkType.isEmpty()) {
             return false
         }
@@ -322,6 +324,7 @@ class RouteSettingsActivity(
     companion object {
         const val EXTRA_ROUTE_ID = "id"
         const val EXTRA_PACKAGE_NAME = "pkg"
+        const val KEY_DIRTY = "dirty"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -355,8 +358,6 @@ class RouteSettingsActivity(
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.settings, MyPreferenceFragmentCompat())
                         .commit()
-
-                    DataStore.dirty = false
                     DataStore.profileCacheStore.registerChangeListener(this@RouteSettingsActivity)
                 }
             }
@@ -365,6 +366,15 @@ class RouteSettingsActivity(
         }
 
         onBackPressedDispatcher.addCallback(this, callback)
+        savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
+            dirty = it
+            callback.isEnabled = it
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_DIRTY, dirty)
     }
 
     suspend fun saveAndExit() {
@@ -437,7 +447,7 @@ class RouteSettingsActivity(
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
     }

@@ -257,8 +257,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         isProxyApps.isEnabled = serviceMode.value == MODE_VPN
         isProxyApps.setOnPreferenceChangeListener { _, newValue ->
             startActivity(Intent(activity, AppManagerActivity::class.java))
-            if (newValue as Boolean) DataStore.dirty = true
-            newValue
+            newValue as Boolean
         }
 
         bypassLan.isEnabled = serviceMode.value == MODE_VPN

@@ -36,7 +36,6 @@ class ConfigSettingsActivity : ProfileSettingsActivity<ConfigBean>() {
     override fun createEntity() = ConfigBean()
 
     var config = ""
-    var dirty = false
 
     override fun ConfigBean.init() {
         DataStore.profileName = name

@@ -19,6 +19,7 @@
 package io.nekohasekai.sagernet.tasker
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -28,10 +29,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
+import com.github.shadowsocks.plugin.Empty
+import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
@@ -48,11 +52,18 @@ import io.nekohasekai.sagernet.widget.TaskerProfilePreference
 class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
     OnPreferenceDataStoreChangeListener {
 
+    companion object {
+        const val KEY_DIRTY = "dirty"
+    }
+
     val settings by lazy { TaskerBundle.fromIntent(intent) }
 
+    var dirty = false
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
-            saveAndExit()
+            UnsavedChangesDialogFragment().apply {
+                key()
+            }.show(supportFragmentManager, null)
         }
     }
 
@@ -81,10 +92,13 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
             .replace(R.id.settings, MyPreferenceFragmentCompat())
             .commit()
 
-        DataStore.dirty = false
         DataStore.profileCacheStore.registerChangeListener(this)
 
         onBackPressedDispatcher.addCallback(this, callback)
+        savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
+            dirty = it
+            callback.isEnabled = it
+        }
     }
 
     lateinit var profile: TaskerProfilePreference
@@ -110,9 +124,14 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
         profile.isEnabled = action.value == "0"
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_DIRTY, dirty)
+    }
+
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
         when (key) {
@@ -203,6 +222,20 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
                     bottom = bars.bottom,
                 )
                 insets
+            }
+        }
+    }
+
+    class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
+        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
+            setTitle(R.string.unsaved_changes_prompt)
+            setPositiveButton(android.R.string.ok) { _, _ ->
+                runOnDefaultDispatcher {
+                    (requireActivity() as TaskerActivity).saveAndExit()
+                }
+            }
+            setNegativeButton(android.R.string.cancel) { _, _ ->
+                requireActivity().finish()
             }
         }
     }

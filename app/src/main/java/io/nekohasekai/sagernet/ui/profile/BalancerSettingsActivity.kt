@@ -234,14 +234,14 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
             proxyList[to - 1] = proxyList[from - 1]
             proxyList[from - 1] = toMove
             notifyItemMoved(from, to)
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
 
         fun remove(index: Int) {
             proxyList.removeAt(index - 1)
             notifyItemRemoved(index)
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
 
@@ -304,7 +304,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
 
     val selectProfileForAdd = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
         if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
 
             val profile = ProfileManager.getProfile(

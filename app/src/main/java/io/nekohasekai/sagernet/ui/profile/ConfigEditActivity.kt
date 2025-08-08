@@ -54,6 +54,7 @@ class ConfigEditActivity : ThemedActivity() {
 
     companion object {
         private const val KEY_CONFIG = "config"
+        private const val KEY_DIRTY = "dirty"
     }
 
     private lateinit var binding: LayoutEditConfigBinding
@@ -130,11 +131,8 @@ class ConfigEditActivity : ThemedActivity() {
         binding.editor.language = JsonLanguage()
         binding.editor.onChangeListener = OnChangeListener {
             config = binding.editor.text.toString()
-            if (!dirty) {
-                dirty = true
-                DataStore.dirty = true
-                callback.isEnabled = true
-            }
+            dirty = true
+            callback.isEnabled = true
         }
         binding.editor.setHorizontallyScrolling(true)
 
@@ -150,11 +148,16 @@ class ConfigEditActivity : ThemedActivity() {
         }
 
         onBackPressedDispatcher.addCallback(this, callback)
+        savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
+            dirty = it
+            callback.isEnabled = it
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(KEY_CONFIG, config)
+        outState.putBoolean(KEY_DIRTY, dirty)
     }
 
     fun saveAndExit() {

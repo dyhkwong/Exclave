@@ -56,6 +56,8 @@ class AssetEditActivity(
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
+    var dirty = false
+
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             UnsavedChangesDialogFragment().apply {
@@ -75,8 +77,7 @@ class AssetEditActivity(
     }
 
     fun needSave(): Boolean {
-        if (!DataStore.dirty) return false
-        return true
+        return dirty
     }
 
     fun validate() {
@@ -139,6 +140,7 @@ class AssetEditActivity(
 
     companion object {
         const val EXTRA_ASSET_NAME = "name"
+        const val KEY_DIRTY = "dirty"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -173,7 +175,6 @@ class AssetEditActivity(
                         .replace(R.id.settings, MyPreferenceFragmentCompat())
                         .commit()
 
-                    DataStore.dirty = false
                     DataStore.profileCacheStore.registerChangeListener(this@AssetEditActivity)
                 }
             }
@@ -181,6 +182,15 @@ class AssetEditActivity(
         }
 
         onBackPressedDispatcher.addCallback(this, callback)
+        savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
+            dirty = it
+            callback.isEnabled = it
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_DIRTY, dirty)
     }
 
     suspend fun saveAndExit() {
@@ -250,7 +260,7 @@ class AssetEditActivity(
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
     }

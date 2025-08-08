@@ -62,6 +62,8 @@ class GroupSettingsActivity(
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
+    var dirty = false
+
     val callback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             UnsavedChangesDialogFragment().apply {
@@ -123,10 +125,7 @@ class GroupSettingsActivity(
     }
 
     fun needSave(): Boolean {
-        if (!DataStore.dirty) {
-            return false
-        }
-        return true
+        return dirty
     }
 
     fun PreferenceFragmentCompat.createPreferences(
@@ -252,6 +251,7 @@ class GroupSettingsActivity(
 
     companion object {
         const val EXTRA_GROUP_ID = "id"
+        const val KEY_DIRTY = "dirty"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -263,6 +263,8 @@ class GroupSettingsActivity(
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
+
+        onBackPressedDispatcher.addCallback(this, callback)
 
         if (savedInstanceState == null) {
             val editingId = intent.getLongExtra(EXTRA_GROUP_ID, 0L)
@@ -285,15 +287,20 @@ class GroupSettingsActivity(
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.settings, MyPreferenceFragmentCompat())
                         .commit()
-
-                    DataStore.dirty = false
                     DataStore.profileCacheStore.registerChangeListener(this@GroupSettingsActivity)
                 }
             }
-
-            onBackPressedDispatcher.addCallback(this, callback)
+        } else {
+            savedInstanceState.getBoolean(KEY_DIRTY).let {
+                dirty = it
+                callback.isEnabled = it
+            }
         }
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(KEY_DIRTY, dirty)
     }
 
     suspend fun saveAndExit() {
@@ -353,7 +360,7 @@ class GroupSettingsActivity(
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
-            DataStore.dirty = true
+            dirty = true
             callback.isEnabled = true
         }
     }
