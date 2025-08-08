@@ -68,7 +68,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 top = dp2px(8),
                 left = bars.left + dp2px(8),
                 right = bars.right + dp2px(8),
-                bottom = bars.bottom + dp2px(96),
+                bottom = bars.bottom + dp2px(64),
             )
             insets
         }
@@ -124,7 +124,6 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
             // The timeout is initially small so that the view gets populated immediately.
             var timeout = 1000000000L / 2
 
-
             while (true) {
                 val line = stdout.readLine() ?: break
                 bufferedLogLines.add(line)
@@ -151,8 +150,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                     )
                     bufferedLogLines.clear()
                     binding.logsScrollView.post {
-                        val height = binding.logsTextView.height
-                        binding.logsScrollView.smoothScrollTo(0, height)
+                        binding.logsScrollView.fullScroll(View.FOCUS_DOWN)
                     }
                 }
             }

@@ -22,7 +22,7 @@
         android:paddingTop="8dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:paddingBottom="96dp" >
+        android:paddingBottom="64dp" >
 
         <TextView
             android:id="@+id/logsTextView"
