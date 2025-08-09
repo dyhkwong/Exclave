@@ -465,7 +465,7 @@
     <string name="probe_cert">Проверка сертификата</string>
     <string name="probe_cert_target_server">Целевой сервер</string>
     <string name="probe_cert_success">Проверка прошла успешно! Сертификат скопирован в буфер обмена.</string>
-    <string name="landing_proxy">Обратный прокси</string>
+    <string name="landing_proxy">Конечный прокси</string>
     <string name="resolve_destination_for_direct">Резолвить адрес назначения (прямой)</string>
     <string name="edns_client_ip">IP-адрес клиента EDNS</string>
     <string name="allow_apps_bypass_vpn">Разрешить приложениям обходить VPN</string>
@@ -503,7 +503,7 @@
     <string name="enable_fragment">Включить фрагментацию TLS Client Hello</string>
     <string name="fragment_length">Длина фрагментации</string>
     <string name="probe_cert_summary">Проверка TLS-сертификата сервера.</string>
-    <string name="front_proxy">Прямой прокси</string>
+    <string name="front_proxy">Начальный прокси</string>
     <string name="allow_apps_bypass_vpn_sum">Разрешить приложениям обходить VPN самостоятельно, используя системные методы</string>
     <string name="ech_config">ECH-конфиг</string>
     <string name="splithttp_mode">Режим</string>
