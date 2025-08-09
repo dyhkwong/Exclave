@@ -52,7 +52,11 @@ fun String.unwrapIDN(): String {
     if (this.isIpAddress() || this.all { it.code < 128 }) {
         return this
     }
-    return IDN.toASCII(this, IDN.ALLOW_UNASSIGNED)
+    return try {
+        IDN.toASCII(this, IDN.ALLOW_UNASSIGNED)
+    } catch (_: IllegalArgumentException) {
+        this
+    }
 }
 
 fun String.isIpAddress(): Boolean {
