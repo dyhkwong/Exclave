@@ -11,104 +11,62 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/bypassGroup"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/appProxyModeDisable"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="@string/off" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:paddingBottom="4dp">
+        <com.google.android.material.chip.Chip
+            android:id="@+id/appProxyModeOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/route_proxy" />
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/bypassGroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:selectionRequired="true"
-                    app:singleSelection="true">
+        <com.google.android.material.chip.Chip
+            android:id="@+id/appProxyModeBypass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/bypass_apps" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/appProxyModeDisable"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/off" />
+    </com.google.android.material.chip.ChipGroup>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/appProxyModeOn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/route_proxy" />
+    <LinearLayout
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/appProxyModeBypass"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="@string/bypass_apps" />
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
 
-                </com.google.android.material.chip.ChipGroup>
+    </LinearLayout>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/show_system_apps"
-                    style="@style/Widget.MaterialComponents.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/show_system_apps" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/search_apps">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/search"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/loading"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:indeterminate="true" />
-
-            </LinearLayout>
-
-            <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:scrollbarSize="0dp"
-                android:visibility="gone"
-                app:fastScrollAutoHide="true"
-                app:fastScrollPopupTextColor="?colorPrimary"
-                app:fastScrollThumbColor="?colorPrimary"
-                app:fastScrollThumbInactiveColor="?colorPrimary"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:listitem="@layout/layout_apps_item" />
-
-        </LinearLayout>
-
-    </ScrollView>
+    <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbarSize="0dp"
+        android:visibility="gone"
+        app:fastScrollAutoHide="true"
+        app:fastScrollPopupTextColor="?colorPrimary"
+        app:fastScrollThumbColor="?colorPrimary"
+        app:fastScrollThumbInactiveColor="?colorPrimary"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/layout_apps_item" />
 
 </LinearLayout>

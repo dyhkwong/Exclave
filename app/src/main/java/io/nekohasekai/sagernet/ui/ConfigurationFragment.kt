@@ -29,6 +29,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
@@ -85,8 +86,14 @@ class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false, val selectedItem: ProxyEntity? = null, val titleRes: Int = 0
 ) : ToolbarFragment(R.layout.layout_group_list),
     PopupMenu.OnMenuItemClickListener,
-    Toolbar.OnMenuItemClickListener,
-    SearchView.OnQueryTextListener {
+    Toolbar.OnMenuItemClickListener {
+
+    val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            searchView?.onActionViewCollapsed()
+            searchView?.clearFocus()
+        }
+    }
 
     interface SelectCallback {
         fun returnProfile(profileId: Long)
@@ -95,6 +102,7 @@ class ConfigurationFragment @JvmOverloads constructor(
     lateinit var adapter: GroupPagerAdapter
     lateinit var tabLayout: TabLayout
     lateinit var groupPager: ViewPager2
+    var searchView: SearchView? = null
     val selectedGroup get() = if (tabLayout.isGone && adapter.groupList.size > 0) adapter.groupList[0] else (if (adapter.groupList.size > 0 && tabLayout.selectedTabPosition > -1) adapter.groupList[tabLayout.selectedTabPosition] else ProxyGroup())
     val alwaysShowAddress by lazy { DataStore.alwaysShowAddress }
 
@@ -107,14 +115,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
         }
     }
-
-    override fun onQueryTextChange(query: String): Boolean {
-        val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
-        fragment?.adapter?.filter(query)
-        return false
-    }
-
-    override fun onQueryTextSubmit(query: String): Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,19 +152,24 @@ class ConfigurationFragment @JvmOverloads constructor(
             insets
         }
 
-        val searchView = toolbar.findViewById<SearchView>(R.id.action_search)
-        if (searchView != null) {
-            searchView.setOnQueryTextListener(this)
-            searchView.maxWidth = Int.MAX_VALUE
-            searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    searchView.onActionViewCollapsed()
-                    searchView.clearFocus()
-                    (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = false
-                } else {
-                    (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
+        searchView = toolbar.findViewById(R.id.action_search)
+        searchView?.maxWidth = Int.MAX_VALUE
+        searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+            override fun onQueryTextChange(query: String?): Boolean {
+                query?.let {
+                    val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
+                    fragment?.adapter?.filter(query)
                 }
+                return false
             }
+        })
+        searchView?.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            onBackPressedCallback.isEnabled = hasFocus
+        }
+        searchView?.let {
+            // override onBackPressedCallback of MainActivity
+            (requireActivity() as? MainActivity)?.onBackPressedDispatcher?.addCallback(this, onBackPressedCallback)
         }
 
         groupPager = view.findViewById(R.id.group_pager)
@@ -177,10 +182,14 @@ class ConfigurationFragment @JvmOverloads constructor(
         groupPager.offscreenPageLimit = 2
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {}
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                searchView?.onActionViewCollapsed()
+                searchView?.clearFocus()
+            }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
-                onQueryTextChange("")
+                val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
+                fragment?.adapter?.filter("")
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {}

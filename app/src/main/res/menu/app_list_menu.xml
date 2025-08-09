@@ -1,16 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_search"
+        android:title="@android:string/search_go"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_invert_selections"
-        android:title="@string/invert_selections" />
+        android:title="@string/invert_selections"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_clear_selections"
         android:title="@string/clear_selections"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_export_clipboard"
-        android:title="@string/action_export_clipboard" />
+        android:title="@string/action_export_clipboard"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_import_clipboard"
-        android:title="@string/action_import" />
+        android:title="@string/action_import"
+        app:showAsAction="never" />
 </menu>

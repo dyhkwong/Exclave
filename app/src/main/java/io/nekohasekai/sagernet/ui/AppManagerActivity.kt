@@ -29,13 +29,14 @@ import android.util.SparseBooleanArray
 import android.view.*
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.UiThread
+import androidx.appcompat.widget.SearchView
 import androidx.core.util.contains
 import androidx.core.util.set
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,6 +50,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutAppsBinding
 import io.nekohasekai.sagernet.databinding.LayoutAppsItemBinding
 import io.nekohasekai.sagernet.ktx.crossFadeFrom
+import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.PackageCache
@@ -60,6 +62,14 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
 class AppManagerActivity : ThemedActivity() {
+
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            searchView.onActionViewCollapsed()
+            searchView.clearFocus()
+        }
+    }
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         private var instance: AppManagerActivity? = null
@@ -78,7 +88,6 @@ class AppManagerActivity : ThemedActivity() {
         val name: CharSequence = appInfo.loadLabel(pm)    // cached for sorting
         val icon: Drawable get() = appInfo.loadIcon(pm)
         val uid get() = appInfo.uid
-        val sys get() = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
     }
 
     private inner class AppViewHolder(val binding: LayoutAppsItemBinding) : RecyclerView.ViewHolder(
@@ -148,7 +157,6 @@ class AppManagerActivity : ThemedActivity() {
                         constraint, true
                     ) || it.uid.toString().contains(constraint)
                 }
-                if (!sysApps) filteredApps = filteredApps.filter { !it.sys }
                 count = filteredApps.size
                 values = filteredApps
             }
@@ -174,6 +182,7 @@ class AppManagerActivity : ThemedActivity() {
     private var loader: Job? = null
     private var apps = emptyList<ProxiedApp>()
     private val appsAdapter = AppsAdapter()
+    private lateinit var searchView: SearchView
 
     private fun initProxiedUids(str: String = DataStore.individual) {
         proxiedUids.clear()
@@ -191,7 +200,7 @@ class AppManagerActivity : ThemedActivity() {
             loading.crossFadeFrom(binding.list)
             val adapter = binding.list.adapter as AppsAdapter
             withContext(Dispatchers.IO) { adapter.reload() }
-            adapter.filter.filter(binding.search.text?.toString() ?: "")
+            adapter.filter.filter( "")
             binding.list.crossFadeFrom(loading)
         }
     }
@@ -202,14 +211,14 @@ class AppManagerActivity : ThemedActivity() {
         binding = LayoutAppsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.scrollView)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.bypassGroup)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
             )
             v.updatePadding(
-                left = bars.left,
-                right = bars.right,
+                left = bars.left + dp2px(4),
+                right = bars.right + dp2px(4),
             )
             insets
         }
@@ -219,6 +228,8 @@ class AppManagerActivity : ThemedActivity() {
                         or WindowInsetsCompat.Type.displayCutout()
             )
             v.updatePadding(
+                left = bars.left,
+                right = bars.right,
                 bottom = bars.bottom,
             )
             insets
@@ -251,24 +262,20 @@ class AppManagerActivity : ThemedActivity() {
         binding.list.itemAnimator = DefaultItemAnimator()
         binding.list.adapter = appsAdapter
 
-        binding.search.addTextChangedListener {
-            appsAdapter.filter.filter(it?.toString() ?: "")
-        }
-
-        binding.showSystemApps.isChecked = sysApps
-        binding.showSystemApps.setOnCheckedChangeListener { _, isChecked ->
-            sysApps = isChecked
-            appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
-        }
-
         instance = this
         loadApps()
     }
 
-    private var sysApps = true
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.per_app_proxy_menu, menu)
+        searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            onBackPressedCallback.isEnabled = hasFocus
+        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+            override fun onQueryTextChange(newText: String?) = true.also { appsAdapter.filter.filter(newText) }
+        })
         return true
     }
 
@@ -287,7 +294,7 @@ class AppManagerActivity : ThemedActivity() {
                         .joinToString("\n") { it.packageName }
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
-                        appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
+                        appsAdapter.filter.filter("")
                     }
                 }
 
@@ -299,7 +306,7 @@ class AppManagerActivity : ThemedActivity() {
                     DataStore.individual = ""
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
-                        appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
+                        appsAdapter.filter.filter("")
                     }
                 }
             }

@@ -28,13 +28,14 @@ import android.util.SparseBooleanArray
 import android.view.*
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.UiThread
+import androidx.appcompat.widget.SearchView
 import androidx.core.util.contains
 import androidx.core.util.set
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,6 +60,14 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
 class AppListActivity : ThemedActivity() {
+
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
+        override fun handleOnBackPressed() {
+            searchView.onActionViewCollapsed()
+            searchView.clearFocus()
+        }
+    }
+
     companion object {
         private const val SWITCH = "switch"
 
@@ -75,7 +84,6 @@ class AppListActivity : ThemedActivity() {
         val name: CharSequence = appInfo.loadLabel(pm)    // cached for sorting
         val icon: Drawable get() = appInfo.loadIcon(pm)
         val uid get() = appInfo.uid
-        val sys get() = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
     }
 
     private inner class AppViewHolder(val binding: LayoutAppsItemBinding) : RecyclerView.ViewHolder(
@@ -145,7 +153,6 @@ class AppListActivity : ThemedActivity() {
                         constraint, true
                     ) || it.uid.toString().contains(constraint)
                 }
-                if (!sysApps) filteredApps = filteredApps.filter { !it.sys }
                 count = filteredApps.size
                 values = filteredApps
             }
@@ -171,6 +178,7 @@ class AppListActivity : ThemedActivity() {
     private var loader: Job? = null
     private var apps = emptyList<ProxiedApp>()
     private val appsAdapter = AppsAdapter()
+    private lateinit var searchView: SearchView
 
     private fun initProxiedUids(str: String = DataStore.routePackages) {
         proxiedUids.clear()
@@ -188,7 +196,7 @@ class AppListActivity : ThemedActivity() {
             loading.crossFadeFrom(binding.list)
             val adapter = binding.list.adapter as AppsAdapter
             withContext(Dispatchers.IO) { adapter.reload() }
-            adapter.filter.filter(binding.search.text?.toString() ?: "")
+            adapter.filter.filter("")
             binding.list.crossFadeFrom(loading)
         }
     }
@@ -199,7 +207,7 @@ class AppListActivity : ThemedActivity() {
         binding = LayoutAppListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.scrollView)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.list)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
@@ -207,15 +215,6 @@ class AppListActivity : ThemedActivity() {
             v.updatePadding(
                 left = bars.left,
                 right = bars.right,
-            )
-            insets
-        }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.list)) { v, insets ->
-            val bars = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars()
-                        or WindowInsetsCompat.Type.displayCutout()
-            )
-            v.updatePadding(
                 bottom = bars.bottom,
             )
             insets
@@ -226,29 +225,24 @@ class AppListActivity : ThemedActivity() {
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
-
         initProxiedUids()
         binding.list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.list.itemAnimator = DefaultItemAnimator()
         binding.list.adapter = appsAdapter
 
-        binding.search.addTextChangedListener {
-            appsAdapter.filter.filter(it?.toString() ?: "")
-        }
-
-        binding.showSystemApps.isChecked = sysApps
-        binding.showSystemApps.setOnCheckedChangeListener { _, isChecked ->
-            sysApps = isChecked
-            appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
-        }
-
         loadApps()
     }
 
-    private var sysApps = false
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.app_list_menu, menu)
+        searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = false
+            override fun onQueryTextChange(newText: String?) = true.also { appsAdapter.filter.filter(newText) }
+        })
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            onBackPressedCallback.isEnabled = hasFocus
+        }
         return true
     }
 
@@ -267,7 +261,7 @@ class AppListActivity : ThemedActivity() {
                         .joinToString("\n") { it.packageName }
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
-                        appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
+                        appsAdapter.filter.filter("")
                     }
                 }
 
@@ -279,7 +273,7 @@ class AppListActivity : ThemedActivity() {
                     DataStore.routePackages = ""
                     apps = apps.sortedWith(compareBy({ !isProxiedApp(it) }, { it.name.toString() }))
                     onMainDispatcher {
-                        appsAdapter.filter.filter(binding.search.text?.toString() ?: "")
+                        appsAdapter.filter.filter("")
                     }
                 }
             }
