@@ -23,6 +23,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -70,6 +71,10 @@ abstract class ThemedActivity : AppCompatActivity {
 
         super.onCreate(savedInstanceState)
         uiMode = resources.configuration.uiMode
+
+        onBackPressedCallback?.let {
+            onBackPressedDispatcher.addCallback(this, it)
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && Build.VERSION.SDK_INT <= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -121,5 +126,7 @@ abstract class ThemedActivity : AppCompatActivity {
     }
 
     internal open fun snackbarInternal(text: CharSequence): Snackbar = throw NotImplementedError()
+
+    open val onBackPressedCallback: OnBackPressedCallback? get() = null
 
 }

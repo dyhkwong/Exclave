@@ -235,14 +235,14 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
             proxyList[from - 1] = toMove
             notifyItemMoved(from, to)
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
         }
 
         fun remove(index: Int) {
             proxyList.removeAt(index - 1)
             notifyItemRemoved(index)
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
         }
 
         override fun getItemId(position: Int): Long {
@@ -305,7 +305,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
     val selectProfileForAdd = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
         if (resultCode == Activity.RESULT_OK) runOnDefaultDispatcher {
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
 
             val profile = ProfileManager.getProfile(
                 data!!.getLongExtra(

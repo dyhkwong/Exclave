@@ -73,7 +73,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
             insets
         }
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
 
         runOnIoDispatcher {
             streamingLog()

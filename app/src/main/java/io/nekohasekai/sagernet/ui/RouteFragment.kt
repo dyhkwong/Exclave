@@ -121,7 +121,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
             }
         }).attachToRecyclerView(ruleListView)
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
     }
 
     override fun onDestroy() {

@@ -75,7 +75,7 @@ class MainActivity : ThemedActivity(),
 
     val userInterface by lazy { GroupInterfaceAdapter(this) }
 
-    val callback = object : OnBackPressedCallback(enabled = false) {
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             displayFragmentWithId(R.id.nav_configuration)
         }
@@ -145,8 +145,6 @@ class MainActivity : ThemedActivity(),
                 insets
             }
         }
-
-        onBackPressedDispatcher.addCallback(this, callback)
 
         if (savedInstanceState == null) {
             displayFragmentWithId(R.id.nav_configuration)

@@ -59,7 +59,7 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
     val settings by lazy { TaskerBundle.fromIntent(intent) }
 
     var dirty = false
-    val callback = object : OnBackPressedCallback(enabled = false) {
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             UnsavedChangesDialogFragment().apply {
                 key()
@@ -94,10 +94,9 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
 
         DataStore.profileCacheStore.registerChangeListener(this)
 
-        onBackPressedDispatcher.addCallback(this, callback)
         savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
             dirty = it
-            callback.isEnabled = it
+            onBackPressedCallback.isEnabled = it
         }
     }
 
@@ -132,7 +131,7 @@ class TaskerActivity : ThemedActivity(R.layout.layout_config_settings),
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
         }
         when (key) {
             Key.TASKER_ACTION -> {

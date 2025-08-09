@@ -58,7 +58,7 @@ class AssetEditActivity(
 
     var dirty = false
 
-    val callback = object : OnBackPressedCallback(enabled = false) {
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             UnsavedChangesDialogFragment().apply {
                 key()
@@ -181,10 +181,9 @@ class AssetEditActivity(
 
         }
 
-        onBackPressedDispatcher.addCallback(this, callback)
         savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
             dirty = it
-            callback.isEnabled = it
+            onBackPressedCallback.isEnabled = it
         }
     }
 
@@ -261,7 +260,7 @@ class AssetEditActivity(
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
         }
     }
 

@@ -160,9 +160,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 if (!hasFocus) {
                     searchView.onActionViewCollapsed()
                     searchView.clearFocus()
-                    (requireActivity() as? MainActivity)?.callback?.isEnabled = false
+                    (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = false
                 } else {
-                    (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+                    (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
                 }
             }
         }
@@ -246,7 +246,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             true
         }
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = false
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = false
     }
 
     override fun onDestroy() {

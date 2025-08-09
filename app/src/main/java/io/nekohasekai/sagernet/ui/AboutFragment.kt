@@ -80,7 +80,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             .replace(R.id.about_fragment_holder, AboutContent())
             .commitAllowingStateLoss()
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
 
         runOnDefaultDispatcher {
             onMainDispatcher {

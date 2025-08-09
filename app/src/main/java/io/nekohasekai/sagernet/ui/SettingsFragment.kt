@@ -34,7 +34,7 @@ class SettingsFragment : ToolbarFragment(R.layout.layout_config_settings) {
             .replace(R.id.settings, SettingsPreferenceFragment())
             .commitAllowingStateLoss()
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
     }
 
 }

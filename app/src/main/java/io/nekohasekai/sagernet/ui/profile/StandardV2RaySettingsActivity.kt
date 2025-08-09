@@ -698,7 +698,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             )
             DataStore.serverPlugin = pluginConfiguration.toString()
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
             plugin.value = pluginConfiguration.selected
             pluginConfigure.isEnabled = selected !is NoPlugin
             pluginConfigure.text = pluginConfiguration.getOptions().toString()
@@ -740,7 +740,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         )
         DataStore.serverPlugin = pluginConfiguration.toString()
         dirty = true
-        callback.isEnabled = true
+        onBackPressedCallback.isEnabled = true
         true
     } catch (exc: RuntimeException) {
         Snackbar.make(child.requireView(), exc.readableMessage, Snackbar.LENGTH_LONG).show()

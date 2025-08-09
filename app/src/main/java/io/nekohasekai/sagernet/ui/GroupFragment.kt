@@ -136,7 +136,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
             }
         }).attachToRecyclerView(groupListView)
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {

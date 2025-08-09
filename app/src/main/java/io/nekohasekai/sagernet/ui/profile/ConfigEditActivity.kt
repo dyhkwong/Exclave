@@ -62,7 +62,7 @@ class ConfigEditActivity : ThemedActivity() {
     var config = ""
     var dirty = false
 
-    val callback = object : OnBackPressedCallback(enabled = false) {
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             if (ViewCompat.getRootWindowInsets(binding.editor)
                 ?.isVisible(WindowInsetsCompat.Type.ime()) == true
@@ -132,7 +132,7 @@ class ConfigEditActivity : ThemedActivity() {
         binding.editor.onChangeListener = OnChangeListener {
             config = binding.editor.text.toString()
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
         }
         binding.editor.setHorizontallyScrolling(true)
 
@@ -147,10 +147,9 @@ class ConfigEditActivity : ThemedActivity() {
             }
         }
 
-        onBackPressedDispatcher.addCallback(this, callback)
         savedInstanceState?.getBoolean(KEY_DIRTY)?.let {
             dirty = it
-            callback.isEnabled = it
+            onBackPressedCallback.isEnabled = it
         }
     }
 

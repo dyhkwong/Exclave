@@ -64,7 +64,7 @@ class GroupSettingsActivity(
 
     var dirty = false
 
-    val callback = object : OnBackPressedCallback(enabled = false) {
+    override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
             UnsavedChangesDialogFragment().apply {
                 key()
@@ -264,8 +264,6 @@ class GroupSettingsActivity(
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
 
-        onBackPressedDispatcher.addCallback(this, callback)
-
         if (savedInstanceState == null) {
             val editingId = intent.getLongExtra(EXTRA_GROUP_ID, 0L)
             DataStore.editingId = editingId
@@ -293,7 +291,7 @@ class GroupSettingsActivity(
         } else {
             savedInstanceState.getBoolean(KEY_DIRTY).let {
                 dirty = it
-                callback.isEnabled = it
+                onBackPressedCallback.isEnabled = it
             }
         }
     }
@@ -361,7 +359,7 @@ class GroupSettingsActivity(
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         if (key != Key.PROFILE_DIRTY) {
             dirty = true
-            callback.isEnabled = true
+            onBackPressedCallback.isEnabled = true
         }
     }
 

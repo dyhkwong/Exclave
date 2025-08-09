@@ -84,7 +84,7 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
 
         (requireActivity() as MainActivity).connection.trafficTimeout = 1500
 
-        (requireActivity() as? MainActivity)?.callback?.isEnabled = true
+        (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
