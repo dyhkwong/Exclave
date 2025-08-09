@@ -64,8 +64,6 @@ class ScannerActivity : ThemedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setTitle(R.string.add_profile_methods_scan_qr_code)
-
         if (Build.VERSION.SDK_INT >= 25) getSystemService<ShortcutManager>()!!.reportShortcutUsed("scan")
 
         binding = LayoutScannerBinding.inflate(layoutInflater)
@@ -73,6 +71,7 @@ class ScannerActivity : ThemedActivity() {
 
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
+            setTitle(R.string.add_profile_methods_scan_qr_code)
             setDisplayHomeAsUpEnabled(true)
             setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
