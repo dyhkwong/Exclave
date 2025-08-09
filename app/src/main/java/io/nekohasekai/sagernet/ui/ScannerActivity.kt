@@ -53,6 +53,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.core.net.toUri
 import cn.hutool.core.lang.Validator.isUrl
+import io.nekohasekai.sagernet.utils.ZxingQRCodeAnalyzer
 import libcore.Libcore
 
 class ScannerActivity : ThemedActivity() {

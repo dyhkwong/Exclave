@@ -17,7 +17,7 @@
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.ui
+package io.nekohasekai.sagernet.utils
 
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
