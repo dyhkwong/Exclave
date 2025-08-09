@@ -202,13 +202,12 @@ class AppManagerActivity : ThemedActivity() {
         binding = LayoutAppsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.collapsing_toolbar)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.scrollView)) { v, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
             )
             v.updatePadding(
-                top = bars.top,
                 left = bars.left,
                 right = bars.right,
             )
@@ -220,13 +219,11 @@ class AppManagerActivity : ThemedActivity() {
                         or WindowInsetsCompat.Type.displayCutout()
             )
             v.updatePadding(
-                left = bars.left,
-                right = bars.right,
                 bottom = bars.bottom,
             )
             insets
         }
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.apply {
             setTitle(R.string.proxied_apps)
             setDisplayHomeAsUpEnabled(true)
@@ -344,10 +341,6 @@ class AppManagerActivity : ThemedActivity() {
 
     override fun supportNavigateUpTo(upIntent: Intent) =
         super.supportNavigateUpTo(upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?) = if (keyCode == KeyEvent.KEYCODE_MENU) {
-        if (binding.toolbar.isOverflowMenuShowing) binding.toolbar.hideOverflowMenu() else binding.toolbar.showOverflowMenu()
-    } else super.onKeyUp(keyCode, event)
 
     override fun onDestroy() {
         instance = null
