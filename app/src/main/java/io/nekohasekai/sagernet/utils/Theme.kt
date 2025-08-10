@@ -120,7 +120,7 @@ object Theme {
             GREY -> R.style.Theme_SagerNet_Dialog_Grey
             BLUE_GREY -> R.style.Theme_SagerNet_Dialog_BlueGrey
             BLACK -> if (usingNightMode()) R.style.Theme_SagerNet_Dialog_Black else R.style.Theme_SagerNet_Dialog_LightBlack
-            DYNAMIC -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) R.style.Theme_SagerNet_Dynamic else getDialogTheme(defaultTheme())
+            DYNAMIC -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) R.style.Theme_SagerNet_Dialog_Dynamic else getDialogTheme(defaultTheme())
             else -> getDialogTheme(defaultTheme())
         }
     }
