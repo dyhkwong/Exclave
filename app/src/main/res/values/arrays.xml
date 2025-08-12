@@ -919,4 +919,14 @@
         <item>@string/route_mode_global</item>
         <item>@string/route_mode_direct</item>
     </string-array>
+
+    <string-array name="mieru_handshake_mode_entry">
+        <item>HANDSHAKE_STANDARD</item>
+        <item>HANDSHAKE_NO_WAIT</item>
+    </string-array>
+
+    <string-array name="mieru_handshake_mode_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>

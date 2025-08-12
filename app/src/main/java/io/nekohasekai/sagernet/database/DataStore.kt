@@ -362,6 +362,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var serverShadowTLSProtocolVersion by profileCacheStore.stringToInt(Key.SERVER_SHADOWTLS_PROTOCOL_VERSION)
     var serverMieruMuxLevel by profileCacheStore.stringToInt(Key.SERVER_MIERU_MUX_LEVEL)
+    var serverMieruHandshakeMode by profileCacheStore.stringToInt(Key.SERVER_MIERU_HANDSHAKE_MODE)
     var serverWireGuardReserved by profileCacheStore.string(Key.SERVER_WIREGUARD_RESERVED)
     var serverWireGuardKeepaliveInterval by profileCacheStore.stringToInt(Key.SERVER_WIREGUARD_KEEPALIVE_INTERVAL)
     var serverAnyTLSIdleSessionCheckInterval by profileCacheStore.stringToInt(Key.SERVER_ANYTLS_IDLE_SESSION_CHECK_INTERVAL) { 30 }

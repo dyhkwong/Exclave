@@ -227,6 +227,7 @@ object Key {
 
     const val SERVER_SHADOWTLS_PROTOCOL_VERSION = "serverShadowTLSProtocolVersion"
     const val SERVER_MIERU_MUX_LEVEL = "serverMieruMuxLevel"
+    const val SERVER_MIERU_HANDSHAKE_MODE = "serverMieruHandshakeMode"
     const val SERVER_WIREGUARD_RESERVED = "serverWireGuardReserved"
     const val SERVER_WIREGUARD_KEEPALIVE_INTERVAL = "serverWireGuardKeepaliveInterval"
     const val SERVER_ANYTLS_IDLE_SESSION_CHECK_INTERVAL = "serverAnyTLSIdleSessionCheckInterval"

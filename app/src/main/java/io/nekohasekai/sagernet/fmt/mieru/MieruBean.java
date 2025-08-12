@@ -39,11 +39,15 @@ public class MieruBean extends AbstractBean {
     public static final int MULTIPLEXING_MIDDLE = 3;
     public static final int MULTIPLEXING_HIGH = 4;
 
+    public static final int HANDSHAKE_STANDARD = 0;
+    public static final int HANDSHAKE_NO_WAIT = 1;
+
     public Integer protocol;
     public String username;
     public String password;
     public Integer mtu;
     public Integer multiplexingLevel;
+    public Integer handshakeMode;
 
     @Override
     public void initializeDefaultValues() {
@@ -53,11 +57,12 @@ public class MieruBean extends AbstractBean {
         if (password == null) password = "";
         if (mtu == null) mtu = 1400;
         if (multiplexingLevel == null) multiplexingLevel = MULTIPLEXING_DEFAULT;
+        if (handshakeMode == null) handshakeMode = HANDSHAKE_STANDARD;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeInt(protocol);
         output.writeString(username);
@@ -66,6 +71,7 @@ public class MieruBean extends AbstractBean {
             output.writeInt(mtu);
         }
         output.writeInt(multiplexingLevel);
+        output.writeInt(handshakeMode);
     }
 
     @Override
@@ -81,6 +87,17 @@ public class MieruBean extends AbstractBean {
         if (version >= 1) {
             multiplexingLevel = input.readInt();
         }
+        if (version >= 2) {
+            handshakeMode = input.readInt();
+        }
+    }
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof MieruBean bean)) return;
+        bean.multiplexingLevel = multiplexingLevel;
+        bean.handshakeMode = handshakeMode;
+        bean.mtu = mtu;
     }
 
     @Override

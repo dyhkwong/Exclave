@@ -163,6 +163,9 @@ fun MieruBean.buildMieruConfig(port: Int): String {
                         }
                     }
                 }
+                when (handshakeMode) {
+                    MieruBean.HANDSHAKE_NO_WAIT -> it["handshakeMode"] = "HANDSHAKE_NO_WAIT"
+                }
             })
         }
     }.toStringPretty()

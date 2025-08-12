@@ -579,4 +579,5 @@
     <string name="debug_log_sum">运行配置将被打印到系统日志，因此日志将包含用于连接到服务端的密钥。对于问题反馈，该等级的日志是必需的，公开发布日志文件前请删除敏感信息。</string>
     <string name="do_not_show_again">不再显示</string>
     <string name="format">格式：%s</string>
+    <string name="mieru_handshake_mode">握手模式</string>
 </resources>
