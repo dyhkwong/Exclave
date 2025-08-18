@@ -411,9 +411,7 @@
     <string name="backup_groups_and_configurations">Группы и профили</string>
     <string name="backup_summary">Если правила маршрутизации резервируются без конфигураций, то пользовательские исходящие соединения будут потеряны. Обратная или прямая совместимость не гарантируется.</string>
     <string name="tasker_action_stop_service">Остановить сервис</string>
-    <string name="experimental_reduced_iv_head_entropy">Это предложение GFWReport по контрмерам блокировке потоковых протоколов случайных данных, наблюдаемой на GFW.
-\n
-\nЭта функция заменяет первые 6 байт вектора инициализации на буквенные символы, что позволяет кому угодно в сети провайдера идентифицировать протокол когда функция включена.</string>
+    <string name="experimental_reduced_iv_head_entropy">Это предложение GFWReport для противодействия блокировке рандомизированных потоковых протоколов GFW.\nДанная опция преобразует первые 6 байт вектора инициализации (IV) в печатные символы, что не позволяет идентифицировать протокол при мониторинге сети с привилегированным доступом.</string>
     <string name="tasker_action_start_service">Запустить сервис</string>
     <string name="tasker_start_current_profile">Текущий профиль</string>
     <string name="tasker_blurb_start_profile">Запустить профиль %s</string>
@@ -589,4 +587,8 @@
     <string name="do_not_show_again">Больше не показывать</string>
     <string name="format">Формат: %s</string>
     <string name="mieru_handshake_mode">Режим квитирования</string>
+    <string name="fragment_method">Метод фрагментации</string>
+    <string name="tls_record_fragmentation">Фрагментация записей TLS</string>
+    <string name="tcp_segmentation">Сегментация TCP</string>
+    <string name="tls_record_fragmentation_and_tcp_segmentation">Фрагментация записей TLS и сегментация TCP</string>
 </resources>
