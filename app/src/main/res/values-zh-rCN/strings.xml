@@ -580,4 +580,8 @@
     <string name="do_not_show_again">不再显示</string>
     <string name="format">格式：%s</string>
     <string name="mieru_handshake_mode">握手模式</string>
+    <string name="fragment_method">分片方法</string>
+    <string name="tls_record_fragmentation">TLS 记录分片</string>
+    <string name="tcp_segmentation">TCP 分段</string>
+    <string name="tls_record_fragmentation_and_tcp_segmentation">TLS 记录分片和 TCP 分段</string>
 </resources>

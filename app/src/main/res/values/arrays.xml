@@ -929,4 +929,16 @@
         <item>0</item>
         <item>1</item>
     </string-array>
+
+    <string-array name="tls_fragmentation_entry">
+        <item>@string/tls_record_fragmentation</item>
+        <item>@string/tcp_segmentation</item>
+        <item>@string/tls_record_fragmentation_and_tcp_segmentation</item>
+    </string-array>
+
+    <string-array name="tls_fragmentation_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

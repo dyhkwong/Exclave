@@ -115,8 +115,7 @@ object Key {
 
     const val ENABLE_FRAGMENT = "enableFragment"
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"
-    const val FRAGMENT_LENGTH = "fragmentLength"
-    const val FRAGMENT_INTERVAL = "fragmentInterval"
+    const val FRAGMENT_METHOD = "fragmentMethod"
     const val REALITY_DISABLE_X25519MLKEM768 = "realityDisableX25519Mlkem768"
 
     const val APP_TRAFFIC_STATISTICS = "appTrafficStatistics"
@@ -362,4 +361,10 @@ object RouteMode {
     const val RULE = 0
     const val GLOBAL = 1
     const val DIRECT = 2
+}
+
+object TLS_FRAGMENTATION_METHOD {
+    const val TLS_RECORD_FRAGMENTATION = 0
+    const val TCP_SEGMENTATION = 1
+    const val TLS_RECORD_FRAGMENTATION_AND_TCP_SEGMENTATION = 2
 }

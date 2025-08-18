@@ -301,18 +301,15 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         // protocol settings
         val enableFragment = findPreference<SwitchPreference>(Key.ENABLE_FRAGMENT)!!
         val enableFragmentForDirect = findPreference<SwitchPreference>(Key.ENABLE_FRAGMENT_FOR_DIRECT)!!
-        val fragmentLength = findPreference<EditTextPreference>(Key.FRAGMENT_LENGTH)!!
-        val fragmentInterval = findPreference<EditTextPreference>(Key.FRAGMENT_INTERVAL)!!
+        val fragmentMethod = findPreference<SimpleMenuPreference>(Key.FRAGMENT_METHOD)!!
         enableFragment.setOnPreferenceChangeListener { _, newValue ->
             newValue as Boolean
             enableFragmentForDirect.isVisible = newValue
-            fragmentLength.isVisible = newValue
-            fragmentInterval.isVisible = newValue
+            fragmentMethod.isVisible = newValue
             true
         }
         enableFragmentForDirect.isVisible = enableFragment.isChecked
-        fragmentLength.isVisible = enableFragment.isChecked
-        fragmentInterval.isVisible = enableFragment.isChecked
+        fragmentMethod.isVisible = enableFragment.isChecked
 
         // DNS settings
         findPreference<EditTextPreference>(Key.REMOTE_DNS)!!.onPreferenceChangeListener = reloadListener

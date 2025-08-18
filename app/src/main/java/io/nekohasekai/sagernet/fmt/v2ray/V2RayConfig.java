@@ -735,8 +735,6 @@ public class V2RayConfig {
         public String redirect;
         public Integer userLevel;
         public String protocolReplacement;
-        public StreamSettingsObject.SockoptObject.FragmentObject fragment;
-        public List<StreamSettingsObject.SockoptObject.NoiseObject> noises;
 
     }
 
@@ -1069,29 +1067,11 @@ public class V2RayConfig {
             public Long rxBufSize;
             public Long txBufSize;
             public Boolean forceBufSize;
-            public String dialerProxy; // xray compatible
-            public FragmentObject fragment;
-            public List<NoiseObject> noises;
-            public Long noiseKeepAlive;
+            public TLSFragmentationObject tlsFragmentation;
+            public static class TLSFragmentationObject {
 
-            public static class FragmentObject {
-
-                public String packets;
-                public String length;
-                public String interval;
-                public String host1_header;
-                public String host1_domain;
-                public String host2_header;
-                public String host2_domain;
-
-            }
-
-            public static class NoiseObject {
-
-                public String type;
-                public String packet;
-                public String delay;
-                public String count;
+                public Boolean tlsRecordFragmentation;
+                public Boolean tcpSegmentation;
 
             }
 

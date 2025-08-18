@@ -174,8 +174,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var enableFragment by configurationStore.boolean(Key.ENABLE_FRAGMENT)
     var enableFragmentForDirect by configurationStore.boolean(Key.ENABLE_FRAGMENT_FOR_DIRECT)
-    var fragmentLength by configurationStore.string(Key.FRAGMENT_LENGTH)
-    var fragmentInterval by configurationStore.string(Key.FRAGMENT_INTERVAL)
+    var fragmentMethod by configurationStore.stringToInt(Key.FRAGMENT_METHOD)
     var realityDisableX25519Mlkem768 by configurationStore.boolean(Key.REALITY_DISABLE_X25519MLKEM768)
 
     // hopefully hashCode = mHandle doesn't change, currently this is true from KitKat to Nougat

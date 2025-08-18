@@ -253,15 +253,13 @@
             app:key="enableFragment"
             app:summary="@string/enable_fragment_sum"
             app:title="@string/enable_fragment" />
-        <EditTextPreference
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="0"
+            app:entries="@array/tls_fragmentation_entry"
+            app:entryValues="@array/tls_fragmentation_value"
             app:icon="@drawable/ic_baseline_texture_24"
-            app:key="fragmentLength"
-            app:title="@string/fragment_length"
-            app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
-            app:icon="@drawable/ic_baseline_texture_24"
-            app:key="fragmentInterval"
-            app:title="@string/fragment_interval"
+            app:key="fragmentMethod"
+            app:title="@string/fragment_method"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_texture_24"

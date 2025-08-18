@@ -35,6 +35,7 @@ import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RouteMode
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.Shadowsocks2022Implementation
+import io.nekohasekai.sagernet.TLS_FRAGMENTATION_METHOD
 import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.DataStore
@@ -1070,11 +1071,18 @@ fun buildV2RayConfig(
                                         && !(network == "splithttp" && bean.shUseBrowserForwarder)
                                     ) {
                                         sockopt = StreamSettingsObject.SockoptObject().apply {
-                                            if (DataStore.enableFragment) {
-                                                fragment = StreamSettingsObject.SockoptObject.FragmentObject().apply {
-                                                    packets = "tlshello"
-                                                    length = DataStore.fragmentLength
-                                                    interval = DataStore.fragmentInterval
+                                            tlsFragmentation = StreamSettingsObject.SockoptObject.TLSFragmentationObject().apply {
+                                                when (DataStore.fragmentMethod) {
+                                                    TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION -> {
+                                                        tlsRecordFragmentation = true
+                                                    }
+                                                    TLS_FRAGMENTATION_METHOD.TCP_SEGMENTATION -> {
+                                                        tcpSegmentation = true
+                                                    }
+                                                    TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION_AND_TCP_SEGMENTATION -> {
+                                                        tlsRecordFragmentation = true
+                                                        tcpSegmentation = true
+                                                    }
                                                 }
                                             }
                                         }
@@ -1370,11 +1378,18 @@ fun buildV2RayConfig(
                                     }
                                     if (DataStore.enableFragment) {
                                         sockopt = StreamSettingsObject.SockoptObject().apply {
-                                            if (DataStore.enableFragment) {
-                                                fragment = StreamSettingsObject.SockoptObject.FragmentObject().apply {
-                                                    packets = "tlshello"
-                                                    length = DataStore.fragmentLength
-                                                    interval = DataStore.fragmentInterval
+                                            tlsFragmentation = StreamSettingsObject.SockoptObject.TLSFragmentationObject().apply {
+                                                when (DataStore.fragmentMethod) {
+                                                    TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION -> {
+                                                        tlsRecordFragmentation = true
+                                                    }
+                                                    TLS_FRAGMENTATION_METHOD.TCP_SEGMENTATION -> {
+                                                        tcpSegmentation = true
+                                                    }
+                                                    TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION_AND_TCP_SEGMENTATION -> {
+                                                        tlsRecordFragmentation = true
+                                                        tcpSegmentation = true
+                                                    }
                                                 }
                                             }
                                         }
@@ -1747,10 +1762,19 @@ fun buildV2RayConfig(
             if (DataStore.enableFragment && DataStore.enableFragmentForDirect) {
                 streamSettings = StreamSettingsObject().apply {
                     sockopt = StreamSettingsObject.SockoptObject().apply {
-                        fragment = StreamSettingsObject.SockoptObject.FragmentObject().apply {
-                            packets = "tlshello"
-                            length = DataStore.fragmentLength
-                            interval = DataStore.fragmentInterval
+                        tlsFragmentation = StreamSettingsObject.SockoptObject.TLSFragmentationObject().apply {
+                            when (DataStore.fragmentMethod) {
+                                TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION -> {
+                                    tlsRecordFragmentation = true
+                                }
+                                TLS_FRAGMENTATION_METHOD.TCP_SEGMENTATION -> {
+                                    tcpSegmentation = true
+                                }
+                                TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION_AND_TCP_SEGMENTATION -> {
+                                    tlsRecordFragmentation = true
+                                    tcpSegmentation = true
+                                }
+                            }
                         }
                     }
                 }
