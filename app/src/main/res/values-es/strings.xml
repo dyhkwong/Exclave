@@ -582,4 +582,5 @@
     <string name="debug_log_sum">La configuración en ejecución se imprimirá en el registro del sistema, por lo que el registro contendrá las claves secretas utilizadas para conectarse a los servidores. Este nivel de registro es necesario para informar de problemas. Elimine la información confidencial antes de publicar los archivos de registro.</string>
     <string name="do_not_show_again">No volver a mostrar</string>
     <string name="format">Formato: %s</string>
+    <string name="mieru_handshake_mode">Modo de protocolo de enlace</string>
 </resources>
