@@ -47,10 +47,6 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
 
     lateinit var binding: LayoutLogcatBinding
 
-    companion object {
-        private const val MAX_BUFFERED_LINES = (1 shl 14) - 1
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = LayoutLogcatBinding.bind(view)
@@ -130,7 +126,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 val timeNow = System.nanoTime()
 
                 if (
-                    bufferedLogLines.size < MAX_BUFFERED_LINES &&
+                    bufferedLogLines.size < (1 shl 14) - 1 &&
                     (timeNow - timeLastNotify) < timeout && stdout.ready()
                 ) continue
 
@@ -139,14 +135,22 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 timeLastNotify = timeNow
 
                 onMainDispatcher {
+                    if (binding.logsTextView.lineCount + bufferedLogLines.size > 4096) {
+                        binding.logsTextView.text = ""
+                        if (bufferedLogLines.size > 4096) {
+                            bufferedLogLines.drop(bufferedLogLines.size - 4096)
+                        }
+                    }
+                    val text = bufferedLogLines.joinToString(
+                        separator = "\n",
+                        postfix = "\n"
+                    )
                     binding.logsTextView.append(
-                        ColorUtils.ansiEscapeToSpannable(
-                            binding.root.context,
-                            bufferedLogLines.joinToString(
-                                separator = "\n",
-                                postfix = "\n"
-                            )
-                        )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            ColorUtils.ansiEscapeToSpannable(binding.root.context, text)
+                        } else {
+                            text
+                        }
                     )
                     bufferedLogLines.clear()
                     binding.logsScrollView.post {

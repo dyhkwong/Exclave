@@ -31,7 +31,7 @@
             android:fontFamily="monospace"
             android:textIsSelectable="true"
             android:textSize="8sp"
-            tools:ignore="SmallSp" />
+            tools:ignore="SmallSp,SpeakableTextPresentCheck" />
 
     </androidx.core.widget.NestedScrollView>
 
