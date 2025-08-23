@@ -167,7 +167,10 @@ class RouteSettingsActivity(
             DataStore.routeOutboundRule = profile.id
             onMainDispatcher {
                 outbound.value = "3"
-                outbound.setSummary(profile.displayName())
+                // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-s2-release/core/java/android/preference/ListPreference.java#167
+                // If the summary has a {@linkplain java.lang.String#format String formatting} marker in it,
+                // (i.e. "%s" or "%1$s"), then the current entry value will be substituted in its place.
+                outbound.setSummary(profile.displayName().replace("%", "%%"))
             }
         }
     }
@@ -210,7 +213,10 @@ class RouteSettingsActivity(
 
         val outboundEntries = resources.getStringArray(R.array.outbound_entry)
         if (DataStore.routeOutbound == 3) {
-            outbound.setSummary(ProfileManager.getProfile(DataStore.routeOutboundRule)?.displayName())
+            // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-s2-release/core/java/android/preference/ListPreference.java#167
+            // If the summary has a {@linkplain java.lang.String#format String formatting} marker in it,
+            // (i.e. "%s" or "%1$s"), then the current entry value will be substituted in its place.
+            outbound.setSummary(ProfileManager.getProfile(DataStore.routeOutboundRule)?.displayName()?.replace("%", "%%"))
         } else {
             outbound.setSummary(outboundEntries[DataStore.routeOutbound.toString().toInt()])
         }

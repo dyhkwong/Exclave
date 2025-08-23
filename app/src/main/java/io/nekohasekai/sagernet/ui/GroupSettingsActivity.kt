@@ -136,7 +136,10 @@ class GroupSettingsActivity(
 
         frontProxyPreference = findPreference(Key.GROUP_FRONT_PROXY)!!
         if (DataStore.frontProxy == 1) {
-            frontProxyPreference.setSummary(ProfileManager.getProfile(DataStore.frontProxyOutbound)?.displayName())
+            // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-s2-release/core/java/android/preference/ListPreference.java#167
+            // If the summary has a {@linkplain java.lang.String#format String formatting} marker in it,
+            // (i.e. "%s" or "%1$s"), then the current entry value will be substituted in its place.
+            frontProxyPreference.setSummary(ProfileManager.getProfile(DataStore.frontProxyOutbound)?.displayName()?.replace("%", "%%"))
         } else {
             frontProxyPreference.setSummary(resources.getString(R.string.disable))
         }
@@ -157,7 +160,10 @@ class GroupSettingsActivity(
         }
         landingProxyPreference = findPreference(Key.GROUP_LANDING_PROXY)!!
         if (DataStore.landingProxy == 1) {
-            landingProxyPreference.setSummary(ProfileManager.getProfile(DataStore.landingProxyOutbound)?.displayName())
+            // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-s2-release/core/java/android/preference/ListPreference.java#167
+            // If the summary has a {@linkplain java.lang.String#format String formatting} marker in it,
+            // (i.e. "%s" or "%1$s"), then the current entry value will be substituted in its place.
+            landingProxyPreference.setSummary(ProfileManager.getProfile(DataStore.landingProxyOutbound)?.displayName()?.replace("%", "%%"))
         } else {
             landingProxyPreference.setSummary(resources.getString(R.string.disable))
         }
@@ -420,7 +426,10 @@ class GroupSettingsActivity(
             DataStore.frontProxyOutbound = profile.id
             onMainDispatcher {
                 frontProxyPreference.value = "1"
-                frontProxyPreference.setSummary(profile.displayName())
+                // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-s2-release/core/java/android/preference/ListPreference.java#167
+                // If the summary has a {@linkplain java.lang.String#format String formatting} marker in it,
+                // (i.e. "%s" or "%1$s"), then the current entry value will be substituted in its place.
+                frontProxyPreference.setSummary(profile.displayName().replace("%", "%%"))
             }
         }
     }
@@ -435,7 +444,10 @@ class GroupSettingsActivity(
             DataStore.landingProxyOutbound = profile.id
             onMainDispatcher {
                 landingProxyPreference.value = "1"
-                landingProxyPreference.setSummary(profile.displayName())
+                // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android16-s2-release/core/java/android/preference/ListPreference.java#167
+                // If the summary has a {@linkplain java.lang.String#format String formatting} marker in it,
+                // (i.e. "%s" or "%1$s"), then the current entry value will be substituted in its place.
+                landingProxyPreference.setSummary(profile.displayName().replace("%", "%%"))
             }
         }
     }
