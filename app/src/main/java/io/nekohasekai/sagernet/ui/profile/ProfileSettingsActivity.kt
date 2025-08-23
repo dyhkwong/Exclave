@@ -19,15 +19,12 @@
 
 package io.nekohasekai.sagernet.ui.profile
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -35,8 +32,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import com.esotericsoftware.kryo.io.ByteBufferInput
-import com.github.shadowsocks.plugin.Empty
-import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -52,7 +48,6 @@ import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
 import io.nekohasekai.sagernet.utils.DirectBoot
-import kotlinx.parcelize.Parcelize
 import java.io.ByteArrayOutputStream
 import kotlin.properties.Delegates
 
@@ -62,40 +57,19 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 ) : ThemedActivity(resId),
     OnPreferenceDataStoreChangeListener {
 
-    class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.unsaved_changes_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                runOnDefaultDispatcher {
-                    (requireActivity() as ProfileSettingsActivity<*>).saveAndExit()
-                }
-            }
-            setNegativeButton(android.R.string.cancel) { _, _ ->
-                requireActivity().finish()
-            }
-        }
-    }
-
     override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
-            UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
-        }
-    }
-
-    @Parcelize
-    data class ProfileIdArg(val profileId: Long, val groupId: Long) : Parcelable
-    class DeleteConfirmationDialogFragment : AlertDialogFragment<ProfileIdArg, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.delete_confirm_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                runOnDefaultDispatcher {
-                    ProfileManager.deleteProfile(arg.groupId, arg.profileId)
+            MaterialAlertDialogBuilder(this@ProfileSettingsActivity)
+                .setTitle(R.string.unsaved_changes_prompt)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    runOnDefaultDispatcher {
+                        saveAndExit()
+                    }
                 }
-                requireActivity().finish()
-            }
-            setNegativeButton(android.R.string.cancel, null)
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    finish()
+                }
+                .show()
         }
     }
 
@@ -208,10 +182,16 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             if (DataStore.editingId == 0L) {
                 finish()
             } else {
-                DeleteConfirmationDialogFragment().apply {
-                    arg(ProfileIdArg(DataStore.editingId, DataStore.editingGroup))
-                    key()
-                }.show(supportFragmentManager, null)
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.delete_confirm_prompt)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        runOnDefaultDispatcher {
+                            ProfileManager.deleteProfile(DataStore.editingId, DataStore.editingGroup)
+                        }
+                        finish()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             }
             true
         }

@@ -20,11 +20,9 @@
 package io.nekohasekai.sagernet.ui
 
 import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.os.ext.SdkExtensions
 import android.view.Menu
 import android.view.MenuItem
@@ -34,17 +32,13 @@ import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.EditTextPreference
 import androidx.preference.MultiSelectListPreference
-import androidx.preference.Preference
 import androidx.preference.PreferenceDataStore
 import androidx.preference.SwitchPreference
-import com.github.shadowsocks.plugin.Empty
-import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
@@ -62,7 +56,6 @@ import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.widget.AppListPreference
-import kotlinx.parcelize.Parcelize
 
 @Suppress("UNCHECKED_CAST")
 class RouteSettingsActivity(
@@ -74,9 +67,17 @@ class RouteSettingsActivity(
 
     override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
-            UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
+            MaterialAlertDialogBuilder(this@RouteSettingsActivity)
+                .setTitle(R.string.unsaved_changes_prompt)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    runOnDefaultDispatcher {
+                        saveAndExit()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    finish()
+                }
+                .show()
         }
     }
 
@@ -294,39 +295,6 @@ class RouteSettingsActivity(
         }
     }
 
-    fun PreferenceFragmentCompat.displayPreferenceDialog(preference: Preference): Boolean {
-        return false
-    }
-
-    class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.unsaved_changes_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                runOnDefaultDispatcher {
-                    (requireActivity() as RouteSettingsActivity).saveAndExit()
-                }
-            }
-            setNegativeButton(android.R.string.cancel) { _, _ ->
-                requireActivity().finish()
-            }
-        }
-    }
-
-    @Parcelize
-    data class ProfileIdArg(val ruleId: Long) : Parcelable
-    class DeleteConfirmationDialogFragment : AlertDialogFragment<ProfileIdArg, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.delete_route_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                runOnDefaultDispatcher {
-                    ProfileManager.deleteRule(arg.ruleId)
-                }
-                requireActivity().finish()
-            }
-            setNegativeButton(android.R.string.cancel, null)
-        }
-    }
-
     companion object {
         const val EXTRA_ROUTE_ID = "id"
         const val EXTRA_PACKAGE_NAME = "pkg"
@@ -424,10 +392,16 @@ class RouteSettingsActivity(
             if (DataStore.editingId == 0L) {
                 finish()
             } else {
-                DeleteConfirmationDialogFragment().apply {
-                    arg(ProfileIdArg(DataStore.editingId))
-                    key()
-                }.show(supportFragmentManager, null)
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.delete_route_prompt)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        runOnDefaultDispatcher {
+                            ProfileManager.deleteRule(DataStore.editingId)
+                        }
+                        finish()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             }
             true
         }
@@ -490,26 +464,6 @@ class RouteSettingsActivity(
             }
             activity.apply {
                 viewCreated(view, savedInstanceState)
-            }
-        }
-
-        override fun onDisplayPreferenceDialog(preference: Preference) {
-            activity.apply {
-                if (displayPreferenceDialog(preference)) return
-            }
-            super.onDisplayPreferenceDialog(preference)
-        }
-
-    }
-
-    object PasswordSummaryProvider : Preference.SummaryProvider<EditTextPreference> {
-
-        override fun provideSummary(preference: EditTextPreference): CharSequence {
-            val text = preference.text
-            return if (text.isNullOrEmpty()) {
-                preference.context.getString(androidx.preference.R.string.not_set)
-            } else {
-                "\u2022".repeat(text.length)
             }
         }
 

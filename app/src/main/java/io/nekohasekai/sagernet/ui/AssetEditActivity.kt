@@ -19,22 +19,17 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
 import cn.hutool.core.lang.Validator.isUrl
-import com.github.shadowsocks.plugin.Empty
-import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
@@ -48,7 +43,6 @@ import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import kotlinx.parcelize.Parcelize
 import java.io.File
 
 class AssetEditActivity(
@@ -60,9 +54,17 @@ class AssetEditActivity(
 
     override val onBackPressedCallback = object : OnBackPressedCallback(enabled = false) {
         override fun handleOnBackPressed() {
-            UnsavedChangesDialogFragment().apply {
-                key()
-            }.show(supportFragmentManager, null)
+            MaterialAlertDialogBuilder(this@AssetEditActivity)
+                .setTitle(R.string.unsaved_changes_prompt)
+                .setPositiveButton(android.R.string.ok) { _, _ ->
+                    runOnDefaultDispatcher {
+                        saveAndExit()
+                    }
+                }
+                .setNegativeButton(android.R.string.cancel) { _, _ ->
+                    finish()
+                }
+                .show()
         }
     }
 
@@ -106,36 +108,6 @@ class AssetEditActivity(
         rootKey: String?,
     ) {
         addPreferencesFromResource(R.xml.asset_preferences)
-    }
-
-    class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.unsaved_changes_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                runOnDefaultDispatcher {
-                    (requireActivity() as AssetEditActivity).saveAndExit()
-                }
-            }
-            setNegativeButton(android.R.string.cancel) { _, _ ->
-                requireActivity().finish()
-            }
-        }
-    }
-
-    @Parcelize
-    data class AssetNameArg(val assetName: String) : Parcelable
-    class DeleteConfirmationDialogFragment : AlertDialogFragment<AssetNameArg, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.route_asset_delete_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                runOnDefaultDispatcher {
-                    File(app.externalAssets, arg.assetName).deleteRecursively()
-                    SagerDatabase.assetDao.delete(arg.assetName)
-                }
-                requireActivity().finish()
-            }
-            setNegativeButton(android.R.string.cancel, null)
-        }
     }
 
     companion object {
@@ -231,10 +203,17 @@ class AssetEditActivity(
             if (DataStore.editingAssetName == "") {
                 finish()
             } else {
-                DeleteConfirmationDialogFragment().apply {
-                    arg(AssetNameArg(DataStore.editingAssetName))
-                    key()
-                }.show(supportFragmentManager, null)
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.route_asset_delete_prompt)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        runOnDefaultDispatcher {
+                            File(app.externalAssets, DataStore.editingAssetName).deleteRecursively()
+                            SagerDatabase.assetDao.delete(DataStore.editingAssetName)
+                        }
+                        finish()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             }
             true
         }

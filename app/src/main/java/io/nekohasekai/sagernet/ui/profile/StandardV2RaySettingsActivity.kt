@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.app.Activity
 import android.content.BroadcastReceiver
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.component1
@@ -34,7 +33,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.github.shadowsocks.plugin.*
-import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import com.github.shadowsocks.preference.PluginConfigurationDialogFragment
 import com.github.shadowsocks.preference.PluginPreference
 import com.github.shadowsocks.preference.PluginPreferenceDialogFragment
@@ -56,7 +54,6 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
 import io.nekohasekai.sagernet.ktx.readableMessage
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ktx.showAllowingStateLoss
 import io.nekohasekai.sagernet.ktx.unwrapIDN
@@ -702,18 +699,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             plugin.value = pluginConfiguration.selected
             pluginConfigure.isEnabled = selected !is NoPlugin
             pluginConfigure.text = pluginConfiguration.getOptions().toString()
-        }
-        AlertDialogFragment.setResultListener<Empty>(
-            this, UnsavedChangesDialogFragment::class.java.simpleName
-        ) { which, _ ->
-            when (which) {
-                DialogInterface.BUTTON_POSITIVE -> {
-                    runOnDefaultDispatcher {
-                        saveAndExit()
-                    }
-                }
-                DialogInterface.BUTTON_NEGATIVE -> requireActivity().finish()
-            }
         }
     }
 

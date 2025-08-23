@@ -20,13 +20,11 @@
 package io.nekohasekai.sagernet.ui.profile
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -35,8 +33,6 @@ import com.blacksquircle.ui.editorkit.listener.OnChangeListener
 import com.blacksquircle.ui.editorkit.model.ColorScheme
 import com.blacksquircle.ui.language.base.model.SyntaxScheme
 import com.blacksquircle.ui.language.json.JsonLanguage
-import com.github.shadowsocks.plugin.Empty
-import com.github.shadowsocks.plugin.fragment.AlertDialogFragment
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutEditConfigBinding
@@ -72,21 +68,15 @@ class ConfigEditActivity : ThemedActivity() {
                     SagerNet.ime.hideSoftInputFromWindow(it, 0)
                 }
             } else {
-                UnsavedChangesDialogFragment().apply {
-                    key()
-                }.show(supportFragmentManager, null)
-            }
-        }
-    }
-
-    class UnsavedChangesDialogFragment : AlertDialogFragment<Empty, Empty>() {
-        override fun AlertDialog.Builder.prepare(listener: DialogInterface.OnClickListener) {
-            setTitle(R.string.unsaved_changes_prompt)
-            setPositiveButton(android.R.string.ok) { _, _ ->
-                (requireActivity() as ConfigEditActivity).saveAndExit()
-            }
-            setNegativeButton(android.R.string.cancel) { _, _ ->
-                requireActivity().finish()
+                MaterialAlertDialogBuilder(this@ConfigEditActivity)
+                    .setTitle(R.string.unsaved_changes_prompt)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        saveAndExit()
+                    }
+                    .setNegativeButton(android.R.string.cancel) { _, _ ->
+                        finish()
+                    }
+                    .show()
             }
         }
     }
