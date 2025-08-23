@@ -17,21 +17,12 @@
  *                                                                            *
  ******************************************************************************/
 
-@file:SuppressLint("SoonBlockedPrivateApi")
-
 package io.nekohasekai.sagernet.ktx
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.annotation.SuppressLint
-import android.app.Service
 import android.content.*
-import android.content.pm.PackageInfo
-import android.content.pm.Signature
-import android.content.res.Resources
-import android.net.NetworkUtils
 import android.os.Build
-import android.os.SystemClock
 import android.system.Os
 import android.system.OsConstants
 import android.util.TypedValue
@@ -50,27 +41,17 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.ui.ThemedActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import sun.misc.Unsafe
-import java.io.FileDescriptor
-import java.net.HttpURLConnection
 import java.net.InetAddress
-import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
-
+import androidx.core.view.isVisible
+import androidx.core.view.isGone
 
 inline fun <T> Iterable<T>.forEachTry(action: (T) -> Unit) {
     var result: Exception? = null
@@ -84,33 +65,8 @@ inline fun <T> Iterable<T>.forEachTry(action: (T) -> Unit) {
     }
 }
 
-val Throwable.readableMessage
+val Throwable.readableMessage: String
     get() = localizedMessage.takeIf { !it.isNullOrBlank() } ?: javaClass.simpleName
-
-/**
- * https://android.googlesource.com/platform/prebuilts/runtime/+/94fec32/appcompat/hiddenapi-light-greylist.txt#9466
- */
-
-private val socketGetFileDescriptor = Socket::class.java.getDeclaredMethod("getFileDescriptor\$")
-val Socket.fileDescriptor get() = socketGetFileDescriptor.invoke(this) as FileDescriptor
-
-private val getInt = FileDescriptor::class.java.getDeclaredMethod("getInt$")
-val FileDescriptor.int get() = getInt.invoke(this) as Int
-
-suspend fun <T> HttpURLConnection.useCancellable(block: suspend HttpURLConnection.() -> T): T {
-    return suspendCancellableCoroutine { cont ->
-        cont.invokeOnCancellation {
-            if (Build.VERSION.SDK_INT >= 26) disconnect() else GlobalScope.launch(Dispatchers.IO) { disconnect() }
-        }
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                cont.resume(block())
-            } catch (e: Throwable) {
-                cont.resumeWithException(e)
-            }
-        }
-    }
-}
 
 fun parsePort(str: String?, default: Int, min: Int = 1025): Int {
     val value = str?.toIntOrNull() ?: default
@@ -143,18 +99,6 @@ fun Context.listenForPackageChanges(onetime: Boolean = true, callback: () -> Uni
             })
         }
     }
-
-val PackageInfo.signaturesCompat: Array<Signature>?
-    get() = if (Build.VERSION.SDK_INT >= 28) signingInfo?.apkContentsSigners else @Suppress("DEPRECATION") signatures
-
-/**
- * Based on: https://stackoverflow.com/a/26348729/2245107
- */
-fun Resources.Theme.resolveResourceId(@AttrRes resId: Int): Int {
-    val typedValue = TypedValue()
-    if (!resolveAttribute(resId, typedValue, true)) throw Resources.NotFoundException()
-    return typedValue.resourceId
-}
 
 fun Preference.remove() = parent!!.removePreference(this)
 
@@ -197,7 +141,7 @@ fun RecyclerView.scrollTo(index: Int, force: Boolean = false) {
                     return SNAP_TO_START
                 }
             })
-        } catch (ignored: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
         }
     }, 300L)
 }
@@ -211,7 +155,7 @@ val shortAnimTime by lazy {
 fun View.crossFadeFrom(other: View) {
     clearAnimation()
     other.clearAnimation()
-    if (visibility == View.VISIBLE && other.visibility == View.GONE) return
+    if (isVisible && other.isGone) return
     alpha = 0F
     visibility = View.VISIBLE
     animate().alpha(1F).duration = shortAnimTime
@@ -256,21 +200,6 @@ fun Fragment.needReload() {
     }
 }
 
-@Suppress("DEPRECATION")
-fun <T : Service> KClass<T>.isRunning(): Boolean {
-    val name = qualifiedName
-    var myServices = SagerNet.activity.getRunningServices(5) ?: return false
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-        val myUid = Os.getuid()
-        myServices = myServices.filter { it.uid == myUid }
-    }
-    for (myService in myServices) if (myService.service.className == name) {
-        return true
-    }
-    return false
-}
-
-
 fun Context.getColour(@ColorRes colorRes: Int): Int {
     return ContextCompat.getColor(this, colorRes)
 }
@@ -281,36 +210,17 @@ fun Context.getColorAttr(@AttrRes resId: Int): Int {
     }.resourceId)
 }
 
-val LAUNCH_DELAY = System.currentTimeMillis() - SystemClock.elapsedRealtime()
-
-private val protectDirectAvailable by lazy {
-    try {
-        NetworkUtils::class.java.getDeclaredMethod("protectFromVpn", Int::class.java)
-        true
-    } catch (e: Exception) {
-        false
-    }
-}
-
-fun Fragment.protectFromVpn(fd: Int) {
-    if (protectDirectAvailable) {
-        NetworkUtils.protectFromVpn(fd)
-    } else {
-        (requireActivity() as? MainActivity)?.connection?.service?.protect(fd)
-    }
-}
-
 fun <T> Continuation<T>.tryResume(value: T) {
     try {
         resumeWith(Result.success(value))
-    } catch (ignored: IllegalStateException) {
+    } catch (_: IllegalStateException) {
     }
 }
 
 fun <T> Continuation<T>.tryResumeWithException(exception: Throwable) {
     try {
         resumeWith(Result.failure(exception))
-    } catch (ignored: IllegalStateException) {
+    } catch (_: IllegalStateException) {
     }
 }
 
@@ -346,11 +256,4 @@ operator fun <K, V> MutableMap<K, V>.setValue(thisRef: K, property: KProperty<*>
 
     }
 
-}
-
-@SuppressLint("DiscouragedPrivateApi")
-val UNSAFE = try {
-    Unsafe::class.java.getDeclaredMethod("getUnsafe").invoke(null) as Unsafe?
-} catch (e: Throwable) {
-    null
 }

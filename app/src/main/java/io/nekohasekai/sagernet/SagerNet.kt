@@ -89,7 +89,18 @@ class SagerNet : Application(),
             PackageCache.register()
         }
 
-        val isMainProcess = ActivityThread.currentProcessName() == BuildConfig.APPLICATION_ID
+        val processName = if (Build.VERSION.SDK_INT >= 28) {
+            getProcessName()
+        } else {
+            @SuppressLint("PrivateApi")
+            try {
+                Class.forName("android.app.ActivityThread").getDeclaredMethod("currentProcessName").invoke(null) as String
+            } catch (_: Exception) {
+                BuildConfig.APPLICATION_ID
+            }
+        }
+
+        val isMainProcess = processName == BuildConfig.APPLICATION_ID
 
         if (!isMainProcess) {
             Libcore.setUidDumper(this, Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)

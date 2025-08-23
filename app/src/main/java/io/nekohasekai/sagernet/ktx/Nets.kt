@@ -25,7 +25,6 @@ import libcore.URL
 import java.net.IDN
 import java.net.InetSocketAddress
 import java.net.Socket
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 fun URL.queryParameter(key: String) = getQueryParameter(key).takeIf { it.isNotEmpty() }

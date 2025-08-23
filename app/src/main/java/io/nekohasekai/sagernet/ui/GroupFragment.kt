@@ -413,7 +413,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                     runOnDefaultDispatcher {
                         onMainDispatcher {
                             SagerNet.trySetPrimaryClip(link)
-                            snackbar(getString(androidx.browser.R.string.copy_toast_msg)).show()
+                            snackbar(R.string.action_export_msg).show()
                         }
                     }
                 }
@@ -429,7 +429,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                         }.joinToString("\n")
                         onMainDispatcher {
                             SagerNet.trySetPrimaryClip(links)
-                            snackbar(getString(androidx.browser.R.string.copy_toast_msg)).show()
+                            snackbar(R.string.action_export_msg).show()
                         }
                     }
                 }
@@ -452,7 +452,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                         }.joinToString("\n")
                         onMainDispatcher {
                             SagerNet.trySetPrimaryClip(links)
-                            snackbar(getString(androidx.browser.R.string.copy_toast_msg)).show()
+                            snackbar(R.string.action_export_msg).show()
                         }
                     }
                 }
@@ -466,7 +466,7 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                         }.joinToString("\n")
                         onMainDispatcher {
                             SagerNet.trySetPrimaryClip(links)
-                            snackbar(getString(androidx.browser.R.string.copy_toast_msg)).show()
+                            snackbar(R.string.action_export_msg).show()
                         }
                     }
                     startFilesForResult(exportBackupOfAllProfiles, "profiles_${proxyGroup.displayName()}_backup.txt")

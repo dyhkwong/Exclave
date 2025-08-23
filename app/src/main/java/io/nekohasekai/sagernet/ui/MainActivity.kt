@@ -297,7 +297,7 @@ class MainActivity : ThemedActivity(),
     }
 
     override fun missingPlugin(profileName: String, pluginName: String) {
-        val pluginId = if (pluginName.startsWith("shadowsocks-")) pluginName.substringAfter("shadowsocks-") else pluginName
+        if (pluginName.startsWith("shadowsocks-")) pluginName.substringAfter("shadowsocks-") else pluginName
         val pluginEntity = PluginEntry.find(pluginName)
         if (pluginEntity == null) {
             snackbar(getString(R.string.plugin_unknown, pluginName)).show()
@@ -365,7 +365,6 @@ class MainActivity : ThemedActivity(),
     }
 
     var state = BaseService.State.Idle
-    var doStop = false
 
     private fun changeState(
         state: BaseService.State,

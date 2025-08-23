@@ -2,6 +2,7 @@
 
 source "bin/init/env.sh"
 
+rm -rf library/core/build
 cd library/core
 ./build.sh || exit 1
 
