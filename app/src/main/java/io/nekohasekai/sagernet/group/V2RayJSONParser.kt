@@ -396,7 +396,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             vnext.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
-                            vnext.getIntFromStringOrInt("port")?.also {
+                            vnext.getV2RayPort("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             vnext.getArray("users")?.get(0)?.also { user ->
@@ -441,7 +441,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             vnext.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
-                            vnext.getIntFromStringOrInt("port")?.also {
+                            vnext.getV2RayPort("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             vnext.getArray("users")?.get(0)?.also { user ->
@@ -479,7 +479,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
-                            server.getIntFromStringOrInt("port")?.also {
+                            server.getV2RayPort("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             server.getString("method")?.lowercase()?.also {
@@ -509,7 +509,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         settings.getString("address")?.also {
                             v2rayBean.serverAddress = it
                         } ?: return listOf()
-                        settings.getIntFromStringOrInt("port")?.also {
+                        settings.getV2RayPort("port")?.also {
                             v2rayBean.serverPort = it
                         } ?: return listOf()
                         settings.getString("method")?.lowercase()?.also {
@@ -539,7 +539,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         settings.getString("address")?.also {
                             v2rayBean.serverAddress = it
                         } ?: return listOf()
-                        settings.getIntFromStringOrInt("port")?.also {
+                        settings.getV2RayPort("port")?.also {
                             v2rayBean.serverPort = it
                         } ?: return listOf()
                         settings.getString("method")?.lowercase()?.also {
@@ -567,7 +567,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
-                            server.getIntFromStringOrInt("port")?.also {
+                            server.getV2RayPort("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             server.getString("password")?.also {
@@ -592,7 +592,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
-                            server.getIntFromStringOrInt("port")?.also {
+                            server.getV2RayPort("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             server.getArray("users")?.get(0)?.also { user ->
@@ -616,7 +616,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
-                            server.getIntFromStringOrInt("port")?.also {
+                            server.getV2RayPort("port")?.also {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             server.getArray("users")?.get(0)?.also { user ->
@@ -643,7 +643,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     server.getString("address")?.also {
                         hysteria2Bean.serverAddress = it
                     } ?: return listOf()
-                    server.getIntFromStringOrInt("port")?.also {
+                    server.getV2RayPort("port")?.also {
                         hysteria2Bean.serverPorts = it.toString()
                     } ?: return listOf()
                 }
@@ -719,7 +719,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 settings.getString("address")?.also {
                     sshBean.serverAddress = it
                 } ?: return listOf()
-                settings.getIntFromStringOrInt("port")?.also {
+                settings.getV2RayPort("port")?.also {
                     sshBean.serverPort = it
                 } ?: return listOf()
                 settings.getString("user")?.also {
@@ -750,7 +750,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 settings.getString("address")?.also {
                     tuic5Bean.serverAddress = it
                 } ?: return listOf()
-                settings.getIntFromStringOrInt("port")?.also {
+                settings.getV2RayPort("port")?.also {
                     tuic5Bean.serverPort = it
                 } ?: return listOf()
                 settings.getString("uuid")?.also {
@@ -796,7 +796,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 settings.getString("address")?.also {
                     http3Bean.serverAddress = it
                 } ?: return listOf()
-                settings.getIntFromStringOrInt("port")?.also {
+                settings.getV2RayPort("port")?.also {
                     http3Bean.serverPort = it
                 } ?: return listOf()
                 settings.getString("username")?.also {
@@ -836,7 +836,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 settings.getString("address")?.also {
                     anytlsBean.serverAddress = it
                 } ?: return listOf()
-                settings.getIntFromStringOrInt("port")?.also {
+                settings.getV2RayPort("port")?.also {
                     anytlsBean.serverPort = it
                 } ?: return listOf()
                 settings.getString("password")?.also {
@@ -942,4 +942,44 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
         }
         else -> return listOf()
     }
+}
+
+private fun Map<String, Any?>.getV2RayPort(key: String): Int? {
+    if (this.contains(key)) {
+        return when (val value = this[key]) {
+            is Int -> return value
+            is String -> return value.toInt()
+            else -> null
+        }
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return when (val value = it.value) {
+                is Int -> value
+                is String -> value.toInt()
+                else -> null
+            }
+        }
+    }
+    return null
+}
+
+private fun Map<String, Any?>.getLongInteger(key: String): Long? {
+    if (this.contains(key)) {
+        return when (val value = this[key]) {
+            is Long -> return value
+            is Int -> return value.toLong()
+            else -> null
+        }
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return when (val value = it.value) {
+                is Long -> return value
+                is Int -> return value.toLong()
+                else -> null
+            }
+        }
+    }
+    return null
 }

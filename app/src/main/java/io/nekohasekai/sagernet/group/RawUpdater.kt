@@ -237,7 +237,7 @@ object RawUpdater : GroupUpdater() {
             val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
                 override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
                     when (tag) {
-                        Tag.FLOAT, Tag.BINARY, Tag.TIMESTAMP -> null
+                        Tag.FLOAT -> null
                         Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
                         else -> super.addImplicitResolver(tag, regexp, first, limit)
                     }

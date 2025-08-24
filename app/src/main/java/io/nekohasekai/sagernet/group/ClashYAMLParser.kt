@@ -65,33 +65,33 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
     when (proxy["type"]) {
         "socks5" -> {
             return listOf(SOCKSBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                username = proxy.getAnyToString("username")
-                password = proxy.getAnyToString("password")
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                username = proxy.getClashString("username")
+                password = proxy.getClashString("password")
                 if (proxy.getBoolean("tls") == true) {
                     security = "tls"
                     if (proxy.getBoolean("skip-cert-verify") == true) {
                         allowInsecure = true
                     }
                 }
-                name = proxy.getAnyToString("name")
+                name = proxy.getClashString("name")
             })
         }
         "http" -> {
             return listOf(HttpBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                username = proxy.getAnyToString("username")
-                password = proxy.getAnyToString("password")
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                username = proxy.getClashString("username")
+                password = proxy.getClashString("password")
                 if (proxy.getBoolean("tls") == true) {
                     security = "tls"
-                    sni = proxy.getAnyToString("sni")
+                    sni = proxy.getClashString("sni")
                     if (proxy.getBoolean("skip-cert-verify") == true) {
                         allowInsecure = true
                     }
                 }
-                name = proxy.getAnyToString("name")
+                name = proxy.getClashString("name")
             })
         }
         "ss" -> {
@@ -100,11 +100,11 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 val opts = proxy.getAny("plugin-opts") as? Map<String, Any?>
                 val pluginOpts = PluginOptions()
                 fun put(clash: String, origin: String = clash) {
-                    opts?.getAnyToString(clash)?.let {
+                    opts?.getClashString(clash)?.let {
                         pluginOpts[origin] = it
                     }
                 }
-                when (proxy.getAnyToString("plugin")) {
+                when (proxy.getClashString("plugin")) {
                     "obfs" -> {
                         pluginOpts.id = "obfs-local"
                         put("mode", "obfs")
@@ -131,10 +131,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 pluginStr = pluginOpts.toString(false)
             }
             return listOf(ShadowsocksBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                password = proxy.getAnyToString("password")
-                method = when (val cipher = proxy.getAnyToString("cipher")?.lowercase()) {
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                password = proxy.getClashString("password")
+                method = when (val cipher = proxy.getClashString("cipher")?.lowercase()) {
                     "dummy" -> "none"
                     "aead_aes_128_gcm" -> "aes-128-gcm"
                     "aead_aes_192_gcm" -> "aes-192-gcm"
@@ -145,7 +145,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     else -> return listOf()
                 }
                 plugin = pluginStr
-                name = proxy.getAnyToString("name")
+                name = proxy.getClashString("name")
             })
         }
         "vmess", "vless", "trojan" -> {
@@ -155,18 +155,18 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 "trojan" -> TrojanBean()
                 else -> error("impossible")
             }.apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                name = proxy.getAnyToString("name")
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                name = proxy.getClashString("name")
             }
 
             if (bean is TrojanBean) {
-                when (val network = proxy.getAnyToString("network")) {
+                when (val network = proxy.getClashString("network")) {
                     "ws", "grpc" -> bean.type = network
                     else -> bean.type = "tcp"
                 }
             } else {
-                when (val network = proxy.getAnyToString("network")) {
+                when (val network = proxy.getClashString("network")) {
                     "h2" -> bean.type = "http"
                     "http" -> {
                         bean.type = "tcp"
@@ -179,14 +179,14 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
 
             if (bean is TrojanBean) {
                 bean.security = "tls"
-                bean.sni = proxy.getAnyToString("sni")
-                bean.password = proxy.getAnyToString("password")
+                bean.sni = proxy.getClashString("sni")
+                bean.password = proxy.getClashString("password")
             } else {
                 bean.security = if (proxy.getBoolean("tls") == true) "tls" else "none"
                 if (bean.security == "tls") {
-                    bean.sni = proxy.getAnyToString("servername")
+                    bean.sni = proxy.getClashString("servername")
                 }
-                proxy.getAnyToString("uuid")?.takeIf { it.isNotEmpty() }?.also {
+                proxy.getClashString("uuid")?.takeIf { it.isNotEmpty() }?.also {
                     bean.uuid = try {
                         UUID.fromString(it).toString()
                     } catch (_: Exception) {
@@ -200,8 +200,8 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             }
 
             if (bean is VMessBean) {
-                bean.alterId = proxy.getAnyToString("alterId")?.toUIntOrNull()
-                bean.encryption = when (val cipher = proxy.getAnyToString("cipher")) {
+                bean.alterId = proxy.getClashInt("alterId") ?: return listOf()
+                bean.encryption = when (val cipher = proxy.getClashString("cipher")) {
                     in supportedVmessMethod -> cipher
                     else -> return listOf()
                 }
@@ -216,7 +216,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     isXUDP = true
                     isPacket = false
                 }
-                when (proxy.getAnyToString("packet-encoding")) {
+                when (proxy.getClashString("packet-encoding")) {
                     "packetaddr", "packet" -> {
                         isPacket = true
                         isXUDP = false
@@ -244,7 +244,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     isXUDP = true
                     isPacket = false
                 }
-                when (proxy.getAnyToString("packet-encoding")) {
+                when (proxy.getClashString("packet-encoding")) {
                     "packetaddr", "packet" -> {
                         isPacket = true
                         isXUDP = false
@@ -260,7 +260,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     else -> "xudp"
                 }
                 if (bean.type != "ws") {
-                    (proxy.getAnyToString("flow"))?.takeIf { it.isNotEmpty() }?.also {
+                    (proxy.getClashString("flow"))?.takeIf { it.isNotEmpty() }?.also {
                         if (it.startsWith("xtls-rprx-vision")) {
                             bean.flow = "xtls-rprx-vision-udp443"
                             bean.packetEncoding = "xudp"
@@ -320,7 +320,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                                 bean.path = wsOpt.value?.toString()
                             }
                             "max-early-data" -> {
-                                bean.maxEarlyData = wsOpt.value?.toString()?.toUIntOrNull()
+                                bean.maxEarlyData = wsOpt.value?.toString()?.toInt()
                             }
                             "early-data-header-name" -> {
                                 bean.earlyDataHeaderName = wsOpt.value?.toString()
@@ -376,14 +376,14 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                             // unsupported
                             return listOf()
                         }
-                        val ssMethod = when (val method = it.getAnyToString("method")?.lowercase()) {
+                        val ssMethod = when (val method = it.getClashString("method")?.lowercase()) {
                             "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305" -> method
                             "aead_aes_128_gcm", "" -> "aes-128-gcm"
                             "aead_aes_256_gcm" -> "aes-256-gcm"
                             "aead_chacha20_poly1305" -> "chacha20-ietf-poly1305"
                             else -> return listOf()
                         }
-                        val ssPassword = it.getAnyToString("password") ?: ""
+                        val ssPassword = it.getClashString("password") ?: ""
                         return listOf(TrojanGoBean().apply {
                             serverAddress = bean.serverAddress
                             serverPort = bean.serverPort
@@ -399,52 +399,52 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
         }
         "ssr" -> {
             return listOf(ShadowsocksRBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                method = when (val cipher = proxy.getAnyToString("cipher")?.lowercase()) {
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                method = when (val cipher = proxy.getClashString("cipher")?.lowercase()) {
                     "dummy" -> "none"
                     in supportedShadowsocksRMethod -> cipher
                     else -> return listOf()
                 }
-                password = proxy.getAnyToString("password")
-                obfs = when (val it = proxy.getAnyToString("obfs")) {
+                password = proxy.getClashString("password")
+                obfs = when (val it = proxy.getClashString("obfs")) {
                     "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
                     in supportedShadowsocksRObfs -> it
                     else -> return listOf()
                 }
-                obfsParam = proxy.getAnyToString("obfs-param")
-                protocol = when (val it = proxy.getAnyToString("protocol")) {
+                obfsParam = proxy.getClashString("obfs-param")
+                protocol = when (val it = proxy.getClashString("protocol")) {
                     in supportedShadowsocksRProtocol -> it
                     else -> return listOf()
                 }
-                protocolParam = proxy.getAnyToString("protocol-param")
-                name = proxy.getAnyToString("name")
+                protocolParam = proxy.getClashString("protocol-param")
+                name = proxy.getClashString("name")
             })
         }
         "ssh" -> {
             return listOf(SSHBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                username = proxy.getAnyToString("username")
-                proxy.getAnyToString("password")?.also {
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                username = proxy.getClashString("username")
+                proxy.getClashString("password")?.also {
                     password = it
                     authType = SSHBean.AUTH_TYPE_PASSWORD
                 }
-                proxy.getAnyToString("private-key")?.also {
+                proxy.getClashString("private-key")?.also {
                     privateKey = it
                     authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
                 }
-                privateKeyPassphrase = proxy.getAnyToString("private-key-passphrase")
+                privateKeyPassphrase = proxy.getClashString("private-key-passphrase")
                 publicKey = (proxy.getAny("host-key") as? List<Any>)?.joinToString("\n")
-                name = proxy.getAnyToString("name")
+                name = proxy.getClashString("name")
             })
         }
         "hysteria" -> {
             return listOf(HysteriaBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPorts = (proxy.getAnyToString("ports")?.takeIf { it.isValidHysteriaPort() }
-                    ?: proxy.getAnyToString("port")?.toUIntOrNull()?.toString()) ?: return listOf()
-                (proxy.getAnyToString("protocol") ?: proxy.getAnyToString("obfs-protocol"))?.also {
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPorts = (proxy.getClashString("ports")?.takeIf { it.isValidHysteriaPort() }
+                    ?: proxy.getClashInt("port")?.takeIf { it > 0 }?.toString()) ?: return listOf()
+                (proxy.getClashString("protocol") ?: proxy.getClashString("obfs-protocol"))?.also {
                     protocol = when (it) {
                         "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
                         "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
@@ -452,110 +452,110 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         else -> return listOf()
                     }
                 }
-                proxy.getAnyToString("auth-str")?.takeIf { it.isNotEmpty() }?.also {
+                proxy.getClashString("auth-str")?.takeIf { it.isNotEmpty() }?.also {
                     authPayloadType = HysteriaBean.TYPE_STRING
                     authPayload = it
                 }
-                proxy.getAnyToString("auth")?.takeIf { it.isNotEmpty() }?.also {
+                proxy.getClashString("auth")?.takeIf { it.isNotEmpty() }?.also {
                     authPayloadType = HysteriaBean.TYPE_BASE64
                     authPayload = it
                 }
-                sni = proxy.getAnyToString("sni")
+                sni = proxy.getClashString("sni")
                 alpn = (proxy.getAny("alpn") as? List<Any>)?.get(0)?.toString()
                 allowInsecure = proxy.getBoolean("skip-cert-verify") == true
-                obfuscation = proxy.getAnyToString("obfs")?.takeIf { it.isNotEmpty() }
-                hopInterval = proxy.getAnyToString("hop-interval")?.toUIntOrNull()?.toLong()
-                name = proxy.getAnyToString("name")
+                obfuscation = proxy.getClashString("obfs")?.takeIf { it.isNotEmpty() }
+                hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()
+                name = proxy.getClashString("name")
             })
         }
         "hysteria2" -> {
             return listOf(Hysteria2Bean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPorts = (proxy.getAnyToString("ports")?.takeIf { it.isValidHysteriaPort() }
-                    ?: proxy.getAnyToString("port")?.toUIntOrNull()?.toString()) ?: return listOf()
-                auth = proxy.getAnyToString("password")
-                sni = proxy.getAnyToString("sni")
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPorts = (proxy.getClashString("ports")?.takeIf { it.isValidHysteriaPort() }
+                    ?: proxy.getClashString("port")?.toUIntOrNull()?.toString()) ?: return listOf()
+                auth = proxy.getClashString("password")
+                sni = proxy.getClashString("sni")
                 // alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
                 allowInsecure = proxy.getBoolean("skip-cert-verify") == true
-                (proxy.getAnyToString("obfs"))?.also {
+                (proxy.getClashString("obfs"))?.also {
                     when (it) {
                         "" -> {}
                         "salamander" -> {
-                            obfs = proxy.getAnyToString("obfs-password")
+                            obfs = proxy.getClashString("obfs-password")
                         }
                         else -> return listOf()
                     }
                 }
-                hopInterval = proxy.getAnyToString("hop-interval")?.toUIntOrNull()?.toLong()
-                name = proxy.getAnyToString("name")
+                hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()
+                name = proxy.getClashString("name")
             })
         }
         "tuic" -> {
-            if (proxy.getAnyToString("token") != null) {
+            if (proxy.getClashString("token") != null) {
                 return listOf(TuicBean().apply {
-                    serverAddress = proxy.getAnyToString("ip") ?: proxy.getAnyToString("server") ?: return listOf()
-                    serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                    token = proxy.getAnyToString("token")
-                    udpRelayMode = when (val mode = proxy.getAnyToString("udp-relay-mode")) {
+                    serverAddress = proxy.getClashString("ip") ?: proxy.getClashString("server") ?: return listOf()
+                    serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                    token = proxy.getClashString("token")
+                    udpRelayMode = when (val mode = proxy.getClashString("udp-relay-mode")) {
                         in supportedTuicRelayMode -> mode
                         else -> "native"
                     }
-                    congestionController = when (val controller = proxy.getAnyToString("congestion-controller")) {
+                    congestionController = when (val controller = proxy.getClashString("congestion-controller")) {
                         in supportedTuicCongestionControl -> controller
                         else -> "cubic"
                     }
                     disableSNI = proxy.getBoolean("disable-sni") == true
                     reduceRTT = proxy.getBoolean("reduce-rtt") == true
                     // allowInsecure = proxy.getBoolean("skip-cert-verify") == true
-                    sni = proxy.getAnyToString("sni")
-                        ?: (if (proxy.getAnyToString("ip") != null) proxy.getAnyToString("server") else null)
+                    sni = proxy.getClashString("sni")
+                        ?: (if (proxy.getClashString("ip") != null) proxy.getClashString("server") else null)
                     // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
                     alpn = if (!proxy.contains("alpn")) "h3" else (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
-                    name = proxy.getAnyToString("name")
+                    name = proxy.getClashString("name")
                 })
             } else {
                 return listOf(Tuic5Bean().apply {
-                    serverAddress = proxy.getAnyToString("ip") ?: proxy.getAnyToString("server") ?: return listOf()
-                    serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                    uuid = proxy.getAnyToString("uuid")
-                    password = proxy.getAnyToString("password")
-                    udpRelayMode = when (val mode = proxy.getAnyToString("udp-relay-mode")) {
+                    serverAddress = proxy.getClashString("ip") ?: proxy.getClashString("server") ?: return listOf()
+                    serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                    uuid = proxy.getClashString("uuid")
+                    password = proxy.getClashString("password")
+                    udpRelayMode = when (val mode = proxy.getClashString("udp-relay-mode")) {
                         in supportedTuic5RelayMode -> mode
                         else -> "native"
                     }
-                    congestionControl = when (val controller = proxy.getAnyToString("congestion-controller")) {
+                    congestionControl = when (val controller = proxy.getClashString("congestion-controller")) {
                         in supportedTuic5CongestionControl -> controller
                         else -> "cubic"
                     }
                     disableSNI = proxy.getBoolean("disable-sni") == true
                     zeroRTTHandshake = proxy.getBoolean("reduce-rtt") == true
                     allowInsecure = proxy.getBoolean("skip-cert-verify") == true
-                    sni = proxy.getAnyToString("sni")
-                        ?: (if (proxy.getAnyToString("ip") != null) proxy.getAnyToString("server") else null)
+                    sni = proxy.getClashString("sni")
+                        ?: (if (proxy.getClashString("ip") != null) proxy.getClashString("server") else null)
                     // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
                     alpn = if (!proxy.contains("alpn")) "h3" else (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
-                    name = proxy.getAnyToString("name")
+                    name = proxy.getClashString("name")
                 })
             }
         }
         "mieru" -> {
             return listOf(MieruBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
+                serverAddress = proxy.getClashString("server") ?: return listOf()
                 // Why yet another protocol containing port-range? Let us use the first port only for now.
-                serverPort = (proxy.getAnyToString("port")?.toUIntOrNull()
-                    ?: (proxy.getAnyToString("port-range"))?.substringBefore("-")?.toIntOrNull())
+                serverPort = (proxy.getClashInt("port")?.takeIf { it > 0 }
+                    ?: (proxy.getClashString("port-range"))?.substringBefore("-")?.toIntOrNull())
                     ?: return listOf()
-                username = proxy.getAnyToString("username")
-                password = proxy.getAnyToString("password")
+                username = proxy.getClashString("username")
+                password = proxy.getClashString("password")
                 protocol = MieruBean.PROTOCOL_TCP
-                proxy.getAnyToString("transport")?.also {
+                proxy.getClashString("transport")?.also {
                     protocol = when (it) {
                         "TCP", "" -> MieruBean.PROTOCOL_TCP
                         "UDP" -> MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
                         else -> return listOf()
                     }
                 }
-                proxy.getAnyToString("multiplexing")?.also {
+                proxy.getClashString("multiplexing")?.also {
                     multiplexingLevel = when (it) {
                         "MULTIPLEXING_OFF" -> MieruBean.MULTIPLEXING_OFF
                         "MULTIPLEXING_LOW" -> MieruBean.MULTIPLEXING_LOW
@@ -564,19 +564,19 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         else -> MieruBean.MULTIPLEXING_LOW
                     }
                 }
-                name = proxy.getAnyToString("name")
+                name = proxy.getClashString("name")
             })
         }
         "anytls" -> {
             return listOf(AnyTLSBean().apply {
-                serverAddress = proxy.getAnyToString("server") ?: return listOf()
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull() ?: return listOf()
-                password = proxy.getAnyToString("password")
+                serverAddress = proxy.getClashString("server") ?: return listOf()
+                serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
+                password = proxy.getClashString("password")
                 security = "tls"
-                sni = proxy.getAnyToString("sni")
+                sni = proxy.getClashString("sni")
                 alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
                 allowInsecure = proxy.getBoolean("skip-cert-verify") == true
-                name = proxy.getAnyToString("name")
+                name = proxy.getClashString("name")
             })
         }
         "wireguard" -> {
@@ -586,16 +586,16 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             }
             val beanList = mutableListOf<WireGuardBean>()
             val bean = WireGuardBean().apply {
-                serverAddress = proxy.getAnyToString("server")
-                serverPort = proxy.getAnyToString("port")?.toUIntOrNull()
-                privateKey = proxy.getAnyToString("private-key")
-                peerPublicKey = proxy.getAnyToString("public-key")
-                peerPreSharedKey = proxy.getAnyToString("pre-shared-key")
-                    ?: proxy.getAnyToString("preshared-key") // "preshared-key" from Clash Premium
-                mtu = (proxy.getAnyToString("mtu")?.toUIntOrNull())?.takeIf { it > 0 } ?: 1408
-                localAddress = listOfNotNull(proxy.getAnyToString("ip"), proxy.getAnyToString("ipv6")).joinToString("\n")
-                keepaliveInterval = proxy.getAnyToString("persistent-keepalive")?.toUIntOrNull()?.takeIf { it > 0 }
-                name = proxy.getAnyToString("name")
+                serverAddress = proxy.getClashString("server")
+                serverPort = proxy.getClashInt("port")
+                privateKey = proxy.getClashString("private-key")
+                peerPublicKey = proxy.getClashString("public-key")
+                peerPreSharedKey = proxy.getClashString("pre-shared-key")
+                    ?: proxy.getClashString("preshared-key") // "preshared-key" from Clash Premium
+                mtu = (proxy.getClashInt("mtu"))?.takeIf { it > 0 } ?: 1408
+                localAddress = listOfNotNull(proxy.getClashString("ip"), proxy.getClashString("ipv6")).joinToString("\n")
+                keepaliveInterval = proxy.getClashInt("persistent-keepalive")
+                name = proxy.getClashString("name")
                 (proxy.getAny("reserved") as? List<Map<String, Any>>)?.also {
                     if (it.size == 3) {
                         reserved = listOf(
@@ -605,7 +605,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         ).joinToString(",")
                     }
                 } ?: {
-                    Base64.decode(proxy.getAnyToString("reserved"))?.also {
+                    Base64.decode(proxy.getClashString("reserved"))?.also {
                         if (it.size == 3) {
                             reserved = listOf(
                                 it[0].toUByte().toInt().toString(),
@@ -622,10 +622,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             (proxy.getAny("peers") as? List<Map<String, Any>>)?.forEach { peer ->
                 if (peer.contains("server") && peer.contains("port")) {
                     beanList.add(bean.applyDefaultValues().clone().apply {
-                        serverAddress = peer.getAnyToString("server")
-                        serverPort = peer.getAnyToString("port")?.toUIntOrNull()
-                        peerPublicKey = peer.getAnyToString("public-key")
-                        peerPreSharedKey = peer.getAnyToString("pre-shared-key")
+                        serverAddress = peer.getClashString("server")
+                        serverPort = peer.getClashInt("port")
+                        peerPublicKey = peer.getClashString("public-key")
+                        peerPreSharedKey = peer.getClashString("pre-shared-key")
                         (peer.getAny("reserved") as? List<Map<String, Any>>)?.also {
                             if (it.size == 3) {
                                 reserved = listOf(
@@ -635,7 +635,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                                 ).joinToString(",")
                             }
                         } ?: {
-                            Base64.decode(peer.getAnyToString("reserved"))?.also {
+                            Base64.decode(peer.getClashString("reserved"))?.also {
                                 if (it.size == 3) {
                                     reserved = listOf(
                                         it[0].toUByte().toInt().toString(),
@@ -652,4 +652,73 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
         }
         else -> return listOf()
     }
+}
+
+private fun Map<String, Any?>.getClashString(key: String): String? {
+    if (this.contains(key)) {
+        return when (val value = this[key]) {
+            is String -> value
+            is Int -> value.toString()
+            // is Float -> value.toString()
+            else -> null
+        }
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return when (val value = it.value) {
+                is String -> value
+                is Int -> value.toString()
+                // is Float -> value.toString()
+                else -> null
+            }
+        }
+    }
+    return null
+}
+
+private fun Map<String, Any?>.getClashInt(key: String): Int? {
+    if (this.contains(key)) {
+        return when (val value = this[key]) {
+            is Int -> return value
+            is String -> return value.convertClashStringToInt()
+            // is Float -> return value.toString().convertClashStringToInt()
+            else -> null
+        }
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return when (val value = it.value) {
+                is Int -> value
+                is String -> value.convertClashStringToInt()
+                // is Float -> return value.toString().convertClashStringToInt()
+                else -> null
+            }
+        }
+    }
+    return null
+}
+
+private fun String.convertClashStringToInt(): Int? {
+    if (this.contains(":")) return null
+    if (!this.startsWith("_") && this.replace("_", "").toFloatOrNull() != null) {
+        return this.replace("_", "").toFloat().toInt()
+    }
+    val newStr = this.lowercase().removePrefix("+")
+    if (newStr.contains("+")) return null
+    if (newStr.startsWith("0x")) {
+        return newStr.removePrefix("0x").replace("_", "").toIntOrNull(16)
+    }
+    if (newStr.startsWith("0b")) {
+        return newStr.removePrefix("0b").replace("_", "").toIntOrNull(2)
+    }
+    if (newStr.startsWith("0o")) {
+        return newStr.removePrefix("0o").replace("_", "").toIntOrNull(8)
+    }
+    if (newStr.startsWith("0")) {
+        return newStr.removePrefix("0").replace("_", "").toIntOrNull(8)
+    }
+    if (newStr.startsWith("_")) {
+        return null
+    }
+    return newStr.replace("_", "").toIntOrNull()
 }

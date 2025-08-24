@@ -44,8 +44,8 @@ fun Map<String, Any?>.getAny(key: String): Any? {
 }
 
 fun Map<String, Any?>.getString(key: String): String? {
-    (this[key] as? String)?.also {
-        return it
+    if (this.contains(key)) {
+        return this[key] as? String
     }
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
@@ -55,21 +55,9 @@ fun Map<String, Any?>.getString(key: String): String? {
     return null
 }
 
-fun Map<String, Any?>.getAnyToString(key: String): String? {
-    (this[key]?.toString())?.also {
-        return it
-    }
-    for (it in this) {
-        if (it.key.lowercase() == key.lowercase()) {
-            return it.value?.toString()
-        }
-    }
-    return null
-}
-
 fun Map<String, Any?>.getInteger(key: String): Int? {
-    (this[key] as? Int)?.also {
-        return it
+    if (this.contains(key)) {
+        return this[key] as? Int
     }
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
@@ -79,37 +67,13 @@ fun Map<String, Any?>.getInteger(key: String): Int? {
     return null
 }
 
-fun Map<String, Any?>.getLongInteger(key: String): Long? {
-    (this[key] as? Long)?.also {
-        return it
-    }
-    for (it in this) {
-        if (it.key.lowercase() == key.lowercase()) {
-            return it.value as? Long
-        }
-    }
-    return null
-}
-
 fun Map<String, Any?>.getBoolean(key: String): Boolean? {
-    (this[key] as? Boolean)?.also {
-        return it
+    if (this.contains(key)) {
+        return this[key] as? Boolean
     }
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
             return it.value as? Boolean
-        }
-    }
-    return null
-}
-
-fun Map<String, Any?>.getIntFromStringOrInt(key: String): Int? {
-    (this[key]?.toString()?.toInt())?.also {
-        return it
-    }
-    for (it in this) {
-        if (it.key.lowercase() == key.lowercase()) {
-            return it.value?.toString()?.toInt()
         }
     }
     return null
@@ -139,28 +103,4 @@ fun Map<String, Any?>.getArray(key: String): List<Map<String, Any?>>? {
         }
     }
     return null
-}
-
-fun String.toUIntOrNull(): Int? {
-    // Clash's custom int parser
-    if (this.contains(":")) return null
-    if (this.contains("-")) return null
-    val newStr = this.lowercase().removePrefix("+")
-    if (newStr.contains("+")) return null
-    if (newStr.startsWith("0x")) {
-        return newStr.removePrefix("0x").replace("_", "").toIntOrNull(16)
-    }
-    if (newStr.startsWith("0b")) {
-        return newStr.removePrefix("0b").replace("_", "").toIntOrNull(2)
-    }
-    if (newStr.startsWith("0o")) {
-        return newStr.removePrefix("0o").replace("_", "").toIntOrNull(8)
-    }
-    if (newStr.startsWith("0")) {
-        return newStr.removePrefix("0").replace("_", "").toIntOrNull(8)
-    }
-    if (newStr.startsWith("_")) {
-        return null
-    }
-    return newStr.replace("_", "").toIntOrNull()
 }
