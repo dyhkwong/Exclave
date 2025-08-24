@@ -186,7 +186,7 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
                     .setTitle(R.string.delete_confirm_prompt)
                     .setPositiveButton(android.R.string.ok) { _, _ ->
                         runOnDefaultDispatcher {
-                            ProfileManager.deleteProfile(DataStore.editingId, DataStore.editingGroup)
+                            ProfileManager.deleteProfile(DataStore.editingGroup, DataStore.editingId)
                         }
                         finish()
                     }
