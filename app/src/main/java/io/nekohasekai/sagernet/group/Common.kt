@@ -55,6 +55,18 @@ fun Map<String, Any?>.getString(key: String): String? {
     return null
 }
 
+fun Map<String, Any?>.getAnyToString(key: String): String? {
+    (this[key]?.toString())?.also {
+        return it
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return it.value?.toString()
+        }
+    }
+    return null
+}
+
 fun Map<String, Any?>.getInteger(key: String): Int? {
     (this[key] as? Int)?.also {
         return it

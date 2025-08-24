@@ -236,17 +236,13 @@ object RawUpdater : GroupUpdater() {
             val options = DumperOptions()
             val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
                 override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
-                    // Stupid config providers write ambiguous strings without quoting.
                     when (tag) {
-                        Tag.FLOAT, Tag.BINARY, Tag.TIMESTAMP -> null // Clash does not use these types for `proxies`
-                        Tag.INT -> null // Treat as str
+                        Tag.FLOAT, Tag.BINARY, Tag.TIMESTAMP -> null
                         Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
                         else -> super.addImplicitResolver(tag, regexp, first, limit)
                     }
                 }
-            }).apply {
-                addTypeDescription(TypeDescription(String::class.java, "str"))
-            }.loadAs(text, Map::class.java)
+            }).loadAs(text, Map::class.java)
             (yaml["proxies"] as? List<Map<String, Any?>>)?.let {
                 return parseClashProxies(it)
             }
