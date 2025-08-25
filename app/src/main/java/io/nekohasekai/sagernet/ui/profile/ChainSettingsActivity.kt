@@ -52,9 +52,14 @@ import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 
 class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout_chain_settings) {
 
+    companion object {
+        const val KEY_PROXY_LIST = "proxyList"
+    }
+
     override fun createEntity() = ChainBean()
 
     val proxyList = ArrayList<ProxyEntity>()
+    var proxyListInSavedInstanceState = ""
 
     override fun ChainBean.init() {
         DataStore.profileName = name
@@ -135,6 +140,14 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
             }
 
         }).attachToRecyclerView(configurationList)
+        savedInstanceState?.getString(KEY_PROXY_LIST)?.let {
+            proxyListInSavedInstanceState = it
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_PROXY_LIST, proxyList.map { it.id }.joinToString(","))
     }
 
     override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
@@ -157,7 +170,6 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
                 layoutParams = this
             }
         }
-
         runOnDefaultDispatcher {
             configurationAdapter.reload()
         }
@@ -166,10 +178,10 @@ class ChainSettingsActivity : ProfileSettingsActivity<ChainBean>(R.layout.layout
     inner class ProxiesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         suspend fun reload() {
-            val idList = DataStore.serverProtocol.split(",")
-                .mapNotNull { it.takeIf { it.isNotBlank() }?.toLong() }
+            val idList = (proxyListInSavedInstanceState.takeIf { it.isNotEmpty() } ?: DataStore.serverProtocol)
+                .split(",").mapNotNull { it.takeIf { it.isNotBlank() }?.toLong() }
             if (idList.isNotEmpty()) {
-                val profiles = ProfileManager.getProfiles(idList).map { it.id to it }.toMap()
+                val profiles = ProfileManager.getProfiles(idList).associateBy { it.id }
                 for (id in idList) {
                     proxyList.add(profiles[id] ?: continue)
                 }

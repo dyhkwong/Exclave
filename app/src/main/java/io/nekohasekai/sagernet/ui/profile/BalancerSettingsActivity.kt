@@ -57,9 +57,14 @@ import io.nekohasekai.sagernet.widget.GroupPreference
 
 class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.layout_chain_settings) {
 
+    companion object {
+        const val KEY_PROXY_LIST = "proxyList"
+    }
+
     override fun createEntity() = BalancerBean()
 
     val proxyList = ArrayList<ProxyEntity>()
+    var proxyListInSavedInstance = ""
 
     override fun BalancerBean.init() {
         DataStore.profileName = name
@@ -182,7 +187,14 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
             }
 
         }).attachToRecyclerView(configurationList)
+        savedInstanceState?.getString(KEY_PROXY_LIST)?.let {
+            proxyListInSavedInstance = it
+        }
+    }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(ChainSettingsActivity.Companion.KEY_PROXY_LIST, proxyList.map { it.id }.joinToString(","))
     }
 
     override fun PreferenceFragmentCompat.viewCreated(view: View, savedInstanceState: Bundle?) {
@@ -216,8 +228,12 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
     inner class ProxiesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         suspend fun reload() {
-            val idList = DataStore.serverProtocol.split(",")
+            var idList = DataStore.serverProtocol.split(",")
                 .mapNotNull { it.takeIf { it.isNotBlank() }?.toLong() }
+            proxyListInSavedInstance.takeIf { it.isNotEmpty() }?.let {
+                idList = it.split(",")
+                    .mapNotNull { it.takeIf { it.isNotBlank() }?.toLong() }
+            }
             if (idList.isNotEmpty()) {
                 val profiles = ProfileManager.getProfiles(idList).map { it.id to it }.toMap()
                 for (id in idList) {
