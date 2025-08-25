@@ -594,9 +594,7 @@ fun buildV2RayConfig(
                                                     port = bean.serverPort
                                                     users = listOf(VMessOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            if (bean.uuid.isNotEmpty()) {
-                                                                id = bean.uuidOrGenerate()
-                                                            }
+                                                            id = bean.uuidOrGenerate()
                                                             if (bean.alterId > 0) {
                                                                 alterId = bean.alterId
                                                             }
@@ -634,9 +632,7 @@ fun buildV2RayConfig(
                                                     port = bean.serverPort
                                                     users = listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            if (bean.uuid.isNotEmpty()) {
-                                                                id = bean.uuidOrGenerate()
-                                                            }
+                                                            id = bean.uuidOrGenerate()
                                                             encryption = bean.encryption
                                                             if (bean.flow.isNotEmpty()) {
                                                                 flow = bean.flow

@@ -132,12 +132,10 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             }
         }
     } else {
-        if (url.username.isNotEmpty()) {
-            bean.uuid = try {
-                UUID.fromString(url.username).toString(false)
-            } catch (_: Exception) {
-                uuid5(url.username)
-            }
+        bean.uuid = try {
+            UUID.fromString(url.username).toString(false)
+        } catch (_: Exception) {
+            uuid5(url.username)
         }
     }
 
@@ -386,7 +384,7 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
         serverAddress = json.getStr("add")?.takeIf { it.isNotEmpty() } ?: error("missing server address")
         serverPort = json.getInt("port")
             ?: json.getStr("port")?.takeIf { it.isNotEmpty() }?.toIntOrNull() ?: error("invalid port")
-        uuid = json.getStr("id")?.takeIf { it.isNotEmpty() }?.let {
+        uuid = json.getStr("id")?.let {
             try {
                 UUID.fromString(it).toString(false)
             } catch (_: Exception) {
@@ -553,16 +551,10 @@ fun StandardV2RayBean.toUri(): String? {
             }
         }
         is VMessBean -> {
-            if (uuid.isEmpty()) {
-                error("empty uuid")
-            }
             builder.username = uuidOrGenerate()
             builder.addQueryParameter("encryption", encryption)
         }
         is VLESSBean -> {
-            if (uuid.isEmpty()) {
-                error("empty uuid")
-            }
             builder.username = uuidOrGenerate()
             builder.addQueryParameter("encryption", "none")
         }

@@ -186,7 +186,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 if (bean.security == "tls") {
                     bean.sni = proxy.getClashString("servername")
                 }
-                proxy.getClashString("uuid")?.takeIf { it.isNotEmpty() }?.also {
+                proxy.getClashString("uuid")?.also {
                     bean.uuid = try {
                         UUID.fromString(it).toString()
                     } catch (_: Exception) {

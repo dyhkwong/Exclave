@@ -400,7 +400,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             vnext.getArray("users")?.get(0)?.also { user ->
-                                user.getString("id")?.takeIf { it.isNotEmpty() }?.also {
+                                user.getString("id")?.also {
                                     v2rayBean.uuid = try {
                                         UUID.fromString(it).toString()
                                     } catch (_: Exception) {
@@ -445,7 +445,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             vnext.getArray("users")?.get(0)?.also { user ->
-                                user.getString("id")?.takeIf { it.isNotEmpty() }?.also {
+                                user.getString("id")?.also {
                                     v2rayBean.uuid = try {
                                         UUID.fromString(it).toString()
                                     } catch (_: Exception) {

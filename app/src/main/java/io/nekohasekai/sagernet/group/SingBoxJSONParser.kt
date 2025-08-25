@@ -231,7 +231,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
                 "vmess" -> {
                     v2rayBean as VMessBean
-                    outbound.getString("uuid")?.takeIf { it.isNotEmpty() }?.also {
+                    outbound.getString("uuid")?.also {
                         v2rayBean.uuid = try {
                             UUID.fromString(it).toString()
                         } catch (_: Exception) {
@@ -256,7 +256,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
                 "vless" -> {
                     v2rayBean as VLESSBean
-                    outbound.getString("uuid")?.takeIf { it.isNotEmpty() }?.also {
+                    outbound.getString("uuid")?.also {
                         v2rayBean.uuid = try {
                             UUID.fromString(it).toString()
                         } catch (_: Exception) {
