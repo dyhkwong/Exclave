@@ -158,8 +158,10 @@ class ConfigurationFragment @JvmOverloads constructor(
             override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(query: String?): Boolean {
                 query?.let {
-                    val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
-                    fragment?.adapter?.filter(query)
+                    try {
+                        val fragment = (childFragmentManager.findFragmentByTag("f" + selectedGroup.id) as GroupFragment?)
+                        fragment?.adapter?.filter(query)
+                    } catch (_: Exception) {}
                 }
                 return false
             }
