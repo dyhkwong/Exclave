@@ -315,7 +315,7 @@
     <string name="hysteria_upload_mbps">Максимальная скорость загрузки (в Мбит/с)</string>
     <string name="hysteria_auth_payload">Полезные данные аутентификации</string>
     <string name="hysteria_auth_type">Тип аутентификации</string>
-    <string name="hysteria_obfs">Обфускация пароля</string>
+    <string name="hysteria_obfs">Пароль для обфускации</string>
     <string name="experimental_no_termination_signal">Не отправлять одинарный дуплексный сигнал завершения соединения для TCP-соединения при передаче через VMess. Это нарушит работу некоторых приложений.</string>
     <string name="experimental_authenticated_length">Сделать длину каждого сегмента полезной нагрузки неизменяемым. Этот эксперимент требует, что бы клиент и сервер оба использовали одинаковую версию v2ray-core. Больше обновлений со временем.</string>
     <string name="experimental_settings">Экспериментально</string>
