@@ -57,6 +57,7 @@ import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
 import io.nekohasekai.sagernet.ktx.showAllowingStateLoss
 import io.nekohasekai.sagernet.ktx.unwrapIDN
+import io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
 import kotlinx.coroutines.launch
 
 abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV2RayBean>(),
@@ -72,9 +73,13 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 DataStore.serverEncryption = method
                 DataStore.serverUserId = password
             }
-            is VMessBean, is VLESSBean -> {
+            is VMessBean -> {
                 DataStore.serverUserId = uuid
                 DataStore.serverEncryption = encryption
+            }
+            is VLESSBean -> {
+                DataStore.serverUserId = uuid
+                DataStore.serverEncryptionForVless = encryption
             }
             is HttpBean -> {
                 DataStore.serverUserId = password
@@ -161,9 +166,13 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 method = DataStore.serverEncryption
                 password = DataStore.serverUserId
             }
-            is VMessBean, is VLESSBean -> {
+            is VMessBean -> {
                 uuid = DataStore.serverUserId
                 encryption = DataStore.serverEncryption
+            }
+            is VLESSBean -> {
+                uuid = DataStore.serverUserId
+                encryption = DataStore.serverEncryptionForVless
             }
             is HttpBean -> {
                 password = DataStore.serverUserId
@@ -234,6 +243,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     }
 
     lateinit var encryption: SimpleMenuPreference
+    lateinit var vlessEncryption: NonBlackEditTextPreference
     lateinit var network: SimpleMenuPreference
     lateinit var header: SimpleMenuPreference
     lateinit var requestHost: EditTextPreference
@@ -297,6 +307,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         }
 
         encryption = findPreference(Key.SERVER_ENCRYPTION)!!
+        vlessEncryption = findPreference(Key.SERVER_ENCRYPTION_FOR_VLESS)!!
         network = findPreference(Key.SERVER_NETWORK)!!
         header = findPreference(Key.SERVER_HEADER)!!
         requestHost = findPreference(Key.SERVER_HOST)!!
@@ -363,18 +374,14 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
         when (bean) {
             is VLESSBean -> {
-                encryption.setEntries(R.array.vless_encryption_value)
-                encryption.setEntryValues(R.array.vless_encryption_value)
-                val vev = resources.getStringArray(R.array.vless_encryption_value)
-                if (encryption.value !in vev) {
-                    encryption.value = vev[0]
-                }
+                encryption.isVisible = false
                 val xfv = resources.getStringArray(R.array.xtls_flow_value)
                 if (xtlsFlow.value !in xfv) {
                     xtlsFlow.value = xfv[0]
                 }
             }
             is VMessBean -> {
+                vlessEncryption.isVisible = false
                 encryption.setEntries(R.array.vmess_encryption_value)
                 encryption.setEntryValues(R.array.vmess_encryption_value)
                 val vev = resources.getStringArray(R.array.vmess_encryption_value)
@@ -383,6 +390,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 }
             }
             is ShadowsocksBean -> {
+                vlessEncryption.isVisible = false
                 encryption.setEntries(R.array.enc_method_value)
                 encryption.setEntryValues(R.array.enc_method_value)
                 val sev = resources.getStringArray(R.array.enc_method_value)
@@ -392,6 +400,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             }
             else -> {
                 encryption.isVisible = false
+                vlessEncryption.isVisible = false
             }
         }
 

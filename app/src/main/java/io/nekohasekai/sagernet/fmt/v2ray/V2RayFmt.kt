@@ -30,10 +30,6 @@ val supportedVmessMethod = arrayOf(
     "auto", "aes-128-gcm", "chacha20-poly1305", "none", "zero"
 )
 
-val supportedVlessMethod = arrayOf(
-    "none"
-)
-
 val supportedVlessFlow = arrayOf(
     "xtls-rprx-vision", "xtls-rprx-vision-udp443"
 )
@@ -146,8 +142,18 @@ fun parseV2Ray(link: String): StandardV2RayBean {
         }
     }
     if (bean is VLESSBean) {
-        url.queryParameter("encryption")?.let {
-            if (it !in supportedVlessMethod) error("unsupported vless encryption")
+        when (val encryption = url.queryParameter("encryption")) {
+            "none", null -> bean.encryption = "none"
+            "" -> error("unsupported vless encryption")
+            else -> {
+                val parts = encryption.split(".")
+                if (parts.size < 4 || parts[0] != "mlkem768x25519plus"
+                    || !(parts[1] == "native" || parts[1] == "xorpub" || parts[1] == "random")
+                    || !(parts[2] == "1rtt" || parts[2] == "0rtt")) {
+                    error("unsupported vless encryption")
+                }
+                bean.encryption = encryption
+            }
         }
     }
 
@@ -162,6 +168,20 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     }
 
     when (bean.security) {
+        "none" -> {
+            if (bean is VLESSBean) {
+                url.queryParameter("flow")?.let {
+                    when (it) {
+                        in supportedVlessFlow -> {
+                            bean.flow = "xtls-rprx-vision-udp443"
+                            bean.packetEncoding = "xudp"
+                        }
+                        in legacyVlessFlow, "", "none" -> null
+                        else -> error("unsupported vless flow")
+                    }
+                }
+            }
+        }
         "tls" -> {
             if (bean is TrojanBean) {
                 bean.sni = url.queryParameter("sni") ?: url.queryParameter("peer")
@@ -173,15 +193,15 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             url.queryParameter("alpn")?.let {
                 bean.alpn = it.split(",").joinToString("\n")
             }
-            if (bean is VLESSBean && bean.security == "tls") {
+            if (bean is VLESSBean) {
                 url.queryParameter("flow")?.let {
                     when (it) {
                         in supportedVlessFlow -> {
                             bean.flow = "xtls-rprx-vision-udp443"
                             bean.packetEncoding = "xudp"
                         }
-                        in legacyVlessFlow, "", "none" -> {}
-                        else -> if (it.startsWith("xtls-rprx-")) error("unsupported vless flow")
+                        in legacyVlessFlow, "", "none" -> null
+                        else -> error("unsupported vless flow")
                     }
                 }
             }
@@ -214,7 +234,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                             bean.flow = "xtls-rprx-vision-udp443"
                             bean.packetEncoding = "xudp"
                         }
-                        "", "none" -> {}
+                        "", "none" -> null
                         else -> error("unsupported vless flow")
                     }
                 }
@@ -556,7 +576,19 @@ fun StandardV2RayBean.toUri(): String? {
         }
         is VLESSBean -> {
             builder.username = uuidOrGenerate()
-            builder.addQueryParameter("encryption", "none")
+            when (encryption) {
+                "none" -> builder.addQueryParameter("encryption", "none")
+                "" -> error("unsupported vless encryption")
+                else -> {
+                    val parts = encryption.split(".")
+                    if (parts.size < 4 || parts[0] != "mlkem768x25519plus"
+                        || !(parts[1] == "native" || parts[1] == "xorpub" || parts[1] == "random")
+                        || !(parts[2] == "1rtt" || parts[2] == "0rtt")) {
+                        error("unsupported vless encryption")
+                    }
+                    builder.addQueryParameter("encryption", encryption)
+                }
+            }
         }
     }
 
@@ -696,6 +728,11 @@ fun StandardV2RayBean.toUri(): String? {
     }
 
     when (security) {
+        "none" -> {
+            if (this is VLESSBean && flow.isNotEmpty()) {
+                builder.addQueryParameter("flow", flow.removeSuffix("-udp443"))
+            }
+        }
         "tls" -> {
             if (sni.isNotEmpty()) {
                 if (this !is TrojanBean || sni != serverAddress) {

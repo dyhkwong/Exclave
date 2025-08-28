@@ -267,6 +267,18 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         } else return listOf()
                     }
                 }
+                when (val encryption = proxy.getString("encryption")) {
+                    "", "none", null -> bean.encryption = "none"
+                    else -> {
+                        val parts = encryption.split(".")
+                        if (parts.size < 4 || parts[0] != "mlkem768x25519plus"
+                            || !(parts[1] == "native" || parts[1] == "xorpub" || parts[1] == "random")
+                            || !(parts[2] == "1rtt" || parts[2] == "0rtt")) {
+                            error("unsupported vless encryption")
+                        }
+                        bean.encryption = encryption
+                    }
+                }
             }
 
             (proxy.getAny("reality-opts") as? Map<String, Any?>)?.also {

@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditTextPreference
         app:icon="@drawable/ic_social_emoji_symbols"
@@ -40,6 +41,12 @@
             app:entryValues="@array/vmess_encryption_value"
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverEncryption"
+            app:title="@string/enc_method"
+            app:useSimpleSummaryProvider="true" />
+        <io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
+            app:defaultValue="none"
+            app:icon="@drawable/ic_notification_enhanced_encryption"
+            app:key="serverEncryptionForVless"
             app:title="@string/enc_method"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference

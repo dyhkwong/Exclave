@@ -462,6 +462,19 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                         else -> if (it.startsWith("xtls-rprx-")) return listOf()
                                     }
                                 }
+                                when (val encryption = user.getString("encryption")) {
+                                    "none" -> v2rayBean.encryption = "none"
+                                    "", null -> return listOf()
+                                    else -> {
+                                        val parts = encryption.split(".")
+                                        if (parts.size < 4 || parts[0] != "mlkem768x25519plus"
+                                            || !(parts[1] == "native" || parts[1] == "xorpub" || parts[1] != "random")
+                                            || !(parts[2] == "1rtt" || parts[2] == "0rtt")) {
+                                            error("unsupported vless encryption")
+                                        }
+                                        v2rayBean.encryption = encryption
+                                    }
+                                }
                             }
                         }
                     }

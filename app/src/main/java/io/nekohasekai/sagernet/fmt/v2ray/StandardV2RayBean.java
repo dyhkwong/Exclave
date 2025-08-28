@@ -90,7 +90,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
         super.initializeDefaultValues();
 
         if (uuid == null) uuid = "";
-        if (encryption == null) encryption = "";
+        if (encryption == null) encryption = ""; // overridden in VMessBean and VLESSBean
 
         if (type == null) type = "tcp";
 
