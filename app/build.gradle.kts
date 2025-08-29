@@ -49,8 +49,8 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-colorpicker:1.1.0")
 
     implementation("com.google.android.material:material:1.12.0")
-    implementation("cn.hutool:hutool-core:5.8.39")
-    implementation("cn.hutool:hutool-json:5.8.39")
+    implementation("cn.hutool:hutool-core:5.8.40")
+    implementation("cn.hutool:hutool-json:5.8.40")
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.google.zxing:core:3.5.3")
 
