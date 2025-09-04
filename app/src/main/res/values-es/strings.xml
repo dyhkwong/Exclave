@@ -583,4 +583,5 @@
     <string name="do_not_show_again">No volver a mostrar</string>
     <string name="format">Formato: %s</string>
     <string name="mieru_handshake_mode">Modo de protocolo de enlace</string>
+    <string name="juicity_provider">Proveedor Juicity</string>
 </resources>

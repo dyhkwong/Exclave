@@ -584,4 +584,5 @@
     <string name="tls_record_fragmentation">TLS 记录分片</string>
     <string name="tcp_segmentation">TCP 分段</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">TLS 记录分片和 TCP 分段</string>
+    <string name="juicity_provider">Juicity 提供程序</string>
 </resources>

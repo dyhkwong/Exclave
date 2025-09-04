@@ -243,6 +243,14 @@
             app:key="providerTuic5"
             app:title="@string/tuic_v5_provider"
             app:useSimpleSummaryProvider="true" />
+        <com.takisoft.preferencex.SimpleMenuPreference
+            android:icon="@drawable/baseline_flight_takeoff_24"
+            app:defaultValue="1"
+            app:entries="@array/juicity_provider"
+            app:entryValues="@array/juicity_provider_value"
+            app:key="providerJuicity"
+            app:title="@string/juicity_provider"
+            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/baseline_construction_24"
             app:key="realityDisableX25519Mlkem768"

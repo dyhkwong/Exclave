@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -56,6 +57,9 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         pinnedCertChainSha256 = DataStore.serverPinnedCertificateChain
     }
 
+    lateinit var pinnedCertificateChain: EditTextPreference
+    lateinit var allowInsecure: SwitchPreference
+
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
@@ -65,6 +69,22 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
-    }
 
+        pinnedCertificateChain = findPreference(Key.SERVER_PINNED_CERTIFICATE_CHAIN)!!
+        allowInsecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
+        // match Juicity's behavior
+        // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
+        if (pinnedCertificateChain.text.isNotEmpty()) {
+            allowInsecure.isChecked = true
+        }
+        allowInsecure.isEnabled = pinnedCertificateChain.text.isEmpty()
+        pinnedCertificateChain.setOnPreferenceChangeListener { _, newValue ->
+            newValue as String
+            if (newValue.isNotEmpty()) {
+                allowInsecure.isChecked = true
+            }
+            allowInsecure.isEnabled = newValue.isEmpty()
+            true
+        }
+    }
 }

@@ -622,4 +622,5 @@
     <string name="tls_record_fragmentation">TLS record fragmentation</string>
     <string name="tcp_segmentation">TCP segmentation</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">TLS record fragmentation and TCP segmentation</string>
+    <string name="juicity_provider">Juicity provider</string>
 </resources>

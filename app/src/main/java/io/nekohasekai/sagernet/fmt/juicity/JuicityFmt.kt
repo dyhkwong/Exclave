@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt.juicity
 
+import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
@@ -33,7 +34,6 @@ fun parseJuicity(url: String): JuicityBean {
     val link = Libcore.parseURL(url)
     return JuicityBean().apply {
         name = link.fragment
-
         serverAddress = link.host
         serverPort = link.port
         uuid = link.username
@@ -52,6 +52,9 @@ fun parseJuicity(url: String): JuicityBean {
         }
         link.queryParameter("pinned_certchain_sha256")?.also {
             pinnedCertChainSha256 = it
+            // match Juicity's behavior
+            // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
+            allowInsecure = true
         }
     }
 }
@@ -68,16 +71,25 @@ fun JuicityBean.toUri(): String? {
     if (password.isNotEmpty()) {
         builder.password = password
     }
-
     builder.addQueryParameter("congestion_control", congestionControl)
-    if (allowInsecure) {
-        builder.addQueryParameter("allow_insecure", "1")
-    }
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
     if (pinnedCertChainSha256.isNotEmpty()) {
-        builder.addQueryParameter("pinned_certchain_sha256", pinnedCertChainSha256)
+        // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L87-L96
+        // it actually supports Base64 URL-safe encoding with padding, Base64 standard encoding with padding and Hex encoding
+        builder.addQueryParameter("pinned_certchain_sha256", when {
+            pinnedCertChainSha256.length == 64 -> {
+                Base64.encodeUrlSafe(pinnedCertChainSha256.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+            }
+            else -> {
+                pinnedCertChainSha256.replace('/', '_').replace('+', '-')
+            }
+        })
+
+    }
+    if (allowInsecure || pinnedCertChainSha256.isNotEmpty()) {
+        builder.addQueryParameter("allow_insecure", "1")
     }
 
     return builder.string
@@ -95,8 +107,8 @@ fun JuicityBean.buildJuicityConfig(port: Int): String {
         } else {
             it["sni"] = serverAddress
         }
-        if (allowInsecure) {
-            it["allow_insecure"] = allowInsecure
+        if (allowInsecure || pinnedCertChainSha256.isNotEmpty()) {
+            it["allow_insecure"] = true
         }
         if (pinnedCertChainSha256.isNotEmpty()) {
             it["pinned_certchain_sha256"] = pinnedCertChainSha256

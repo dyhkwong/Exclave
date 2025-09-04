@@ -28,6 +28,8 @@ import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
+import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.fmt.juicity.supportedJuicityCongestionControl
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocks2022Method
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocksMethod
@@ -907,6 +909,44 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
             }
             return listOf(anytlsBean)
+        }
+        "juicity" -> {
+            val juicityBean = JuicityBean()
+            outbound.getObject("settings")?.also { settings ->
+                outbound.getString("tag")?.also {
+                    juicityBean.name = it
+                }
+                settings.getString("address")?.also {
+                    juicityBean.serverAddress = it
+                } ?: return listOf()
+                settings.getV2RayPort("port")?.also {
+                    juicityBean.serverPort = it
+                } ?: return listOf()
+                settings.getString("uuid")?.also {
+                    juicityBean.uuid = it
+                }
+                settings.getString("password")?.also {
+                    juicityBean.password = it
+                }
+                settings.getString("congestionControl")?.also {
+                    juicityBean.congestionControl = if (it in supportedJuicityCongestionControl) it else "bbr"
+                }
+                settings.getObject("tlsSettings")?.also { tlsSettings ->
+                    tlsSettings.getString("serverName")?.also {
+                        juicityBean.sni = it
+                    }
+                    tlsSettings.getBoolean("allowInsecure")?.also {
+                        juicityBean.allowInsecure = it
+                    }
+                    (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                        juicityBean.pinnedCertChainSha256 = it[0].replace('/', '_').replace('+', '-')
+                        // match Juicity's behavior
+                        // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
+                        juicityBean.allowInsecure = true
+                    }
+                }
+            }
+            return listOf(juicityBean)
         }
         "wireguard" -> {
             val beanList = mutableListOf<WireGuardBean>()

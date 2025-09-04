@@ -941,4 +941,14 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="juicity_provider">
+        <item>@string/plugin</item>
+        <item>@string/core</item>
+    </string-array>
+
+    <string-array name="juicity_provider_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 </resources>

@@ -1391,6 +1391,37 @@ fun buildV2RayConfig(
                                         }
                                     }
                                 }
+                            } else if (bean is JuicityBean) {
+                                protocol = "juicity"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    V2RayConfig.JuicityOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
+                                        uuid = bean.uuid
+                                        password = bean.password
+                                        congestionControl = bean.congestionControl
+                                        tlsSettings = TLSObject().apply {
+                                            if (bean.sni.isNotEmpty()) {
+                                                serverName = bean.sni
+                                            }
+                                            if (bean.allowInsecure || bean.pinnedCertChainSha256.isNotEmpty()) {
+                                                // match Juicity's behavior
+                                                // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
+                                                allowInsecure = true
+                                            }
+                                            if (bean.pinnedCertChainSha256.isNotEmpty()) {
+                                                pinnedPeerCertificateChainSha256 = when {
+                                                    bean.pinnedCertChainSha256.length == 64 -> {
+                                                        listOf(Base64.encode(bean.pinnedCertChainSha256.chunked(2).map { it.toInt(16).toByte() }.toByteArray()))
+                                                    }
+                                                    else -> {
+                                                        listOf(bean.pinnedCertChainSha256.replace('_', '/').replace('-', '+'))
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                )
                             }
                             if (bean is StandardV2RayBean && bean.mux) {
                                 mux = OutboundObject.MuxObject().apply {

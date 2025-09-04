@@ -433,6 +433,9 @@ data class ProxyEntity(
         if (bean is Tuic5Bean) {
             return DataStore.providerTuic5 != ProtocolProvider.CORE
         }
+        if (bean is JuicityBean) {
+            return DataStore.providerJuicity != ProtocolProvider.CORE
+        }
         return when (type) {
             TYPE_TROJAN_GO -> true
             TYPE_NAIVE -> true

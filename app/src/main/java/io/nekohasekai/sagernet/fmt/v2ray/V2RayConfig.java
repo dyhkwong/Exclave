@@ -698,6 +698,8 @@ public class V2RayConfig {
                     return ShadowTLSOutboundConfigurationObject.class;
                 case "anytls":
                     return AnyTLSOutboundConfigurationObject.class;
+                case "juicity":
+                    return JuicityOutboundConfigurationObject.class;
             }
             return null;
         }
@@ -1013,6 +1015,16 @@ public class V2RayConfig {
 
     }
 
+    public static class JuicityOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public String uuid;
+        public String password;
+        public String congestionControl;
+        public TLSObject tlsSettings;
+
+    }
 
     public TransportObject transport;
 

@@ -102,6 +102,7 @@ object Key {
     const val PROVIDER_HYSTERIA2 = "providerHysteria2"
     const val HYSTERIA_ENABLE_PORT_HOPPING = "hysteriaEnablePortHopping"
     const val PROVIDER_TUIC5 = "providerTuic5"
+    const val PROVIDER_JUICITY = "providerJuicity"
     const val PROVIDER_ROOT_CA = "providerRootCA"
 
     const val TUN_IMPLEMENTATION = "tunImplementation"

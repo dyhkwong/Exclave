@@ -591,4 +591,5 @@
     <string name="tls_record_fragmentation">Фрагментация записей TLS</string>
     <string name="tcp_segmentation">Сегментация TCP</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">Фрагментация записей TLS и сегментация TCP</string>
+    <string name="juicity_provider">Реализация Juicity</string>
 </resources>
