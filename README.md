@@ -73,7 +73,6 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
 
 - [Shadowsocks](https://github.com/shadowsocks/shadowsocks-android) by [Mygod](https://github.com/Mygod), [madeye](https://github.com/madeye), et al.
 - [SagerNet](https://github.com/SagerNet/SagerNet) by [nekohasekai](https://github.com/nekohasekai) et al.
-- [AnXray](https://github.com/XTLS/AnXray) by [nekohasekai](https://github.com/nekohasekai) et al.
 - [Matsuri](https://github.com/MatsuriDayo/Matsuri) by [arm64v8a](https://github.com/arm64v8a) et al.
 - [NekoBox](https://github.com/MatsuriDayo/NekoBoxForAndroid) by [arm64v8a](https://github.com/arm64v8a) et al.
 - [husi](https://github.com/xchacha20-poly1305/husi) by [xchacha20-poly1305](https://github.com/xchacha20-poly1305) et al.
