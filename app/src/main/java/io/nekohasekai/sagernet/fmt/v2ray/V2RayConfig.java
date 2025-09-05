@@ -51,6 +51,7 @@ public class V2RayConfig {
 
         public String tag;
         public List<String> services;
+        public String listen;
 
     }
 
