@@ -1,6 +1,7 @@
 *.iml
 .gradle
 .idea
+.kotlin
 .DS_Store
 build/
 /captures
@@ -11,4 +12,3 @@ local.properties
 /app/src/main/assets/v2ray/*.dat
 /service_account_credentials.json
 jniLibs/
-/.kotlin

@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.2.0-2.0.2"
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
@@ -48,13 +48,13 @@ dependencies {
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")
     implementation("com.takisoft.preferencex:preferencex-colorpicker:1.1.0")
 
-    implementation("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.material:material:1.13.0")
     implementation("cn.hutool:hutool-core:5.8.40")
     implementation("cn.hutool:hutool-json:5.8.40")
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.google.zxing:core:3.5.3")
 
-    implementation("org.yaml:snakeyaml:2.4")
+    implementation("org.yaml:snakeyaml:2.5")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.jakewharton:process-phoenix:3.0.0")
     implementation("com.esotericsoftware:kryo:5.6.2")
