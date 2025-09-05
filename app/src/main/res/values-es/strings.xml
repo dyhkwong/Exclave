@@ -583,5 +583,8 @@
     <string name="do_not_show_again">No volver a mostrar</string>
     <string name="format">Formato: %s</string>
     <string name="mieru_handshake_mode">Modo de protocolo de enlace</string>
-    <string name="juicity_provider">Proveedor Juicity</string>
+    <string name="fragment_method">Método de fragmentación</string>
+    <string name="tls_record_fragmentation">Fragmentación de registros TLS</string>
+    <string name="tcp_segmentation">Segmentación TCP</string>
+    <string name="tls_record_fragmentation_and_tcp_segmentation">Fragmentación de registros TLS y segmentación TCP</string>
 </resources>
