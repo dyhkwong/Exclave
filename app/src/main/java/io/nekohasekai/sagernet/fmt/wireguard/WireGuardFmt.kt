@@ -34,22 +34,26 @@ fun parseWireGuard(server: String): WireGuardBean {
         serverPort = link.port.takeIf { it > 0 } ?: 51820
         if (link.username.isNotEmpty()) {
             // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L126-L148
-            privateKey = link.username.replace('_', '/').replace('-', '+').padEnd(44, '=')
+            privateKey = link.username.replace('_', '/').replace('-', '+')
+            if (privateKey.length == 43) privateKey += "="
             // v2rayNG style link
             // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L75
             localAddress = "10.0.0.1/32\nfd59:7153:2388:b5fd:0000:0000:0000:0001/128"
         }
         (link.queryParameter("privatekey") ?: link.queryParameter("privateKey")) ?.let {
-            privateKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
+            privateKey = it.replace('_', '/').replace('-', '+')
+            if (privateKey.length == 43) privateKey += "="
         }
         (link.queryParameter("address") ?: link.queryParameter("ip")) ?.takeIf { it.isNotEmpty() }?.also {
             localAddress = it.split(",").joinToString("\n")
         }
         (link.queryParameter("publickey") ?: link.queryParameter("publicKey")) ?.let {
-            peerPublicKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
+            peerPublicKey = it.replace('_', '/').replace('-', '+')
+            if (peerPublicKey.length == 43) peerPublicKey += "="
         }
         (link.queryParameter("presharedkey") ?: link.queryParameter("preSharedKey")) ?.let {
-            peerPreSharedKey = it.replace('_', '/').replace('-', '+').padEnd(44, '=')
+            peerPreSharedKey = it.replace('_', '/').replace('-', '+')
+            if (peerPublicKey.length == 43) peerPublicKey += "="
         }
         link.queryParameter("mtu")?.toIntOrNull()?.takeIf { it > 0 }?.let {
             mtu = it
