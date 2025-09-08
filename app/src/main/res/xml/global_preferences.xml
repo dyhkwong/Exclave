@@ -245,7 +245,7 @@
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             android:icon="@drawable/baseline_flight_takeoff_24"
-            app:defaultValue="1"
+            app:defaultValue="0"
             app:entries="@array/juicity_provider"
             app:entryValues="@array/juicity_provider_value"
             app:key="providerJuicity"
