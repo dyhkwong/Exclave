@@ -439,7 +439,48 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             "packet" -> "packet"
                             else -> "none"
                         }
-                        settings.getArray("vnext")?.get(0)?.also { vnext ->
+                        settings.getString("address")?.also { address ->
+                            settings.getString("reverse")?.also {
+                                return listOf()
+                            }
+                            v2rayBean.serverAddress = address
+                            settings.getV2RayPort("port")?.also {
+                                v2rayBean.serverPort = it
+                            } ?: return listOf()
+                            settings.getString("id")?.also {
+                                v2rayBean.uuid = try {
+                                    UUID.fromString(it).toString()
+                                } catch (_: Exception) {
+                                    uuid5(it)
+                                }
+                            }
+                            settings.getString("flow")?.also {
+                                when (it) {
+                                    in supportedVlessFlow -> {
+                                        v2rayBean.flow = "xtls-rprx-vision-udp443"
+                                        v2rayBean.packetEncoding = "xudp"
+                                    }
+                                    in legacyVlessFlow,  "", "none" -> {}
+                                    else -> if (it.startsWith("xtls-rprx-")) return listOf()
+                                }
+                            }
+                            when (val encryption = settings.getString("encryption")) {
+                                "none" -> v2rayBean.encryption = "none"
+                                "", null -> return listOf()
+                                else -> {
+                                    val parts = encryption.split(".")
+                                    if (parts.size < 4 || parts[0] != "mlkem768x25519plus"
+                                        || !(parts[1] == "native" || parts[1] == "xorpub" || parts[1] != "random")
+                                        || !(parts[2] == "1rtt" || parts[2] == "0rtt")) {
+                                        error("unsupported vless encryption")
+                                    }
+                                    v2rayBean.encryption = encryption
+                                }
+                            }
+                        } ?: settings.getArray("vnext")?.get(0)?.also { vnext ->
+                            vnext.getString("reverse")?.also {
+                                return listOf()
+                            }
                             vnext.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
