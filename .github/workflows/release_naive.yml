@@ -24,7 +24,7 @@ jobs:
         arch: [ armeabi-v7a, arm64-v8a, x86, x86_64 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Checkout Submodule
         run: |
           git submodule update --init plugin/naive/src/main/jni/naiveproxy
@@ -52,7 +52,7 @@ jobs:
       - native
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Native Cache (armeabi-v7a)
         uses: actions/cache@v4
         with:
@@ -112,7 +112,7 @@ jobs:
 #      GH_TOKEN: ${{ github.token }}
 #    steps:
 #      - name: Checkout
-#        uses: actions/checkout@v4
+#        uses: actions/checkout@v5
 #      - name: Download Artifacts
 #        uses: actions/download-artifact@v4
 #        with:
