@@ -394,7 +394,34 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             "packet" -> "packet"
                             else -> "none"
                         }
-                        settings.getArray("vnext")?.get(0)?.also { vnext ->
+                        settings.getString("address")?.also { address ->
+                            v2rayBean.serverAddress = address
+                            settings.getV2RayPort("port")?.also {
+                                v2rayBean.serverPort = it
+                            } ?: return listOf()
+                            settings.getString("id")?.also {
+                                v2rayBean.uuid = try {
+                                    UUID.fromString(it).toString()
+                                } catch (_: Exception) {
+                                    uuid5(it)
+                                }
+                            }
+                            settings.getString("security")?.lowercase()?.also {
+                                if (it !in supportedVmessMethod) return listOf()
+                                v2rayBean.encryption = it
+                            }
+                            settings.getInteger("alterId")?.also {
+                                v2rayBean.alterId = it
+                            }
+                            settings.getString("experiments")?.also {
+                                if (it.contains("AuthenticatedLength")) {
+                                    v2rayBean.experimentalAuthenticatedLength = true
+                                }
+                                if (it.contains("NoTerminationSignal")) {
+                                    v2rayBean.experimentalNoTerminationSignal = true
+                                }
+                            }
+                        } ?: settings.getArray("vnext")?.get(0)?.also { vnext ->
                             vnext.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
@@ -528,7 +555,30 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         v2rayBean.name = it
                     }
                     outbound.getObject("settings")?.also { settings ->
-                        settings.getArray("servers")?.get(0)?.also { server ->
+                        settings.getString("address")?.also { address ->
+                            v2rayBean.serverAddress = address
+                            settings.getV2RayPort("port")?.also {
+                                v2rayBean.serverPort = it
+                            } ?: return listOf()
+                            settings.getString("method")?.lowercase()?.also {
+                                v2rayBean.method = when (it) {
+                                    in supportedShadowsocksMethod -> it
+                                    "aes_128_gcm", "aead_aes_128_gcm" -> "aes-128-gcm"
+                                    "aes_192_gcm", "aead_aes_192_gcm" -> "aes-192-gcm"
+                                    "aes_256_gcm", "aead_aes_256_gcm" -> "aes-256-gcm"
+                                    "chacha20_poly1305", "aead_chacha20_poly1305", "chacha20-poly1305" -> "chacha20-ietf-poly1305"
+                                    "xchacha20_poly1305", "aead_xchacha20_poly1305", "xchacha20-poly1305" -> "xchacha20-ietf-poly1305"
+                                    "plain" -> "none"
+                                    else -> return listOf()
+                                }
+                            }
+                            settings.getString("password")?.also {
+                                v2rayBean.password = it
+                            }
+                            settings.getString("plugin")?.also { pluginId ->
+                                v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
+                            }
+                        } ?: settings.getArray("servers")?.get(0)?.also { server ->
                             settings.getString("plugin")?.also { pluginId ->
                                 v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
                             }
@@ -578,11 +628,8 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 v2rayBean.password = ipsk.joinToString(":") + ":" + psk
                             }
                         }
-                        settings.getString("plugin")?.also { plugin ->
-                            v2rayBean.plugin = plugin
-                            settings.getString("pluginOpts")?.also {
-                                v2rayBean.plugin += ";$it"
-                            }
+                        settings.getString("plugin")?.also { pluginId ->
+                            v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
                         }
                     }
                 }
@@ -605,11 +652,8 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         settings.getString("password")?.also {
                             v2rayBean.password = it
                         }
-                        settings.getString("plugin")?.also { plugin ->
-                            v2rayBean.plugin = plugin
-                            settings.getString("pluginOpts").also {
-                                v2rayBean.plugin += ";$it"
-                            }
+                        settings.getString("plugin")?.also { pluginId ->
+                            v2rayBean.plugin = PluginOptions(pluginId, settings.getString("pluginOpts")).toString(trimId = false)
                         }
                     }
                 }
@@ -619,7 +663,15 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         v2rayBean.name = it
                     }
                     outbound.getObject("settings")?.also { settings ->
-                        settings.getArray("servers")?.get(0)?.also { server ->
+                        settings.getString("address")?.also { address ->
+                            v2rayBean.serverAddress = address
+                            settings.getV2RayPort("port")?.also {
+                                v2rayBean.serverPort = it
+                            } ?: return listOf()
+                            settings.getString("password")?.also {
+                                v2rayBean.password = it
+                            }
+                        } ?: settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
@@ -644,7 +696,18 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             "", "5" -> SOCKSBean.PROTOCOL_SOCKS5
                             else -> return listOf()
                         }
-                        settings.getArray("servers")?.get(0)?.also { server ->
+                        settings.getString("address")?.also { address ->
+                            v2rayBean.serverAddress = address
+                            settings.getV2RayPort("port")?.also {
+                                v2rayBean.serverPort = it
+                            } ?: return listOf()
+                            settings.getString("user")?.also {
+                                v2rayBean.username = it
+                            }
+                            settings.getString("pass")?.also {
+                                v2rayBean.password = it
+                            }
+                        } ?: settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
@@ -668,7 +731,18 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         v2rayBean.name = it
                     }
                     outbound.getObject("settings")?.also { settings ->
-                        settings.getArray("servers")?.get(0)?.also { server ->
+                        settings.getString("address")?.also { address ->
+                            v2rayBean.serverAddress = address
+                            settings.getV2RayPort("port")?.also {
+                                v2rayBean.serverPort = it
+                            } ?: return listOf()
+                            settings.getString("user")?.also {
+                                v2rayBean.username = it
+                            }
+                            settings.getString("pass")?.also {
+                                v2rayBean.password = it
+                            }
+                        } ?: settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
                                 v2rayBean.serverAddress = it
                             } ?: return listOf()
@@ -695,7 +769,12 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 hysteria2Bean.name = it
             }
             outbound.getObject("settings")?.also { settings ->
-                settings.getArray("servers")?.get(0)?.also { server ->
+                settings.getString("address")?.also { address ->
+                    hysteria2Bean.serverAddress = address
+                    settings.getV2RayPort("port")?.also {
+                        hysteria2Bean.serverPorts = it.toString()
+                    } ?: return listOf()
+                } ?: settings.getArray("servers")?.get(0)?.also { server ->
                     server.getString("address")?.also {
                         hysteria2Bean.serverAddress = it
                     } ?: return listOf()
