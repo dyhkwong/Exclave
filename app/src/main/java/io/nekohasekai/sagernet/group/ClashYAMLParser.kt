@@ -259,13 +259,11 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     isXUDP -> "xudp"
                     else -> "xudp"
                 }
-                if (bean.type != "ws") {
-                    (proxy.getClashString("flow"))?.takeIf { it.isNotEmpty() }?.also {
-                        if (it.startsWith("xtls-rprx-vision")) {
-                            bean.flow = "xtls-rprx-vision-udp443"
-                            bean.packetEncoding = "xudp"
-                        } else return listOf()
-                    }
+                (proxy.getClashString("flow"))?.takeIf { it.isNotEmpty() }?.also {
+                    if (it.startsWith("xtls-rprx-vision")) {
+                        bean.flow = "xtls-rprx-vision-udp443"
+                        bean.packetEncoding = "xudp"
+                    } else return listOf()
                 }
                 when (val encryption = proxy.getString("encryption")) {
                     "", "none", null -> bean.encryption = "none"
