@@ -652,10 +652,10 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             server.getArray("users")?.get(0)?.also { user ->
-                                user.getString("username")?.also {
+                                user.getString("user")?.also {
                                     v2rayBean.username = it
                                 }
-                                user.getString("password")?.also {
+                                user.getString("pass")?.also {
                                     v2rayBean.password = it
                                 }
                             }
@@ -676,10 +676,10 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             server.getArray("users")?.get(0)?.also { user ->
-                                user.getString("username")?.also {
+                                user.getString("user")?.also {
                                     v2rayBean.username = it
                                 }
-                                user.getString("password")?.also {
+                                user.getString("pass")?.also {
                                     v2rayBean.password = it
                                 }
                             }
