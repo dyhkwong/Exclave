@@ -264,7 +264,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var shadowsocks2022Implementation by configurationStore.stringToInt(Key.SHADOWSOCKS_2022_IMPLEMENTATION)
     var providerHysteria2 by configurationStore.stringToInt(Key.PROVIDER_HYSTERIA2) { 1 }
     var providerTuic5 by configurationStore.stringToInt(Key.PROVIDER_TUIC5) { 1 }
-    var providerJuicity by configurationStore.stringToInt(Key.PROVIDER_JUICITY)
+    var providerJuicity by configurationStore.stringToInt(Key.PROVIDER_JUICITY) { 1 }
     var hysteriaEnablePortHopping by configurationStore.boolean(Key.HYSTERIA_ENABLE_PORT_HOPPING)
     var providerRootCA by configurationStore.stringToInt(Key.PROVIDER_ROOT_CA) { 1 }
 
