@@ -13,6 +13,8 @@ A proxy client powered by a modified version of v2ray-core. It is a fork of Sage
 - [TUIC v5 plugin](https://github.com/dyhkwong/Exclave/releases?q=tuic-plugin-1)
 - [Other obsolete plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
 
+Google Play Protect incorrectly declares that this app "may be harmful" and blocks it from installation. It is nonsense to demand that developers prove their innocence.
+
 <details>
 
 Since August 2025, Google has been advancing a plan to block apps from being installed by users on certified Android devices if developers do not verify their identities and register their apps. Only organizations with D-U-N-S number can be approved to publish new apps that use `VpnService` on Play Store, and even if "limited distribution" outside Play Store for "hobbyist developers" that comes with limits on the number of apps and installations requires developers to provide real identity information. The developer of this app is unable and unwilling to provide real identity information and register this app and its plugins. As a result, you will end up have no choice but to use Android Debug Bridge (ADB) to install this app and its plugins on certified Android devices.
