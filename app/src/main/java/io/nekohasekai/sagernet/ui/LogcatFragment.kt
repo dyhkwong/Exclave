@@ -18,7 +18,6 @@
 
 package io.nekohasekai.sagernet.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -40,7 +39,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
-import java.nio.charset.StandardCharsets
 
 class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
     Toolbar.OnMenuItemClickListener {
@@ -76,55 +74,48 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private suspend fun streamingLog() = onIoDispatcher {
-        val format = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) "tag,color" else "tag"
-        val filter = arrayOf(
-            "AndroidRuntime:D",
-            "ProxyInstance:D",
-            "GuardedProcessPool:D",
-            "VpnService:D",
-            "GoLog:D",
-            "libcore:D",
-            "v2ray-core:D",
-            "su:D",
-            "libnaive:D",
-            "libbrook:D",
-            "libhysteria:D",
-            "libhysteria2:D",
-            "libmieru:D",
-            "libtuic5:D",
-            "libtuic:D",
-            "libtrojan-go:D",
-            "libjuicity:D",
-            "libshadowquic:D",
-            "*:S",
-        ).joinToString(",")
-
-        val builder = ProcessBuilder(listOf("logcat", "-v", format, "-s", filter))
-        builder.environment()["LC_ALL"] = "C"
-        var process: Process? = null
+        val process = try {
+            ProcessBuilder(
+                listOf("logcat",
+                    "-T", "2048",
+                    "-v", if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) "tag,color" else "tag",
+                    "-s", arrayOf(
+                        "AndroidRuntime:D",
+                        "ProxyInstance:D",
+                        "GuardedProcessPool:D",
+                        "VpnService:D",
+                        "GoLog:D",
+                        "libcore:D",
+                        "v2ray-core:D",
+                        "su:D",
+                        "libnaive:D",
+                        "libbrook:D",
+                        "libhysteria:D",
+                        "libhysteria2:D",
+                        "libmieru:D",
+                        "libtuic5:D",
+                        "libtuic:D",
+                        "libtrojan-go:D",
+                        "libjuicity:D",
+                        "libshadowquic:D",
+                        "*:S",
+                    ).joinToString(",")
+                )
+            ).start()
+        } catch (_: Exception) {
+            return@onIoDispatcher
+        }
+        val stdout = BufferedReader(InputStreamReader(process.inputStream))
+        val bufferedLogLines = arrayListOf<String>()
+        var timeLastNotify = System.nanoTime()
+        // The timeout is initially small so that the view gets populated immediately.
+        var timeout = 1000000000L / 2
         try {
-            process = try {
-                builder.start()
-            } catch (_: Exception) {
-                return@onIoDispatcher
-            }
-
-            val stdout = BufferedReader(
-                InputStreamReader(process!!.inputStream, StandardCharsets.UTF_8)
-            )
-            val bufferedLogLines = arrayListOf<String>()
-
-            var timeLastNotify = System.nanoTime()
-            // The timeout is initially small so that the view gets populated immediately.
-            var timeout = 1000000000L / 2
-
             while (true) {
                 val line = stdout.readLine() ?: break
                 bufferedLogLines.add(line)
                 val timeNow = System.nanoTime()
-
                 if (
                     bufferedLogLines.size < (1 shl 14) - 1 &&
                     (timeNow - timeLastNotify) < timeout && stdout.ready()
@@ -135,21 +126,19 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 timeLastNotify = timeNow
 
                 onMainDispatcher {
-                    if (binding.logsTextView.lineCount + bufferedLogLines.size > 4096) {
+                    if (binding.logsTextView.lineCount + bufferedLogLines.size > 2048) {
                         binding.logsTextView.text = ""
-                        if (bufferedLogLines.size > 4096) {
-                            bufferedLogLines.drop(bufferedLogLines.size - 4096)
+                        if (bufferedLogLines.size > 2048) {
+                            bufferedLogLines.drop(bufferedLogLines.size - 2048)
                         }
                     }
-                    val text = bufferedLogLines.joinToString(
-                        separator = "\n",
-                        postfix = "\n"
-                    )
                     binding.logsTextView.append(
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            ColorUtils.ansiEscapeToSpannable(binding.root.context, text)
+                            ColorUtils.ansiEscapeToSpannable(binding.root.context,
+                                bufferedLogLines.joinToString(separator = "\n", postfix = "\n")
+                            )
                         } else {
-                            text
+                            bufferedLogLines.joinToString(separator = "\n", postfix = "\n")
                         }
                     )
                     bufferedLogLines.clear()
