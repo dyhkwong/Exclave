@@ -13,13 +13,26 @@ A proxy client powered by a modified version of v2ray-core. It is a fork of Sage
 - [TUIC v5 plugin](https://github.com/dyhkwong/Exclave/releases?q=tuic-plugin-1)
 - [Other obsolete plugins](https://github.com/dyhkwong/Exclave/releases/tag/0.12.0-0-legacy-plugins)
 
-Google Play Protect incorrectly declares that this app "may be harmful" and blocks it from installation. It is nonsense to demand that developers prove their innocence.
+Google Play Protect has ever declared that this app "may be harmful" and blocks it from installation. There is no guarantee that this won't happen again in the future. It is nonsense to demand that developers prove their innocence.
 
 <details>
 
 Since August 2025, Google has been advancing a plan to block apps from being installed by users on certified Android devices if developers do not verify their identities and register their apps. Only organizations with D-U-N-S number can be approved to publish new apps that use `VpnService` on Play Store, and even if "limited distribution" outside Play Store for "hobbyist developers" that comes with limits on the number of apps and installations requires developers to provide real identity information. The developer of this app is unable and unwilling to provide real identity information and register this app and its plugins. As a result, you will end up have no choice but to use Android Debug Bridge (ADB) to install this app and its plugins on certified Android devices.
 
 </details>
+
+## License
+
+    Copyright (C) 2023 by dyhkwong
+    Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
+
+    This program (except for all files in directory "library/core/clash") is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    All files in directory "library/core/clash" are free software: you can redistribute them and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.
+
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ## Translation
 
@@ -48,34 +61,25 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
     ALIAS_NAME=your_alias_name
     ALIAS_PASS=your_alias_pass
 ```
-- Build the app:
-  - Build `libcore`: `./run lib core` [^1]
-  - Download assets: `./gradlew :app:downloadAssets` (or update assets: `./gradlew :app:updateAssets`) [^2]
+- Build Exclave:
+  - Build `libcore`: `./run lib core`
+  - Download assets: `./gradlew :app:downloadAssets` (or update assets: `./gradlew :app:updateAssets`)
   - Build the app: `./gradlew :app:assembleOssRelease`
   - APK files are located in `app/build/outputs/apk/`
 - Build a plugin:
-  - Build native binaries: `./run plugin [hysteria2|juicity|mieru|tuic5|shadowquic|naive]` [^3]
+  - Build native binaries: `./run plugin [hysteria2|juicity|mieru|tuic5|shadowquic|naive]`
   - Build the plugin:`./gradlew :plugin:[hysteria2|juicity|mieru|tuic5|shadowquic|naive]:assembleOssRelease`
   - Plugin APK files are located in `plugin/[hysteria2|juicity|mieru|tuic5|shadowquic|naive]/build/outputs/apk/`
 
-[^1]: If `libcore` is compiled with `with_clash` tag, the app is applicable to GPL v3 only. If `libcore` is compiled without `with_clash` tag, the app is applicable to GPL v3 or later.
-[^2]: Assets are data files downloaded and bundled directly and therefore not subjected to the restrictions of GPL.
-[^3]: Plugins are applicable to GPL v3 or later. However, native binaries are executables that run in separate processes and therefore not subjected to the restrictions of GPL.
+## Dependencies, submodules and assets
 
-## License
-
-    Copyright (C) 2023-2025 by dyhkwong
-    Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
-
-    This program (except for submodules) is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-    Submodule `library/core` (except for the files under the `clash` directory) is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-    Files under the `clash` directory of submodule `library/core` are free software: you can redistribute them and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.
-
-    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+- See [app/build.gradle.kts](app/build.gradle.kts), [buildSrc/build.gradle.kts](buildSrc/build.gradle.kts) and [library/proto-stub/build.gradle.kts](library/proto-stub/build.gradle.kts) for Android libraries used in Exclave.
+- See [library/core/go.mod](library/core/go.mod) for Go libraries used in Exclave.
+- See [plugin/api/build.gradle.kts](plugin/api/build.gradle.kts) for Android libraries used in plugins.
+- `geosite.dat` is downloaded from https://github.com/v2fly/domain-list-community/releases. It is licensed under the MIT license.
+- `geoip.dat` is downloaded from https://github.com/v2fly/geoip/releases. It is licensed under CC-BY-4.0.
+- `mozilla_included.pem` is downloaded from https://www.ccadb.org/resources. It is licensed under CDLA-2.0 Permissive.
+- Submodules are for compiling native binaries of plugins. They are executables that run in separate processes and therefore not subjected to the restrictions of GPL. Please refer to submodule repositories for their respective licenses.
 
 ## Acknowledgment
 

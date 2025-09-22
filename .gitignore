@@ -1,3 +1,4 @@
+*.aar
 *.iml
 .gradle
 .idea

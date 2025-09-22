@@ -4,9 +4,6 @@
 [submodule "plugin/hysteria2/src/main/go/hysteria2"]
 	path = plugin/hysteria2/src/main/go/hysteria2
 	url = https://github.com/apernet/hysteria
-[submodule "library/core"]
-	path = library/core
-	url = https://github.com/dyhkwong/LibSagerNetCore
 [submodule "plugin/mieru/src/main/go/mieru"]
 	path = plugin/mieru/src/main/go/mieru
 	url = https://github.com/enfein/mieru
