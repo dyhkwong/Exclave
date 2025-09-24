@@ -84,7 +84,6 @@ class StatsBar @JvmOverloads constructor(
     }
 
     fun changeState(state: BaseService.State) {
-        context as MainActivity
         if ((state == BaseService.State.Connected).also { hideOnScroll = it }) {
             doOnPreDraw {
                 performShow()
@@ -122,7 +121,7 @@ class StatsBar @JvmOverloads constructor(
     }
 
     fun testConnection() {
-        val activity = context as MainActivity
+        val activity = context.findActivity<MainActivity>()!!
         isEnabled = false
         setStatus(context.getText(R.string.connection_test_testing))
         runOnDefaultDispatcher {
@@ -131,7 +130,7 @@ class StatsBar @JvmOverloads constructor(
                 onMainDispatcher {
                     isEnabled = true
                     setStatus(
-                        activity.getString(
+                        context.getString(
                             if (DataStore.connectionTestURL.startsWith("https://")) {
                                 R.string.connection_test_available
                             } else {
@@ -148,7 +147,7 @@ class StatsBar @JvmOverloads constructor(
                     setStatus(context.getText(R.string.connection_test_testing))
 
                     activity.snackbar(
-                        activity.getString(
+                        context.getString(
                             R.string.connection_test_error, e.readableMessage
                         )
                     ).show()
