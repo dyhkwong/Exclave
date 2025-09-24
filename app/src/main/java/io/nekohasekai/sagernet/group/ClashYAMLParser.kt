@@ -69,9 +69,9 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
                 username = proxy.getClashString("username")
                 password = proxy.getClashString("password")
-                if (proxy.getBoolean("tls") == true) {
+                if (proxy.getClashBool("tls") == true) {
                     security = "tls"
-                    if (proxy.getBoolean("skip-cert-verify") == true) {
+                    if (proxy.getClashBool("skip-cert-verify") == true) {
                         allowInsecure = true
                     }
                 }
@@ -84,10 +84,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 serverPort = proxy.getClashInt("port")?.takeIf { it > 0 } ?: return listOf()
                 username = proxy.getClashString("username")
                 password = proxy.getClashString("password")
-                if (proxy.getBoolean("tls") == true) {
+                if (proxy.getClashBool("tls") == true) {
                     security = "tls"
                     sni = proxy.getClashString("sni")
-                    if (proxy.getBoolean("skip-cert-verify") == true) {
+                    if (proxy.getClashBool("skip-cert-verify") == true) {
                         allowInsecure = true
                     }
                 }
@@ -113,15 +113,15 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     "v2ray-plugin" -> {
                         pluginOpts.id = "v2ray-plugin"
                         put("mode")
-                        if (opts?.getBoolean("tls") == true) {
+                        if (opts?.getClashBool("tls") == true) {
                             pluginOpts["tls"] = null
                         }
                         put("host")
                         put("path")
-                        if (opts?.getBoolean("mux") == true) {
+                        if (opts?.getClashBool("mux") == true) {
                             pluginOpts["mux"] = "8"
                         }
-                        if (opts?.getBoolean("v2ray-http-upgrade") == true) {
+                        if (opts?.getClashBool("v2ray-http-upgrade") == true) {
                             return listOf()
                         }
                     }
@@ -182,7 +182,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 bean.sni = proxy.getClashString("sni")
                 bean.password = proxy.getClashString("password")
             } else {
-                bean.security = if (proxy.getBoolean("tls") == true) "tls" else "none"
+                bean.security = if (proxy.getClashBool("tls") == true) "tls" else "none"
                 if (bean.security == "tls") {
                     bean.sni = proxy.getClashString("servername")
                 }
@@ -196,7 +196,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             }
             if (bean.security == "tls") {
                 bean.alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
-                bean.allowInsecure = proxy.getBoolean("skip-cert-verify") == true
+                bean.allowInsecure = proxy.getClashBool("skip-cert-verify") == true
             }
 
             if (bean is VMessBean) {
@@ -205,14 +205,14 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     in supportedVmessMethod -> cipher
                     else -> return listOf()
                 }
-                bean.experimentalAuthenticatedLength = proxy.getBoolean("authenticated-length") == true
+                bean.experimentalAuthenticatedLength = proxy.getClashBool("authenticated-length") == true
                 var isPacket = false
                 var isXUDP = false
-                if (proxy.getBoolean("packet-addr") == true) {
+                if (proxy.getClashBool("packet-addr") == true) {
                     isPacket = true
                     isXUDP = false
                 }
-                if (proxy.getBoolean("xudp") == true) {
+                if (proxy.getClashBool("xudp") == true) {
                     isXUDP = true
                     isPacket = false
                 }
@@ -236,11 +236,11 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             if (bean is VLESSBean) {
                 var isPacket = false
                 var isXUDP = true
-                if (proxy.getBoolean("packet-addr") == true) {
+                if (proxy.getClashBool("packet-addr") == true) {
                     isPacket = true
                     isXUDP = false
                 }
-                if (proxy.getBoolean("xudp") == true) {
+                if (proxy.getClashBool("xudp") == true) {
                     isXUDP = true
                     isPacket = false
                 }
@@ -381,7 +381,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
 
             if (bean is TrojanBean) {
                 (proxy.getAny("ss-opts") as? Map<String, Any?>)?.also {
-                    if (it.getBoolean("enabled") == true) {
+                    if (it.getClashBool("enabled") == true) {
                         if (bean.security != "tls") {
                             // unsupported
                             return listOf()
@@ -472,7 +472,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 }
                 sni = proxy.getClashString("sni")
                 alpn = (proxy.getAny("alpn") as? List<Any>)?.get(0)?.toString()
-                allowInsecure = proxy.getBoolean("skip-cert-verify") == true
+                allowInsecure = proxy.getClashBool("skip-cert-verify") == true
                 obfuscation = proxy.getClashString("obfs")?.takeIf { it.isNotEmpty() }
                 hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()
                 name = proxy.getClashString("name")
@@ -486,7 +486,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 auth = proxy.getClashString("password")
                 sni = proxy.getClashString("sni")
                 // alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
-                allowInsecure = proxy.getBoolean("skip-cert-verify") == true
+                allowInsecure = proxy.getClashBool("skip-cert-verify") == true
                 (proxy.getClashString("obfs"))?.also {
                     when (it) {
                         "" -> {}
@@ -514,9 +514,9 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         in supportedTuicCongestionControl -> controller
                         else -> "cubic"
                     }
-                    disableSNI = proxy.getBoolean("disable-sni") == true
-                    reduceRTT = proxy.getBoolean("reduce-rtt") == true
-                    // allowInsecure = proxy.getBoolean("skip-cert-verify") == true
+                    disableSNI = proxy.getClashBool("disable-sni") == true
+                    reduceRTT = proxy.getClashBool("reduce-rtt") == true
+                    // allowInsecure = proxy.getClashBool("skip-cert-verify") == true
                     sni = proxy.getClashString("sni")
                         ?: (if (proxy.getClashString("ip") != null) proxy.getClashString("server") else null)
                     // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
@@ -537,9 +537,9 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         in supportedTuic5CongestionControl -> controller
                         else -> "cubic"
                     }
-                    disableSNI = proxy.getBoolean("disable-sni") == true
-                    zeroRTTHandshake = proxy.getBoolean("reduce-rtt") == true
-                    allowInsecure = proxy.getBoolean("skip-cert-verify") == true
+                    disableSNI = proxy.getClashBool("disable-sni") == true
+                    zeroRTTHandshake = proxy.getClashBool("reduce-rtt") == true
+                    allowInsecure = proxy.getClashBool("skip-cert-verify") == true
                     sni = proxy.getClashString("sni")
                         ?: (if (proxy.getClashString("ip") != null) proxy.getClashString("server") else null)
                     // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
@@ -585,7 +585,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 security = "tls"
                 sni = proxy.getClashString("sni")
                 alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
-                allowInsecure = proxy.getBoolean("skip-cert-verify") == true
+                allowInsecure = proxy.getClashBool("skip-cert-verify") == true
                 name = proxy.getClashString("name")
             })
         }
@@ -691,7 +691,7 @@ private fun Map<String, Any?>.getClashInt(key: String): Int? {
         return when (val value = this[key]) {
             is Int -> return value
             is String -> return value.convertClashStringToInt()
-            // is Float -> return value.toString().convertClashStringToInt()
+            is Float -> return value.toInt()
             else -> null
         }
     }
@@ -700,7 +700,27 @@ private fun Map<String, Any?>.getClashInt(key: String): Int? {
             return when (val value = it.value) {
                 is Int -> value
                 is String -> value.convertClashStringToInt()
-                // is Float -> return value.toString().convertClashStringToInt()
+                is Float -> return value.toInt()
+                else -> null
+            }
+        }
+    }
+    return null
+}
+
+private fun Map<String, Any?>.getClashBool(key: String): Boolean? {
+    if (this.contains(key)) {
+        return when (val value = this[key]) {
+            is Boolean -> return value
+            is Int -> return value != 0
+            else -> null
+        }
+    }
+    for (it in this) {
+        if (it.key.lowercase() == key.lowercase()) {
+            return when (val value = it.value) {
+                is Boolean -> return value
+                is Int -> return value != 0
                 else -> null
             }
         }
