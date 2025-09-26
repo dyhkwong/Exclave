@@ -552,8 +552,9 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             return listOf(MieruBean().apply {
                 serverAddress = proxy.getClashString("server") ?: return listOf()
                 // Why yet another protocol containing port-range? Let us use the first port only for now.
-                serverPort = (proxy.getClashInt("port")?.takeIf { it > 0 }
-                    ?: (proxy.getClashString("port-range"))?.substringBefore("-")?.toIntOrNull())
+                serverPort = ((proxy.getClashInt("port")?.takeIf { it > 0 }
+                    ?: proxy.getClashString("port")?.substringBefore("-")?.toIntOrNull())
+                    ?: proxy.getClashString("port-range")?.substringBefore("-")?.toIntOrNull())
                     ?: return listOf()
                 username = proxy.getClashString("username")
                 password = proxy.getClashString("password")
