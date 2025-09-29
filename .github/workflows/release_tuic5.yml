@@ -31,8 +31,8 @@ jobs:
           ndk-version: r28c
       - name: Setup Rust
         run: |
-          rustup toolchain install nightly-2025-02-12
-          rustup override set nightly-2025-02-12
+          rustup toolchain install nightly-2025-07-01
+          rustup override set nightly-2025-07-01
           rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
           cargo install --force --locked bindgen-cli
       - name: Native Build
