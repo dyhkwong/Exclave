@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("com.google.devtools.ksp") version "2.2.20-2.0.2"
+    id("com.google.devtools.ksp") version "2.2.20-2.0.3"
     id("kotlin-parcelize")
     id("com.google.protobuf")
 }
@@ -41,8 +41,8 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.4.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.work:work-runtime-ktx:2.10.4")
-    implementation("androidx.work:work-multiprocess:2.10.4")
+    implementation("androidx.work:work-runtime-ktx:2.10.5")
+    implementation("androidx.work:work-multiprocess:2.10.5")
 
     implementation("com.takisoft.preferencex:preferencex:1.1.0")
     implementation("com.takisoft.preferencex:preferencex-simplemenu:1.1.0")

@@ -67,7 +67,7 @@ fun Project.setupCommon() {
 
 fun Project.setupCommon(projectName: String) {
     android.apply {
-        buildToolsVersion = "36.0.0"
+        buildToolsVersion = "36.1.0"
         compileSdk = 36
         defaultConfig {
             minSdk = if (projectName.lowercase(Locale.ROOT) == "naive") 24 else 21
