@@ -25,6 +25,7 @@
         app:tabPaddingStart="16dp"
         app:tabRippleColor="?tabRippleColor"
         app:tabSelectedTextColor="?tabSelectedTextColor"
+        app:tabTextAppearance="@style/TabTextAppearance"
         app:tabTextColor="?tabTextColor"
         app:tabUnboundedRipple="false" />
 
