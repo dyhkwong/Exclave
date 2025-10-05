@@ -31,6 +31,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
@@ -140,20 +141,35 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                 runOnDefaultDispatcher {
                     SagerDatabase.rulesDao.enableAll(enabled = false)
                     ruleAdapter.reload()
+                    onMainDispatcher {
+                        needReload()
+                    }
                 }
             }
             R.id.action_enable_all -> {
                 runOnDefaultDispatcher {
                     SagerDatabase.rulesDao.enableAll()
                     ruleAdapter.reload()
+                    onMainDispatcher {
+                        needReload()
+                    }
                 }
             }
             R.id.action_reset_route -> {
-                runOnDefaultDispatcher {
-                    SagerDatabase.rulesDao.reset()
-                    DataStore.rulesFirstCreate = false
-                    ruleAdapter.reload()
-                }
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.route_reset)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        runOnDefaultDispatcher {
+                            SagerDatabase.rulesDao.reset()
+                            DataStore.rulesFirstCreate = false
+                            ruleAdapter.reload()
+                            onMainDispatcher {
+                                needReload()
+                            }
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             }
             R.id.action_manage_assets -> {
                 startActivity(Intent(requireContext(), AssetsActivity::class.java))
@@ -327,6 +343,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                 itemView.setOnClickListener {
                     enableSwitch.performClick()
                 }
+                enableSwitch.setOnCheckedChangeListener(null)
                 enableSwitch.isChecked = rule.enabled
                 enableSwitch.setOnCheckedChangeListener { _, isChecked ->
                     runOnDefaultDispatcher {
