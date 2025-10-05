@@ -24,8 +24,8 @@
     <string name="connection_test_testing">Тест…</string>
     <string name="speed_detail">Прокси ： %1$s↑ %2$s↓
 \nПрямой ： %3$s↑%4$s↓</string>
-    <string name="allow_insecure_sum">Отключить проверку сертификата. При включении эта функция настолько же безопасна как передача пароля в открытом виде.</string>
-    <string name="allow_insecure">Разрешить небезопасное подключение</string>
+    <string name="allow_insecure_sum">Включение этой опции без применения других мер безопасности приводит к успешному проведению атак типа «человек посередине». НЕ включайте её, если не уверены в своих действиях.</string>
+    <string name="allow_insecure">Пропустить проверку сертификата</string>
     <string name="security_settings">Настройки безопасности</string>
     <string name="show_direct_speed_sum">Также в уведомлении показывать скорость трафика без прокси</string>
     <string name="show_direct_speed">Показать прямую скорость</string>
@@ -294,7 +294,7 @@
     <string name="config_type">Тип конфигурации</string>
     <string name="extra_headers">Дополнительные заголовки</string>
     <string name="early_data_header_name">Заголовок запроса ранних данных</string>
-    <string name="pinned_peer_certificate_chain_sha256">Хэш цепочки закрепленного сертификата</string>
+    <string name="pinned_peer_certificate_chain_sha256">Закреплённая цепочка сертификатов SHA-256</string>
     <string name="certificates">Сертификаты</string>
     <string name="alpn">ALPN (согласование протокола прикладного уровня)</string>
     <string name="sni">SNI (индикация имени сервера)</string>
@@ -591,4 +591,12 @@
     <string name="tcp_segmentation">Сегментация TCP</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">Фрагментация записей TLS и сегментация TCP</string>
     <string name="juicity_provider">Реализация Juicity</string>
+    <string name="core_settings">Настройки ядра</string>
+    <string name="core_settings_sum">Эти параметры применимы только к ядру.</string>
+    <string name="pinned_peer_certificate_public_key_sha256">Открытый ключ закреплённой цепочки сертификатов SHA-256</string>
+    <string name="pinned_peer_certificate_sha256">Закрепленный сертификат SHA-256</string>
+    <string name="pinned_peer_certificate_sha256_base64_dialog_message">Используйте с пропуском проверки сертификата, если сам сертификат ненадёжный или недействительный. Один на строку в кодировке Base64.</string>
+    <string name="pinned_peer_certificate_sha256_hex_dialog_message">Используйте с пропуском проверки сертификата, если сам сертификат ненадёжный или недействительный. Один на строку в шестнадцатеричном коде.</string>
+    <string name="mtls_certificate">Сертификат для mTLS</string>
+    <string name="mtls_certificate_private_key">Закрытый ключ сертификата для mTLS</string>
 </resources>
