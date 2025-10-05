@@ -223,7 +223,7 @@ class AppListActivity : ThemedActivity() {
         supportActionBar?.apply {
             setTitle(R.string.select_apps)
             setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.ic_navigation_close)
+            setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         }
         initProxiedUids()
         binding.list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
