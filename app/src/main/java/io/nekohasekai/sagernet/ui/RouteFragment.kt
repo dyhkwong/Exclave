@@ -328,9 +328,9 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                     enableSwitch.performClick()
                 }
                 enableSwitch.isChecked = rule.enabled
-                enableSwitch.setOnClickListener {
+                enableSwitch.setOnCheckedChangeListener { _, isChecked ->
                     runOnDefaultDispatcher {
-                        rule.enabled = enableSwitch.isChecked
+                        rule.enabled = isChecked
                         SagerDatabase.rulesDao.updateRule(rule)
                         onMainDispatcher {
                             needReload()
