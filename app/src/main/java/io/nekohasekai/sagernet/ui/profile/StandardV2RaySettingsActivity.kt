@@ -123,6 +123,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             }
         }
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
+        DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
+        DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
         DataStore.serverQuicSecurity = quicSecurity
         DataStore.serverWsMaxEarlyData = maxEarlyData
         DataStore.serverEarlyDataHeaderName = earlyDataHeaderName
@@ -130,6 +132,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverSplithttpExtra = splithttpExtra
         DataStore.serverUTLSFingerprint = utlsFingerprint
         DataStore.serverEchConfig = echConfig
+        DataStore.serverMtlsCertificate = mtlsCertificate
+        DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
 
         DataStore.serverRealityPublicKey = realityPublicKey
         DataStore.serverRealityShortId = realityShortId
@@ -198,6 +202,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         alpn = DataStore.serverALPN
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
+        pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
+        pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
         when (this) {
             is VLESSBean -> flow = DataStore.serverFlow
             is VMessBean -> {
@@ -217,6 +223,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         splithttpMode = DataStore.serverSplithttpMode
         splithttpExtra = DataStore.serverSplithttpExtra
         utlsFingerprint = DataStore.serverUTLSFingerprint
+        mtlsCertificate = DataStore.serverMtlsCertificate
+        mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
         echConfig = DataStore.serverEchConfig
 
         realityPublicKey = DataStore.serverRealityPublicKey
@@ -258,8 +266,12 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var securityCategory: PreferenceCategory
     lateinit var certificates: EditTextPreference
     lateinit var pinnedCertificateChain: EditTextPreference
+    lateinit var pinnedCertificatePublickey: EditTextPreference
+    lateinit var pinnedCertificate: EditTextPreference
     lateinit var allowInsecure: SwitchPreference
     lateinit var utlsFingerprint: SimpleMenuPreference
+    lateinit var mtlsCertificate: EditTextPreference
+    lateinit var mtlsCertificatePrivateKey: EditTextPreference
     lateinit var echConfig: EditTextPreference
 
     lateinit var realityPublicKey: EditTextPreference
@@ -320,10 +332,14 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         securityCategory = findPreference(Key.SERVER_SECURITY_CATEGORY)!!
         certificates = findPreference(Key.SERVER_CERTIFICATES)!!
         pinnedCertificateChain = findPreference(Key.SERVER_PINNED_CERTIFICATE_CHAIN)!!
+        pinnedCertificatePublickey = findPreference(Key.SERVER_PINNED_CERTIFICATE_PUBLIC_KEY)!!
+        pinnedCertificate = findPreference(Key.SERVER_PINNED_CERTIFICATE)!!
         allowInsecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
         xtlsFlow = findPreference(Key.SERVER_FLOW)!!
         alterId = findPreference(Key.SERVER_ALTER_ID)!!
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
+        mtlsCertificate = findPreference(Key.SERVER_MTLS_CERTIFICATE)!!
+        mtlsCertificatePrivateKey = findPreference(Key.SERVER_MTLS_CERTIFICATE_PRIVATE_KEY)!!
         echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
 
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
@@ -670,6 +686,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         securityCategory.isVisible = security == "tls" || security == "reality"
         certificates.isVisible = security == "tls"
         pinnedCertificateChain.isVisible = security == "tls"
+        pinnedCertificatePublickey.isVisible = security == "tls"
+        pinnedCertificate.isVisible = security == "tls"
         allowInsecure.isVisible = security == "tls"
         sni.isVisible = security == "tls" || security == "reality"
         alpn.isVisible = security == "tls"
@@ -678,6 +696,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         utlsFingerprint.isVisible = security == "tls" && (network.value == "tcp" || network.value == "ws"
                 || network.value == "http" || network.value == "meek" || network.value == "httpupgrade"
                 || network.value == "grpc" || network.value == "splithttp" || network.value == "mekya")
+        mtlsCertificate.isVisible = security == "tls"
+        mtlsCertificatePrivateKey.isVisible = security == "tls"
         echConfig.isVisible = security == "tls"
         realityFingerprint.isVisible = security == "reality"
         realityDisableX25519Mlkem768.isVisible = security == "reality"

@@ -158,6 +158,18 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                     // https://github.com/SagerNet/sing-box/pull/1934
                                     v2rayBean.alpn = "h3"
                                 }
+                                (tls.getAny("certificate") as? (List<String>))?.also {
+                                    v2rayBean.certificates = it.joinToString("\n")
+                                } ?: tls.getString("certificate")?.also {
+                                    v2rayBean.certificates = it
+                                }
+                                (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                                    v2rayBean.allowInsecure = true
+                                } ?: tls.getString("certificate_public_key_sha256")?.also {
+                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = it
+                                    v2rayBean.allowInsecure = true
+                                }
                                 tls.getObject("reality")?.also { reality ->
                                     reality.getBoolean("enabled")?.also { enabled ->
                                         if (enabled) {
@@ -322,6 +334,18 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tls.getBoolean("insecure")?.also {
                         allowInsecure = it
                     }
+                    (tls.getAny("certificate") as? (List<String>))?.also {
+                        certificates = it.joinToString("\n")
+                    } ?: tls.getString("certificate")?.also {
+                        certificates = it
+                    }
+                    (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                        pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                        allowInsecure = true
+                    } ?: tls.getString("certificate_public_key_sha256")?.also {
+                        pinnedPeerCertificatePublicKeySha256 = it
+                        allowInsecure = true
+                    }
                 } ?: return listOf()
                 outbound.getObject("obfs")?.also { obfuscation ->
                     obfuscation.getString("type")?.takeIf { it.isNotEmpty() }?.also { type ->
@@ -448,6 +472,18 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tls.getBoolean("disable_sni")?.also {
                         disableSNI = it
                     }
+                    (tls.getAny("certificate") as? (List<String>))?.also {
+                        certificates = it.joinToString("\n")
+                    } ?: tls.getString("certificate")?.also {
+                        certificates = it
+                    }
+                    (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                        pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                        allowInsecure = true
+                    } ?: tls.getString("certificate_public_key_sha256")?.also {
+                        pinnedPeerCertificatePublicKeySha256 = it
+                        allowInsecure = true
+                    }
                 } ?: return listOf()
             }
             return listOf(tuic5Bean)
@@ -552,6 +588,18 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             } ?: tls.getString("alpn")?.also {
                                 alpn = it
                             }
+                            (tls.getAny("certificate") as? (List<String>))?.also {
+                                certificates = it.joinToString("\n")
+                            } ?: tls.getString("certificate")?.also {
+                                certificates = it
+                            }
+                            (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                                pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                                allowInsecure = true
+                            } ?: tls.getString("certificate_public_key_sha256")?.also {
+                                pinnedPeerCertificatePublicKeySha256 = it
+                                allowInsecure = true
+                            }
                             tls.getObject("reality")?.also { reality ->
                                 reality.getBoolean("enabled")?.also { enabled ->
                                     if (enabled) {
@@ -620,29 +668,28 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 } ?: return listOf()
                 beanList.add(bean)
             }
-            outbound.getArray("peers")?.forEach { json ->
-                val peer = json as? Map<String, Any?>
+            outbound.getArray("peers")?.forEach { peer ->
                 beanList.add(bean.applyDefaultValues().clone().apply {
-                    peer?.getString("server")?.also {
+                    peer.getString("server")?.also {
                         serverAddress = it
                     }
-                    peer?.getInteger("server_port")?.also {
+                    peer.getInteger("server_port")?.also {
                         serverPort = it
                     }
-                    peer?.getString("public_key")?.also {
+                    peer.getString("public_key")?.also {
                         peerPublicKey = it
                     }
-                    peer?.getString("pre_shared_key")?.also {
+                    peer.getString("pre_shared_key")?.also {
                         peerPreSharedKey = it
                     }
-                    peer?.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
+                    peer.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
                         keepaliveInterval = it
                     }
-                    (peer?.getAny("reserved") as? (List<Int>))?.also {
+                    (peer.getAny("reserved") as? (List<Int>))?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
-                    } ?: Base64.decode(peer?.getString("reserved"))?.also {
+                    } ?: Base64.decode(peer.getString("reserved"))?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
                         }
@@ -681,29 +728,28 @@ fun parseSingBoxEndpoint(endpoint: Map<String, Any?>): List<AbstractBean> {
                     localAddress = it
                 } ?: return listOf()
             }
-            endpoint.getArray("peers")?.forEach { json ->
-                val peer = json as? Map<String, Any?>
+            endpoint.getArray("peers")?.forEach { peer ->
                 beanList.add(bean.applyDefaultValues().clone().apply {
-                    peer?.getString("address")?.also {
+                    peer.getString("address")?.also {
                         serverAddress = it
                     }
-                    peer?.getInteger("port")?.also {
+                    peer.getInteger("port")?.also {
                         serverPort = it
                     }
-                    peer?.getString("public_key")?.also {
+                    peer.getString("public_key")?.also {
                         peerPublicKey = it
                     }
-                    peer?.getString("pre_shared_key")?.also {
+                    peer.getString("pre_shared_key")?.also {
                         peerPreSharedKey = it
                     }
-                    peer?.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
+                    peer.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
                         keepaliveInterval = it
                     }
-                    (peer?.getAny("reserved") as? (List<Int>))?.also {
+                    (peer.getAny("reserved") as? (List<Int>))?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
-                    } ?: Base64.decode(peer?.getString("reserved"))?.also {
+                    } ?: Base64.decode(peer.getString("reserved"))?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
                         }

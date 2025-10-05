@@ -93,8 +93,31 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 tlsSettings.getBoolean("allowInsecure")?.also {
                                     v2rayBean.allowInsecure = it
                                 }
+                                (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                                    when (certificate.getString("usage")?.lowercase()) {
+                                        null, "", "encipherment" -> {
+                                            v2rayBean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                            v2rayBean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                        }
+                                        "verify" -> {
+                                            v2rayBean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                        }
+                                    }
+                                }
                                 (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                                     v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                        v2rayBean.allowInsecure = allowInsecure
+                                    }
+                                }
+                                (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                        v2rayBean.allowInsecure = allowInsecure
+                                    }
+                                }
+                                (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                                    v2rayBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
@@ -829,6 +852,35 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 tlsSettings.getBoolean("allowInsecure")?.also {
                                     hysteria2Bean.allowInsecure = it
                                 }
+                                (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                                    when (certificate.getString("usage")?.lowercase()) {
+                                        null, "", "encipherment" -> {
+                                            hysteria2Bean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                            hysteria2Bean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                        }
+                                        "verify" -> {
+                                            hysteria2Bean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                        }
+                                    }
+                                }
+                                (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                                    hysteria2Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                        hysteria2Bean.allowInsecure = allowInsecure
+                                    }
+                                }
+                                (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                                    hysteria2Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                        hysteria2Bean.allowInsecure = allowInsecure
+                                    }
+                                }
+                                (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                                    hysteria2Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
+                                    tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                        hysteria2Bean.allowInsecure = allowInsecure
+                                    }
+                                }
                             }
                         }
                         else -> return listOf()
@@ -947,8 +999,31 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tlsSettings.getBoolean("allowInsecure")?.also {
                         http3Bean.allowInsecure = it
                     }
+                    (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                        when (certificate.getString("usage")?.lowercase()) {
+                            null, "", "encipherment" -> {
+                                http3Bean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                http3Bean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                            }
+                            "verify" -> {
+                                http3Bean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                            }
+                        }
+                    }
                     (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                         http3Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                        tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            http3Bean.allowInsecure = allowInsecure
+                        }
+                    }
+                    (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                        http3Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                        tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            http3Bean.allowInsecure = allowInsecure
+                        }
+                    }
+                    (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                        http3Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             http3Bean.allowInsecure = allowInsecure
                         }
@@ -1000,8 +1075,31 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             tlsSettings.getBoolean("allowInsecure")?.also {
                                 anytlsBean.allowInsecure = it
                             }
+                            (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                                when (certificate.getString("usage")?.lowercase()) {
+                                    null, "", "encipherment" -> {
+                                        anytlsBean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                        anytlsBean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                    }
+                                    "verify" -> {
+                                        anytlsBean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                    }
+                                }
+                            }
                             (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                                 anytlsBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                    anytlsBean.allowInsecure = allowInsecure
+                                }
+                            }
+                            (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                                anytlsBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                                tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                                    anytlsBean.allowInsecure = allowInsecure
+                                }
+                            }
+                            (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                                anytlsBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
@@ -1058,11 +1156,37 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tlsSettings.getBoolean("allowInsecure")?.also {
                         juicityBean.allowInsecure = it
                     }
+                    (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                        when (certificate.getString("usage")?.lowercase()) {
+                            null, "", "encipherment" -> {
+                                juicityBean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                juicityBean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                            }
+                            "verify" -> {
+                                juicityBean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                            }
+                        }
+                    }
                     (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
-                        juicityBean.pinnedCertChainSha256 = it[0].replace('/', '_').replace('+', '-')
+                        juicityBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                        /*tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            juicityBean.allowInsecure = allowInsecure
+                        }*/
                         // match Juicity's behavior
                         // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
                         juicityBean.allowInsecure = true
+                    }
+                    (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                        juicityBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                        tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            juicityBean.allowInsecure = allowInsecure
+                        }
+                    }
+                    (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                        juicityBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
+                        tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            juicityBean.allowInsecure = allowInsecure
+                        }
                     }
                 }
             }

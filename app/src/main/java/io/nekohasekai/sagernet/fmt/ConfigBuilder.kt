@@ -797,7 +797,6 @@ fun buildV2RayConfig(
                                         }
                                     )
                                 }
-
                                 streamSettings = StreamSettingsObject().apply {
                                     network = bean.type
                                     if (bean.security.isNotEmpty()) {
@@ -809,26 +808,38 @@ fun buildV2RayConfig(
                                                 if (bean.sni.isNotEmpty()) {
                                                     serverName = bean.sni
                                                 }
-
                                                 if (bean.alpn.isNotEmpty()) {
                                                     alpn = bean.alpn.listByLineOrComma()
                                                 }
-
-                                                if (bean.certificates.isNotEmpty()) {
-                                                    disableSystemRoot = true
-                                                    certificates = listOf(TLSObject.CertificateObject()
-                                                        .apply {
+                                                if (bean.certificates.isNotEmpty() || bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                    certificates = mutableListOf()
+                                                    if (bean.certificates.isNotEmpty()) {
+                                                        disableSystemRoot = true
+                                                        certificates.add(TLSObject.CertificateObject().apply {
                                                             usage = "verify"
-                                                            certificate = bean.certificates.split(
-                                                                "\n"
-                                                            ).filter { it.isNotEmpty() }
+                                                            certificate = bean.certificates.lines()
                                                         })
+                                                    }
+                                                    if (bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                        certificates.add(TLSObject.CertificateObject().apply {
+                                                            usage = "encipherment"
+                                                            certificate = bean.mtlsCertificate.lines()
+                                                            key = bean.mtlsCertificatePrivateKey.lines()
+                                                        })
+                                                    }
                                                 }
-
+                                                if (bean.pinnedPeerCertificateSha256.isNotEmpty()) {
+                                                    pinnedPeerCertificateSha256 = mutableListOf()
+                                                    bean.pinnedPeerCertificateSha256.listByLineOrComma().forEach {
+                                                        pinnedPeerCertificateSha256.add(it.replace(":", ""))
+                                                    }
+                                                }
+                                                if (bean.pinnedPeerCertificatePublicKeySha256.isNotEmpty()) {
+                                                    pinnedPeerCertificatePublicKeySha256 = bean.pinnedPeerCertificatePublicKeySha256.listByLineOrComma()
+                                                }
                                                 if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
                                                     pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
                                                 }
-
                                                 if (bean.allowInsecure) {
                                                     allowInsecure = true
                                                 }
@@ -1197,12 +1208,37 @@ fun buildV2RayConfig(
                                         if (bean.allowInsecure) {
                                             allowInsecure = true
                                         }
-                                        if (bean.caText.isNotEmpty()) {
-                                            disableSystemRoot = true
-                                            certificates = listOf(TLSObject.CertificateObject().apply {
-                                                usage = "verify"
-                                                certificate = bean.caText.split("\n").filter { it.isNotEmpty() }
-                                            })
+                                        if (bean.pinnedPeerCertificateSha256.isNotEmpty()) {
+                                            pinnedPeerCertificateSha256 = mutableListOf()
+                                            bean.pinnedPeerCertificateSha256.listByLineOrComma().forEach {
+                                                pinnedPeerCertificateSha256.add(it.replace(":", "").replace("-", ""))
+                                            }
+                                        }
+                                        if (bean.pinnedPeerCertificatePublicKeySha256.isNotEmpty()) {
+                                            pinnedPeerCertificatePublicKeySha256 = bean.pinnedPeerCertificatePublicKeySha256.listByLineOrComma()
+                                        }
+                                        if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
+                                            pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
+                                        }
+                                        if (bean.certificates.isNotEmpty() || bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                            certificates = mutableListOf()
+                                            if (bean.certificates.isNotEmpty()) {
+                                                disableSystemRoot = true
+                                                certificates.add(TLSObject.CertificateObject().apply {
+                                                    usage = "verify"
+                                                    certificate = bean.certificates.lines()
+                                                })
+                                            }
+                                            if (bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                certificates.add(TLSObject.CertificateObject().apply {
+                                                    usage = "encipherment"
+                                                    certificate = bean.mtlsCertificate.lines()
+                                                    key = bean.mtlsCertificatePrivateKey.lines()
+                                                })
+                                            }
+                                        }
+                                        if (bean.echConfig.isNotEmpty()) {
+                                            echConfig = bean.echConfig
                                         }
                                     }
                                 }
@@ -1225,18 +1261,40 @@ fun buildV2RayConfig(
                                             if (bean.alpn.isNotEmpty()) {
                                                 alpn = bean.alpn.listByLineOrComma()
                                             }
-                                            if (bean.caText.isNotEmpty()) {
-                                                disableSystemRoot = true
-                                                certificates = listOf(TLSObject.CertificateObject()
-                                                    .apply {
-                                                        usage = "verify"
-                                                        certificate = bean.caText.split(
-                                                            "\n"
-                                                        ).filter { it.isNotEmpty() }
-                                                    })
-                                            }
                                             if (bean.allowInsecure) {
                                                 allowInsecure = true
+                                            }
+                                            if (bean.certificates.isNotEmpty() || bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                certificates = mutableListOf()
+                                                if (bean.certificates.isNotEmpty()) {
+                                                    disableSystemRoot = true
+                                                    certificates.add(TLSObject.CertificateObject().apply {
+                                                        usage = "verify"
+                                                        certificate = bean.certificates.lines()
+                                                    })
+                                                }
+                                                if (bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                    certificates.add(TLSObject.CertificateObject().apply {
+                                                        usage = "encipherment"
+                                                        certificate = bean.mtlsCertificate.lines()
+                                                        key = bean.mtlsCertificatePrivateKey.lines()
+                                                    })
+                                                }
+                                            }
+                                            if (bean.pinnedPeerCertificateSha256.isNotEmpty()) {
+                                                pinnedPeerCertificateSha256 = mutableListOf()
+                                                bean.pinnedPeerCertificateSha256.listByLineOrComma().forEach {
+                                                    pinnedPeerCertificateSha256.add(it.replace(":", ""))
+                                                }
+                                            }
+                                            if (bean.pinnedPeerCertificatePublicKeySha256.isNotEmpty()) {
+                                                pinnedPeerCertificatePublicKeySha256 = bean.pinnedPeerCertificatePublicKeySha256.listByLineOrComma()
+                                            }
+                                            if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
+                                                pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
+                                            }
+                                            if (bean.echConfig.isNotEmpty()) {
+                                                echConfig = bean.echConfig
                                             }
                                         }
                                     }
@@ -1253,18 +1311,37 @@ fun buildV2RayConfig(
                                             if (bean.sni.isNotEmpty()) {
                                                 serverName = bean.sni
                                             }
-                                            if (bean.certificates.isNotEmpty()) {
-                                                disableSystemRoot = true
-                                                certificates = listOf(TLSObject.CertificateObject()
-                                                    .apply {
+                                            if (bean.certificates.isNotEmpty() || bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                certificates = mutableListOf()
+                                                if (bean.certificates.isNotEmpty()) {
+                                                    disableSystemRoot = true
+                                                    certificates.add(TLSObject.CertificateObject().apply {
                                                         usage = "verify"
-                                                        certificate = bean.certificates.split(
-                                                            "\n"
-                                                        ).filter { it.isNotEmpty() }
+                                                        certificate = bean.certificates.lines()
                                                     })
+                                                }
+                                                if (bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                    certificates.add(TLSObject.CertificateObject().apply {
+                                                        usage = "encipherment"
+                                                        certificate = bean.mtlsCertificate.lines()
+                                                        key = bean.mtlsCertificatePrivateKey.lines()
+                                                    })
+                                                }
+                                            }
+                                            if (bean.pinnedPeerCertificateSha256.isNotEmpty()) {
+                                                pinnedPeerCertificateSha256 = mutableListOf()
+                                                bean.pinnedPeerCertificateSha256.listByLineOrComma().forEach {
+                                                    pinnedPeerCertificateSha256.add(it.replace(":", ""))
+                                                }
+                                            }
+                                            if (bean.pinnedPeerCertificatePublicKeySha256.isNotEmpty()) {
+                                                pinnedPeerCertificatePublicKeySha256 = bean.pinnedPeerCertificatePublicKeySha256.listByLineOrComma()
                                             }
                                             if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
                                                 pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
+                                            }
+                                            if (bean.echConfig.isNotEmpty()) {
+                                                echConfig = bean.echConfig
                                             }
                                             if (bean.allowInsecure) {
                                                 allowInsecure = true
@@ -1297,7 +1374,7 @@ fun buildV2RayConfig(
                                                 disableSystemRoot = true
                                                 certificates = listOf(TLSObject.CertificateObject().apply {
                                                     usage = "verify"
-                                                    certificate = bean.certificates.split("\n").filter { it.isNotEmpty() }
+                                                    certificate = bean.certificates.lines()
                                                 })
                                             }
                                         }
@@ -1328,15 +1405,31 @@ fun buildV2RayConfig(
                                                 if (bean.alpn.isNotEmpty()) {
                                                     alpn = bean.alpn.listByLineOrComma()
                                                 }
-                                                if (bean.certificates.isNotEmpty()) {
-                                                    disableSystemRoot = true
-                                                    certificates = listOf(TLSObject.CertificateObject()
-                                                        .apply {
+                                                if (bean.certificates.isNotEmpty() || bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                    certificates = mutableListOf()
+                                                    if (bean.certificates.isNotEmpty()) {
+                                                        disableSystemRoot = true
+                                                        certificates.add(TLSObject.CertificateObject().apply {
                                                             usage = "verify"
-                                                            certificate = bean.certificates.split(
-                                                                "\n"
-                                                            ).filter { it.isNotEmpty() }
+                                                            certificate = bean.certificates.lines()
                                                         })
+                                                    }
+                                                    if (bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                        certificates.add(TLSObject.CertificateObject().apply {
+                                                            usage = "encipherment"
+                                                            certificate = bean.mtlsCertificate.lines()
+                                                            key = bean.mtlsCertificatePrivateKey.lines()
+                                                        })
+                                                    }
+                                                }
+                                                if (bean.pinnedPeerCertificateSha256.isNotEmpty()) {
+                                                    pinnedPeerCertificateSha256 = mutableListOf()
+                                                    bean.pinnedPeerCertificateSha256.listByLineOrComma().forEach {
+                                                        pinnedPeerCertificateSha256.add(it.replace(":", ""))
+                                                    }
+                                                }
+                                                if (bean.pinnedPeerCertificatePublicKeySha256.isNotEmpty()) {
+                                                    pinnedPeerCertificatePublicKeySha256 = bean.pinnedPeerCertificatePublicKeySha256.listByLineOrComma()
                                                 }
                                                 if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
                                                     pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
@@ -1404,20 +1497,52 @@ fun buildV2RayConfig(
                                             if (bean.sni.isNotEmpty()) {
                                                 serverName = bean.sni
                                             }
-                                            if (bean.allowInsecure || bean.pinnedCertChainSha256.isNotEmpty()) {
-                                                // match Juicity's behavior
-                                                // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
+                                            if (bean.allowInsecure) {
                                                 allowInsecure = true
                                             }
-                                            if (bean.pinnedCertChainSha256.isNotEmpty()) {
-                                                pinnedPeerCertificateChainSha256 = when {
-                                                    bean.pinnedCertChainSha256.length == 64 -> {
-                                                        listOf(Base64.encode(bean.pinnedCertChainSha256.chunked(2).map { it.toInt(16).toByte() }.toByteArray()))
-                                                    }
-                                                    else -> {
-                                                        listOf(bean.pinnedCertChainSha256.replace('_', '/').replace('-', '+'))
-                                                    }
+                                            if (bean.pinnedPeerCertificateSha256.isNotEmpty()) {
+                                                pinnedPeerCertificateSha256 = mutableListOf()
+                                                bean.pinnedPeerCertificateSha256.listByLineOrComma().forEach {
+                                                    pinnedPeerCertificateSha256.add(it.replace(":", ""))
                                                 }
+                                            }
+                                            if (bean.pinnedPeerCertificatePublicKeySha256.isNotEmpty()) {
+                                                pinnedPeerCertificatePublicKeySha256 = bean.pinnedPeerCertificatePublicKeySha256.listByLineOrComma()
+                                            }
+                                            if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
+                                                pinnedPeerCertificateChainSha256 = mutableListOf()
+                                                bean.pinnedPeerCertificateChainSha256.listByLineOrComma().forEach {
+                                                    pinnedPeerCertificateChainSha256.add(
+                                                        when {
+                                                            it.length == 64 -> {
+                                                                Base64.encode(bean.pinnedPeerCertificateChainSha256.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                                                            }
+                                                            else -> {
+                                                                bean.pinnedPeerCertificateChainSha256.replace('_', '/').replace('-', '+')
+                                                            }
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                            if (bean.certificates.isNotEmpty() || bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                certificates = mutableListOf()
+                                                if (bean.certificates.isNotEmpty()) {
+                                                    disableSystemRoot = true
+                                                    certificates.add(TLSObject.CertificateObject().apply {
+                                                        usage = "verify"
+                                                        certificate = bean.certificates.lines()
+                                                    })
+                                                }
+                                                if (bean.mtlsCertificate.isNotEmpty() || bean.mtlsCertificatePrivateKey.isNotEmpty()) {
+                                                    certificates.add(TLSObject.CertificateObject().apply {
+                                                        usage = "encipherment"
+                                                        certificate = bean.mtlsCertificate.lines()
+                                                        key = bean.mtlsCertificatePrivateKey.lines()
+                                                    })
+                                                }
+                                            }
+                                            if (bean.echConfig.isNotEmpty()) {
+                                                echConfig = bean.echConfig
                                             }
                                         }
                                     }

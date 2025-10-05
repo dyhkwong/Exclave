@@ -52,7 +52,6 @@ fun Http3Bean.toUri(): String {
     if (password.isNotEmpty()) {
         builder.password = password
     }
-
     if (sni.isNotEmpty()) {
         // non-standard
         builder.addQueryParameter("sni", sni)

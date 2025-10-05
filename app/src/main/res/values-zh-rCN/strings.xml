@@ -212,7 +212,7 @@
     <string name="route_reverse">反向代理</string>
     <string name="route_reverse_redirect">反向代理地址</string>
     <string name="certificates">证书（链）</string>
-    <string name="pinned_peer_certificate_chain_sha256">固定证书链散列</string>
+    <string name="pinned_peer_certificate_chain_sha256">固定证书链 SHA-256</string>
     <string name="ignore_battery_optimizations">忽略电池优化</string>
     <string name="ignore_battery_optimizations_sum">移除一些限制</string>
     <string name="early_data_header_name">前置数据头名称</string>
@@ -223,8 +223,8 @@
     <string name="auto">自动</string>
     <string name="follow_system">跟随系统</string>
     <string name="security_settings">安全设置</string>
-    <string name="allow_insecure">允许不安全的连接</string>
-    <string name="allow_insecure_sum">禁用证书验证。启用后该配置安全性相当于明文。</string>
+    <string name="allow_insecure">跳过证书验证</string>
+    <string name="allow_insecure_sum">启用此项且未部署其他安全措施会导致中间人攻击得逞。切勿启用除非您知道自己在做什么。</string>
     <string name="config_type">配置类型</string>
     <string name="edit_config">编辑配置</string>
     <plurals name="lines">
@@ -481,9 +481,8 @@
     <string name="mux_settings">Mux 设置</string>
     <string name="update_subscription">更新订阅</string>
     <string name="group_not_a_subscription">此分组不是订阅。</string>
-    <string name="sha256_certificate_fingerprint">SHA256 证书指纹</string>
     <string name="plugin_settings">插件设置</string>
-    <string name="hysteria2_plugin_settings_sum">这些选项仅对插件生效。</string>
+    <string name="plugin_settings_sum">这些选项仅对插件生效。</string>
     <string name="hysteria_enable_port_hopping_experimental">启用 Hysteria 端口跳跃（实验性）</string>
     <string name="hysteria_enable_port_hopping_sum">这与链式代理不兼容。如果禁用，端口跳跃范围内的一个随机端口将会被使用。</string>
     <string name="enable_fragment">启用 TLS Client Hello 分片</string>
@@ -585,4 +584,12 @@
     <string name="tcp_segmentation">TCP 分段</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">TLS 记录分片和 TCP 分段</string>
     <string name="juicity_provider">Juicity 提供程序</string>
+    <string name="core_settings">核心设置</string>
+    <string name="core_settings_sum">这些选项仅对核心生效。</string>
+    <string name="pinned_peer_certificate_public_key_sha256">固定证书公钥 SHA-256</string>
+    <string name="pinned_peer_certificate_sha256">固定证书 SHA-256</string>
+    <string name="pinned_peer_certificate_sha256_base64_dialog_message">如果证书本身无效则需要配合“跳过证书验证”使用。每行一个，Base64 编码。</string>
+    <string name="pinned_peer_certificate_sha256_hex_dialog_message">如果证书本身无效则需要配合“跳过证书验证”使用。每行一个，hex 编码。</string>
+    <string name="mtls_certificate">mTLS 证书</string>
+    <string name="mtls_certificate_private_key">mTLS 证书私钥</string>
 </resources>

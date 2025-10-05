@@ -64,8 +64,8 @@
     <string name="show_direct_speed">Show direct speed</string>
     <string name="show_direct_speed_sum">Show direct traffic speed in notification as well</string>
     <string name="security_settings">Security settings</string>
-    <string name="allow_insecure">Allow insecure</string>
-    <string name="allow_insecure_sum">Disable certificate validation. When enabled the security of this configuration is equivalent to cleartext.</string>
+    <string name="allow_insecure">Skip certificate verification</string>
+    <string name="allow_insecure_sum">Enabling this option without deploying other security measures leads to the success of man-in-the-middle attacks. Do NOT enable unless you know what you are doing.</string>
     <string name="traffic" translatable="false">%1$s↑ %2$s↓</string>
     <string name="speed_detail">Proxy: %1$s↑ %2$s↓
 \nDirect: %3$s↑ %4$s↓</string>
@@ -118,7 +118,7 @@
     <string name="sni">SNI</string>
     <string name="alpn">ALPN</string>
     <string name="certificates">Certificate</string>
-    <string name="pinned_peer_certificate_chain_sha256">Pinned certificate chain hash</string>
+    <string name="pinned_peer_certificate_chain_sha256">Pinned certificate chain SHA-256</string>
     <string name="early_data_header_name">Early data header name</string>
     <string name="extra_headers">Extra headers</string>
     <string name="config_type">Config type</string>
@@ -512,9 +512,8 @@
     <string name="mux_settings">Mux settings</string>
     <string name="update_subscription">Update subscription</string>
     <string name="group_not_a_subscription">This group is not a subscription.</string>
-    <string name="sha256_certificate_fingerprint">SHA256 certificate fingerprint</string>
     <string name="plugin_settings">Plugin settings</string>
-    <string name="hysteria2_plugin_settings_sum">These options only apply to plugins.</string>
+    <string name="plugin_settings_sum">These options only apply to plugins.</string>
     <string name="hysteria_enable_port_hopping_experimental">Enable Hysteria port hopping (Experimental)</string>
     <string name="hysteria_enable_port_hopping_sum">This is incompatible with chain proxy. If disabled, a random port within the port hopping range will be used.</string>
     <string name="enable_fragment">Enable TLS Client Hello fragmentation</string>
@@ -623,4 +622,12 @@
     <string name="tcp_segmentation">TCP segmentation</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">TLS record fragmentation and TCP segmentation</string>
     <string name="juicity_provider">Juicity provider</string>
+    <string name="core_settings">Core settings</string>
+    <string name="core_settings_sum">These options only apply to core.</string>
+    <string name="pinned_peer_certificate_public_key_sha256">Pinned certificate public key SHA-256</string>
+    <string name="pinned_peer_certificate_sha256">Pinned certificate SHA-256</string>
+    <string name="pinned_peer_certificate_sha256_base64_dialog_message">Use with "skip certificate verification" if the certificate itself is untrusted or invalid. One per line in Base64 encoding.</string>
+    <string name="pinned_peer_certificate_sha256_hex_dialog_message">Use with "skip certificate verification" if the certificate itself is untrusted or invalid. One per line in hex encoding.</string>
+    <string name="mtls_certificate">mTLS certificate</string>
+    <string name="mtls_certificate_private_key">mTLS certificate private key</string>
 </resources>

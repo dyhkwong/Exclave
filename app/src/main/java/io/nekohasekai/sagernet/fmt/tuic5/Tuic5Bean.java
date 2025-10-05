@@ -27,12 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.ktx.NetsKt;
 
 public class Tuic5Bean extends AbstractBean {
 
     public String uuid;
     public String password;
-    public String caText;
+    public String certificates;
     public String udpRelayMode;
     public String congestionControl;
     public String alpn;
@@ -41,13 +42,19 @@ public class Tuic5Bean extends AbstractBean {
     public Integer mtu;
     public String sni;
     public Boolean allowInsecure;
+    public String echConfig;
+    public String pinnedPeerCertificateChainSha256;
+    public String pinnedPeerCertificatePublicKeySha256;
+    public String pinnedPeerCertificateSha256;
+    public String mtlsCertificate;
+    public String mtlsCertificatePrivateKey;
 
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
         if (uuid == null) uuid = "";
         if (password == null) password = "";
-        if (caText == null) caText = "";
+        if (certificates == null) certificates = "";
         if (udpRelayMode == null) udpRelayMode = "native";
         if (congestionControl == null) congestionControl = "cubic";
         if (alpn == null) alpn = "";
@@ -56,14 +63,20 @@ public class Tuic5Bean extends AbstractBean {
         if (mtu == null) mtu = 1500;
         if (sni == null) sni = "";
         if (allowInsecure == null) allowInsecure = false;
+        if (echConfig == null) echConfig = "";
+        if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
+        if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
+        if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
+        if (mtlsCertificate == null) mtlsCertificate = "";
+        if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(password);
-        output.writeString(caText);
+        output.writeString(certificates);
         output.writeString(udpRelayMode);
         output.writeString(congestionControl);
         output.writeString(alpn);
@@ -73,6 +86,12 @@ public class Tuic5Bean extends AbstractBean {
         output.writeString(sni);
         output.writeString(uuid);
         output.writeBoolean(allowInsecure);
+        output.writeString(echConfig);
+        output.writeString(pinnedPeerCertificateChainSha256);
+        output.writeString(pinnedPeerCertificatePublicKeySha256);
+        output.writeString(pinnedPeerCertificateSha256);
+        output.writeString(mtlsCertificate);
+        output.writeString(mtlsCertificatePrivateKey);
     }
 
     @Override
@@ -80,7 +99,7 @@ public class Tuic5Bean extends AbstractBean {
         int version = input.readInt();
         super.deserialize(input);
         password = input.readString();
-        caText = input.readString();
+        certificates = input.readString();
         udpRelayMode = input.readString();
         congestionControl = input.readString();
         alpn = input.readString();
@@ -92,6 +111,15 @@ public class Tuic5Bean extends AbstractBean {
         if (version >= 1) {
             allowInsecure = input.readBoolean();
         }
+        if (version >= 2) {
+            alpn = input.readString();
+            echConfig = input.readString();
+            pinnedPeerCertificateChainSha256 = input.readString();
+            pinnedPeerCertificatePublicKeySha256 = input.readString();
+            pinnedPeerCertificateSha256 = input.readString();
+            mtlsCertificate = input.readString();
+            mtlsCertificatePrivateKey = input.readString();
+        }
     }
 
     @Override
@@ -99,15 +127,52 @@ public class Tuic5Bean extends AbstractBean {
         return "udp";
     }
 
+    public boolean canUsePluginImplementation() {
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificatePublicKeySha256).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateChainSha256).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateSha256).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(mtlsCertificate).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(mtlsCertificatePrivateKey).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof Tuic5Bean bean)) return;
-        bean.caText = caText;
+        if (bean.certificates == null || bean.certificates.isEmpty() && !certificates.isEmpty()) {
+            bean.certificates = certificates;
+        }
         bean.zeroRTTHandshake = zeroRTTHandshake;
         bean.mtu = mtu;
         if (allowInsecure) {
             bean.allowInsecure = true;
         }
+        if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
+                !pinnedPeerCertificateChainSha256.isEmpty()) {
+            bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        if (bean.pinnedPeerCertificatePublicKeySha256 == null || bean.pinnedPeerCertificatePublicKeySha256.isEmpty() &&
+                !pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            bean.pinnedPeerCertificatePublicKeySha256 = pinnedPeerCertificatePublicKeySha256;
+        }
+        if (bean.pinnedPeerCertificateSha256 == null || bean.pinnedPeerCertificateSha256.isEmpty() &&
+                !pinnedPeerCertificateSha256.isEmpty()) {
+            bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
+        }
+        bean.echConfig = echConfig;
     }
 
     @NotNull

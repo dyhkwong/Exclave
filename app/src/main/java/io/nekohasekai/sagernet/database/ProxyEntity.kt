@@ -389,7 +389,7 @@ data class ProxyEntity(
                             }
                             is Hysteria2Bean -> {
                                 append("\n\n")
-                                append(bean.buildHysteria2Config(port, false, null))
+                                append(bean.buildHysteria2Config(port))
                             }
                             is MieruBean -> {
                                 append("\n\n")
@@ -428,13 +428,13 @@ data class ProxyEntity(
             return bean.type != "v2ray_outbound"
         }
         if (bean is Hysteria2Bean) {
-            return DataStore.providerHysteria2 != ProtocolProvider.CORE
+            return DataStore.providerHysteria2 != ProtocolProvider.CORE && bean.canUsePluginImplementation()
         }
         if (bean is Tuic5Bean) {
-            return DataStore.providerTuic5 != ProtocolProvider.CORE
+            return DataStore.providerTuic5 != ProtocolProvider.CORE && bean.canUsePluginImplementation()
         }
         if (bean is JuicityBean) {
-            return DataStore.providerJuicity != ProtocolProvider.CORE
+            return DataStore.providerJuicity != ProtocolProvider.CORE && bean.canUsePluginImplementation()
         }
         return when (type) {
             TYPE_TROJAN_GO -> true

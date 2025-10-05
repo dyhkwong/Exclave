@@ -51,7 +51,15 @@ fun parseJuicity(url: String): JuicityBean {
             }
         }
         link.queryParameter("pinned_certchain_sha256")?.also {
-            pinnedCertChainSha256 = it
+            when {
+                it.length == 64 -> {
+                    Base64.encodeUrlSafe(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                }
+                else -> {
+                    it.replace('/', '_').replace('+', '-')
+                }
+            }
+            pinnedPeerCertificateChainSha256 = it.lowercase()
             // match Juicity's behavior
             // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
             allowInsecure = true
@@ -75,23 +83,27 @@ fun JuicityBean.toUri(): String? {
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
-    if (pinnedCertChainSha256.isNotEmpty()) {
+    if (pinnedPeerCertificateChainSha256.isNotEmpty()) {
         // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L87-L96
         // it actually supports Base64 URL-safe encoding with padding, Base64 standard encoding with padding and Hex encoding
+        val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
         builder.addQueryParameter("pinned_certchain_sha256", when {
-            pinnedCertChainSha256.length == 64 -> {
-                Base64.encodeUrlSafe(pinnedCertChainSha256.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+            certChainHash.length == 64 -> {
+                Base64.encodeUrlSafe(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
             }
             else -> {
-                pinnedCertChainSha256.replace('/', '_').replace('+', '-')
+                certChainHash.replace('/', '_').replace('+', '-').lowercase()
             }
         })
-
     }
-    if (allowInsecure || pinnedCertChainSha256.isNotEmpty()) {
+    // as `pinnedPeerCertificate(PublicKey)Sha256` is not exportable,
+    // only add `allow_insecure=1` if `pinnedPeerCertificate(PublicKey)Sha256` is not used
+    if (pinnedPeerCertificateChainSha256.isNotEmpty() ||
+        (allowInsecure && pinnedPeerCertificateSha256.isEmpty() &&
+                pinnedPeerCertificatePublicKeySha256.isEmpty())
+        ) {
         builder.addQueryParameter("allow_insecure", "1")
     }
-
     return builder.string
 }
 
@@ -107,11 +119,19 @@ fun JuicityBean.buildJuicityConfig(port: Int): String {
         } else {
             it["sni"] = serverAddress
         }
-        if (allowInsecure || pinnedCertChainSha256.isNotEmpty()) {
+        if (allowInsecure || pinnedPeerCertificateChainSha256.isNotEmpty()) {
             it["allow_insecure"] = true
         }
-        if (pinnedCertChainSha256.isNotEmpty()) {
-            it["pinned_certchain_sha256"] = pinnedCertChainSha256
+        if (pinnedPeerCertificateChainSha256.isNotEmpty()) {
+            val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
+            it["pinned_certchain_sha256"] = when {
+                certChainHash.length == 64 -> {
+                    Base64.encodeUrlSafe(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                }
+                else -> {
+                    certChainHash.replace('/', '_').replace('+', '-')
+                }
+            }
         }
         it["log_level"] = when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"

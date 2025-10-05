@@ -38,7 +38,6 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
 import io.nekohasekai.sagernet.fmt.brook.BrookBean
 import io.nekohasekai.sagernet.fmt.brook.buildBrookConfig
-import io.nekohasekai.sagernet.fmt.brook.toInternalUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
@@ -129,15 +128,19 @@ abstract class V2RayInstance(
                     }
                     is Hysteria2Bean -> {
                         initPlugin("hysteria2-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildHysteria2Config(port, isVpn) {
-                            File(
-                                app.noBackupFilesDir,
-                                "hysteria2_" + SystemClock.elapsedRealtime() + ".ca"
-                            ).apply {
-                                parentFile?.mkdirs()
-                                cacheFiles.add(this)
-                            }
-                        }
+                        pluginConfigs[port] = profile.type to bean.buildHysteria2Config(
+                            port,
+                            isVpn = isVpn,
+                            cacheFile = {
+                                File(
+                                    app.noBackupFilesDir,
+                                    "hysteria2_" + SystemClock.elapsedRealtime() + ".pem"
+                                ).apply {
+                                    parentFile?.mkdirs()
+                                    cacheFiles.add(this)
+                                }
+                            },
+                        )
                     }
                     is MieruBean -> {
                         initPlugin("mieru-plugin")

@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.ktx.isIpv6Address
 import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.isValidHysteriaPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
+import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 import org.yaml.snakeyaml.DumperOptions
@@ -91,7 +92,8 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
             allowInsecure = true
         }
         link.queryParameter("pinSHA256")?.also {
-            pinSHA256 = it
+            // https://github.com/apernet/hysteria/blob/922128e425a700c5bc01290e7a9560f182fe451b/app/cmd/client.go#L882-L889
+            pinnedPeerCertificateSha256 = it.replace(":", "").replace("-", "").lowercase()
         }
         link.queryParameter("obfs")?.also {
             if (it.isNotEmpty() && it != "salamander") {
@@ -125,11 +127,14 @@ fun Hysteria2Bean.toUri(): String? {
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
-    if (allowInsecure) {
+    // as `pinnedPeerCertificate[Chain|PublicKey]Sha256` is not exportable,
+    // only add `allow_insecure=1` if `pinnedPeerCertificate[Chain|PublicKey]Sha256` is not used
+    if (allowInsecure &&
+        pinnedPeerCertificateChainSha256.isEmpty() && pinnedPeerCertificatePublicKeySha256.isEmpty()) {
         builder.addQueryParameter("insecure", "1")
     }
-    if (pinSHA256.isNotEmpty()) {
-        builder.addQueryParameter("pinSHA256", pinSHA256)
+    if (pinnedPeerCertificateSha256.isNotEmpty()) {
+        builder.addQueryParameter("pinSHA256", pinnedPeerCertificateSha256.listByLineOrComma()[0].replace(":", "").lowercase())
     }
     if (obfs.isNotEmpty()) {
         // obfs password must not be empty
@@ -151,7 +156,7 @@ fun Hysteria2Bean.toUri(): String? {
     return url
 }
 
-fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean, cacheFile: (() -> File)?): String {
+fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean = false, cacheFile: ((type: String) -> File)? = null): String {
     if (!serverPorts.isValidHysteriaPort()) {
         error("invalid port: $serverPorts")
     }
@@ -187,13 +192,23 @@ fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean, cacheFile: (()
     if (servername.isNotEmpty()) {
         tlsObject["sni"] = servername
     }
-    if (caText.isNotEmpty() && cacheFile != null) {
-        val caFile = cacheFile()
-        caFile.writeText(caText)
-        tlsObject["ca"] = caFile.absolutePath
+    if (certificates.isNotEmpty() && cacheFile != null) {
+        val file = cacheFile("ca")
+        file.writeText(certificates)
+        tlsObject["ca"] = file.absolutePath
     }
-    if (pinSHA256.isNotEmpty()) {
-        tlsObject["pinSHA256"] = pinSHA256
+    if (mtlsCertificate.isNotEmpty() && cacheFile != null) {
+        val file = cacheFile("clientCertificate")
+        file.writeText(mtlsCertificate)
+        tlsObject["clientCertificate"] = file.absolutePath
+    }
+    if (mtlsCertificatePrivateKey.isNotEmpty() && cacheFile != null) {
+        val file = cacheFile("clientKey")
+        file.writeText(mtlsCertificatePrivateKey)
+        tlsObject["clientKey"] = file.absolutePath
+    }
+    if (pinnedPeerCertificateSha256.isNotEmpty()) {
+        tlsObject["pinSHA256"] = pinnedPeerCertificateSha256.listByLineOrComma()[0].replace(":", "")
     }
     if (tlsObject.isNotEmpty()) {
         confObject["tls"] = tlsObject

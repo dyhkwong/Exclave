@@ -50,6 +50,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public String certificates;
     public String pinnedPeerCertificateChainSha256;
+    public String pinnedPeerCertificatePublicKeySha256;
+    public String pinnedPeerCertificateSha256;
+    public String mtlsCertificate;
+    public String mtlsCertificatePrivateKey;
     public String utlsFingerprint;
     public String echConfig;
 
@@ -114,6 +118,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (shUseBrowserForwarder == null) shUseBrowserForwarder = false;
         if (certificates == null) certificates = "";
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
+        if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
+        if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
+        if (mtlsCertificate == null) mtlsCertificate = "";
+        if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
         if (earlyDataHeaderName == null) earlyDataHeaderName = "";
         if (allowInsecure == null) allowInsecure = false;
         if (packetEncoding == null) packetEncoding = "none";
@@ -141,7 +149,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(30);
+        output.writeInt(31);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -224,9 +232,13 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 output.writeString(alpn);
                 output.writeString(certificates);
                 output.writeString(pinnedPeerCertificateChainSha256);
+                output.writeString(pinnedPeerCertificatePublicKeySha256);
+                output.writeString(pinnedPeerCertificateSha256);
                 output.writeBoolean(allowInsecure);
                 output.writeString(utlsFingerprint);
                 output.writeString(echConfig);
+                output.writeString(mtlsCertificate);
+                output.writeString(mtlsCertificatePrivateKey);
                 break;
             }
             case "reality": {
@@ -384,6 +396,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     certificates = input.readString();
                     pinnedPeerCertificateChainSha256 = input.readString();
                 }
+                if (version >= 31) {
+                    pinnedPeerCertificatePublicKeySha256 = input.readString();
+                    pinnedPeerCertificateSha256 = input.readString();
+                }
                 if (version >= 3) {
                     allowInsecure = input.readBoolean();
                 }
@@ -395,6 +411,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
                     if (version <= 28) {
                         input.readString(); // echDohServer, removed
                     }
+                }
+                if (version >= 31) {
+                    mtlsCertificate = input.readString();
+                    mtlsCertificatePrivateKey = input.readString();
                 }
                 break;
             }
@@ -484,10 +504,20 @@ public abstract class StandardV2RayBean extends AbstractBean {
         }
         bean.wsUseBrowserForwarder = wsUseBrowserForwarder;
         bean.shUseBrowserForwarder = shUseBrowserForwarder;
-        bean.certificates = certificates;
+        if (bean.certificates == null || bean.certificates.isEmpty() && !certificates.isEmpty()) {
+            bean.certificates = certificates;
+        }
         if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
                 !pinnedPeerCertificateChainSha256.isEmpty()) {
             bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        if (bean.pinnedPeerCertificatePublicKeySha256 == null || bean.pinnedPeerCertificatePublicKeySha256.isEmpty() &&
+                !pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            bean.pinnedPeerCertificatePublicKeySha256 = pinnedPeerCertificatePublicKeySha256;
+        }
+        if (bean.pinnedPeerCertificateSha256 == null || bean.pinnedPeerCertificateSha256.isEmpty() &&
+                !pinnedPeerCertificateSha256.isEmpty()) {
+            bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
         if (bean.packetEncoding == null) {
             bean.packetEncoding = packetEncoding;

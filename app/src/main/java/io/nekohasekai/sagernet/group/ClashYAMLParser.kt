@@ -74,6 +74,12 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     if (proxy.getClashBool("skip-cert-verify") == true) {
                         allowInsecure = true
                     }
+                    proxy.getClashString("fingerprint")?.replace(":", "")?.trim()?.also {
+                        pinnedPeerCertificateSha256 = it
+                        allowInsecure = true
+                    }
+                    mtlsCertificate = proxy.getClashString("certificate")
+                    mtlsCertificatePrivateKey = proxy.getClashString("private-key")
                 }
                 name = proxy.getClashString("name")
             })
@@ -90,6 +96,12 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     if (proxy.getClashBool("skip-cert-verify") == true) {
                         allowInsecure = true
                     }
+                    proxy.getClashString("fingerprint")?.replace(":", "")?.trim()?.also {
+                        pinnedPeerCertificateSha256 = it
+                        allowInsecure = true
+                    }
+                    mtlsCertificate = proxy.getClashString("certificate")
+                    mtlsCertificatePrivateKey = proxy.getClashString("private-key")
                 }
                 name = proxy.getClashString("name")
             })
@@ -197,6 +209,12 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             if (bean.security == "tls") {
                 bean.alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
                 bean.allowInsecure = proxy.getClashBool("skip-cert-verify") == true
+                proxy.getClashString("fingerprint")?.replace(":", "")?.trim()?.also {
+                    bean.pinnedPeerCertificateSha256 = it
+                    bean.allowInsecure = true
+                }
+                bean.mtlsCertificate = proxy.getClashString("certificate")
+                bean.mtlsCertificatePrivateKey = proxy.getClashString("private-key")
             }
 
             if (bean is VMessBean) {
@@ -485,8 +503,15 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     ?: proxy.getClashString("port")?.toUIntOrNull()?.toString()) ?: return listOf()
                 auth = proxy.getClashString("password")
                 sni = proxy.getClashString("sni")
-                // alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
                 allowInsecure = proxy.getClashBool("skip-cert-verify") == true
+                proxy.getClashString("fingerprint")?.replace(":", "")?.trim()?.also {
+                    pinnedPeerCertificateSha256 = it
+                    allowInsecure = true
+                }
+                // https://github.com/MetaCubeX/mihomo/commit/6786705212f67eebe25151778b86ab4d2793c7d9
+                certificates = proxy.getClashString("ca-str")?.lines()?.joinToString("\n")
+                mtlsCertificate = proxy.getClashString("certificate")
+                mtlsCertificatePrivateKey = proxy.getClashString("private-key")
                 (proxy.getClashString("obfs"))?.also {
                     when (it) {
                         "" -> {}
@@ -544,6 +569,14 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         ?: (if (proxy.getClashString("ip") != null) proxy.getClashString("server") else null)
                     // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
                     alpn = if (!proxy.contains("alpn")) "h3" else (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
+                    proxy.getClashString("fingerprint")?.replace(":", "")?.trim()?.also {
+                        pinnedPeerCertificateSha256 = it
+                        allowInsecure = true
+                    }
+                    // https://github.com/MetaCubeX/mihomo/commit/6786705212f67eebe25151778b86ab4d2793c7d9
+                    certificates = proxy.getClashString("ca-str")?.lines()?.joinToString("\n")
+                    mtlsCertificate = proxy.getClashString("certificate")
+                    mtlsCertificatePrivateKey = proxy.getClashString("private-key")
                     name = proxy.getClashString("name")
                 })
             }
@@ -587,6 +620,12 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 sni = proxy.getClashString("sni")
                 alpn = (proxy.getAny("alpn") as? List<Any>)?.joinToString("\n")
                 allowInsecure = proxy.getClashBool("skip-cert-verify") == true
+                proxy.getClashString("fingerprint")?.replace(":", "")?.trim()?.also {
+                    pinnedPeerCertificateSha256 = it
+                    allowInsecure = true
+                }
+                mtlsCertificate = proxy.getClashString("certificate")
+                mtlsCertificatePrivateKey = proxy.getClashString("private-key")
                 name = proxy.getClashString("name")
             })
         }

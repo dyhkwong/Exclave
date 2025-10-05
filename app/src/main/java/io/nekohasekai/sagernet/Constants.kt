@@ -157,6 +157,8 @@ object Key {
     const val SERVER_ALPN = "serverALPN"
     const val SERVER_CERTIFICATES = "serverCertificates"
     const val SERVER_PINNED_CERTIFICATE_CHAIN = "serverPinnedCertificateChain"
+    const val SERVER_PINNED_CERTIFICATE_PUBLIC_KEY = "serverPinnedCertificatePublicKey"
+    const val SERVER_PINNED_CERTIFICATE = "serverPinnedCertificate"
     const val SERVER_FLOW = "serverFlow"
     const val SERVER_QUIC_SECURITY = "serverQuicSecurity"
     const val SERVER_WS_MAX_EARLY_DATA = "serverWsMaxEarlyData"
@@ -169,6 +171,8 @@ object Key {
     const val SERVER_PACKET_ENCODING = "serverPacketEncoding"
     const val SERVER_UTLS_FINGERPRINT = "serverUTLSFingerprint"
     const val SERVER_ECH_CONFIG = "serverEchConfig"
+    const val SERVER_MTLS_CERTIFICATE = "serverMtlsCertificate"
+    const val SERVER_MTLS_CERTIFICATE_PRIVATE_KEY = "serverMtlsCertificatePrivateKey"
 
     const val SERVER_REALITY_PUBLIC_KEY = "serverRealityPublicKey"
     const val SERVER_REALITY_SHORT_ID = "serverRealityShortId"

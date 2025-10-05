@@ -176,7 +176,9 @@ fun Tuic5Bean.toUri(): String? {
     if (zeroRTTHandshake) {
         builder.addQueryParameter("reduce_rtt", "1")
     }
-    if (allowInsecure) {
+    // as pinned certificate is not exportable, only add `allow_insecure=1` if pinned certificate is not used
+    if (allowInsecure && pinnedPeerCertificateSha256.isEmpty() &&
+        pinnedPeerCertificatePublicKeySha256.isEmpty() && pinnedPeerCertificateChainSha256.isEmpty()) {
         builder.addQueryParameter("allow_insecure", "1")
     }
     return builder.string
@@ -195,13 +197,13 @@ fun Tuic5Bean.buildTuic5Config(port: Int, forExport: Boolean, cacheFile: (() -> 
             it["uuid"] = uuid
             it["password"] = password
 
-            if (caText.isNotEmpty() && cacheFile != null) {
+            if (certificates.isNotEmpty() && cacheFile != null) {
                 val caFile = cacheFile()
-                caFile.writeText(caText)
+                caFile.writeText(certificates)
                 it["certificates"] = JSONArray().apply {
                     put(caFile.absolutePath)
                 }
-            } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
+            } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && certificates.isEmpty()) {
                 it["certificates"] = JSONArray().apply {
                     // https://github.com/maskedeken/tuic/commit/88e57f6e41ae8985edd8f620950e3f8e7d29e1cc
                     // workaround tuic can't load Android system root certificates without forking it

@@ -40,8 +40,10 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         DataStore.serverObfs = obfs
         DataStore.serverPassword = auth
         DataStore.serverSNI = sni
-        DataStore.serverCertificates = caText
-        DataStore.serverPinnedCertificateChain = pinSHA256
+        DataStore.serverCertificates = certificates
+        DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
+        DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
+        DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverUploadSpeed = uploadMbps
         DataStore.serverDownloadSpeed = downloadMbps
@@ -52,6 +54,9 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         DataStore.serverMaxConnReceiveWindow = maxConnReceiveWindow
         DataStore.serverPorts = serverPorts
         DataStore.serverHopInterval = hopInterval
+        DataStore.serverEchConfig = echConfig
+        DataStore.serverMtlsCertificate = mtlsCertificate
+        DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
     }
 
     override fun Hysteria2Bean.serialize() {
@@ -61,8 +66,10 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         obfs = DataStore.serverObfs
         auth = DataStore.serverPassword
         sni = DataStore.serverSNI
-        caText = DataStore.serverCertificates
-        pinSHA256 = DataStore.serverPinnedCertificateChain
+        certificates = DataStore.serverCertificates
+        pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
+        pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
+        pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
         allowInsecure = DataStore.serverAllowInsecure
         uploadMbps = DataStore.serverUploadSpeed
         downloadMbps = DataStore.serverDownloadSpeed
@@ -73,6 +80,9 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         maxConnReceiveWindow = DataStore.serverMaxConnReceiveWindow
         serverPorts = DataStore.serverPorts
         hopInterval = DataStore.serverHopInterval
+        echConfig = DataStore.serverEchConfig
+        mtlsCertificate = DataStore.serverMtlsCertificate
+        mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

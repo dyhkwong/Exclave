@@ -452,9 +452,8 @@
     <string name="mux_settings">Настройки Mux</string>
     <string name="update_subscription">Обновить подписку</string>
     <string name="group_not_a_subscription">Эта группа не является подпиской.</string>
-    <string name="sha256_certificate_fingerprint">SHA256 хэш-сумма сертификата</string>
     <string name="plugin_settings">Настройки плагина</string>
-    <string name="hysteria2_plugin_settings_sum">Эти параметры применимы только к плагинам.</string>
+    <string name="plugin_settings_sum">Эти параметры применимы только к плагинам.</string>
     <string name="hysteria_enable_port_hopping_experimental">Включить переключение портов Hysteria (экспериментальная функция)</string>
     <string name="hysteria_enable_port_hopping_sum">Несовместимо с цепочкой прокси. Если отключено, будет использоваться случайный порт в диапазоне переключения портов.</string>
     <string name="enable_fragment_sum">Может помочь обойти цензуру SNI. Эта опция может быть удалена в будущем.</string>

@@ -743,7 +743,9 @@ fun StandardV2RayBean.toUri(): String? {
             if (alpn.isNotEmpty()) {
                 builder.addQueryParameter("alpn", alpn.listByLineOrComma().joinToString(","))
             }
-            if (allowInsecure) {
+            // as pinned certificate is not exportable, only add `allowInsecure=1` if pinned certificate is not used
+            if (allowInsecure && pinnedPeerCertificateSha256.isEmpty() &&
+                pinnedPeerCertificatePublicKeySha256.isEmpty() && pinnedPeerCertificateChainSha256.isEmpty()) {
                 // bad format from where?
                 builder.addQueryParameter("allowInsecure", "1")
             }

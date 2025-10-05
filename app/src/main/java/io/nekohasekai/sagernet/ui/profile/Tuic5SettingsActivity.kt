@@ -40,7 +40,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         DataStore.serverUserId = uuid
         DataStore.serverPassword = password
         DataStore.serverALPN = alpn
-        DataStore.serverCertificates = caText
+        DataStore.serverCertificates = certificates
         DataStore.serverUDPRelayMode = udpRelayMode
         DataStore.serverCongestionController = congestionControl
         DataStore.serverDisableSNI = disableSNI
@@ -48,7 +48,12 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         DataStore.serverReduceRTT = zeroRTTHandshake
         DataStore.serverMTU = mtu
         DataStore.serverAllowInsecure = allowInsecure
-
+        DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
+        DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
+        DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
+        DataStore.serverMtlsCertificate = mtlsCertificate
+        DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
+        DataStore.serverEchConfig = echConfig
     }
 
     override fun Tuic5Bean.serialize() {
@@ -58,7 +63,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         uuid = DataStore.serverUserId
         password = DataStore.serverPassword
         alpn = DataStore.serverALPN
-        caText = DataStore.serverCertificates
+        certificates = DataStore.serverCertificates
         udpRelayMode = DataStore.serverUDPRelayMode
         congestionControl = DataStore.serverCongestionController
         disableSNI = DataStore.serverDisableSNI
@@ -66,6 +71,12 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         zeroRTTHandshake = DataStore.serverReduceRTT
         mtu = DataStore.serverMTU
         allowInsecure = DataStore.serverAllowInsecure
+        pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
+        pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
+        pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
+        mtlsCertificate = DataStore.serverMtlsCertificate
+        mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
+        echConfig = DataStore.serverEchConfig
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

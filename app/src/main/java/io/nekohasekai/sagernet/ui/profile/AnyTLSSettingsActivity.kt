@@ -50,6 +50,8 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         DataStore.serverALPN = alpn
         DataStore.serverCertificates = certificates
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
+        DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
+        DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
         DataStore.serverUTLSFingerprint = utlsFingerprint
         DataStore.serverEchConfig = echConfig
         DataStore.serverRealityPublicKey = realityPublicKey
@@ -57,6 +59,8 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         DataStore.serverRealityFingerprint = realityFingerprint
         DataStore.serverRealityDisableX25519Mlkem768 = realityDisableX25519Mlkem768
         DataStore.serverAllowInsecure = allowInsecure
+        DataStore.serverMtlsCertificate = mtlsCertificate
+        DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
     }
 
     override fun AnyTLSBean.serialize() {
@@ -72,6 +76,8 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         alpn = DataStore.serverALPN
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
+        pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
+        pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
         utlsFingerprint = DataStore.serverUTLSFingerprint
         echConfig = DataStore.serverEchConfig
         realityPublicKey = DataStore.serverRealityPublicKey
@@ -79,6 +85,8 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         realityFingerprint = DataStore.serverRealityFingerprint
         realityDisableX25519Mlkem768 = DataStore.serverRealityDisableX25519Mlkem768
         allowInsecure = DataStore.serverAllowInsecure
+        mtlsCertificate = DataStore.serverMtlsCertificate
+        mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
     }
 
     lateinit var password: EditTextPreference
@@ -88,8 +96,12 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
     lateinit var securityCategory: PreferenceCategory
     lateinit var certificates: EditTextPreference
     lateinit var pinnedCertificateChain: EditTextPreference
+    lateinit var pinnedPeerCertificatePublicKey: EditTextPreference
+    lateinit var pinnedPeerCertificate: EditTextPreference
     lateinit var allowInsecure: SwitchPreference
     lateinit var utlsFingerprint: SimpleMenuPreference
+    lateinit var mtlsCertificate: EditTextPreference
+    lateinit var mtlsCertificatePrivateKey: EditTextPreference
     lateinit var echConfig: EditTextPreference
     lateinit var realityPublicKey: EditTextPreference
     lateinit var realityShortId: EditTextPreference
@@ -122,9 +134,13 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         securityCategory = findPreference(Key.SERVER_SECURITY_CATEGORY)!!
         certificates = findPreference(Key.SERVER_CERTIFICATES)!!
         pinnedCertificateChain = findPreference(Key.SERVER_PINNED_CERTIFICATE_CHAIN)!!
+        pinnedPeerCertificatePublicKey = findPreference(Key.SERVER_PINNED_CERTIFICATE_PUBLIC_KEY)!!
+        pinnedPeerCertificate = findPreference(Key.SERVER_PINNED_CERTIFICATE)!!
         allowInsecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
         echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
+        mtlsCertificate = findPreference(Key.SERVER_MTLS_CERTIFICATE)!!
+        mtlsCertificatePrivateKey = findPreference(Key.SERVER_MTLS_CERTIFICATE_PRIVATE_KEY)!!
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
         realityShortId = findPreference(Key.SERVER_REALITY_SHORT_ID)!!
         realityFingerprint = findPreference(Key.SERVER_REALITY_FINGERPRINT)!!
@@ -151,9 +167,13 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         securityCategory.isVisible = security == "tls" || security == "reality"
         certificates.isVisible = security == "tls"
         pinnedCertificateChain.isVisible = security == "tls"
+        pinnedPeerCertificatePublicKey.isVisible = security == "tls"
+        pinnedPeerCertificate.isVisible = security == "tls"
         allowInsecure.isVisible = security == "tls"
         sni.isVisible = security == "tls" || security == "reality"
         alpn.isVisible = security == "tls"
+        mtlsCertificate.isVisible = security == "tls"
+        mtlsCertificatePrivateKey.isVisible = security == "tls"
         echConfig.isVisible = security == "tls"
         realityPublicKey.isVisible = security == "reality"
         realityShortId.isVisible = security == "reality"

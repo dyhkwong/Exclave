@@ -36,8 +36,12 @@ public class Http3Bean extends AbstractBean {
     public String sni;
     public String certificates;
     public String pinnedPeerCertificateChainSha256;
+    public String pinnedPeerCertificatePublicKeySha256;
+    public String pinnedPeerCertificateSha256;
     public Boolean allowInsecure;
     public String echConfig;
+    public String mtlsCertificate;
+    public String mtlsCertificatePrivateKey;
 
     @Override
     public void initializeDefaultValues() {
@@ -47,22 +51,29 @@ public class Http3Bean extends AbstractBean {
         if (sni == null) sni = "";
         if (certificates == null) certificates = "";
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
+        if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
+        if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
         if (allowInsecure == null) allowInsecure = false;
         if (echConfig == null) echConfig = "";
+        if (mtlsCertificate == null) mtlsCertificate = "";
+        if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(username);
         output.writeString(password);
         output.writeString(sni);
         output.writeString(certificates);
         output.writeString(pinnedPeerCertificateChainSha256);
+        output.writeString(pinnedPeerCertificatePublicKeySha256);
+        output.writeString(pinnedPeerCertificateSha256);
         output.writeBoolean(allowInsecure);
         output.writeString(echConfig);
-        output.writeString(""); // echDohServer, removed
+        output.writeString(mtlsCertificate);
+        output.writeString(mtlsCertificatePrivateKey);
     }
 
     @Override
@@ -74,9 +85,19 @@ public class Http3Bean extends AbstractBean {
         sni = input.readString();
         certificates = input.readString();
         pinnedPeerCertificateChainSha256 = input.readString();
+        if (version >= 2) {
+            pinnedPeerCertificatePublicKeySha256 = input.readString();
+            pinnedPeerCertificateSha256 = input.readString();
+        }
         allowInsecure = input.readBoolean();
         echConfig = input.readString();
-        input.readString(); // echDohServer, removed
+        if (version == 0) {
+            input.readString(); // echDohServer, removed
+        }
+        if (version >= 2) {
+            mtlsCertificate = input.readString();
+            mtlsCertificatePrivateKey = input.readString();
+        }
     }
 
     @Override
@@ -85,10 +106,20 @@ public class Http3Bean extends AbstractBean {
         if (allowInsecure) {
             bean.allowInsecure = true;
         }
-        bean.certificates = certificates;
+        if (bean.certificates == null || bean.certificates.isEmpty() && !certificates.isEmpty()) {
+            bean.certificates = certificates;
+        }
         if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
                 !pinnedPeerCertificateChainSha256.isEmpty()) {
             bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        if (bean.pinnedPeerCertificatePublicKeySha256 == null || bean.pinnedPeerCertificatePublicKeySha256.isEmpty() &&
+                !pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            bean.pinnedPeerCertificatePublicKeySha256 = pinnedPeerCertificatePublicKeySha256;
+        }
+        if (bean.pinnedPeerCertificateSha256 == null || bean.pinnedPeerCertificateSha256.isEmpty() &&
+                !pinnedPeerCertificateSha256.isEmpty()) {
+            bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
         bean.echConfig = echConfig;
     }

@@ -446,7 +446,7 @@
     <string name="reality_short_id">ID corto REALITY</string>
     <string name="use_local_dns_as_bootstrap_dns">Usar DNS del sistema como DNS de arranque</string>
     <string name="update_subscription">Actualizar suscripción</string>
-    <string name="hysteria2_plugin_settings_sum">Estas opciones solo se aplican a los plugins.</string>
+    <string name="plugin_settings_sum">Estas opciones solo se aplican a los plugins.</string>
     <string name="enable_fragment_for_direct">Activar también fragmentación para directo</string>
     <string name="reality_fingerprint">Huella digital uTLS REALITY</string>
     <string name="action_flash_off">Apagar flash</string>
@@ -468,7 +468,6 @@
     <string name="enable_fragment">Activar fragmentación de TLS Client Hello</string>
     <string name="http_proxy_exception_list">Lista de excepciones de proxy HTTP</string>
     <string name="group_not_a_subscription">Este grupo no es una suscripción.</string>
-    <string name="sha256_certificate_fingerprint">Huella digital del certificado SHA256</string>
     <string name="plugin_settings">Ajustes del plugin</string>
     <string name="hysteria_enable_port_hopping_experimental">Activar salto de puerto de Hysteria (experimental)</string>
     <string name="enable_fragment_sum">Puede ayudar a eludir la censura de SNI. Esta opción puede eliminarse en el futuro.</string>

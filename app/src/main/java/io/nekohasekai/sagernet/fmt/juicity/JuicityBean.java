@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.ktx.NetsKt;
 
 public class JuicityBean extends AbstractBean {
 
@@ -36,7 +37,13 @@ public class JuicityBean extends AbstractBean {
     public String sni;
     public Boolean allowInsecure;
     public String congestionControl; // https://github.com/daeuniverse/softwind/blob/6daa40f6b7a5cb9a0c44ea252e86fcb3440a7a0e/protocol/tuic/common/congestion.go#L15
-    public String pinnedCertChainSha256;
+    public String certificates;
+    public String pinnedPeerCertificateChainSha256; // was “pinnedCertChainSha256”
+    public String pinnedPeerCertificatePublicKeySha256;
+    public String pinnedPeerCertificateSha256;
+    public String mtlsCertificate;
+    public String mtlsCertificatePrivateKey;
+    public String echConfig;
 
     @Override
     public void initializeDefaultValues() {
@@ -46,19 +53,31 @@ public class JuicityBean extends AbstractBean {
         if (sni == null) sni = "";
         if (allowInsecure == null) allowInsecure = false;
         if (congestionControl == null) congestionControl = "bbr";
-        if (pinnedCertChainSha256 == null) pinnedCertChainSha256 = "";
+        if (certificates == null) certificates = "";
+        if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
+        if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
+        if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
+        if (mtlsCertificate == null) mtlsCertificate = "";
+        if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
+        if (echConfig == null) echConfig = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(password);
         output.writeString(sni);
         output.writeBoolean(allowInsecure);
         output.writeString(congestionControl);
-        output.writeString(pinnedCertChainSha256);
+        output.writeString(certificates);
+        output.writeString(pinnedPeerCertificateChainSha256);
+        output.writeString(pinnedPeerCertificatePublicKeySha256);
+        output.writeString(pinnedPeerCertificateSha256);
+        output.writeString(mtlsCertificate);
+        output.writeString(mtlsCertificatePrivateKey);
+        output.writeString(echConfig);
     }
 
     @Override
@@ -70,8 +89,21 @@ public class JuicityBean extends AbstractBean {
         sni = input.readString();
         allowInsecure = input.readBoolean();
         congestionControl = input.readString();
+        if (version >= 3) {
+            certificates = input.readString();
+        }
         if (version >= 2) {
-            pinnedCertChainSha256 = input.readString();
+            pinnedPeerCertificateChainSha256 = input.readString();
+            if (version == 2 && !pinnedPeerCertificateChainSha256.isEmpty()) {
+                allowInsecure = true;
+            }
+        }
+        if (version >= 3) {
+            pinnedPeerCertificatePublicKeySha256 = input.readString();
+            pinnedPeerCertificateSha256 = input.readString();
+            mtlsCertificate = input.readString();
+            mtlsCertificatePrivateKey = input.readString();
+            echConfig = input.readString();
         }
     }
 
@@ -80,11 +112,48 @@ public class JuicityBean extends AbstractBean {
         return "udp";
     }
 
+    public boolean canUsePluginImplementation() {
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificatePublicKeySha256).isEmpty()) {
+            return false;
+        }
+        if (NetsKt.listByLineOrComma(pinnedPeerCertificateChainSha256).size() > 1) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateSha256).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(mtlsCertificate).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(mtlsCertificatePrivateKey).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof JuicityBean bean)) return;
         if (allowInsecure) {
             bean.allowInsecure = true;
+        }
+        if (bean.certificates == null || bean.certificates.isEmpty() && !certificates.isEmpty()) {
+            bean.certificates = certificates;
+        }
+        if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
+                !pinnedPeerCertificateChainSha256.isEmpty()) {
+            bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        if (bean.pinnedPeerCertificatePublicKeySha256 == null || bean.pinnedPeerCertificatePublicKeySha256.isEmpty() &&
+                !pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            bean.pinnedPeerCertificatePublicKeySha256 = pinnedPeerCertificatePublicKeySha256;
+        }
+        if (bean.pinnedPeerCertificateSha256 == null || bean.pinnedPeerCertificateSha256.isEmpty() &&
+                !pinnedPeerCertificateSha256.isEmpty()) {
+            bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
     }
 

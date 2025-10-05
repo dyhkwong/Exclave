@@ -37,8 +37,10 @@ public class Hysteria2Bean extends AbstractBean {
     public String auth;
     public String obfs;
     public String sni;
-    public String pinSHA256;
-    public String caText;
+    public String pinnedPeerCertificateSha256;
+    public String pinnedPeerCertificatePublicKeySha256;
+    public String pinnedPeerCertificateChainSha256;
+    public String certificates;
     public Boolean allowInsecure;
     public Long uploadMbps;
     public Long downloadMbps;
@@ -49,6 +51,9 @@ public class Hysteria2Bean extends AbstractBean {
     public Integer maxConnReceiveWindow;
     public String serverPorts;
     public Long hopInterval;
+    public String echConfig;
+    public String mtlsCertificate;
+    public String mtlsCertificatePrivateKey;
 
     @Override
     public boolean canMapping() {
@@ -72,8 +77,10 @@ public class Hysteria2Bean extends AbstractBean {
         if (auth == null) auth = "";
         if (obfs == null) obfs = "";
         if (sni == null) sni = "";
-        if (pinSHA256 == null) pinSHA256 = "";
-        if (caText == null) caText = "";
+        if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
+        if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
+        if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
+        if (certificates == null) certificates = "";
         if (allowInsecure == null) allowInsecure = false;
         if (uploadMbps == null) uploadMbps = 0L;
         if (downloadMbps == null) downloadMbps = 0L;
@@ -84,17 +91,22 @@ public class Hysteria2Bean extends AbstractBean {
         if (maxConnReceiveWindow == null) maxConnReceiveWindow = 0;
         if (serverPorts == null) serverPorts = "1080";
         if (hopInterval == null) hopInterval = 30L;
+        if (echConfig == null) echConfig = "";
+        if (mtlsCertificate == null) mtlsCertificate = "";
+        if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeString(auth);
         output.writeString(obfs);
         output.writeString(sni);
-        output.writeString(pinSHA256);
-        output.writeString(caText);
+        output.writeString(pinnedPeerCertificateSha256);
+        output.writeString(pinnedPeerCertificatePublicKeySha256);
+        output.writeString(pinnedPeerCertificateChainSha256);
+        output.writeString(certificates);
         output.writeBoolean(allowInsecure);
         output.writeLong(uploadMbps);
         output.writeLong(downloadMbps);
@@ -105,6 +117,9 @@ public class Hysteria2Bean extends AbstractBean {
         output.writeInt(maxConnReceiveWindow);
         output.writeString(serverPorts);
         output.writeLong(hopInterval);
+        output.writeString(echConfig);
+        output.writeString(mtlsCertificate);
+        output.writeString(mtlsCertificatePrivateKey);
     }
 
     @Override
@@ -114,8 +129,12 @@ public class Hysteria2Bean extends AbstractBean {
         auth = input.readString();
         obfs = input.readString();
         sni = input.readString();
-        pinSHA256 = input.readString();
-        caText = input.readString();
+        pinnedPeerCertificateSha256 = input.readString();
+        if (version >= 4) {
+            pinnedPeerCertificatePublicKeySha256 = input.readString();
+            pinnedPeerCertificateChainSha256 = input.readString();
+        }
+        certificates = input.readString();
         allowInsecure = input.readBoolean();
         if (version <= 2) {
             uploadMbps = (long) input.readInt();
@@ -143,6 +162,11 @@ public class Hysteria2Bean extends AbstractBean {
                 hopInterval = input.readLong();
             }
         }
+        if (version >= 4) {
+            echConfig = input.readString();
+            mtlsCertificate = input.readString();
+            mtlsCertificatePrivateKey = input.readString();
+        }
     }
 
     @Override
@@ -154,7 +178,21 @@ public class Hysteria2Bean extends AbstractBean {
         bean.uploadMbps = uploadMbps;
         bean.downloadMbps = downloadMbps;
         bean.disableMtuDiscovery = disableMtuDiscovery;
-        bean.caText = caText;
+        if (bean.pinnedPeerCertificateSha256 == null || bean.pinnedPeerCertificateSha256.isEmpty() && !pinnedPeerCertificateSha256.isEmpty()) {
+            bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
+        }
+        if (bean.pinnedPeerCertificatePublicKeySha256 == null || bean.pinnedPeerCertificatePublicKeySha256.isEmpty() &&
+                !pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            bean.pinnedPeerCertificatePublicKeySha256 = pinnedPeerCertificatePublicKeySha256;
+        }
+        if (bean.pinnedPeerCertificateChainSha256 == null || bean.pinnedPeerCertificateChainSha256.isEmpty() &&
+                !pinnedPeerCertificateChainSha256.isEmpty()) {
+            bean.pinnedPeerCertificateChainSha256 = pinnedPeerCertificateChainSha256;
+        }
+        if (bean.certificates == null || bean.certificates.isEmpty() && !certificates.isEmpty()) {
+            bean.certificates = certificates;
+        }
+        bean.echConfig = echConfig;
         bean.hopInterval = hopInterval;
         bean.initConnReceiveWindow = initConnReceiveWindow;
         bean.initStreamReceiveWindow = initStreamReceiveWindow;
@@ -176,13 +214,29 @@ public class Hysteria2Bean extends AbstractBean {
         return "udp";
     }
 
+    public boolean canUsePluginImplementation() {
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificatePublicKeySha256).isEmpty()) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateChainSha256).isEmpty()) {
+            return false;
+        }
+        if (NetsKt.listByLineOrComma(pinnedPeerCertificateSha256).size() > 1) {
+            return false;
+        }
+        if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
     @NotNull
     @Override
     public Hysteria2Bean clone() {
         return KryoConverters.deserialize(new Hysteria2Bean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<Hysteria2Bean> CREATOR = new CREATOR<Hysteria2Bean>() {
+    public static final Creator<Hysteria2Bean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public Hysteria2Bean newInstance() {

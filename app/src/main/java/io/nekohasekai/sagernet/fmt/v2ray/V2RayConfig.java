@@ -1101,6 +1101,8 @@ public class V2RayConfig {
         public List<CertificateObject> certificates;
         public Boolean disableSystemRoot;
         public List<String> pinnedPeerCertificateChainSha256;
+        public List<String> pinnedPeerCertificatePublicKeySha256;
+        public List<String> pinnedPeerCertificateSha256;
         public Boolean verifyClientCertificate;
         public String fingerprint;
         public String minVersion;

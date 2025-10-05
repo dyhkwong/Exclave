@@ -72,6 +72,22 @@ fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 (tlsConfig["serverName"]?.toString() ?: tlsConfig["server_name"]?.toString())?.also {
                                     v2rayBean.sni = it
                                 }
+                                (tlsConfig["nextProtocol"] as? List<String>)?.also {
+                                    v2rayBean.alpn = it.joinToString("\n")
+                                } ?: (tlsConfig["next_protocol"] as? List<String>)?.also {
+                                    v2rayBean.alpn = it.joinToString("\n")
+                                }
+                                (tlsConfig["certificate"] as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                                    when (certificate["usage"]) {
+                                        null, "ENCIPHERMENT" -> {
+                                            v2rayBean.mtlsCertificate = (certificate["Certificate"] as? List<String>)?.joinToString("\n")
+                                            v2rayBean.mtlsCertificatePrivateKey = (certificate["Key"] as? List<String>)?.joinToString("\n")
+                                        }
+                                        "AUTHORITY_VERIFY" -> {
+                                            v2rayBean.certificates = (certificate["Certificate"] as? List<String>)?.joinToString("\n")
+                                        }
+                                    }
+                                }
                                 (tlsConfig["pinnedPeerCertificateChainSha256"] as? List<String>
                                     ?: tlsConfig["pinned_peer_certificate_chain_sha256"] as? List<String>)?.also {
                                     v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
@@ -79,11 +95,6 @@ fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                         ?: tlsConfig["allow_insecure_if_pinned_peer_certificate"] as? Boolean)?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
-                                }
-                                (tlsConfig["nextProtocol"] as? List<String>)?.also {
-                                    v2rayBean.alpn = it.joinToString("\n")
-                                } ?: (tlsConfig["next_protocol"] as? List<String>)?.also {
-                                    v2rayBean.alpn = it.joinToString("\n")
                                 }
                                 // tlsConfig["imitate"]
                             }

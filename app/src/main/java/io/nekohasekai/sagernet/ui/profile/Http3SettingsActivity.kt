@@ -42,8 +42,12 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         DataStore.serverSNI = sni
         DataStore.serverCertificates = certificates
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
+        DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
+        DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
         DataStore.serverEchConfig = echConfig
         DataStore.serverAllowInsecure = allowInsecure
+        DataStore.serverMtlsCertificate = mtlsCertificate
+        DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
     }
 
     override fun Http3Bean.serialize() {
@@ -55,8 +59,12 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         sni = DataStore.serverSNI
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
+        pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
+        pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
         echConfig = DataStore.serverEchConfig
         allowInsecure = DataStore.serverAllowInsecure
+        mtlsCertificate = DataStore.serverMtlsCertificate
+        mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
