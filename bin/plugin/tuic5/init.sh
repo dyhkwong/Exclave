@@ -14,6 +14,9 @@ export RUST_ANDROID_GRADLE_PYTHON_COMMAND=python
 export RUST_ANDROID_GRADLE_LINKER_WRAPPER_PY=$PROJECT/bin/rust-linker/linker-wrapper.py
 export RUST_ANDROID_GRADLE_CC_LINK_ARG=""
 export BINDGEN_EXTRA_CLANG_ARGS=--sysroot=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/sysroot/
+export CARGO_PROFILE_RELEASE_LTO=true
+export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
+export RUSTFLAGS="-C link-arg=-s"
 
 CURR="plugin/tuic5"
 CURR_PATH="$PROJECT/$CURR"
