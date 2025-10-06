@@ -112,7 +112,6 @@ public class Tuic5Bean extends AbstractBean {
             allowInsecure = input.readBoolean();
         }
         if (version >= 2) {
-            alpn = input.readString();
             echConfig = input.readString();
             pinnedPeerCertificateChainSha256 = input.readString();
             pinnedPeerCertificatePublicKeySha256 = input.readString();
