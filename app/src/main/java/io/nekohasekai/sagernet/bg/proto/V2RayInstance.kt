@@ -131,10 +131,10 @@ abstract class V2RayInstance(
                         pluginConfigs[port] = profile.type to bean.buildHysteria2Config(
                             port,
                             isVpn = isVpn,
-                            cacheFile = {
+                            cacheFile = { type ->
                                 File(
                                     app.noBackupFilesDir,
-                                    "hysteria2_" + SystemClock.elapsedRealtime() + ".pem"
+                                    "hysteria2_" + SystemClock.elapsedRealtime() + "." + type
                                 ).apply {
                                     parentFile?.mkdirs()
                                     cacheFiles.add(this)
