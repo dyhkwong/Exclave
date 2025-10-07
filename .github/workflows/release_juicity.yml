@@ -21,7 +21,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: 1.24.7
+          go-version: 1.24.8
           cache-dependency-path: "plugin/juicity/src/main/go/juicity/go.sum"
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -33,7 +33,7 @@ jobs:
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r28c
+          ndk-version: r29
       - name: Native Build
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}

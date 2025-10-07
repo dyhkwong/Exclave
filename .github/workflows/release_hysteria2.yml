@@ -21,7 +21,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: 1.25.1
+          go-version: 1.25.2
           cache-dependency-path: "plugin/hysteria2/src/main/go/hysteria2/app/go.sum"
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -33,7 +33,7 @@ jobs:
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r28c
+          ndk-version: r29
       - name: Native Build
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}

@@ -28,7 +28,7 @@ jobs:
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r28c
+          ndk-version: r29
       - name: Setup Rust
         # do not pin the toolchain version for now
         run: |

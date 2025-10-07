@@ -35,7 +35,7 @@ val supportedShadowsocksMethod = arrayOf(
     "aes-128-cfb","aes-192-cfb","aes-256-cfb",
     "aes-128-cfb8","aes-192-cfb8","aes-256-cfb8",
     "aes-128-ofb","aes-192-ofb","aes-256-ofb",
-    "bf-cfb","cast5-cfb","des-cfb","rc2-cfb","seed-cfb",
+    "bf-cfb","cast5-cfb","des-cfb","rc2-cfb","seed-cfb","idea-cfb",
     "camellia-128-cfb","camellia-192-cfb","camellia-256-cfb",
     "camellia-128-cfb8","camellia-192-cfb8","camellia-256-cfb8",
     "salsa20","chacha20","chacha20-ietf","xchacha20",
