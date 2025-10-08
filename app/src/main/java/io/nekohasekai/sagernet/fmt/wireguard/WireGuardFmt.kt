@@ -23,9 +23,10 @@ import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
-import org.ini4j.Ini
-import java.io.StringReader
+import com.sshtools.jini.INI
+import com.sshtools.jini.INIWriter
 import java.io.StringWriter
+import kotlin.jvm.optionals.getOrNull
 
 fun parseWireGuard(server: String): WireGuardBean {
     val link = Libcore.parseURL(server)
@@ -69,76 +70,57 @@ fun parseWireGuard(server: String): WireGuardBean {
 
 fun parseWireGuardConfig(conf: String): List<WireGuardBean> {
     val beans = mutableListOf<WireGuardBean>()
-    val ini = Ini(StringReader(conf)).apply {
-        config.isMultiSection = true
-    }
-    if (ini.size == 0) {
+    val ini = try {
+        INI.fromString(conf)
+    } catch (_: Exception) {
         return beans
     }
-    val iface = ini["Interface"] ?: return beans
-    val localAddresses = iface.getAll("Address")
-    if (localAddresses.isNullOrEmpty()) {
-        return beans
-    }
-    val peers = ini.getAll("Peer")
-    if (peers.isNullOrEmpty()) {
-        return beans
-    }
+    val iface = ini.sectionOr("Interface").getOrNull() ?: return beans
     val wgBean = WireGuardBean().apply {
-        localAddress = localAddresses.flatMap {
-            it.filterNot { it.isWhitespace() }.split(",")
-        }.joinToString("\n")
-        privateKey = iface["PrivateKey"]
-        mtu = iface["MTU"]?.toInt()?.takeIf { it > 0 } ?: 1420
+        localAddress = iface.getAllOr("Address").getOrNull()
+            ?.takeIf { it.isNotEmpty() }?.joinToString("\n")
+            ?: return beans
+        privateKey = iface.getOr("PrivateKey").getOrNull() ?: return beans
+        mtu = iface.getOr("MTU").getOrNull()?.toInt()?.takeIf { it > 0 } ?: 1420
     }
+    val peers = ini.allSectionsOr("Peer").getOrNull() ?: return beans
     for (peer in peers) {
-        val endpoint = peer["Endpoint"]
+        val endpoint = peer.getOr("Endpoint").getOrNull()
         if (endpoint.isNullOrEmpty() || !endpoint.contains(":")) {
             continue
         }
-        val port = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
-        val publicKey = peer["PublicKey"] ?: continue
         beans.add(wgBean.applyDefaultValues().clone().apply {
             serverAddress = endpoint.substringBeforeLast(":").removePrefix("[").removeSuffix("]")
-            serverPort = port
-            peerPreSharedKey = peer["PreSharedKey"]
-            keepaliveInterval = peer["PersistentKeepalive"]?.toIntOrNull()?.takeIf { it > 0 }
-            peerPublicKey = publicKey
+            serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: continue
+            peerPublicKey = peer.getOr("PublicKey").getOrNull() ?: continue
+            peerPreSharedKey = peer.getOr("PreSharedKey").getOrNull()
+            keepaliveInterval = peer.getOr("PersistentKeepalive").getOrNull()?.toIntOrNull()?.takeIf { it > 0 }
         })
     }
     return beans
 }
 
 fun WireGuardBean.toConf(): String {
-    val ini = Ini().apply {
-        config.isEscape = false
-    }
-    ini.add("Interface", "Address", localAddress.listByLineOrComma().joinToString(", "))
+    val ini = INI.create()
+    val iface = ini.create("Interface")
+    iface.put("Address", localAddress.listByLineOrComma())
     if (mtu > 0) {
-        ini.add("Interface", "MTU", mtu)
+        iface.put("MTU", mtu)
     }
-    ini.add(
-        "Interface",
-        "PrivateKey",
-        privateKey.ifEmpty { error("empty private key") }
-    )
-    ini.add(
-        "Peer",
-        "Endpoint",
-        joinHostPort(serverAddress.ifEmpty { error("empty server address") }, serverPort)
-    )
-    ini.add(
-        "Peer",
-        "PublicKey",
-        peerPublicKey.ifEmpty { error("empty peer public key") }
-    )
+    iface.put("PrivateKey", privateKey.ifEmpty { error("empty private key") })
+    val peer = ini.create("Peer")
+    peer.put("Endpoint", joinHostPort(serverAddress.ifEmpty { error("empty server address") }, serverPort))
+    peer.put("PublicKey", peerPublicKey.ifEmpty { error("empty peer public key") })
     if (peerPreSharedKey.isNotEmpty()) {
-        ini.add("Peer", "PreSharedKey", peerPreSharedKey)
+        peer.put("PreSharedKey", peerPreSharedKey)
     }
     if (keepaliveInterval > 0) {
-        ini.add("Peer", "PersistentKeepalive", keepaliveInterval)
+        peer.put("PersistentKeepalive", keepaliveInterval)
     }
     val conf = StringWriter()
-    ini.store(conf)
+    INIWriter.Builder()
+        .withIndent(0)
+        .build()
+        .write(ini, conf)
     return conf.toString()
 }
