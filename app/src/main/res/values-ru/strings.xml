@@ -469,7 +469,7 @@
     <string name="update_all_subscriptions">Обновить все подписки</string>
     <string name="cag_splithttp">Настройки XHTTP</string>
     <string name="ech_doh_server">ECH DoH сервер</string>
-    <string name="ws_max_early_data">Максимальный объём данных</string>
+    <string name="ws_max_early_data">Максимальный объем ранних данных</string>
     <string name="hijack_dns">Перехват DNS</string>
     <string name="connection_test_url_test">URL test</string>
     <string name="alter_id">Изменить ID</string>
