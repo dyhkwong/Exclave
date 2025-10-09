@@ -24,6 +24,9 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import cn.hutool.core.lang.UUID;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
+import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
+import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
 import io.nekohasekai.sagernet.ktx.UUIDsKt;
 
 public abstract class StandardV2RayBean extends AbstractBean {
@@ -79,12 +82,19 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public Integer muxConcurrency;
     public String muxPacketEncoding;
 
+    public Boolean singMux;
+    public String singMuxProtocol;
+    public Integer singMuxMaxConnections;
+    public Integer singMuxMinStreams;
+    public Integer singMuxMaxStreams;
+    public Boolean singMuxPadding;
+
+
     @Override
     public boolean canMapping() {
         return switch (type) {
             case "ws" -> !wsUseBrowserForwarder;
             case "splithttp" -> !shUseBrowserForwarder;
-            // case "quic" -> false; // "quic" is incompatible with chain proxy but this should be a bug.
             default -> true;
         };
     }
@@ -145,11 +155,17 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (muxConcurrency == null) muxConcurrency = 8;
         if (muxPacketEncoding == null) muxPacketEncoding = "none";
 
+        if (singMux == null) singMux = false;
+        if (singMuxProtocol == null) singMuxProtocol = "h2mux";
+        if (singMuxMaxConnections == null) singMuxMaxConnections = 0;
+        if (singMuxMinStreams == null) singMuxMinStreams = 0;
+        if (singMuxMaxStreams == null) singMuxMaxStreams = 0;
+        if (singMuxPadding == null) singMuxPadding = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(31);
+        output.writeInt(32);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -265,6 +281,20 @@ public abstract class StandardV2RayBean extends AbstractBean {
         output.writeBoolean(mux);
         output.writeInt(muxConcurrency);
         output.writeString(muxPacketEncoding);
+
+        if (this instanceof ShadowsocksBean) {
+            output.writeBoolean(((ShadowsocksBean) this).singUoT);
+        }
+        if (this instanceof SOCKSBean) {
+            output.writeBoolean(((SOCKSBean) this).singUoT);
+        }
+        output.writeBoolean(singMux);
+        output.writeString(singMuxProtocol);
+        output.writeInt(singMuxMaxConnections);
+        output.writeInt(singMuxMinStreams);
+        output.writeInt(singMuxMaxStreams);
+        output.writeBoolean(singMuxPadding);
+
     }
 
     @Override
@@ -488,6 +518,23 @@ public abstract class StandardV2RayBean extends AbstractBean {
             muxConcurrency = input.readInt();
             muxPacketEncoding = input.readString();
         }
+        if (version >= 32) {
+            if (this instanceof ShadowsocksBean) {
+                ((ShadowsocksBean) this).singUoT = input.readBoolean();
+            }
+            if (this instanceof SOCKSBean) {
+                ((SOCKSBean) this).singUoT = input.readBoolean();
+            }
+            if (this instanceof ShadowsocksBean || this instanceof TrojanBean
+                    || this instanceof VMessBean || this instanceof VLESSBean) {
+                singMux = input.readBoolean();
+                singMuxProtocol = input.readString();
+                singMuxMaxConnections = input.readInt();
+                singMuxMinStreams = input.readInt();
+                singMuxMaxStreams = input.readInt();
+                singMuxPadding = input.readBoolean();
+            }
+        }
     }
 
     @Override
@@ -531,6 +578,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
         bean.mux = mux;
         bean.muxConcurrency = muxConcurrency;
         bean.muxPacketEncoding = muxPacketEncoding;
+        bean.singMux = singMux;
+        bean.singMuxProtocol = singMuxProtocol;
+        bean.singMuxMaxConnections = singMuxMaxConnections;
+        bean.singMuxMinStreams = singMuxMinStreams;
+        bean.singMuxMaxStreams = singMuxMaxStreams;
+        bean.singMuxPadding = singMuxPadding;
     }
 
     public String uuidOrGenerate() {

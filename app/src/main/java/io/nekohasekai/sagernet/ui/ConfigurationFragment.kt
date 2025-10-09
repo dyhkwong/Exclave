@@ -1190,11 +1190,13 @@ class ConfigurationFragment @JvmOverloads constructor(
                 onViewCreated(requireView(), null)
             }
             checkOrderMenu()
-            if (!DataStore.enableDebug) {
+
+            if (!DataStore.enableDebug && !DataStore.experimentalFlags.split("\n").any { it == "shadowquic=true" }) {
                 // WIP, not ready yet
                 (parentFragment as? ToolbarFragment)
                     ?.toolbar?.menu?.findItem(R.id.action_new_shadowquic)?.isVisible  = false
             }
+
             configurationListView.requestFocus()
         }
 

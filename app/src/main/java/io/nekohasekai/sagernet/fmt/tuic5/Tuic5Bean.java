@@ -48,6 +48,7 @@ public class Tuic5Bean extends AbstractBean {
     public String pinnedPeerCertificateSha256;
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
+    public Boolean singUDPOverStream;
 
     @Override
     public void initializeDefaultValues() {
@@ -69,11 +70,12 @@ public class Tuic5Bean extends AbstractBean {
         if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
         if (mtlsCertificate == null) mtlsCertificate = "";
         if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
+        if (singUDPOverStream == null) singUDPOverStream = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeString(password);
         output.writeString(certificates);
@@ -92,6 +94,7 @@ public class Tuic5Bean extends AbstractBean {
         output.writeString(pinnedPeerCertificateSha256);
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
+        output.writeBoolean(singUDPOverStream);
     }
 
     @Override
@@ -119,6 +122,9 @@ public class Tuic5Bean extends AbstractBean {
             mtlsCertificate = input.readString();
             mtlsCertificatePrivateKey = input.readString();
         }
+        if (version >= 3) {
+            singUDPOverStream = input.readBoolean();
+        }
     }
 
     @Override
@@ -143,6 +149,9 @@ public class Tuic5Bean extends AbstractBean {
             return false;
         }
         if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
+            return false;
+        }
+        if (singUDPOverStream) {
             return false;
         }
         return true;
@@ -172,6 +181,7 @@ public class Tuic5Bean extends AbstractBean {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
         bean.echConfig = echConfig;
+        bean.singUDPOverStream = singUDPOverStream;
     }
 
     @NotNull

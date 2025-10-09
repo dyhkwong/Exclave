@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceCategory
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
@@ -54,6 +55,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         DataStore.serverMtlsCertificate = mtlsCertificate
         DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
         DataStore.serverEchConfig = echConfig
+        DataStore.serverSingUot = singUDPOverStream
     }
 
     override fun Tuic5Bean.serialize() {
@@ -77,6 +79,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
         echConfig = DataStore.serverEchConfig
+        singUDPOverStream = DataStore.serverSingUot
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -96,6 +99,9 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
+
+        findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
+        DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }
     }
 
 }

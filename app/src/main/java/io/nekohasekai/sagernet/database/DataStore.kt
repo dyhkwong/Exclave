@@ -377,6 +377,16 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverNaiveNoPostQuantum by profileCacheStore.boolean(Key.SERVER_NAIVE_NO_POST_QUANTUM)
     var serverJuicityCongestionControl by profileCacheStore.string(Key.SERVER_JUICITY_CONGESTION_CONTROL)
 
+    var serverSingUot by profileCacheStore.boolean(Key.SERVER_SING_UOT)
+    var serverSingMux by profileCacheStore.boolean(Key.SERVER_SING_MUX)
+    var serverSingMuxProtocol by profileCacheStore.string(Key.SERVER_SING_MUX_PROTOCOL)
+    var serverSingMuxMaxConnections by profileCacheStore.stringToInt(Key.SERVER_SING_MUX_MAX_CONNECTIONS)
+    var serverSingMuxMinStreams by profileCacheStore.stringToInt(Key.SERVER_SING_MUX_MIN_STREAMS)
+    var serverSingMuxMaxStreams by profileCacheStore.stringToInt(Key.SERVER_SING_MUX_MAX_STREAMS)
+    var serverSingMuxPadding by profileCacheStore.boolean(Key.SERVER_SING_MUX_PADDING)
+
+    var experimentalFlags by configurationStore.string(Key.EXPERIMENTAL_FLAGS)
+
     var balancerType by profileCacheStore.stringToInt(Key.BALANCER_TYPE)
     var balancerGroup by profileCacheStore.stringToLong(Key.BALANCER_GROUP)
     var balancerStrategy by profileCacheStore.string(Key.BALANCER_STRATEGY)

@@ -37,6 +37,7 @@ public class ShadowsocksBean extends StandardV2RayBean {
     public String password;
     public String plugin;
     public Boolean experimentReducedIvHeadEntropy;
+    public Boolean singUoT;
 
     @Override
     public void initializeDefaultValues() {
@@ -46,6 +47,7 @@ public class ShadowsocksBean extends StandardV2RayBean {
         if (password == null) password = "";
         if (plugin == null) plugin = "";
         if (experimentReducedIvHeadEntropy == null) experimentReducedIvHeadEntropy = false;
+        if (singUoT == null) singUoT = false;
     }
 
     @Override
@@ -71,12 +73,13 @@ public class ShadowsocksBean extends StandardV2RayBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(5);
+        output.writeInt(6);
         super.serialize(output);
         output.writeString(method);
         output.writeString(password);
         output.writeString(plugin);
         output.writeBoolean(experimentReducedIvHeadEntropy);
+        output.writeBoolean(singUoT);
     }
 
     @Override
@@ -100,12 +103,16 @@ public class ShadowsocksBean extends StandardV2RayBean {
         if (version == 3) {
             input.readBoolean(); // encryptedProtocolExtension, removed
         }
+        if (version >= 6) {
+            singUoT = input.readBoolean();
+        }
     }
 
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof ShadowsocksBean bean)) return;
         bean.experimentReducedIvHeadEntropy = experimentReducedIvHeadEntropy;
+        bean.singUoT = singUoT;
     }
 
     @NotNull

@@ -245,6 +245,18 @@ object Key {
     const val SERVER_NAIVE_NO_POST_QUANTUM = "serverNaiveNoPostQuantum"
     const val SERVER_JUICITY_CONGESTION_CONTROL = "serverJuicityCongestionControl"
 
+    const val SERVER_SING_UOT_CATEGORY = "serverSingUotCategory"
+    const val SERVER_SING_MUX_CATEGORY = "serverSingMuxCategory"
+    const val SERVER_SING_UOT = "serverSingUot"
+    const val SERVER_SING_MUX = "serverSingMux"
+    const val SERVER_SING_MUX_PROTOCOL = "serverSingMuxProtocol"
+    const val SERVER_SING_MUX_MAX_CONNECTIONS = "serverSingMuxMaxConnections"
+    const val SERVER_SING_MUX_MIN_STREAMS = "serverSingMuxMinStreams"
+    const val SERVER_SING_MUX_MAX_STREAMS = "serverSingMuxMaxStreams"
+    const val SERVER_SING_MUX_PADDING = "serverSingMuxPadding"
+
+    const val EXPERIMENTAL_FLAGS = "experimentalFlags"
+
     const val BALANCER_TYPE = "balancerType"
     const val BALANCER_GROUP = "balancerGroup"
     const val BALANCER_STRATEGY = "balancerStrategy"

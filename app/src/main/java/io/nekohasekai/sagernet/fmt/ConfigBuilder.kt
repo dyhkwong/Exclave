@@ -707,6 +707,9 @@ fun buildV2RayConfig(
                                                         }
                                                     }
                                                 }
+                                                if (bean.singUoT && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                                    uot = bean.singUoT
+                                                }
                                             }
                                         )
                                     } else {
@@ -750,6 +753,9 @@ fun buildV2RayConfig(
                                                             }
                                                         }
                                                     }
+                                                    if (bean.singUoT && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                                        uot = bean.singUoT
+                                                    }
                                                 })
                                             }
                                         )
@@ -774,6 +780,9 @@ fun buildV2RayConfig(
                                                 }
                                             })
                                             version = bean.protocolVersionName()
+                                            if (bean.singUoT && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                                uot = bean.singUoT
+                                            }
                                         }
                                     )
                                 } else if (bean is HttpBean) {
@@ -1254,6 +1263,9 @@ fun buildV2RayConfig(
                                         udpRelayMode = bean.udpRelayMode
                                         if (bean.zeroRTTHandshake) zeroRTTHandshake = bean.zeroRTTHandshake
                                         if (bean.disableSNI) disableSNI = bean.disableSNI
+                                        if (bean.singUDPOverStream && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                            udpOverStream = bean.singUDPOverStream
+                                        }
                                         tlsSettings = TLSObject().apply {
                                             if (bean.sni.isNotEmpty()) {
                                                 serverName = bean.sni
@@ -1559,6 +1571,25 @@ fun buildV2RayConfig(
                                         "xudp" -> {
                                             packetEncoding = "xudp"
                                         }
+                                    }
+                                }
+                            }
+                            if ((bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean)
+                                && bean.singMux && DataStore.experimentalFlags.split("\n").any { it == "singmux=true" }) {
+                                smux = OutboundObject.SmuxObject().apply {
+                                    enabled = bean.singMux
+                                    protocol = bean.singMuxProtocol
+                                    if (bean.singMuxMaxConnections > 0) {
+                                        maxConnections = bean.singMuxMaxConnections
+                                    }
+                                    if (bean.singMuxMinStreams > 0) {
+                                        minStreams = bean.singMuxMinStreams
+                                    }
+                                    if (bean.singMuxMaxStreams > 0) {
+                                        maxStreams = bean.singMuxMaxStreams
+                                    }
+                                    if (bean.singMuxPadding) {
+                                        padding = bean.singMuxPadding
                                     }
                                 }
                             }

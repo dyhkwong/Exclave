@@ -122,4 +122,14 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        app:key="serverSingUotCategory"
+        app:title="sing-uot settings"
+        app:summary="@string/core_settings_sum">
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_compare_arrows_24"
+            app:key="serverSingUot"
+            app:title="Enable UDP over stream" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

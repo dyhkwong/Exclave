@@ -432,6 +432,10 @@
             app:key="pprofServer"
             app:title="pprof server listen address"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dialogMessage="For testing purpose only.\nBreaking changes are expected.\nNo guarantee of existence."
+            app:key="experimentalFlags"
+            app:title="Experimental flags" />
     </PreferenceCategory>
 
 </PreferenceScreen>

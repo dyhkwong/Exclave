@@ -156,6 +156,20 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverMux = mux
         DataStore.serverMuxConcurrency = muxConcurrency
         DataStore.serverMuxPacketEncoding = muxPacketEncoding
+        when (this) {
+            is ShadowsocksBean -> DataStore.serverSingUot = singUoT
+            is SOCKSBean -> DataStore.serverSingUot = singUoT
+        }
+        when (this) {
+            is ShadowsocksBean, is TrojanBean, is VMessBean, is VLESSBean -> {
+                DataStore.serverSingMux = singMux
+                DataStore.serverSingMuxProtocol = singMuxProtocol
+                DataStore.serverSingMuxMaxConnections = singMuxMaxConnections
+                DataStore.serverSingMuxMinStreams = singMuxMinStreams
+                DataStore.serverSingMuxMaxStreams = singMuxMaxStreams
+                DataStore.serverSingMuxPadding = singMuxPadding
+            }
+        }
     }
 
     override fun StandardV2RayBean.serialize() {
@@ -248,6 +262,21 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         mux = DataStore.serverMux
         muxConcurrency = DataStore.serverMuxConcurrency
         muxPacketEncoding = DataStore.serverMuxPacketEncoding
+
+        when (this) {
+            is ShadowsocksBean -> singUoT = DataStore.serverSingUot
+            is SOCKSBean -> singUoT = DataStore.serverSingUot
+        }
+        when (this) {
+            is ShadowsocksBean, is TrojanBean, is VMessBean, is VLESSBean -> {
+                singMux = DataStore.serverSingMux
+                singMuxProtocol = DataStore.serverSingMuxProtocol
+                singMuxMaxConnections = DataStore.serverSingMuxMaxConnections
+                singMuxMinStreams = DataStore.serverSingMuxMinStreams
+                singMuxMaxStreams = DataStore.serverSingMuxMaxStreams
+                singMuxPadding = DataStore.serverSingMuxPadding
+            }
+        }
     }
 
     lateinit var encryption: SimpleMenuPreference
@@ -307,6 +336,12 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var mux: SwitchPreference
     lateinit var muxConcurrency: EditTextPreference
     lateinit var muxPacketEncoding: SimpleMenuPreference
+    lateinit var singMux: SwitchPreference
+    lateinit var singMuxProtocol: SimpleMenuPreference
+    lateinit var singMuxMaxConnections: EditTextPreference
+    lateinit var singMuxMinStreams: EditTextPreference
+    lateinit var singMuxMaxStreams: EditTextPreference
+    lateinit var singMuxPadding: SwitchPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
@@ -514,6 +549,41 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         pluginConfigure.onPreferenceChangeListener = this@StandardV2RaySettingsActivity
         pluginConfiguration = PluginConfiguration(DataStore.serverPlugin)
         initPlugins()
+
+        findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
+            (bean is ShadowsocksBean || bean is SOCKSBean) &&
+                    DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }
+        findPreference<PreferenceCategory>(Key.SERVER_SING_MUX_CATEGORY)!!.isVisible =
+            (bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean) &&
+                    DataStore.experimentalFlags.split("\n").any { it == "singmux=true" }
+        singMux = findPreference(Key.SERVER_SING_MUX)!!
+        singMuxProtocol = findPreference(Key.SERVER_SING_MUX_PROTOCOL)!!
+        singMuxMaxConnections = findPreference(Key.SERVER_SING_MUX_MAX_CONNECTIONS)!!
+        singMuxMinStreams = findPreference(Key.SERVER_SING_MUX_MIN_STREAMS)!!
+        singMuxMaxStreams = findPreference(Key.SERVER_SING_MUX_MAX_STREAMS)!!
+        singMuxPadding = findPreference(Key.SERVER_SING_MUX_PADDING)!!
+        muxConcurrency.isVisible = singMux.isChecked
+        singMuxProtocol.isVisible = singMux.isChecked
+        singMuxMaxConnections.isVisible = singMux.isChecked
+        singMuxMinStreams.isVisible = singMux.isChecked
+        singMuxMaxStreams.isVisible = singMux.isChecked
+        singMuxPadding.isVisible = singMux.isChecked
+        singMuxMaxConnections.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        singMuxMinStreams.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        singMuxMaxStreams.setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
+        val singMuxProtocolValues = resources.getStringArray(R.array.sing_mux_protocol_value)
+        if (singMuxProtocol.value !in singMuxProtocolValues) {
+            singMuxProtocol.value = singMuxProtocolValues[0]
+        }
+        singMux.setOnPreferenceChangeListener { _, newValue ->
+            newValue as Boolean
+            singMuxProtocol.isVisible = newValue
+            singMuxMaxConnections.isVisible = newValue
+            singMuxMinStreams.isVisible = newValue
+            singMuxMaxStreams.isVisible = newValue
+            singMuxPadding.isVisible = newValue
+            true
+        }
     }
 
     val tcpHeadersValue = app.resources.getStringArray(R.array.tcp_headers_value)

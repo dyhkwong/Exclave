@@ -26,6 +26,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
+import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean;
 
@@ -72,6 +73,8 @@ public class SOCKSBean extends StandardV2RayBean {
     public static final int PROTOCOL_SOCKS4A = 1;
     public static final int PROTOCOL_SOCKS5 = 2;
 
+    public Boolean singUoT;
+
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
@@ -79,15 +82,17 @@ public class SOCKSBean extends StandardV2RayBean {
         if (protocol == null) protocol = PROTOCOL_SOCKS5;
         if (username == null) username = "";
         if (password == null) password = "";
+        if (singUoT == null) singUoT = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeInt(protocol);
         output.writeString(username);
         output.writeString(password);
+        output.writeBoolean(singUoT);
     }
 
     @Override
@@ -113,6 +118,15 @@ public class SOCKSBean extends StandardV2RayBean {
         if (version == 2) {
             utlsFingerprint = input.readString();
         }
+        if (version >= 4) {
+            singUoT = input.readBoolean();
+        }
+    }
+
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof SOCKSBean bean)) return;
+        bean.singUoT = singUoT;
     }
 
     @NotNull

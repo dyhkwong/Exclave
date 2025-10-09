@@ -613,6 +613,7 @@ public class V2RayConfig {
         public StreamSettingsObject streamSettings;
         public ProxySettingsObject proxySettings;
         public MuxObject mux;
+        public SmuxObject smux;
         public String domainStrategy;
         public String dialDomainStrategy;
 
@@ -634,6 +635,17 @@ public class V2RayConfig {
             public Boolean enabled;
             public Integer concurrency;
             public String packetEncoding;
+
+        }
+
+        public static class SmuxObject {
+
+            public Boolean enabled;
+            public String protocol;
+            public Integer maxConnections;
+            public Integer minStreams;
+            public Integer maxStreams;
+            public Boolean padding;
 
         }
 
@@ -772,6 +784,7 @@ public class V2RayConfig {
 
         public List<ServerObject> servers;
         public String version;
+        public Boolean uot;
 
         public static class ServerObject {
 
@@ -837,6 +850,7 @@ public class V2RayConfig {
         public String pluginOpts;
         public List<String> pluginArgs;
         public String pluginWorkingDir;
+        public Boolean uot;
 
     }
 
@@ -850,6 +864,7 @@ public class V2RayConfig {
         public String pluginOpts;
         public List<String> pluginArgs;
         public String pluginWorkingDir;
+        public Boolean uot;
 
     }
 
@@ -864,6 +879,7 @@ public class V2RayConfig {
         public String pluginOpts;
         public List<String> pluginArgs;
         public String pluginWorkingDir;
+        public Boolean uot;
 
     }
 
@@ -989,6 +1005,7 @@ public class V2RayConfig {
         public Boolean zeroRTTHandshake;
         public TLSObject tlsSettings;
         public Boolean disableSNI;
+        public Boolean udpOverStream;
 
     }
 
