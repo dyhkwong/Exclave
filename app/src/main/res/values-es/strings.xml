@@ -117,7 +117,7 @@
     <string name="route_name">Nombre de ruta</string>
     <string name="delete_route_prompt">¿Realmente quieres eliminar esta ruta?</string>
     <string name="early_data_header_name">Nombre de cabecera de datos iniciales</string>
-    <string name="pinned_peer_certificate_chain_sha256">Hash de cadena de certificados fijados</string>
+    <string name="pinned_peer_certificate_chain_sha256">Cadena de certificado fijado SHA-256</string>
     <string name="certificates">Certificados</string>
     <string name="sni">SNI</string>
     <string name="grpc_service_name">Nombre de servicio gRPC</string>
@@ -137,8 +137,8 @@
     <string name="connection_test_available_http">Éxito: El protocolo de enlace HTTP tardó %d ms</string>
     <string name="connection_test_available">Éxito: El protocolo de enlace HTTPS tardó %d ms</string>
     <string name="connection_test_testing">Probando…</string>
-    <string name="allow_insecure_sum">Desactiva la validación de certificados. Cuando está activado, la seguridad de esta configuración es equivalente a la de texto sin cifrar.</string>
-    <string name="allow_insecure">Permitir inseguro</string>
+    <string name="allow_insecure_sum">Activar esta opción sin desplegar otras medidas de seguridad conduce al éxito de los ataques man-in-the-middle. NO la actives a menos que sepas lo que estás haciendo.</string>
+    <string name="allow_insecure">Omitir verificación del certificado</string>
     <string name="allow_access">Permitir conexiones desde la LAN</string>
     <string name="group_status_empty_subscription">Aún no actualizado</string>
     <string name="group_status_empty">Grupo vacio</string>
@@ -586,4 +586,13 @@
     <string name="tls_record_fragmentation">Fragmentación de registros TLS</string>
     <string name="tcp_segmentation">Segmentación TCP</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">Fragmentación de registros TLS y segmentación TCP</string>
+    <string name="juicity_provider">Proveedor de Juicity</string>
+    <string name="core_settings">Ajustes del núcleo</string>
+    <string name="core_settings_sum">Estas opciones solo se aplican al núcleo.</string>
+    <string name="pinned_peer_certificate_public_key_sha256">Clave pública del certificado fijado SHA-256</string>
+    <string name="pinned_peer_certificate_sha256">Certificado fijado SHA-256</string>
+    <string name="pinned_peer_certificate_sha256_base64_dialog_message">Utilícelo para omitir la verificación del certificado si el propio certificado no es de confianza o no es válido. Uno por línea en codificación Base64.</string>
+    <string name="pinned_peer_certificate_sha256_hex_dialog_message">Utilícelo para omitir la verificación del certificado si el propio certificado no es de confianza o no es válido. Uno por línea en codificación hexadecimal.</string>
+    <string name="mtls_certificate">Certificado mTLS</string>
+    <string name="mtls_certificate_private_key">Clave privada del certificado mTLS</string>
 </resources>
