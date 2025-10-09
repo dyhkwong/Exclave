@@ -85,7 +85,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 tlsSettings.getString("serverName")?.also {
                                     v2rayBean.sni = it
                                 }
-                                (tlsSettings.getAny("alpn") as? List<String>)?.also {
+                                (tlsSettings.getArray("alpn") as? List<String>)?.also {
                                     v2rayBean.alpn = it.joinToString("\n")
                                 } ?: tlsSettings.getString("alpn")?.also {
                                     v2rayBean.alpn = it.split(",").joinToString("\n")
@@ -93,30 +93,47 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 tlsSettings.getBoolean("allowInsecure")?.also {
                                     v2rayBean.allowInsecure = it
                                 }
-                                (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                                (tlsSettings.getArray("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
                                     when (certificate.getString("usage")?.lowercase()) {
                                         null, "", "encipherment" -> {
-                                            v2rayBean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
-                                            v2rayBean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                            if (!certificate.contains("certificateFile") && !certificate.contains("keyFile")) {
+                                                val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                val key = (certificate.getArray("key") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                                }
+                                                if (cert != null && key != null) {
+                                                    v2rayBean.mtlsCertificate = cert
+                                                    v2rayBean.mtlsCertificatePrivateKey = key
+                                                }
+                                            }
                                         }
                                         "verify" -> {
-                                            v2rayBean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                            if (!certificate.contains("certificateFile")) {
+                                                val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                if (cert != null) {
+                                                    v2rayBean.certificates = cert
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                                (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                                (tlsSettings.getArray("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                                     v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
-                                (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                                (tlsSettings.getArray("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
                                     v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
-                                (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                                (tlsSettings.getArray("pinnedPeerCertificateSha256") as? List<String>)?.also {
                                     v2rayBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
@@ -155,13 +172,13 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                             "http" -> {
                                                 v2rayBean.headerType = "http"
                                                 header.getObject("request")?.also { request ->
-                                                    (request.getAny("path") as? List<String>)?.also {
+                                                    (request.getArray("path") as? List<String>)?.also {
                                                         v2rayBean.path = it.joinToString("\n")
                                                     } ?: request.getString("path")?.also {
                                                         v2rayBean.path = it.split(",").joinToString("\n")
                                                     }
                                                     request.getObject("headers")?.also { headers ->
-                                                        (headers.getAny("Host") as? List<String>)?.also {
+                                                        (headers.getArray("Host") as? List<String>)?.also {
                                                             v2rayBean.host = it.joinToString("\n")
                                                         } ?: headers.getString("Host")?.also {
                                                             v2rayBean.host = it.split(",").joinToString("\n")
@@ -233,7 +250,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             streamSettings.getObject("httpSettings")?.also { httpSettings ->
                                 // will not follow the breaking change in
                                 // https://github.com/XTLS/Xray-core/commit/0a252ac15d34e7c23a1d3807a89bfca51cbb559b
-                                (httpSettings.getAny("host") as? List<String>)?.also {
+                                (httpSettings.getArray("host") as? List<String>)?.also {
                                     v2rayBean.host = it.joinToString("\n")
                                 } ?: httpSettings.getString("host")?.also {
                                     v2rayBean.host = it.split(",").joinToString("\n")
@@ -647,7 +664,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         }
                         settings.getString("psk")?.also { psk ->
                             v2rayBean.password = psk
-                            (settings.getAny("ipsk") as? List<String>)?.also { ipsk ->
+                            (settings.getArray("ipsk") as? List<String>)?.also { ipsk ->
                                 v2rayBean.password = ipsk.joinToString(":") + ":" + psk
                             }
                         }
@@ -852,30 +869,47 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 tlsSettings.getBoolean("allowInsecure")?.also {
                                     hysteria2Bean.allowInsecure = it
                                 }
-                                (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                                (tlsSettings.getArray("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
                                     when (certificate.getString("usage")?.lowercase()) {
                                         null, "", "encipherment" -> {
-                                            hysteria2Bean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
-                                            hysteria2Bean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                            if (!certificate.contains("certificateFile") && !certificate.contains("keyFile")) {
+                                                val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                val key = (certificate.getArray("key") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                                }
+                                                if (cert != null && key != null) {
+                                                    hysteria2Bean.mtlsCertificate = cert
+                                                    hysteria2Bean.mtlsCertificatePrivateKey = key
+                                                }
+                                            }
                                         }
                                         "verify" -> {
-                                            hysteria2Bean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                            if (!certificate.contains("certificateFile")) {
+                                                val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                if (cert != null) {
+                                                    hysteria2Bean.certificates = cert
+                                                }
+                                            }
                                         }
                                     }
                                 }
-                                (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                                (tlsSettings.getArray("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                                     hysteria2Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         hysteria2Bean.allowInsecure = allowInsecure
                                     }
                                 }
-                                (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                                (tlsSettings.getArray("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
                                     hysteria2Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         hysteria2Bean.allowInsecure = allowInsecure
                                     }
                                 }
-                                (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                                (tlsSettings.getArray("pinnedPeerCertificateSha256") as? List<String>)?.also {
                                     hysteria2Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                     tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                         hysteria2Bean.allowInsecure = allowInsecure
@@ -962,7 +996,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tlsSettings.getBoolean("allowInsecure")?.also {
                         tuic5Bean.allowInsecure = it
                     }
-                    (tlsSettings.getAny("alpn") as? List<String>)?.also {
+                    (tlsSettings.getArray("alpn") as? List<String>)?.also {
                         tuic5Bean.alpn = it.joinToString("\n")
                     } ?: tlsSettings.getString("alpn")?.also {
                         tuic5Bean.alpn = it.split(",").joinToString("\n")
@@ -999,30 +1033,47 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tlsSettings.getBoolean("allowInsecure")?.also {
                         http3Bean.allowInsecure = it
                     }
-                    (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                    (tlsSettings.getArray("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
                         when (certificate.getString("usage")?.lowercase()) {
                             null, "", "encipherment" -> {
-                                http3Bean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
-                                http3Bean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                if (!certificate.contains("certificateFile") && !certificate.contains("keyFile")) {
+                                    val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                    val key = (certificate.getArray("key") as? List<String>)?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                    }
+                                    if (cert != null && key != null) {
+                                        http3Bean.mtlsCertificate = cert
+                                        http3Bean.mtlsCertificatePrivateKey = key
+                                    }
+                                }
                             }
                             "verify" -> {
-                                http3Bean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                if (!certificate.contains("certificateFile")) {
+                                    val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                    if (cert != null) {
+                                        http3Bean.certificates = cert
+                                    }
+                                }
                             }
                         }
                     }
-                    (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                    (tlsSettings.getArray("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                         http3Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             http3Bean.allowInsecure = allowInsecure
                         }
                     }
-                    (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                    (tlsSettings.getArray("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
                         http3Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             http3Bean.allowInsecure = allowInsecure
                         }
                     }
-                    (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                    (tlsSettings.getArray("pinnedPeerCertificateSha256") as? List<String>)?.also {
                         http3Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             http3Bean.allowInsecure = allowInsecure
@@ -1067,7 +1118,7 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             tlsSettings.getString("serverName")?.also {
                                 anytlsBean.sni = it
                             }
-                            (tlsSettings.getAny("alpn") as? List<String>)?.also {
+                            (tlsSettings.getArray("alpn") as? List<String>)?.also {
                                 anytlsBean.alpn = it.joinToString("\n")
                             } ?: tlsSettings.getString("alpn")?.also {
                                 anytlsBean.alpn = it.split(",").joinToString("\n")
@@ -1075,30 +1126,47 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             tlsSettings.getBoolean("allowInsecure")?.also {
                                 anytlsBean.allowInsecure = it
                             }
-                            (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                            (tlsSettings.getArray("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
                                 when (certificate.getString("usage")?.lowercase()) {
                                     null, "", "encipherment" -> {
-                                        anytlsBean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
-                                        anytlsBean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                        if (!certificate.contains("certificateFile") && !certificate.contains("keyFile")) {
+                                            val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                            }
+                                            val key = (certificate.getArray("key") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                            }
+                                            if (cert != null && key != null) {
+                                                anytlsBean.mtlsCertificate = cert
+                                                anytlsBean.mtlsCertificatePrivateKey = key
+                                            }
+                                        }
                                     }
                                     "verify" -> {
-                                        anytlsBean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                        if (!certificate.contains("certificateFile")) {
+                                            val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                            }
+                                            if (cert != null) {
+                                                anytlsBean.certificates = cert
+                                            }
+                                        }
                                     }
                                 }
                             }
-                            (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                            (tlsSettings.getArray("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                                 anytlsBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
                             }
-                            (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                            (tlsSettings.getArray("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
                                 anytlsBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
                             }
-                            (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                            (tlsSettings.getArray("pinnedPeerCertificateSha256") as? List<String>)?.also {
                                 anytlsBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                                 tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                                     anytlsBean.allowInsecure = allowInsecure
@@ -1156,18 +1224,35 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tlsSettings.getBoolean("allowInsecure")?.also {
                         juicityBean.allowInsecure = it
                     }
-                    (tlsSettings.getAny("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
+                    (tlsSettings.getArray("certificates") as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
                         when (certificate.getString("usage")?.lowercase()) {
                             null, "", "encipherment" -> {
-                                juicityBean.mtlsCertificate = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
-                                juicityBean.mtlsCertificatePrivateKey = (certificate.getAny("key") as? List<String>)?.joinToString("\n")
+                                if (!certificate.contains("certificateFile") && !certificate.contains("keyFile")) {
+                                    val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                    val key = (certificate.getArray("key") as? List<String>)?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                    }
+                                    if (cert != null && key != null) {
+                                        juicityBean.mtlsCertificate = cert
+                                        juicityBean.mtlsCertificatePrivateKey = key
+                                    }
+                                }
                             }
                             "verify" -> {
-                                juicityBean.certificates = (certificate.getAny("certificate") as? List<String>)?.joinToString("\n")
+                                if (!certificate.contains("certificateFile")) {
+                                    val cert = (certificate.getArray("certificate") as? List<String>)?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                    if (cert != null) {
+                                        juicityBean.certificates = cert
+                                    }
+                                }
                             }
                         }
                     }
-                    (tlsSettings.getObject("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
+                    (tlsSettings.getArray("pinnedPeerCertificateChainSha256") as? List<String>)?.also {
                         juicityBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
                         /*tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             juicityBean.allowInsecure = allowInsecure
@@ -1176,13 +1261,13 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
                         juicityBean.allowInsecure = true
                     }
-                    (tlsSettings.getObject("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
+                    (tlsSettings.getArray("pinnedPeerCertificatePublicKeySha256") as? List<String>)?.also {
                         juicityBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             juicityBean.allowInsecure = allowInsecure
                         }
                     }
-                    (tlsSettings.getObject("pinnedPeerCertificateSha256") as? List<String>)?.also {
+                    (tlsSettings.getArray("pinnedPeerCertificateSha256") as? List<String>)?.also {
                         juicityBean.pinnedPeerCertificateSha256 = it.joinToString("\n")
                         tlsSettings.getBoolean("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
                             juicityBean.allowInsecure = allowInsecure
@@ -1206,14 +1291,14 @@ fun parseV2RayOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
                 // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L75
                 wireguardBean.localAddress = "10.0.0.1/32\nfd59:7153:2388:b5fd:0000:0000:0000:0001/128"
-                (settings.getAny("address") as? List<String>)?.also {
+                (settings.getArray("address") as? List<String>)?.also {
                     wireguardBean.localAddress = it.joinToString("\n")
                 }
                 wireguardBean.mtu = 1420
                 settings.getInteger("mtu")?.takeIf { it > 0 }?.also {
                     wireguardBean.mtu = it
                 }
-                (settings.getAny("reserved") as? List<Int>)?.also {
+                (settings.getArray("reserved") as? List<Int>)?.also {
                     if (it.size == 3) {
                         wireguardBean.reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                     }

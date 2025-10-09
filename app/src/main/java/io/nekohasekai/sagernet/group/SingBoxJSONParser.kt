@@ -80,7 +80,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                     v2rayBean.path = it
                                 }
                                 transport.getObject("headers")?.also { headers ->
-                                    (headers.getAny("host") as? (List<String>))?.get(0)?.also {
+                                    (headers.getArray("host") as? List<String>)?.get(0)?.also {
                                         v2rayBean.host = it
                                     } ?: headers.getString("host")?.also {
                                         v2rayBean.host = it
@@ -107,7 +107,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 transport.getString("path")?.also {
                                     v2rayBean.path = it
                                 }
-                                (transport.getAny("host") as? (List<String>))?.also {
+                                (transport.getArray("host") as? List<String>)?.also {
                                     v2rayBean.host = it.joinToString("\n")
                                 } ?: transport.getString("host")?.also {
                                     v2rayBean.host = it
@@ -149,7 +149,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 tls.getBoolean("insecure")?.also {
                                     v2rayBean.allowInsecure = it
                                 }
-                                (tls.getAny("alpn") as? (List<String>))?.also {
+                                (tls.getArray("alpn") as? List<String>)?.also {
                                     v2rayBean.alpn = it.joinToString("\n")
                                 } ?: tls.getString("alpn")?.also {
                                     v2rayBean.alpn = it
@@ -158,12 +158,48 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                     // https://github.com/SagerNet/sing-box/pull/1934
                                     v2rayBean.alpn = "h3"
                                 }
-                                (tls.getAny("certificate") as? (List<String>))?.also {
-                                    v2rayBean.certificates = it.joinToString("\n")
-                                } ?: tls.getString("certificate")?.also {
-                                    v2rayBean.certificates = it
+                                if (!tls.contains("certificate_path")) {
+                                    var cert: String? = null
+                                    (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                                        cert = certificate.joinToString("\n").takeIf {
+                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                        }
+                                    } ?: tls.getString("certificate")?.also { certificate ->
+                                        cert = certificate.takeIf {
+                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                        }
+                                    }
+                                    if (cert != null) {
+                                        v2rayBean.certificates = cert
+                                    }
                                 }
-                                (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                                if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                                    var cert: String? = null
+                                    (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                                        cert = clientCert.joinToString("\n").takeIf {
+                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                        }
+                                    } ?: tls.getString("client_certificate")?.also { clientCert ->
+                                        cert = clientCert.takeIf {
+                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                        }
+                                    }
+                                    var key: String? = null
+                                    (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                                        key = clientKey.joinToString("\n").takeIf {
+                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                        }
+                                    } ?: tls.getString("client_key")?.also { clientKey ->
+                                        key = clientKey.takeIf {
+                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                        }
+                                    }
+                                    if (cert != null && key != null) {
+                                        v2rayBean.mtlsCertificate = cert
+                                        v2rayBean.mtlsCertificatePrivateKey = key
+                                    }
+                                }
+                                (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
                                     v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                     v2rayBean.allowInsecure = true
                                 } ?: tls.getString("certificate_public_key_sha256")?.also {
@@ -304,9 +340,9 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 } ?: return listOf()
                 (outbound.getInteger("server_port")?.also {
                     serverPorts = it.toString()
-                } ?: (outbound.getAny("server_ports") as? List<String>)?.also {
+                } ?: (outbound.getArray("server_ports") as? List<String>)?.also {
                     serverPorts = it.joinToString(",").replace(":", "-")
-                } ?: (outbound.getAny("server_ports") as? String)?.also {
+                } ?: outbound.getString("server_ports")?.also {
                     serverPorts = it.replace(":", "-")
                 }) ?: return listOf()
                 if (!serverPorts.isValidHysteriaPort()) {
@@ -334,12 +370,48 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tls.getBoolean("insecure")?.also {
                         allowInsecure = it
                     }
-                    (tls.getAny("certificate") as? (List<String>))?.also {
-                        certificates = it.joinToString("\n")
-                    } ?: tls.getString("certificate")?.also {
-                        certificates = it
+                    if (!tls.contains("certificate_path")) {
+                        var cert: String? = null
+                        (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                            cert = certificate.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        } ?: tls.getString("certificate")?.also { certificate ->
+                            cert = certificate.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        }
+                        if (cert != null) {
+                            certificates = cert
+                        }
                     }
-                    (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                    if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                        var cert: String? = null
+                        (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                            cert = clientCert.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        } ?: tls.getString("client_certificate")?.also { clientCert ->
+                            cert = clientCert.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        }
+                        var key: String? = null
+                        (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                            key = clientKey.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                            }
+                        } ?: tls.getString("client_key")?.also { clientKey ->
+                            key = clientKey.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                            }
+                        }
+                        if (cert != null && key != null) {
+                            mtlsCertificate = cert
+                            mtlsCertificatePrivateKey = key
+                        }
+                    }
+                    (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
                         pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         allowInsecure = true
                     } ?: tls.getString("certificate_public_key_sha256")?.also {
@@ -374,9 +446,9 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 } ?: return listOf()
                 (outbound.getInteger("server_port")?.also {
                     serverPorts = it.toString()
-                } ?: (outbound.getAny("server_ports") as? List<String>)?.also {
+                } ?: (outbound.getArray("server_ports") as? List<String>)?.also {
                     serverPorts = it.joinToString(",").replace(":", "-")
-                } ?: (outbound.getAny("server_ports") as? String)?.also {
+                } ?: outbound.getString("server_ports")?.also {
                     serverPorts = it.replace(":", "-")
                 }) ?: return listOf()
                 if (!serverPorts.isValidHysteriaPort()) {
@@ -413,7 +485,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tls.getString("server_name")?.also {
                         sni = it
                     }
-                    (tls.getAny("alpn") as? (List<String>))?.also {
+                    (tls.getArray("alpn") as? List<String>)?.also {
                         alpn = it[0]
                     } ?: tls.getString("alpn")?.also {
                         alpn = it
@@ -461,7 +533,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tls.getString("server_name")?.also {
                         sni = it
                     }
-                    (tls.getAny("alpn") as? (List<String>))?.also {
+                    (tls.getArray("alpn") as? List<String>)?.also {
                         alpn = it.joinToString("\n")
                     } ?: tls.getString("alpn")?.also {
                         alpn = it
@@ -472,12 +544,48 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     tls.getBoolean("disable_sni")?.also {
                         disableSNI = it
                     }
-                    (tls.getAny("certificate") as? (List<String>))?.also {
-                        certificates = it.joinToString("\n")
-                    } ?: tls.getString("certificate")?.also {
-                        certificates = it
+                    if (!tls.contains("certificate_path")) {
+                        var cert: String? = null
+                        (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                            cert = certificate.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        } ?: tls.getString("certificate")?.also { certificate ->
+                            cert = certificate.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        }
+                        if (cert != null) {
+                            certificates = cert
+                        }
                     }
-                    (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                    if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                        var cert: String? = null
+                        (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                            cert = clientCert.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        } ?: tls.getString("client_certificate")?.also { clientCert ->
+                            cert = clientCert.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        }
+                        var key: String? = null
+                        (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                            key = clientKey.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                            }
+                        } ?: tls.getString("client_key")?.also { clientKey ->
+                            key = clientKey.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                            }
+                        }
+                        if (cert != null && key != null) {
+                            mtlsCertificate = cert
+                            mtlsCertificatePrivateKey = key
+                        }
+                    }
+                    (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
                         pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         allowInsecure = true
                     } ?: tls.getString("certificate_public_key_sha256")?.also {
@@ -517,7 +625,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         privateKeyPassphrase = it
                     }
                 }
-                (outbound.getAny("host_key") as? List<String>)?.also {
+                (outbound.getArray("host_key") as? List<String>)?.also {
                     publicKey = it.joinToString("\n")
                 }
             }
@@ -583,17 +691,53 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             tls.getBoolean("insecure")?.also {
                                 allowInsecure = it
                             }
-                            (tls.getAny("alpn") as? (List<String>))?.also {
+                            (tls.getArray("alpn") as? List<String>)?.also {
                                 alpn = it.joinToString("\n")
                             } ?: tls.getString("alpn")?.also {
                                 alpn = it
                             }
-                            (tls.getAny("certificate") as? (List<String>))?.also {
-                                certificates = it.joinToString("\n")
-                            } ?: tls.getString("certificate")?.also {
-                                certificates = it
+                            if (!tls.contains("certificate_path")) {
+                                var cert: String? = null
+                                (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                                    cert = certificate.joinToString("\n").takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                } ?: tls.getString("certificate")?.also { certificate ->
+                                    cert = certificate.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                }
+                                if (cert != null) {
+                                    certificates = cert
+                                }
                             }
-                            (tls.getAny("certificate_public_key_sha256") as? (List<String>))?.also {
+                            if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                                var cert: String? = null
+                                (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                                    cert = clientCert.joinToString("\n").takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                } ?: tls.getString("client_certificate")?.also { clientCert ->
+                                    cert = clientCert.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                }
+                                var key: String? = null
+                                (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                                    key = clientKey.joinToString("\n").takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                    }
+                                } ?: tls.getString("client_key")?.also { clientKey ->
+                                    key = clientKey.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                    }
+                                }
+                                if (cert != null && key != null) {
+                                    mtlsCertificate = cert
+                                    mtlsCertificatePrivateKey = key
+                                }
+                            }
+                            (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
                                 pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                 allowInsecure = true
                             } ?: tls.getString("certificate_public_key_sha256")?.also {
@@ -644,12 +788,12 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 outbound.getInteger("mtu")?.takeIf { it > 0 }?.also {
                     mtu = it
                 }
-                (outbound.getAny("local_address") as? (List<String>))?.also {
+                (outbound.getArray("local_address") as? List<String>)?.also {
                     localAddress = it.joinToString("\n")
                 } ?: outbound.getString("local_address")?.also {
                     localAddress = it
                 } ?: return listOf()
-                (outbound.getAny("reserved") as? (List<Int>))?.also {
+                (outbound.getArray("reserved") as? List<Int>)?.also {
                     if (it.size == 3) {
                         reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                     }
@@ -685,7 +829,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     peer.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
                         keepaliveInterval = it
                     }
-                    (peer.getAny("reserved") as? (List<Int>))?.also {
+                    (peer.getArray("reserved") as? List<Int>)?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
@@ -722,7 +866,7 @@ fun parseSingBoxEndpoint(endpoint: Map<String, Any?>): List<AbstractBean> {
                 endpoint.getInteger("mtu")?.takeIf { it > 0 }?.also {
                     mtu = it
                 }
-                (endpoint.getAny("address") as? (List<String>))?.also {
+                (endpoint.getArray("address") as? List<String>)?.also {
                     localAddress = it.joinToString("\n")
                 } ?: endpoint.getString("address")?.also {
                     localAddress = it
@@ -745,7 +889,7 @@ fun parseSingBoxEndpoint(endpoint: Map<String, Any?>): List<AbstractBean> {
                     peer.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
                         keepaliveInterval = it
                     }
-                    (peer.getAny("reserved") as? (List<Int>))?.also {
+                    (peer.getArray("reserved") as? List<Int>)?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }

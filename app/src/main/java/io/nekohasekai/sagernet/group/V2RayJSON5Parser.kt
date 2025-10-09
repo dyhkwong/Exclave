@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.group
 
+import cn.hutool.core.codec.Base64
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
@@ -58,7 +59,7 @@ fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
                 streamSettings.getString("security")?.also { security ->
                     when (security) {
-                        "none" -> {}
+                        "none", "" -> {}
                         "tls", "utls" -> {
                             v2rayBean.security = "tls"
                             val securitySettings = streamSettings.getObject("securitySettings")
@@ -80,11 +81,29 @@ fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 (tlsConfig["certificate"] as? List<Map<String, Any?>>)?.asReversed()?.forEach { certificate ->
                                     when (certificate["usage"]) {
                                         null, "ENCIPHERMENT" -> {
-                                            v2rayBean.mtlsCertificate = (certificate["Certificate"] as? List<String>)?.joinToString("\n")
-                                            v2rayBean.mtlsCertificatePrivateKey = (certificate["Key"] as? List<String>)?.joinToString("\n")
+                                            if (!certificate.containsKey("certificateFile") && !certificate.containsKey("certificate_file")
+                                                && !certificate.containsKey("keyFile") && !certificate.containsKey("key_file")) {
+                                                val cert = (certificate["Certificate"] as? String)?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                val key = (certificate["Key"] as? String)?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                                }
+                                                if (cert != null && key != null) {
+                                                    v2rayBean.mtlsCertificate = Base64.decodeStr(cert)
+                                                    v2rayBean.mtlsCertificatePrivateKey = Base64.decodeStr(key)
+                                                }
+                                            }
                                         }
                                         "AUTHORITY_VERIFY" -> {
-                                            v2rayBean.certificates = (certificate["Certificate"] as? List<String>)?.joinToString("\n")
+                                            if (!certificate.containsKey("certificateFile") && !certificate.containsKey("certificate_file")) {
+                                                val cert = (certificate["Certificate"] as? String)?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                if (cert != null) {
+                                                    v2rayBean.certificates = cert
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -104,7 +123,7 @@ fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
                 streamSettings.getString("transport")?.also { transport ->
                     when (transport) {
-                        "tcp" -> {
+                        "tcp", "" -> {
                             v2rayBean.type = "tcp"
                             streamSettings.getObject("transportSettings")?.also { transportSettings ->
                                 (transportSettings["headerSettings"] as? Map<String, Any?>)
