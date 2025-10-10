@@ -108,14 +108,41 @@ func (c *httpClient) PinnedTLS12() {
 }
 
 func (c *httpClient) PinnedSHA256(sumHex string) {
-	c.tls.VerifyPeerCertificate = func(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
-		for _, rawCert := range rawCerts {
-			certSum := sha256.Sum256(rawCert)
-			if sumHex == hex.EncodeToString(certSum[:]) {
-				return nil
-			}
+	// Only used in OOC v1.
+	//
+	// "Certificate SHA-256 Fingerprint: Optional.
+	// Pin the server certificate by verifying the certificate fingerprint.
+	// Required only when using a self-signed certificate."
+	//
+	// "The certSha256 field is required when using a self-signed certificate.
+	// With a publicly-trusted certificate, this field SHOULD be omitted."
+	//
+	// So we have to skip the Go TLS certificate verification logic
+	// and handcraft a custom certificate verification logic.
+	c.tls.InsecureSkipVerify = true
+	c.tls.VerifyPeerCertificate = func(rawCerts [][]byte, _ [][]*x509.Certificate) error {
+		opts := x509.VerifyOptions{
+			DNSName:       c.tls.ServerName,
+			Roots:         c.tls.RootCAs,
+			Intermediates: x509.NewCertPool(),
 		}
-		return newError("pinned sha256 sum mismatch")
+		if c.tls.Time != nil {
+			opts.CurrentTime = c.tls.Time()
+		}
+		for _, rawCert := range rawCerts[1:] {
+			cert, _ := x509.ParseCertificate(rawCert)
+			opts.Intermediates.AddCert(cert)
+		}
+		cert, _ := x509.ParseCertificate(rawCerts[0])
+		_, err := cert.Verify(opts)
+		if err == nil {
+			return nil
+		}
+		certSum := sha256.Sum256(rawCerts[0])
+		if sumHex == hex.EncodeToString(certSum[:]) {
+			return nil
+		}
+		return err
 	}
 }
 
