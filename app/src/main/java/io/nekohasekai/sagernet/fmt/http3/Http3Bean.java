@@ -85,7 +85,7 @@ public class Http3Bean extends AbstractBean {
         sni = input.readString();
         certificates = input.readString();
         pinnedPeerCertificateChainSha256 = input.readString();
-        if (version >= 2) {
+        if (version >= 1) {
             pinnedPeerCertificatePublicKeySha256 = input.readString();
             pinnedPeerCertificateSha256 = input.readString();
         }
@@ -94,7 +94,7 @@ public class Http3Bean extends AbstractBean {
         if (version == 0) {
             input.readString(); // echDohServer, removed
         }
-        if (version >= 2) {
+        if (version >= 1) {
             mtlsCertificate = input.readString();
             mtlsCertificatePrivateKey = input.readString();
         }

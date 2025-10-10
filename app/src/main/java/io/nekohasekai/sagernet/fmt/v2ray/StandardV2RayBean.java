@@ -525,15 +525,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
             if (this instanceof SOCKSBean) {
                 ((SOCKSBean) this).singUoT = input.readBoolean();
             }
-            if (this instanceof ShadowsocksBean || this instanceof TrojanBean
-                    || this instanceof VMessBean || this instanceof VLESSBean) {
-                singMux = input.readBoolean();
-                singMuxProtocol = input.readString();
-                singMuxMaxConnections = input.readInt();
-                singMuxMinStreams = input.readInt();
-                singMuxMaxStreams = input.readInt();
-                singMuxPadding = input.readBoolean();
-            }
+            singMux = input.readBoolean();
+            singMuxProtocol = input.readString();
+            singMuxMaxConnections = input.readInt();
+            singMuxMinStreams = input.readInt();
+            singMuxMaxStreams = input.readInt();
+            singMuxPadding = input.readBoolean();
         }
     }
 

@@ -160,16 +160,12 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             is ShadowsocksBean -> DataStore.serverSingUot = singUoT
             is SOCKSBean -> DataStore.serverSingUot = singUoT
         }
-        when (this) {
-            is ShadowsocksBean, is TrojanBean, is VMessBean, is VLESSBean -> {
-                DataStore.serverSingMux = singMux
-                DataStore.serverSingMuxProtocol = singMuxProtocol
-                DataStore.serverSingMuxMaxConnections = singMuxMaxConnections
-                DataStore.serverSingMuxMinStreams = singMuxMinStreams
-                DataStore.serverSingMuxMaxStreams = singMuxMaxStreams
-                DataStore.serverSingMuxPadding = singMuxPadding
-            }
-        }
+        DataStore.serverSingMux = singMux
+        DataStore.serverSingMuxProtocol = singMuxProtocol
+        DataStore.serverSingMuxMaxConnections = singMuxMaxConnections
+        DataStore.serverSingMuxMinStreams = singMuxMinStreams
+        DataStore.serverSingMuxMaxStreams = singMuxMaxStreams
+        DataStore.serverSingMuxPadding = singMuxPadding
     }
 
     override fun StandardV2RayBean.serialize() {
@@ -267,16 +263,12 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             is ShadowsocksBean -> singUoT = DataStore.serverSingUot
             is SOCKSBean -> singUoT = DataStore.serverSingUot
         }
-        when (this) {
-            is ShadowsocksBean, is TrojanBean, is VMessBean, is VLESSBean -> {
-                singMux = DataStore.serverSingMux
-                singMuxProtocol = DataStore.serverSingMuxProtocol
-                singMuxMaxConnections = DataStore.serverSingMuxMaxConnections
-                singMuxMinStreams = DataStore.serverSingMuxMinStreams
-                singMuxMaxStreams = DataStore.serverSingMuxMaxStreams
-                singMuxPadding = DataStore.serverSingMuxPadding
-            }
-        }
+        singMux = DataStore.serverSingMux
+        singMuxProtocol = DataStore.serverSingMuxProtocol
+        singMuxMaxConnections = DataStore.serverSingMuxMaxConnections
+        singMuxMinStreams = DataStore.serverSingMuxMinStreams
+        singMuxMaxStreams = DataStore.serverSingMuxMaxStreams
+        singMuxPadding = DataStore.serverSingMuxPadding
     }
 
     lateinit var encryption: SimpleMenuPreference
