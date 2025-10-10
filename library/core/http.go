@@ -40,10 +40,7 @@ import (
 
 type HTTPClient interface {
 	RestrictedTLS()
-	ModernTLS()
-	PinnedTLS12()
 	PinnedSHA256(sumHex string)
-	TrySocks5(port int32)
 	UseSocks5(port int32)
 	KeepAlive()
 	NewRequest() HTTPRequest
@@ -88,23 +85,8 @@ func NewHttpClient() HTTPClient {
 	return client
 }
 
-func (c *httpClient) ModernTLS() {
-	c.tls.MinVersion = tls.VersionTLS12
-	c.tls.CipherSuites = Map(tls.CipherSuites(), func(it *tls.CipherSuite) uint16 { return it.ID })
-}
-
 func (c *httpClient) RestrictedTLS() {
 	c.tls.MinVersion = tls.VersionTLS13
-	c.tls.CipherSuites = Map(Filter(tls.CipherSuites(), func(it *tls.CipherSuite) bool {
-		return Contains(it.SupportedVersions, uint16(tls.VersionTLS13))
-	}), func(it *tls.CipherSuite) uint16 {
-		return it.ID
-	})
-}
-
-func (c *httpClient) PinnedTLS12() {
-	c.tls.MinVersion = tls.VersionTLS12
-	c.tls.MaxVersion = tls.VersionTLS12
 }
 
 func (c *httpClient) PinnedSHA256(sumHex string) {
@@ -143,22 +125,6 @@ func (c *httpClient) PinnedSHA256(sumHex string) {
 			return nil
 		}
 		return err
-	}
-}
-
-// not used
-func (c *httpClient) TrySocks5(port int32) {
-	dialer := new(net.Dialer)
-	socks5Dialer, _ := socks5.NewDialer("socks5h://127.0.0.1:" + strconv.Itoa(int(port)))
-	c.transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
-		for {
-			socksConn, err := socks5Dialer.DialContext(ctx, "tcp", addr)
-			if err != nil {
-				break
-			}
-			return socksConn, err
-		}
-		return dialer.DialContext(ctx, network, addr)
 	}
 }
 

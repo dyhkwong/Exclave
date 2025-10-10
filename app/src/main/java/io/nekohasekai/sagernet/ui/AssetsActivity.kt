@@ -327,7 +327,6 @@ class AssetsActivity : ThemedActivity() {
         }
 
         val client = Libcore.newHttpClient().apply {
-            modernTLS()
             keepAlive()
             if (SagerNet.started && DataStore.startedProfile > 0) {
                 useSocks5(DataStore.socksPort)
@@ -389,7 +388,6 @@ class AssetsActivity : ThemedActivity() {
 
     suspend fun updateCustomAsset(file: File, url: String) {
         val client = Libcore.newHttpClient().apply {
-            modernTLS()
             keepAlive()
             if (SagerNet.started && DataStore.startedProfile > 0) {
                 useSocks5(DataStore.socksPort)

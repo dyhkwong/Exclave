@@ -51,7 +51,6 @@ object SIP008Updater : GroupUpdater() {
         } else {
 
             val response = Libcore.newHttpClient().apply {
-                modernTLS()
                 if (SagerNet.started && DataStore.startedProfile > 0) {
                     useSocks5(DataStore.socksPort)
                 }

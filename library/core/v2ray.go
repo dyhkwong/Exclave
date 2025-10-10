@@ -97,9 +97,7 @@ func (instance *V2RayInstance) Start() error {
 			if response == "" {
 				return nil, dns.ErrEmptyResponse
 			}
-			addrs := Filter(strings.Split(response, ","), func(it string) bool {
-				return len(strings.TrimSpace(it)) >= 0
-			})
+			addrs := strings.Split(response, ",")
 			ips := make([]net.IP, len(addrs))
 			for i, addr := range addrs {
 				ip := net.ParseIP(addr)
