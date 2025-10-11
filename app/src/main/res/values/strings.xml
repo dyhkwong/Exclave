@@ -523,8 +523,6 @@
     <string name="enable_fragment_for_direct">Also enable fragmentation for direct</string>
     <string name="probe_cert">Certificate prober</string>
     <string name="probe_cert_summary">Probe the TLS certificate of a server.</string>
-    <string name="probe_cert_target_server">Target server</string>
-    <string name="probe_cert_success">Probed successfully! Certificate has been copied to clipboard.</string>
     <string name="front_proxy">Front proxy</string>
     <string name="landing_proxy">Landing proxy</string>
     <string name="resolve_destination_for_direct">Resolve destination (direct)</string>

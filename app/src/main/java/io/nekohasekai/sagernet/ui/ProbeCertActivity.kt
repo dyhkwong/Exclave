@@ -24,15 +24,12 @@ import android.content.ClipData
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.ListPopupWindow
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import com.google.android.material.snackbar.Snackbar
+import androidx.core.widget.doAfterTextChanged
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
@@ -71,21 +68,13 @@ class ProbeCertActivity : ThemedActivity() {
             setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         }
 
-        binding.probeCertServer.setText("example.com:443")
-        binding.probeCertAlpn.setText("h2,http/1.1")
-        val list = arrayListOf("h2,http/1.1", "h3")
-        binding.probeCertAlpn.setOnClickListener {
-            val listPopupWindow = ListPopupWindow(this)
-            listPopupWindow.setAdapter(
-                ArrayAdapter(this, android.R.layout.simple_list_item_1, list)
-            )
-            listPopupWindow.setOnItemClickListener { _, _, i, _ ->
-                binding.probeCertAlpn.setText(list[i])
-                listPopupWindow.dismiss()
-            }
-            listPopupWindow.anchorView = binding.probeCertAlpn
-            listPopupWindow.show()
+        binding.probeCertServer.setText("example.com")
+        binding.probeCertServerPort.setText("443")
+        binding.probeCertServerName.setText("example.com")
+        binding.probeCertServer.doAfterTextChanged { text ->
+            binding.probeCertServerName.setText(text)
         }
+        binding.probeCertAlpn.setText("h2,http/1.1")
         binding.probeCertProtocol.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?, view: View?, position: Int, id: Long
@@ -101,56 +90,87 @@ class ProbeCertActivity : ThemedActivity() {
         }
 
         binding.probeCert.setOnClickListener {
-            copyCert()
+            probeCert()
+        }
+
+        binding.certificate.doAfterTextChanged { text ->
+            try {
+                binding.certHash.text = when (binding.certHashType.selectedItemPosition) {
+                    0 -> Libcore.calculatePEMCertSHA256Hash(text.toString())
+                    1 -> Libcore.calculatePEMCertPublicKeySHA256Hash(text.toString())
+                    2 -> Libcore.calculatePEMCertChainSHA256Hash(text.toString())
+                    else -> error("impossible")
+                }
+            } catch (_: Exception) {
+                binding.certHash.text = ""
+            }
+        }
+        binding.certHashType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?, view: View?, position: Int, id: Long
+            ) {
+                try {
+                    val certificate = binding.certificate.text.toString()
+                    val certHash = when (position) {
+                        0 -> Libcore.calculatePEMCertSHA256Hash(certificate)
+                        1 -> Libcore.calculatePEMCertPublicKeySHA256Hash(certificate)
+                        2 -> Libcore.calculatePEMCertChainSHA256Hash(certificate)
+                        else -> error("impossible")
+                    }
+                    binding.certHash.text = certHash
+                } catch (_: Exception) {
+                    binding.certHash.text = ""
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+        binding.certHash.setOnClickListener {
+            try {
+                val clipData = ClipData.newPlainText("hash", binding.certHash.text)
+                SagerNet.clipboard.setPrimaryClip(clipData)
+            } catch (e: Exception) {
+                Logs.w(e)
+            }
         }
     }
 
-
-    private fun copyCert() {
+    private fun probeCert() {
         binding.waitLayout.isVisible = true
-
-        val server = binding.probeCertServer.text.toString()
-        val serverName = binding.probeCertServerName.text.toString()
-        val protocol: String = when (binding.probeCertProtocol.selectedItemPosition) {
-            0 -> "tls"
-            1 -> "quic"
-            else -> error("unknown protocol")
-        }
-        val alpn = binding.probeCertAlpn.text.toString()
-
         runOnDefaultDispatcher {
-            try {
-                val certificate = Libcore.probeCert(server, serverName, alpn, protocol,
-                    SagerNet.started && DataStore.startedProfile > 0, DataStore.socksPort
-                )
-                Logs.i(certificate)
-
-                val clipData = ClipData.newPlainText("Certificate", certificate)
-                SagerNet.clipboard.setPrimaryClip(clipData)
-
-                Snackbar.make(
-                    binding.root,
-                    R.string.probe_cert_success,
-                    Snackbar.LENGTH_SHORT
-                ).apply {
-                    view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
-                        maxLines = 10
-                    }
-                }.show()
-
-                onMainDispatcher {
-                    binding.waitLayout.isVisible = false
-                }
-            } catch (e: Exception) {
-                Logs.w(e)
-                onMainDispatcher {
-                    binding.waitLayout.isVisible = false
+            val result = Libcore.probeCert(
+                binding.probeCertServer.text.toString(),
+                binding.probeCertServerPort.text.toString().toInt(),
+                binding.probeCertServerName.text.toString(),
+                binding.probeCertAlpn.text.toString(),
+                when (binding.probeCertProtocol.selectedItemPosition) {
+                    0 -> "tls"
+                    1 -> "quic"
+                    else -> error("impossible")
+                },
+                SagerNet.started && DataStore.startedProfile > 0,
+                DataStore.socksPort
+            )
+            onMainDispatcher {
+                binding.waitLayout.isVisible = false
+                if (result.error.isNotEmpty()) {
+                    binding.certificate.setText("")
                     AlertDialog.Builder(this@ProbeCertActivity)
                         .setTitle(R.string.error_title)
-                        .setMessage(e.toString())
+                        .setMessage(result.error)
                         .setPositiveButton(android.R.string.ok) { _, _ -> }
                         .setOnCancelListener { finish() }
                         .runCatching { show() }
+                } else {
+                    binding.certificate.setText(result.cert)
+                    if (result.verifyError.isNotEmpty()) {
+                        AlertDialog.Builder(this@ProbeCertActivity)
+                            .setTitle(R.string.error_title)
+                            .setMessage(result.verifyError)
+                            .setPositiveButton(android.R.string.ok) { _, _ -> }
+                            .setOnCancelListener { finish() }
+                            .runCatching { show() }
+                    }
                 }
             }
         }

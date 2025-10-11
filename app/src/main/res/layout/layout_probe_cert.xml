@@ -1,149 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/coordinator"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/layout_appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:id="@+id/wait_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/stun_attest_loading"
+            android:textAppearance="@style/AppearanceFoundation.Title" />
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false" >
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-        <include
-                layout="@layout/layout_appbar"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        <LinearLayout
-                android:id="@+id/wait_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:visibility="gone">
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/stun_attest_loading"
-                    android:textAppearance="@style/AppearanceFoundation.Title" />
-        </LinearLayout>
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/main_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" >
-
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:cardElevation="2dp">
-
-                    <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp">
-
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/probe_cert_target_server"
-                                android:textAppearance="?attr/textAppearanceSubtitle2" />
-
-                        <EditText
-                                android:id="@+id/probe_cert_server"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="text|textMultiLine"
-                                android:singleLine="false"
-                                tools:ignore="LabelFor" />
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/sni"
-                                android:textAppearance="?attr/textAppearanceSubtitle2" />
-
-                        <EditText
-                                android:id="@+id/probe_cert_server_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:inputType="text|textMultiLine"
-                                android:singleLine="false"
-                                tools:ignore="LabelFor" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/alpn"
-                            android:textAppearance="?attr/textAppearanceSubtitle2" />
-
-                        <EditText
-                            android:id="@+id/probe_cert_alpn"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text|textMultiLine"
-                            android:singleLine="false"
-                            tools:ignore="LabelFor" />
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@string/protocol"
-                                android:textAppearance="?attr/textAppearanceSubtitle2" />
-
-                        <Spinner
-                                android:id="@+id/probe_cert_protocol"
-                                android:layout_width="match_parent"
-                                android:entries="@array/probe_cert_protocol"
-                                android:layout_height="wrap_content" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:cardElevation="2dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardElevation="2dp">
 
                 <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/server_address"
+                        android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                    <EditText
+                        android:id="@+id/probe_cert_server"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        android:gravity="end"
-                        android:orientation="horizontal">
+                        android:inputType="text"
+                        tools:ignore="LabelFor" />
 
-                    <Button
-                            android:id="@+id/probeCert"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/start"
-                            android:textColor="?primaryOrTextPrimary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/server_port"
+                        android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                    <EditText
+                        android:id="@+id/probe_cert_server_port"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sni"
+                        android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                    <EditText
+                        android:id="@+id/probe_cert_server_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/alpn"
+                        android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                    <EditText
+                        android:id="@+id/probe_cert_alpn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        tools:ignore="LabelFor" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/protocol"
+                        android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                    <Spinner
+                        android:id="@+id/probe_cert_protocol"
+                        android:layout_width="match_parent"
+                        android:entries="@array/probe_cert_protocol"
+                        android:layout_height="wrap_content" />
+
+
                 </LinearLayout>
 
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/probeCert"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/start"
+                    android:textColor="?primaryOrTextPrimary" />
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/certificateCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/certificates"
+                        android:textAppearance="?attr/textAppearanceSubtitle2" />
+
+                    <EditText
+                        android:id="@+id/certificate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text|textMultiLine"
+                        android:singleLine="false"
+                        android:scrollbars="vertical"
+                        android:lines="3"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:textColorSecondary"
+                        tools:ignore="LabelFor" />
+
+                    <Spinner
+                        android:id="@+id/cert_hash_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp"
+                        android:entries="@array/cert_hash_type" />
+
+                    <TextView
+                        android:id="@+id/certHash"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:textIsSelectable="true"
+                        android:textAppearance="?attr/textAppearanceBody2"
+                        android:textColor="?android:textColorSecondary" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

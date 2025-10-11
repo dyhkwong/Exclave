@@ -959,4 +959,10 @@
         <item>smux</item>
         <item>yamux</item>
     </string-array>
+
+    <string-array name="cert_hash_type">
+        <item>@string/pinned_peer_certificate_sha256</item>
+        <item>@string/pinned_peer_certificate_public_key_sha256</item>
+        <item>@string/pinned_peer_certificate_chain_sha256</item>
+    </string-array>
 </resources>

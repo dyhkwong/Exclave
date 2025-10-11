@@ -38,7 +38,15 @@ import (
 
 	"github.com/quic-go/quic-go"
 	"github.com/wzshiming/socks5"
+
+	v2tls "github.com/v2fly/v2ray-core/v5/transport/internet/tls"
 )
+
+type CertProbeResult struct {
+	Cert        string
+	VerifyError string
+	Error       string
+}
 
 func ProbeCertTLS(ctx context.Context, address, sni string, alpn []string, useSOCKS5 bool, socksPort int) ([]*x509.Certificate, error) {
 	var conn net.Conn
@@ -59,11 +67,11 @@ func ProbeCertTLS(ctx context.Context, address, sni string, alpn []string, useSO
 		NextProtos:         alpn,
 		ServerName:         sni,
 	})
+	defer tlsConn.Close()
 	err = tlsConn.HandshakeContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer tlsConn.Close()
 	return tlsConn.ConnectionState().PeerCertificates, nil
 }
 
@@ -115,27 +123,30 @@ func ProbeCertQUIC(ctx context.Context, address, sni string, alpn []string, useS
 	return quicConn.ConnectionState().TLS.PeerCertificates, nil
 }
 
-func ProbeCert(address, sni, alpn, protocol string, useSOCKS5 bool, socksPort int32) (cert string, err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+func ProbeCert(host string, port int32, sni, alpn string, protocol string, useSOCKS5 bool, socksPort int32) *CertProbeResult {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var certs []*x509.Certificate
 	var nextProto []string
 	if len(alpn) > 0 {
 		nextProto = strings.Split(alpn, ",")
 	}
+	address := net.JoinHostPort(host, strconv.Itoa(int(port)))
+	var certs []*x509.Certificate
+	var err error
 	switch protocol {
 	case "tls":
 		certs, err = ProbeCertTLS(ctx, address, sni, nextProto, useSOCKS5, int(socksPort))
 	case "quic":
 		certs, err = ProbeCertQUIC(ctx, address, sni, nextProto, useSOCKS5, int(socksPort))
 	default:
-		err = newError("unknown protocol: ", protocol)
+		panic("unknown protocol: " + protocol)
 	}
 	if err != nil {
-		return "", err
+		return &CertProbeResult{
+			Error: err.Error(),
+		}
 	}
-
 	var builder strings.Builder
 	for _, cert := range certs {
 		err = pem.Encode(&builder, &pem.Block{
@@ -143,8 +154,35 @@ func ProbeCert(address, sni, alpn, protocol string, useSOCKS5 bool, socksPort in
 			Bytes: cert.Raw,
 		})
 		if err != nil {
-			return "", err
+			return &CertProbeResult{
+				Error: err.Error(),
+			}
 		}
 	}
-	return builder.String(), nil
+	result := &CertProbeResult{
+		Cert: builder.String(),
+	}
+	opts := x509.VerifyOptions{
+		DNSName:       sni,
+		Intermediates: x509.NewCertPool(),
+	}
+	for _, cert := range certs[1:] {
+		opts.Intermediates.AddCert(cert)
+	}
+	if _, verifyErr := certs[0].Verify(opts); verifyErr != nil {
+		result.VerifyError = verifyErr.Error()
+	}
+	return result
+}
+
+func CalculatePEMCertSHA256Hash(input string) (string, error) {
+	return v2tls.CalculatePEMCertSHA256Hash([]byte(input))
+}
+
+func CalculatePEMCertPublicKeySHA256Hash(input string) (string, error) {
+	return v2tls.CalculatePEMCertPublicKeySHA256Hash([]byte(input))
+}
+
+func CalculatePEMCertChainSHA256Hash(input string) (string, error) {
+	return v2tls.CalculatePEMCertChainSHA256Hash([]byte(input)), nil
 }

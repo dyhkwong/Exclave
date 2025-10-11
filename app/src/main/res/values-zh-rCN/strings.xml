@@ -492,8 +492,6 @@
     <string name="enable_fragment_for_direct">为直连也启用分片</string>
     <string name="probe_cert">证书探测器</string>
     <string name="probe_cert_summary">探测服务器的 TLS 证书。</string>
-    <string name="probe_cert_target_server">目标服务器</string>
-    <string name="probe_cert_success">探测成功！证书已复制到剪贴板。</string>
     <string name="front_proxy">前置代理</string>
     <string name="landing_proxy">落地代理</string>
     <string name="resolve_destination_for_direct">解析目标地址（直连）</string>

@@ -460,8 +460,6 @@
     <string name="fragment_interval">Интервал фрагментации</string>
     <string name="enable_fragment_for_direct">Также включить фрагментацию для прямого</string>
     <string name="probe_cert">Проверка сертификата</string>
-    <string name="probe_cert_target_server">Целевой сервер</string>
-    <string name="probe_cert_success">Проверка прошла успешно! Сертификат скопирован в буфер обмена.</string>
     <string name="landing_proxy">Конечный прокси</string>
     <string name="resolve_destination_for_direct">Резолвить адрес назначения (прямой)</string>
     <string name="edns_client_ip">IP-адрес клиента EDNS</string>

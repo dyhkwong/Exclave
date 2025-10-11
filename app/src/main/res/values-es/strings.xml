@@ -475,8 +475,6 @@
     <string name="fragment_interval">Intervalo de fragmentación</string>
     <string name="splithttp_mode">Modo</string>
     <string name="probe_cert_summary">Prueba el certificado TLS de un servidor.</string>
-    <string name="probe_cert_target_server">Servidor de destino</string>
-    <string name="probe_cert_success">¡Prueba exitosa! El certificado se ha copiado al portapapeles.</string>
     <string name="show_group_name_in_notification">Mostrar nombre del grupo en la notificación</string>
     <string name="subscription_expire">Expira: %s</string>
     <string name="allow_apps_bypass_vpn_sum">Permite que las apps omitan la VPN usando métodos proporcionados por el sistema por sí mismas</string>
