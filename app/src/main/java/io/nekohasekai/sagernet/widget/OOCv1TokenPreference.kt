@@ -78,7 +78,7 @@ class OOCv1TokenPreference : EditTextPreference {
                                 linkLayout.error = "baseUrl must not contain a trailing slash"
                                 isValid = false
                             }
-                            !baseUrl.startsWith("https://") -> {
+                            !baseUrl.startsWith("https://", ignoreCase = true) -> {
                                 isValid = false
                                 linkLayout.error = "Protocol scheme must be https"
                             }

@@ -62,7 +62,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 baseUrl.endsWith("/") -> {
                     error("baseUrl must not contain a trailing slash")
                 }
-                !baseUrl.startsWith("https://") -> {
+                !baseUrl.startsWith("https://", ignoreCase = true) -> {
                     error("Protocol scheme must be https")
                 }
                 else -> baseLink = Libcore.parseURL(baseUrl)

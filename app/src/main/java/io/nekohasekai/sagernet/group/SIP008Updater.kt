@@ -41,7 +41,7 @@ object SIP008Updater : GroupUpdater() {
 
         val link = subscription.link
         val sip008Response: JSONObject
-        if (link.startsWith("content://")) {
+        if (link.startsWith("content://", ignoreCase = true)) {
             val contentText = app.contentResolver.openInputStream(link.toUri())
                 ?.bufferedReader()
                 ?.readText()

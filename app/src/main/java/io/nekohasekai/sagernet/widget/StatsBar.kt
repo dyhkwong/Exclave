@@ -131,7 +131,7 @@ class StatsBar @JvmOverloads constructor(
                     isEnabled = true
                     setStatus(
                         context.getString(
-                            if (DataStore.connectionTestURL.startsWith("https://")) {
+                            if (DataStore.connectionTestURL.startsWith("https://", ignoreCase = true)) {
                                 R.string.connection_test_available
                             } else {
                                 R.string.connection_test_available_http
