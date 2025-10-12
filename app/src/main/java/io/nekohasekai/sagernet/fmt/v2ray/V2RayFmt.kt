@@ -70,7 +70,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     }
 
     if (url.scheme == "vmess" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
-        val decoded = link.removePrefix("vmess://").substringBefore("#").decodeBase64UrlSafe()
+        val decoded = link.substring("vmess://".length).substringBefore("#").decodeBase64UrlSafe()
         val json = try {
             JSONUtil.parse(decoded)
         } catch (_: Exception) {
@@ -109,12 +109,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
         // https://github.com/trojan-gfw/igniter/issues/318
         when {
             url.username.isEmpty() && url.password.isEmpty() -> {
-                if (link.substringAfter("trojan://").substringBefore("@") == ":") {
+                if (link.substring("trojan://".length).substringBefore("@") == ":") {
                     bean.password = ":"
                 }
             }
             url.username.isNotEmpty() && url.password.isEmpty() -> {
-                bean.password = if (link.substringAfter("trojan://").substringBefore("@").endsWith(":")) {
+                bean.password = if (link.substring("trojan://".length).substringBefore("@").endsWith(":")) {
                     url.username + ":"
                 } else {
                     url.username

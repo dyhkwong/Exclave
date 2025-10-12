@@ -27,12 +27,12 @@ import io.nekohasekai.sagernet.database.ProxyGroup
 
 fun parseBackupLink(link: String): AbstractBean {
     return if (link.contains("?")) {
-        val type = link.substringAfter("exclave://").substringBefore("?")
+        val type = link.substring("exclave://".length).substringBefore("?")
         ProxyEntity(type = TypeMap[type] ?: error("Type $type not found")).apply {
             putByteArray(ZipUtil.unZlib(Base64Decoder.decode(link.substringAfter("?"))))
         }.requireBean()
     } else {
-        val type = link.substringAfter("exclave://").substringBefore(":")
+        val type = link.substring("exclave://".length).substringBefore(":")
         ProxyEntity(type = TypeMap[type] ?: error("Type $type not found")).apply {
             putByteArray(Base64Decoder.decode(link.substringAfter(":").substringAfter(":")))
         }.requireBean()

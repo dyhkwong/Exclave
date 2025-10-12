@@ -57,80 +57,93 @@ fun parseShareLinks(text: String): List<AbstractBean> {
     val entitiesByLine = ArrayList<AbstractBean>()
 
     fun String.parseLink(entities: ArrayList<AbstractBean>) {
-        if (startsWith("exclave://subscription") || startsWith("sn://subscription")) {
+        if (startsWith("exclave://", ignoreCase = true) &&
+            substring("exclave://".length).startsWith("subscription")) {
             throw SubscriptionFoundException(this)
         }
-
-        if (startsWith("exclave://")) {
+        if (startsWith("sn://", ignoreCase = true) &&
+            substring("sn://".length).startsWith("subscription")) {
+            throw SubscriptionFoundException(this)
+        }
+        if (startsWith("exclave://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseBackupLink(this))
             }
-        } else if (startsWith("socks://") || startsWith("socks4://") || startsWith("socks4a://") ||
-            startsWith("socks5://") || startsWith("socks5h://")) {
+        } else if (startsWith("socks://", ignoreCase = true)
+            || startsWith("socks4://", ignoreCase = true)
+            || startsWith("socks4a://", ignoreCase = true)
+            || startsWith("socks5://", ignoreCase = true)
+            || startsWith("socks5h://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseSOCKS(this))
             }
-        } else if (matches("(http|https)://.*".toRegex())) {
+        } else if (startsWith("http://", ignoreCase = true)
+            || startsWith("https://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseHttp(this))
             }
-        } else if (startsWith("vmess://") || startsWith("vless://") || startsWith("trojan://")) {
+        } else if (startsWith("vmess://", ignoreCase = true)
+            || startsWith("vless://", ignoreCase = true)
+            || startsWith("trojan://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseV2Ray(this))
             }
-        } else if (startsWith("trojan-go://")) {
+        } else if (startsWith("trojan-go://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseTrojanGo(this))
             }
-        } else if (startsWith("ss://")) {
+        } else if (startsWith("ss://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseShadowsocks(this))
             }
-        } else if (startsWith("ssr://")) {
+        } else if (startsWith("ssr://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseShadowsocksR(this))
             }
-        } else if (startsWith("naive+https") || startsWith("naive+quic")) {
+        } else if (startsWith("naive+https", ignoreCase = true)
+            || startsWith("naive+quic", ignoreCase = true)) {
             runCatching {
                 entities.add(parseNaive(this))
             }
-        } else if (startsWith("brook://")) {
+        } else if (startsWith("brook://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseBrook(this))
             }
-        } else if (startsWith("hysteria://") || startsWith("hy://")) {
+        } else if (startsWith("hysteria://", ignoreCase = true)
+            || startsWith("hy://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseHysteria(this))
             }
-        } else if (startsWith("hysteria2://") || startsWith("hy2://")) {
+        } else if (startsWith("hysteria2://", ignoreCase = true)
+            || startsWith("hy2://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseHysteria2(this))
             }
-        } else if (startsWith("juicity://")) {
+        } else if (startsWith("juicity://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseJuicity(this))
             }
-        } else if (startsWith("tuic://")) {
+        } else if (startsWith("tuic://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseTuic(this))
             }
-        } else if (startsWith("wireguard://") || startsWith("wg://")) {
+        } else if (startsWith("wireguard://", ignoreCase = true) || startsWith("wg://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseWireGuard(this))
             }
-        } else if (startsWith("mierus://")) {
+        } else if (startsWith("mierus://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseMieru(this))
             }
-        } else if (startsWith("quic://")) {
+        } else if (startsWith("quic://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseHttp3(this))
             }
-        } else if (startsWith("anytls://")) {
+        } else if (startsWith("anytls://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseAnyTLS(this))
             }
-        } else if (startsWith("ssh://")) {
+        } else if (startsWith("ssh://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseSSH(this))
             }

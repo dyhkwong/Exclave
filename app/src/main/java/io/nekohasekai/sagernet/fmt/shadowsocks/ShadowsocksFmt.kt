@@ -65,7 +65,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
     if (link.port == 0 && link.username.isEmpty() && link.password.isEmpty()) {
         // pre-SIP002, https://shadowsocks.org/doc/configs.html#uri-and-qr-code
         // example: ss://YmYtY2ZiOnRlc3QvIUAjOkAxOTIuMTY4LjEwMC4xOjg4ODg#example-server
-        val plainUri = url.removePrefix("ss://").substringBefore("#").decodeBase64UrlSafe()
+        val plainUri = url.substring("ss://".length).substringBefore("#").decodeBase64UrlSafe()
 
         return ShadowsocksBean().apply {
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":")
@@ -84,7 +84,7 @@ fun parseShadowsocks(url: String): ShadowsocksBean {
         }
     }
     if (link.password.isNotEmpty() ||
-        url.substringAfter("ss://").substringBefore("#")
+        url.substring("ss://".length).substringBefore("#")
             .substringBefore("@").endsWith(":")) {
         // SIP002, plain user info
         // example: ss://2022-blake3-aes-256-gcm:YctPZ6U7xPPcU%2Bgp3u%2B0tx%2FtRizJN9K8y%2BuKlW2qjlI%3D@192.168.100.1:8888#Example3

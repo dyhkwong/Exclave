@@ -28,7 +28,7 @@ fun parseSOCKS(link: String): SOCKSBean {
     if (url.scheme == "socks" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
         // old v2rayNG format
         // This format is broken if username and/or password contains ":".
-        val plainUri = link.removePrefix("socks://").substringBefore("#").decodeBase64UrlSafe()
+        val plainUri = link.substring("socks://".length).substringBefore("#").decodeBase64UrlSafe()
         return SOCKSBean().apply {
             protocol = SOCKSBean.PROTOCOL_SOCKS5
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":").removePrefix("[").removeSuffix("]")

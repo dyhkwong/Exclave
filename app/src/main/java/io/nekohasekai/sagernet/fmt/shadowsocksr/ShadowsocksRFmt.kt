@@ -49,7 +49,7 @@ val supportedShadowsocksRObfs = arrayOf(
 
 fun parseShadowsocksR(url: String): ShadowsocksRBean {
     // https://github.com/shadowsocksrr/shadowsocks-rss/wiki/SSR-QRcode-scheme
-    val params = url.substringAfter("ssr://").decodeBase64UrlSafe().split(":")
+    val params = url.substring("ssr://".length).decodeBase64UrlSafe().split(":")
     if (params.size < 6) error("invalid url")
 
     val bean = ShadowsocksRBean().apply {
