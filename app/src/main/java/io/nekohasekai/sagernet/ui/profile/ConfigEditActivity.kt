@@ -92,10 +92,11 @@ class ConfigEditActivity : ThemedActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
-                        or WindowInsetsCompat.Type.ime()
             )
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             v.updatePadding(
                 left = bars.left,
+                bottom = ime.bottom,
             )
             insets
         }
@@ -103,7 +104,6 @@ class ConfigEditActivity : ThemedActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
-                        or WindowInsetsCompat.Type.ime()
             )
             v.updatePadding(
                 right = bars.right,
@@ -126,7 +126,6 @@ class ConfigEditActivity : ThemedActivity() {
             dirty = true
             onBackPressedCallback.isEnabled = true
         }
-        binding.editor.setHorizontallyScrolling(true)
 
         runOnDefaultDispatcher {
             config = DataStore.serverConfig

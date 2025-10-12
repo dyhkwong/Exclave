@@ -9,22 +9,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <FrameLayout
-        android:layoutDirection="ltr"
+    <HorizontalScrollView
         android:id="@+id/layout_editor"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none">
 
-        <com.blacksquircle.ui.editorkit.widget.TextProcessor
-            android:id="@+id/editor"
-            android:layout_width="match_parent"
+        <ScrollView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@null"
-            android:completionThreshold="2"
-            android:importantForAutofill="no"
-            android:scrollbars="vertical|horizontal" />
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-    </FrameLayout>
+            <com.blacksquircle.ui.editorkit.widget.TextProcessor
+                android:id="@+id/editor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:completionThreshold="2"
+                android:scrollbars="none"
+                android:importantForAutofill="no" />
+
+        </ScrollView>
+
+    </HorizontalScrollView>
 
 </LinearLayout>
