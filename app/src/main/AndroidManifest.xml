@@ -261,12 +261,10 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.StunActivity"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.ProbeCertActivity"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan"
             android:parentActivityName="io.nekohasekai.sagernet.ui.MainActivity" />
 
         <activity

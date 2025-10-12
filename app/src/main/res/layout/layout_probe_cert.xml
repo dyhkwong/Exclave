@@ -171,8 +171,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="text|textMultiLine"
                         android:singleLine="false"
-                        android:scrollbars="vertical"
-                        android:lines="3"
+                        android:maxLines="3"
                         android:textAppearance="?attr/textAppearanceBody2"
                         android:textColor="?android:textColorSecondary"
                         tools:ignore="LabelFor" />
