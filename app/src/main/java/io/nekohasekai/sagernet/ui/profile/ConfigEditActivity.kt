@@ -92,6 +92,7 @@ class ConfigEditActivity : ThemedActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
+                        or WindowInsetsCompat.Type.ime()
             )
             v.updatePadding(
                 left = bars.left,
@@ -102,6 +103,7 @@ class ConfigEditActivity : ThemedActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
+                        or WindowInsetsCompat.Type.ime()
             )
             v.updatePadding(
                 right = bars.right,
@@ -154,7 +156,7 @@ class ConfigEditActivity : ThemedActivity() {
             DataStore.serverConfig = JSONObject(config).toStringPretty()
         } catch (e: Exception) {
             DataStore.serverConfig = config
-                MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
+            MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
                 .setMessage(e.readableMessage).show()
             return
         }
