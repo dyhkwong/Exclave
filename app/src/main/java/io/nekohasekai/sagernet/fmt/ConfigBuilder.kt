@@ -23,7 +23,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
-import androidx.core.net.toUri
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
@@ -122,6 +121,7 @@ import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.ktx.toHysteriaPort
 import io.nekohasekai.sagernet.ktx.unescapeLineFeed
 import io.nekohasekai.sagernet.utils.PackageCache
+import libcore.Libcore
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -2064,22 +2064,26 @@ fun buildV2RayConfig(
             }
         }
 
-        remoteDNS.forEach { dns ->
-            dns.toUri().host?.takeIf { !it.isIpAddress() }?.also {
-                bypassDomainSkipFakeDns.add("full:$it")
-            }
-            if (!dns.contains("://") && !dns.isIpAddress() && dns != "localhost") {
-                bypassDomainSkipFakeDns.add("full:$dns")
-            }
+        remoteDNS.forEach {
+            try {
+                if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
+                    val url = Libcore.parseURL(it)
+                    if (!url.host.isIpAddress()) {
+                        bypassDomainSkipFakeDns.add("full:${url.host}")
+                    }
+                }
+            } catch (_: Exception) {}
         }
 
-        directDNS.forEach { dns ->
-            dns.toUri().host?.takeIf { !it.isIpAddress() }?.also {
-                bootstrapDomain.add("full:$it")
-            }
-            if (!dns.contains("://") && !dns.isIpAddress() && dns != "localhost") {
-                bootstrapDomain.add("full:$dns")
-            }
+        directDNS.forEach {
+            try {
+                if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
+                    val url = Libcore.parseURL(it)
+                    if (!url.host.isIpAddress()) {
+                        bootstrapDomain.add("full:${url.host}")
+                    }
+                }
+            } catch (_: Exception) {}
         }
 
         var hasDnsTagDirect = false
