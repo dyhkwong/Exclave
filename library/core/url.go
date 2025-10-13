@@ -22,8 +22,6 @@ import (
 	"net/url"
 	"strconv"
 	_ "unsafe"
-
-	url2 "github.com/v2fly/v2ray-core/v5/common/net/url"
 )
 
 type URL interface {
@@ -77,7 +75,7 @@ func setFragment(u *url.URL, fragment string) error
 func setPath(u *url.URL, fragment string) error
 
 func ParseURL(rawURL string) (URL, error) {
-	url, err := url2.Parse(rawURL)
+	url, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, err
 	}
