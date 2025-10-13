@@ -23,6 +23,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -31,6 +33,11 @@ jobs:
         with:
           go-version: 1.25.2
           cache-dependency-path: "library/core/go.sum"
+      - name: Patch Go
+        run: |
+          cd $(go env GOROOT)
+          curl https://github.com/golang/go/commit/9db7e30bb42eed9912f5e7e9e3959f3b38879d5b.diff | patch --verbose -p 1
+          curl https://github.com/golang/go/commit/1cd71689f2ed8f07031a0cc58fc3586ca501839f.diff | patch --verbose -p 1
       - name: Setup Go Mobile
         # https://github.com/golang/mobile/blob/c31d5b91ecc32c0d598b8fe8457d244ca0b4e815/cmd/gomobile/init.go#L83
         run: |
@@ -92,15 +99,9 @@ jobs:
         with:
           name: APKs
           path: artifacts
-      - name: Publish Pre-release
-        if: github.event.inputs.prerelease == 'y'
-        run: |
-          mkdir apks
-          find artifacts -name "*.apk" -exec cp {} apks \;
-          gh release create ${{ github.event.inputs.tag }} --notes="" --title=${{ github.event.inputs.tag }} --prerelease ./apks/*
       - name: Publish Release
         if: github.event.inputs.prerelease != 'y'
         run: |
           mkdir apks
           find artifacts -name "*.apk" -exec cp {} apks \;
-          gh release create ${{ github.event.inputs.tag }} --notes="" --title=${{ github.event.inputs.tag }} ./apks/*
+          gh release create --latest=false ${{ github.event.inputs.tag }} --notes="" --title=${{ github.event.inputs.tag }} ./apks/*
