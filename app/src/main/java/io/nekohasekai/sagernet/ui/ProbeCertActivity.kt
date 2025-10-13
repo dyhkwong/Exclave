@@ -144,10 +144,23 @@ class ProbeCertActivity : ThemedActivity() {
 
     private fun probeCert() {
         binding.waitLayout.isVisible = true
+        var port: Int
+        try {
+            port = binding.probeCertServerPort.text.toString().toInt()
+        } catch (e: NumberFormatException) {
+            binding.waitLayout.isVisible = false
+            binding.certificate.setText("")
+            AlertDialog.Builder(this@ProbeCertActivity)
+                .setTitle(R.string.error_title)
+                .setMessage(e.toString())
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
+                .runCatching { show() }
+            return
+        }
         runOnDefaultDispatcher {
             val result = Libcore.probeCert(
                 binding.probeCertServer.text.toString(),
-                binding.probeCertServerPort.text.toString().toInt(),
+                port,
                 binding.probeCertServerName.text.toString(),
                 binding.probeCertAlpn.text.toString(),
                 when (binding.probeCertProtocol.selectedItemPosition) {
@@ -166,7 +179,6 @@ class ProbeCertActivity : ThemedActivity() {
                         .setTitle(R.string.error_title)
                         .setMessage(result.error)
                         .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .setOnCancelListener { finish() }
                         .runCatching { show() }
                 } else {
                     binding.certificate.setText(result.cert)
@@ -175,7 +187,6 @@ class ProbeCertActivity : ThemedActivity() {
                             .setTitle(R.string.error_title)
                             .setMessage(result.verifyError)
                             .setPositiveButton(android.R.string.ok) { _, _ -> }
-                            .setOnCancelListener { finish() }
                             .runCatching { show() }
                     }
                 }

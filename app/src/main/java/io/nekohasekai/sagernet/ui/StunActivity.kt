@@ -121,7 +121,6 @@ class StunActivity : ThemedActivity() {
                         .setTitle(R.string.error_title)
                         .setMessage(result.error)
                         .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .setOnCancelListener { finish() }
                         .runCatching { show() }
                 }
                 binding.waitLayout.isVisible = false
@@ -150,7 +149,6 @@ class StunActivity : ThemedActivity() {
                         .setTitle(R.string.error_title)
                         .setMessage(result.error)
                         .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .setOnCancelListener { finish() }
                         .runCatching { show() }
                 }
                 binding.waitLayout.isVisible = false
