@@ -60,10 +60,11 @@ class StunActivity : ThemedActivity() {
                 WindowInsetsCompat.Type.systemBars()
                         or WindowInsetsCompat.Type.displayCutout()
             )
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             v.updatePadding(
                 left = bars.left,
                 right = bars.right,
-                bottom = bars.bottom,
+                bottom = if (ime.bottom > bars.bottom) 0 else bars.bottom - ime.bottom,
             )
             insets
         }
