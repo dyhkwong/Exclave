@@ -257,7 +257,9 @@ class AppManagerActivity : ThemedActivity() {
             }
         }
 
-        PackageCache.awaitLoadSync()
+        lifecycleScope.launch {
+            PackageCache.awaitLoadSync()
+        }
 
         initProxiedUids()
         binding.list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
