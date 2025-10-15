@@ -24,6 +24,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
 import kotlinx.coroutines.runBlocking
@@ -52,14 +53,21 @@ object PackageCache {
 
     @SuppressLint("InlinedApi")
     fun reload() {
-        installedPackages = app.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS or PackageManager.MATCH_UNINSTALLED_PACKAGES)
-            .filter {
-                when (it.packageName) {
-                    "android" -> true
-                    else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
-                }
+        installedPackages = app.packageManager.getInstalledPackages(
+            PackageManager.GET_PERMISSIONS or
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                PackageManager.MATCH_UNINSTALLED_PACKAGES
+            } else {
+                @Suppress("DEPRECATION")
+                PackageManager.GET_UNINSTALLED_PACKAGES
             }
-            .associateBy { it.packageName }
+        ).filter {
+            when (it.packageName) {
+                "android" -> true
+                else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
+            }
+        }
+        .associateBy { it.packageName }
 
         val installed = app.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
         installedApps = installed.associateBy { it.packageName }
