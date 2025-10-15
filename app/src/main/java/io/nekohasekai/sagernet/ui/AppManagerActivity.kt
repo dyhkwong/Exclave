@@ -186,6 +186,7 @@ class AppManagerActivity : ThemedActivity() {
 
     private fun initProxiedUids(str: String = DataStore.individual) {
         proxiedUids.clear()
+        PackageCache.awaitLoadSync()
         val apps = cachedApps
         for (line in str.lineSequence()) proxiedUids[(apps[line]
             ?: continue).applicationInfo!!.uid] = true

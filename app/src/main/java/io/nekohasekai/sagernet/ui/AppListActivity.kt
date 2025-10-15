@@ -182,6 +182,7 @@ class AppListActivity : ThemedActivity() {
 
     private fun initProxiedUids(str: String = DataStore.routePackages) {
         proxiedUids.clear()
+        PackageCache.awaitLoadSync()
         val apps = cachedApps
         for (line in str.lineSequence()) proxiedUids[(apps[line]
             ?: continue).applicationInfo!!.uid] = true

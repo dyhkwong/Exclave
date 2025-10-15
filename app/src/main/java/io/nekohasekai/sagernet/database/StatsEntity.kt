@@ -41,6 +41,7 @@ class StatsEntity(
 ) : Parcelable {
 
     fun toStats(): AppStats {
+        PackageCache.awaitLoadSync()
         return AppStats(
             packageName,
             PackageCache[packageName] ?: packageName.toIntOrNull() ?: 1000,

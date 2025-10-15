@@ -40,6 +40,7 @@ import io.nekohasekai.sagernet.Key.MODE_VPN
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
 import io.nekohasekai.sagernet.widget.LinkOrContentPreference
@@ -215,7 +216,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             true
         }
         appTrafficStatistics.isEnabled = serviceMode.value == MODE_VPN
-        appTrafficStatistics.onPreferenceChangeListener = reloadListener
+        appTrafficStatistics.setOnPreferenceChangeListener { _, newValue ->
+            newValue as Boolean
+            if (newValue) {
+                PackageCache.awaitLoadSync()
+            }
+            true
+        }
 
         val profileTrafficStatistics = findPreference<SwitchPreference>(Key.PROFILE_TRAFFIC_STATISTICS)!!
         val speedInterval = findPreference<Preference>(Key.SPEED_INTERVAL)!!

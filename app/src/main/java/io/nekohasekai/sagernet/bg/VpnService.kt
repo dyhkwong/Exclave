@@ -309,6 +309,7 @@ class VpnService : BaseVpnService(),
         tun.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()
         val all = SagerDatabase.statsDao.all().associateBy { it.packageName }
+        PackageCache.awaitLoadSync()
         for (stats in appStats) {
             val packageName = when (val uid = stats.uid) {
                 1000 -> "android"

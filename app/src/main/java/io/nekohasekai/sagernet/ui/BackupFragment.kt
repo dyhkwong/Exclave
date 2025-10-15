@@ -48,6 +48,7 @@ import io.nekohasekai.sagernet.databinding.LayoutBackupBinding
 import io.nekohasekai.sagernet.databinding.LayoutImportBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.PackageCache
 import java.io.File
 import java.util.*
 
@@ -269,6 +270,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
                             ProcessPhoenix.triggerRebirth(
                                 requireContext(), Intent(requireContext(), MainActivity::class.java)
                             )
+                            PackageCache.awaitLoadSync()
                         }.onFailure {
                             Logs.w(it)
                             onMainDispatcher {

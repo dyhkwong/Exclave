@@ -150,6 +150,7 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
         override fun onMenuItemClick(item: MenuItem): Boolean {
             when (item.itemId) {
                 R.id.copy_label -> {
+                    PackageCache.awaitLoadSync()
                     val success = SagerNet.trySetPrimaryClip(PackageCache.loadLabel(stats.packageName))
                     snackbar(if (success) R.string.copy_success else R.string.copy_failed).show()
                 }

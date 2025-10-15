@@ -85,6 +85,7 @@ class RouteSettingsActivity(
         RuleEntity().apply {
             if (!packageName.isNullOrEmpty()) {
                 packages = listOf(packageName)
+                PackageCache.awaitLoadSync()
                 name = getString(R.string.route_for, PackageCache.loadLabel(packageName))
             }
         }.init()

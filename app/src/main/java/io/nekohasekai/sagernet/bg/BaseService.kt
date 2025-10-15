@@ -185,6 +185,7 @@ class BaseService {
             var tun = (data?.proxy?.service as? VpnService)?.tun ?: return
             if (!tun.trafficStatsEnabled) return
 
+            PackageCache.awaitLoadSync()
             while (true) {
                 val delayMs = statsListeners.values.minOrNull()
                 if (delayMs == 0L) return

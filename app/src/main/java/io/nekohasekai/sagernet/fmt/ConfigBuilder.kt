@@ -1794,6 +1794,7 @@ fun buildV2RayConfig(
                     alerts.add(Alerts.ROUTE_ALERT_NOT_VPN to rule.displayName())
                     continue
                 }
+                PackageCache.awaitLoadSync()
                 for (pkg in rule.packages) {
                     PackageCache[pkg]?.let {
                         uidList.add(it)

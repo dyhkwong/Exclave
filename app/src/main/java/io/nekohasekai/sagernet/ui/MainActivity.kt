@@ -63,6 +63,7 @@ import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.group.GroupInterfaceAdapter
 import io.nekohasekai.sagernet.group.GroupUpdater
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.utils.PackageCache
 import io.noties.markwon.Markwon
 
 class MainActivity : ThemedActivity(),
@@ -162,6 +163,11 @@ class MainActivity : ThemedActivity(),
         changeState(BaseService.State.Idle)
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
+
+        if (DataStore.configurationStore.getBoolean("isNotFirstRun") != true) {
+            DataStore.configurationStore.putBoolean("isNotFirstRun", true)
+            PackageCache.awaitLoadSync()
+        }
 
         if (intent?.action == Intent.ACTION_VIEW) {
             onNewIntent(intent)
