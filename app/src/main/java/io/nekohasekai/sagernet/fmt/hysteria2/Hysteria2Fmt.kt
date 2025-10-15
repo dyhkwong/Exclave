@@ -216,7 +216,7 @@ fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean = false, cacheF
 
     val transportObject: MutableMap<String, Any> = HashMap()
     transportObject["type"] = "udp"
-    if (DataStore.hysteriaEnablePortHopping && serverPorts.isValidHysteriaMultiPort()) {
+    if (DataStore.hysteriaEnablePortHopping && serverPorts.isValidHysteriaMultiPort() && hopInterval > 0) {
         val udpObject: MutableMap<String, Any> = HashMap()
         udpObject["hopInterval"] = "$hopInterval" + "s"
         transportObject["udp"] = udpObject

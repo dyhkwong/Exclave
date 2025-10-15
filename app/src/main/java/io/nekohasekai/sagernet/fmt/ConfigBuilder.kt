@@ -1207,7 +1207,9 @@ fun buildV2RayConfig(
                                         }
                                         if (bean.serverPorts.isValidHysteriaMultiPort() && DataStore.hysteriaEnablePortHopping) {
                                             hopPorts = bean.serverPorts
-                                            hopInterval = bean.hopInterval
+                                            if (bean.hopInterval > 0) {
+                                                hopInterval = bean.hopInterval
+                                            }
                                         }
                                     }
                                     tlsSettings = TLSObject().apply {

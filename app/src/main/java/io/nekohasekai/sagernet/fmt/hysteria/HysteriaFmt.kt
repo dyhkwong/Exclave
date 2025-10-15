@@ -156,13 +156,15 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
                 } else {
                     "$serverAddress:$serverPorts"
                 }
+                if (hopInterval > 0) {
+                    it["hop_interval"] = hopInterval
+                }
             } else {
                 it["server"] = if (serverAddress.isIpv6Address()) {
                     "[" + serverAddress + "]:" + serverPorts.toHysteriaPort()
                 } else {
                     serverAddress + ":" + serverPorts.toHysteriaPort()
                 }
-                it["hop_interval"] = hopInterval
             }
         } else {
             it["server"] = joinHostPort(finalAddress, finalPort)

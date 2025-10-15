@@ -477,7 +477,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 alpn = (proxy.getArray("alpn") as? List<String>)?.get(0)
                 allowInsecure = proxy.getClashBool("skip-cert-verify") == true
                 obfuscation = proxy.getClashString("obfs")?.takeIf { it.isNotEmpty() }
-                hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()
+                hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()?.takeIf { it > 0 }
                 name = proxy.getClashString("name")
             })
         }
@@ -518,7 +518,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         else -> return listOf()
                     }
                 }
-                hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()
+                hopInterval = proxy.getClashString("hop-interval")?.toUIntOrNull()?.toLong()?.takeIf { it > 0 }
                 name = proxy.getClashString("name")
             })
         }

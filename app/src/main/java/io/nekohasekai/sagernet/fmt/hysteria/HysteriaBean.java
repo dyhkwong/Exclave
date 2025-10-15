@@ -105,7 +105,7 @@ public class HysteriaBean extends AbstractBean {
         if (disableMtuDiscovery == null) disableMtuDiscovery = false;
 
         if (serverPorts == null) serverPorts = "1080";
-        if (hopInterval == null) hopInterval = 10L;
+        if (hopInterval == null) hopInterval = 0L;
     }
 
     @Override

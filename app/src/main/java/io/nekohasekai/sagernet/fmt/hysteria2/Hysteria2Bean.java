@@ -90,7 +90,7 @@ public class Hysteria2Bean extends AbstractBean {
         if (initConnReceiveWindow == null) initConnReceiveWindow = 0;
         if (maxConnReceiveWindow == null) maxConnReceiveWindow = 0;
         if (serverPorts == null) serverPorts = "1080";
-        if (hopInterval == null) hopInterval = 30L;
+        if (hopInterval == null) hopInterval = 0L;
         if (echConfig == null) echConfig = "";
         if (mtlsCertificate == null) mtlsCertificate = "";
         if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
