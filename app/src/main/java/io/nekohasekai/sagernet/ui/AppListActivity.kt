@@ -226,9 +226,7 @@ class AppListActivity : ThemedActivity() {
             setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
         }
 
-        lifecycleScope.launch {
-            PackageCache.awaitLoadSync()
-        }
+        PackageCache.awaitLoadSync()
 
         initProxiedUids()
         binding.list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
