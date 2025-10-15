@@ -85,6 +85,10 @@ class SagerNet : Application(),
         updateNotificationChannels()
         Seq.setContext(this)
 
+        runOnDefaultDispatcher {
+            PackageCache.register()
+        }
+
         val processName = if (Build.VERSION.SDK_INT >= 28) {
             getProcessName()
         } else {
