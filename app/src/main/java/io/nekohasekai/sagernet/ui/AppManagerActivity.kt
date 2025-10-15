@@ -257,6 +257,8 @@ class AppManagerActivity : ThemedActivity() {
             }
         }
 
+        PackageCache.awaitLoadSync()
+
         initProxiedUids()
         binding.list.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         binding.list.itemAnimator = DefaultItemAnimator()
