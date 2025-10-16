@@ -85,12 +85,6 @@ class MainActivity : ThemedActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (app.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
-            }
-        }
-
         binding = LayoutMainBinding.inflate(layoutInflater)
         when (DataStore.fabStyle) {
             FabStyle.SagerNet -> {
@@ -164,13 +158,18 @@ class MainActivity : ThemedActivity(),
         connection.connect(this, this)
         DataStore.configurationStore.registerChangeListener(this)
 
-        if (DataStore.configurationStore.getBoolean("isNotFirstRun") != true) {
-            DataStore.configurationStore.putBoolean("isNotFirstRun", true)
-            PackageCache.awaitLoadSync()
-        }
-
         if (intent?.action == Intent.ACTION_VIEW) {
             onNewIntent(intent)
+        }
+
+        if (DataStore.configurationStore.getBoolean("isNotFirstRun") != true) {
+            DataStore.configurationStore.putBoolean("isNotFirstRun", true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (app.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+                }
+            }
+            PackageCache.awaitLoadSync()
         }
     }
 
