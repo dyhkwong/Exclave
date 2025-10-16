@@ -85,10 +85,10 @@ class LinkPreference : EditTextPreference {
 
                     if (uri.scheme.isNullOrBlank()) {
                         error("Missing scheme in url")
-                    } else if (uri.scheme == "http") {
+                    } else if (uri.scheme?.lowercase() == "http") {
                         linkLayout.error = context.getString(R.string.cleartext_http_warning)
                         linkLayout.isErrorEnabled = true
-                    } else if (uri.scheme != "https") {
+                    } else if (uri.scheme?.lowercase() != "https") {
                         error("Invalid scheme ${uri.scheme}")
                     } else {
                         linkLayout.isErrorEnabled = false

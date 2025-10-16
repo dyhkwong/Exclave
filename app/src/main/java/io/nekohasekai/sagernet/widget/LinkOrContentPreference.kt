@@ -27,6 +27,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.readableMessage
+import androidx.core.net.toUri
 
 class LinkOrContentPreference : EditTextPreference {
 
@@ -57,17 +58,17 @@ class LinkOrContentPreference : EditTextPreference {
                     if (link.toString().contains("\n")) {
                             error("invalid url")
                     }
-                    val uri = Uri.parse(link.toString())
+                    val uri = link.toString().toUri()
 
                     if (uri.scheme.isNullOrBlank()) {
                         error("Missing scheme in url")
-                    } else if (uri.scheme == "content") {
+                    } else if (uri.scheme?.lowercase() == "content") {
                         linkLayout.isErrorEnabled = false
                         return
-                    } else if (uri.scheme == "http") {
+                    } else if (uri.scheme?.lowercase() == "http") {
                         linkLayout.error = context.getString(R.string.cleartext_http_warning)
                         linkLayout.isErrorEnabled = true
-                    } else if (uri.scheme != "https") {
+                    } else if (uri.scheme?.lowercase() != "https") {
                         error("Invalid scheme ${uri.scheme}")
                     } else {
                         linkLayout.isErrorEnabled = false
