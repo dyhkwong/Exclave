@@ -49,6 +49,7 @@
             app:title="@string/mieru_multiplexing_level"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
+            app:defaultValue="2"
             app:entries="@array/mieru_handshake_mode_entry"
             app:entryValues="@array/mieru_handshake_mode_value"
             app:icon="@drawable/baseline_flight_takeoff_24"

@@ -614,7 +614,14 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         "MULTIPLEXING_LOW" -> MieruBean.MULTIPLEXING_LOW
                         "MULTIPLEXING_MIDDLE" -> MieruBean.MULTIPLEXING_MIDDLE
                         "MULTIPLEXING_HIGH" -> MieruBean.MULTIPLEXING_HIGH
-                        else -> MieruBean.MULTIPLEXING_LOW
+                        else -> MieruBean.MULTIPLEXING_DEFAULT
+                    }
+                }
+                proxy.getClashString("handshake-mode")?.also {
+                    multiplexingLevel = when (it) {
+                        "HANDSHAKE_STANDARD" -> MieruBean.HANDSHAKE_STANDARD
+                        "HANDSHAKE_NO_WAIT" -> MieruBean.HANDSHAKE_NO_WAIT
+                        else -> MieruBean.HANDSHAKE_DEFAULT
                     }
                 }
                 name = proxy.getClashString("name")

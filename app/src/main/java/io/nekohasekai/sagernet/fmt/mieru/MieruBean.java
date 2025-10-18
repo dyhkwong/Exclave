@@ -39,6 +39,7 @@ public class MieruBean extends AbstractBean {
     public static final int MULTIPLEXING_MIDDLE = 3;
     public static final int MULTIPLEXING_HIGH = 4;
 
+    public static final int HANDSHAKE_DEFAULT = 2;
     public static final int HANDSHAKE_STANDARD = 0;
     public static final int HANDSHAKE_NO_WAIT = 1;
 
@@ -57,7 +58,7 @@ public class MieruBean extends AbstractBean {
         if (password == null) password = "";
         if (mtu == null) mtu = 1400;
         if (multiplexingLevel == null) multiplexingLevel = MULTIPLEXING_DEFAULT;
-        if (handshakeMode == null) handshakeMode = HANDSHAKE_STANDARD;
+        if (handshakeMode == null) handshakeMode = HANDSHAKE_DEFAULT;
     }
 
     @Override

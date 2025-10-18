@@ -772,7 +772,7 @@
     </string-array>
 
     <string-array name="mieru_mux_level_entry">
-        <item />
+        <item>MULTIPLEXING_DEFAULT</item>
         <item>MULTIPLEXING_OFF</item>
         <item>MULTIPLEXING_LOW</item>
         <item>MULTIPLEXING_MIDDLE</item>
@@ -923,11 +923,13 @@
     </string-array>
 
     <string-array name="mieru_handshake_mode_entry">
+        <item>HANDSHAKE_DEFAULT</item>
         <item>HANDSHAKE_STANDARD</item>
         <item>HANDSHAKE_NO_WAIT</item>
     </string-array>
 
     <string-array name="mieru_handshake_mode_value">
+        <item>2</item>
         <item>0</item>
         <item>1</item>
     </string-array>

@@ -64,6 +64,12 @@ fun parseMieru(link: String): MieruBean {
                 "MULTIPLEXING_HIGH" -> multiplexingLevel = MieruBean.MULTIPLEXING_HIGH
             }
         }
+        url.queryParameter("handshake-mode")?.let {
+            when (it) {
+                "HANDSHAKE_STANDARD" -> handshakeMode = MieruBean.HANDSHAKE_STANDARD
+                "HANDSHAKE_NO_WAIT" -> handshakeMode = MieruBean.HANDSHAKE_NO_WAIT
+            }
+        }
     }
 }
 
@@ -108,6 +114,14 @@ fun MieruBean.toUri(): String? {
         }
         MieruBean.MULTIPLEXING_HIGH -> {
             builder.addQueryParameter("multiplexing", "MULTIPLEXING_HIGH")
+        }
+    }
+    when (handshakeMode) {
+        MieruBean.HANDSHAKE_STANDARD -> {
+            builder.addQueryParameter("handshake-mode", "HANDSHAKE_STANDARD")
+        }
+        MieruBean.HANDSHAKE_NO_WAIT -> {
+            builder.addQueryParameter("handshake-mode", "HANDSHAKE_NO_WAIT")
         }
     }
     return builder.string
@@ -164,6 +178,7 @@ fun MieruBean.buildMieruConfig(port: Int): String {
                     }
                 }
                 when (handshakeMode) {
+                    MieruBean.HANDSHAKE_STANDARD -> it["handshakeMode"] = "HANDSHAKE_STANDARD"
                     MieruBean.HANDSHAKE_NO_WAIT -> it["handshakeMode"] = "HANDSHAKE_NO_WAIT"
                 }
             })
