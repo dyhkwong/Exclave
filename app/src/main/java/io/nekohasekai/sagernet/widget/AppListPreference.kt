@@ -40,6 +40,7 @@ class AppListPreference : Preference {
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun getSummary(): CharSequence {
+        PackageCache.awaitLoadSync()
         val packages = DataStore.routePackages.split("\n").filter { it.isNotEmpty() }.map {
             PackageCache.installedPackages[it]?.applicationInfo?.loadLabel(app.packageManager) ?: it
         }
