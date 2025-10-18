@@ -19,13 +19,13 @@
 
 package io.nekohasekai.sagernet.fmt.juicity
 
-import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import java.util.Base64
 
 // invalid option
 val supportedJuicityCongestionControl = arrayOf("cubic", "bbr", "new_reno")
@@ -51,15 +51,14 @@ fun parseJuicity(url: String): JuicityBean {
             }
         }
         link.queryParameter("pinned_certchain_sha256")?.also {
-            when {
+            pinnedPeerCertificateChainSha256 = when {
                 it.length == 64 -> {
-                    Base64.encodeUrlSafe(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                    Base64.getUrlEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
                 }
                 else -> {
                     it.replace('/', '_').replace('+', '-')
                 }
             }
-            pinnedPeerCertificateChainSha256 = it.lowercase()
             // match Juicity's behavior
             // https://github.com/juicity/juicity/blob/412dbe43e091788c5464eb2d6e9c169bdf39f19c/cmd/client/run.go#L97
             allowInsecure = true
@@ -89,10 +88,10 @@ fun JuicityBean.toUri(): String? {
         val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
         builder.addQueryParameter("pinned_certchain_sha256", when {
             certChainHash.length == 64 -> {
-                Base64.encodeUrlSafe(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                Base64.getUrlEncoder().encodeToString(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
             }
             else -> {
-                certChainHash.replace('/', '_').replace('+', '-').lowercase()
+                certChainHash.replace('/', '_').replace('+', '-')
             }
         })
     }
@@ -126,7 +125,7 @@ fun JuicityBean.buildJuicityConfig(port: Int): String {
             val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
             it["pinned_certchain_sha256"] = when {
                 certChainHash.length == 64 -> {
-                    Base64.encodeUrlSafe(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                    Base64.getUrlEncoder().encodeToString(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
                 }
                 else -> {
                     certChainHash.replace('/', '_').replace('+', '-')
