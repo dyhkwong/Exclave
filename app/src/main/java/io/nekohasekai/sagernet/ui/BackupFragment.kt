@@ -230,7 +230,11 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
             invalid()
             return
         }
-        val version = content.getInt("version", 0)
+        val version = content["version"] as? Integer
+        if (version == null) {
+            invalid()
+            return
+        }
         if (version < 1 || version > 1) {
             invalid()
             return
