@@ -221,6 +221,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             if (newValue) {
                 PackageCache.awaitLoadSync()
             }
+            needReload()
             true
         }
 
