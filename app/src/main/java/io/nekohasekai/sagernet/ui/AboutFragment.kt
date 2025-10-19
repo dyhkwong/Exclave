@@ -46,7 +46,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
 import io.nekohasekai.sagernet.fmt.PluginEntry
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
@@ -84,11 +83,13 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
         runOnDefaultDispatcher {
             onMainDispatcher {
-                binding.license.text = "Copyright (C) 2023 by dyhkwong\n" +
-                        "Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>\n\n" +
-                        "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.\n\n" +
-                        "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n" +
-                        "You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>."
+                binding.license.text = getString(
+                    if (Libcore.buildWithClash()) {
+                        R.string.license_gpl_v3_only
+                    } else {
+                        R.string.license_gpl_v3_or_later
+                    }
+                )
                 Linkify.addLinks(binding.license, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS)
             }
         }
