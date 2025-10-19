@@ -102,7 +102,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
                 )
                 onMainDispatcher {
                     startFilesForResult(
-                        exportSettings, "exclave_backup_${Date().toLocaleString()}.json"
+                        exportSettings, "exclave_backup_${System.currentTimeMillis()}.json"
                     )
                 }
             }
@@ -117,7 +117,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
                 )
                 app.cacheDir.mkdirs()
                 val cacheFile = File(
-                    app.cacheDir, "exclave_backup_${Date().toLocaleString()}.json"
+                    app.cacheDir, "exclave_backup_${System.currentTimeMillis()}.json"
                 )
                 cacheFile.writeText(content)
                 onMainDispatcher {
