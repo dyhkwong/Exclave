@@ -25,6 +25,7 @@ import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import java.io.File
+import kotlin.io.encoding.Base64
 
 val supportedHysteriaProtocol = arrayOf("udp", "faketcp", "wechat-video")
 
@@ -105,7 +106,7 @@ fun HysteriaBean.toUri(): String? {
     if (authPayloadType != HysteriaBean.TYPE_NONE && authPayload.isNotEmpty()) {
         when (authPayloadType) {
             HysteriaBean.TYPE_BASE64 -> {
-                builder.addQueryParameter("auth", authPayload.decodeBase64UrlSafe())
+                builder.addQueryParameter("auth", String(Base64.decode(authPayload)))
             }
             HysteriaBean.TYPE_STRING -> {
                 builder.addQueryParameter("auth", authPayload)

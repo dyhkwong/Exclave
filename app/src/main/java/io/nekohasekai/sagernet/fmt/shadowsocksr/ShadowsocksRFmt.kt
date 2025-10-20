@@ -18,13 +18,10 @@
  ******************************************************************************/
 
 package io.nekohasekai.sagernet.fmt.shadowsocksr
-
-import cn.hutool.core.codec.Base64
-import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
-import java.util.*
-import kotlin.collections.joinToString
+import java.util.Locale
+import kotlin.io.encoding.Base64
 
 val supportedShadowsocksRMethod = arrayOf(
     "rc4","rc4-md5","rc4-md5-6",
@@ -49,7 +46,7 @@ val supportedShadowsocksRObfs = arrayOf(
 
 fun parseShadowsocksR(url: String): ShadowsocksRBean {
     // https://github.com/shadowsocksrr/shadowsocks-rss/wiki/SSR-QRcode-scheme
-    val params = url.substring("ssr://".length).decodeBase64UrlSafe().split(":")
+    val params = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(url.substring("ssr://".length))).split(":")
     if (params.size < 6) error("invalid url")
 
     val bean = ShadowsocksRBean().apply {
@@ -61,28 +58,28 @@ fun parseShadowsocksR(url: String): ShadowsocksRBean {
             "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
             else -> it.takeIf { it in supportedShadowsocksRObfs } ?: error("unsupported obfs")
         }
-        password = params[params.size - 1].substringBefore("/").decodeBase64UrlSafe()
+        password = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(params[params.size - 1].substringBefore("/")))
     }
 
     val httpUrl = Libcore.parseURL("https://localhost" + params[params.size - 1].substringAfter("/", ""))
 
     httpUrl.queryParameter("obfsparam")?.let {
-        bean.obfsParam = it.decodeBase64UrlSafe()
+        bean.obfsParam = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(it))
     }
 
     httpUrl.queryParameter("protoparam")?.let {
-        bean.protocolParam = it.decodeBase64UrlSafe()
+        bean.protocolParam = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(it))
     }
 
     httpUrl.queryParameter("remarks")?.let {
-        bean.name = it.decodeBase64UrlSafe()
+        bean.name = String(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(it))
     }
 
     return bean
 }
 
 fun ShadowsocksRBean.toUri(): String {
-    return "ssr://" + Base64.encodeUrlSafe(
+    return "ssr://" + Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(
         "%s:%d:%s:%s:%s:%s/?obfsparam=%s&protoparam=%s&remarks=%s".format(
             Locale.ENGLISH,
             serverAddress.ifEmpty { error("empty server address") },
@@ -90,14 +87,10 @@ fun ShadowsocksRBean.toUri(): String {
             protocol,
             method,
             obfs,
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, password)),
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, obfsParam)),
-            Base64.encodeUrlSafe("%s".format(Locale.ENGLISH, protocolParam)),
-            Base64.encodeUrlSafe(
-                "%s".format(
-                    Locale.ENGLISH, name ?: ""
-                )
-            )
-        )
+            Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode("%s".format(Locale.ENGLISH, password).toByteArray()),
+            Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode("%s".format(Locale.ENGLISH, obfsParam).toByteArray()),
+            Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode("%s".format(Locale.ENGLISH, protocolParam).toByteArray()),
+            Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode("%s".format(Locale.ENGLISH, name ?: "").toByteArray())
+        ).toByteArray()
     )
 }

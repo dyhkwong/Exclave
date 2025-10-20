@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.ktx
 
-import cn.hutool.core.codec.Base64
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.parseAnyTLS
@@ -40,11 +39,16 @@ import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic5.parseTuic
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuard
+import kotlin.io.encoding.Base64
 
-fun String.decodeBase64UrlSafe(): String {
-    return Base64.decodeStr(
-        replace(' ', '-').replace('/', '_').replace('+', '-').replace("=", "")
-    )
+fun String.decodeBase64(): String {
+    if (this.contains("-") || this.contains("_")) {
+        return String(Base64.UrlSafe.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL).decode(this))
+    }
+    if (this.contains("+") || this.contains("/")) {
+        return String(Base64.Default.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
+    }
+    return String(Base64.Default.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
 }
 
 class SubscriptionFoundException(val link: String) : RuntimeException()

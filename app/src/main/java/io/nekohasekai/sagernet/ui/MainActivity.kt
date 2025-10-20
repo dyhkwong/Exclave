@@ -29,7 +29,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
 import android.provider.Settings
-import android.text.util.Linkify
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
@@ -41,7 +40,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
-import cn.hutool.core.codec.Base64Decoder
 import cn.hutool.core.util.ZipUtil
 import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
 import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_END
@@ -67,6 +65,7 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.noties.markwon.Markwon
 import libcore.Libcore
+import kotlin.io.encoding.Base64
 import kotlin.system.exitProcess
 
 class MainActivity : ThemedActivity(),
@@ -251,7 +250,7 @@ class MainActivity : ThemedActivity(),
             val data = uri.encodedQuery.takeIf { !it.isNullOrBlank() } ?: return
             try {
                 group = KryoConverters.deserialize(
-                    ProxyGroup().apply { export = true }, ZipUtil.unZlib(Base64Decoder.decode(data))
+                    ProxyGroup().apply { export = true }, ZipUtil.unZlib(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(data))
                 ).apply {
                     export = false
                 }

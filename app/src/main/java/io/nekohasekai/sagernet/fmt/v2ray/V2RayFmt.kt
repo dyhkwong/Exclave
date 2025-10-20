@@ -70,7 +70,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     }
 
     if (url.scheme == "vmess" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
-        val decoded = link.substring("vmess://".length).substringBefore("#").decodeBase64UrlSafe()
+        val decoded = link.substring("vmess://".length).substringBefore("#").decodeBase64()
         val json = try {
             JSONUtil.parse(decoded)
         } catch (_: Exception) {

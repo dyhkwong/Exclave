@@ -32,8 +32,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import cn.hutool.core.codec.Base64Decoder
-import cn.hutool.core.codec.Base64Encoder
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -49,7 +47,7 @@ import io.nekohasekai.sagernet.databinding.LayoutImportBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.ktx.*
 import java.io.File
-import java.util.*
+import kotlin.io.encoding.Base64
 
 class BackupFragment : NamedFragment(R.layout.layout_backup) {
 
@@ -146,7 +144,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
         val parcel = Parcel.obtain()
         writeToParcel(parcel, 0)
         try {
-            return Base64Encoder.encodeStr(parcel.marshall(), false, false)
+            return Base64.encode(parcel.marshall())
         } finally {
             parcel.recycle()
         }
@@ -296,7 +294,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
         if (profile && content.containsKey("profiles")) {
             val profiles = mutableListOf<ProxyEntity>()
             content.getJSONArray("profiles").toList().forEach {
-                val data = Base64Decoder.decode(it.toString())
+                val data = Base64.decode(it.toString())
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
                 parcel.setDataPosition(0)
@@ -308,7 +306,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
 
             val groups = mutableListOf<ProxyGroup>()
             content.getJSONArray("groups").toList().forEach {
-                val data = Base64Decoder.decode(it.toString())
+                val data = Base64.decode(it.toString())
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
                 parcel.setDataPosition(0)
@@ -321,7 +319,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
         if (rule && content.containsKey("rules")) {
             val rules = mutableListOf<RuleEntity>()
             content.getJSONArray("rules").toList().forEach {
-                val data = Base64Decoder.decode(it.toString())
+                val data = Base64.decode(it.toString())
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
                 parcel.setDataPosition(0)
@@ -333,7 +331,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
 
             val assets = mutableListOf<AssetEntity>()
             content.getJSONArray("assets").toList().forEach {
-                val data = Base64Decoder.decode(it.toString())
+                val data = Base64.decode(it.toString())
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
                 parcel.setDataPosition(0)
@@ -346,7 +344,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
         if (setting && content.containsKey("settings")) {
             val settings = mutableListOf<KeyValuePair>()
             content.getJSONArray("settings").toList().forEach {
-                val data = Base64Decoder.decode(it.toString())
+                val data = Base64.decode(it.toString())
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
                 parcel.setDataPosition(0)

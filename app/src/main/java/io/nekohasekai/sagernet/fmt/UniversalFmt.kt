@@ -19,22 +19,21 @@
 
 package io.nekohasekai.sagernet.fmt
 
-import cn.hutool.core.codec.Base64Decoder
-import cn.hutool.core.codec.Base64Encoder
 import cn.hutool.core.util.ZipUtil
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyGroup
+import kotlin.io.encoding.Base64
 
 fun parseBackupLink(link: String): AbstractBean {
     return if (link.contains("?")) {
         val type = link.substring("exclave://".length).substringBefore("?")
         ProxyEntity(type = TypeMap[type] ?: error("Type $type not found")).apply {
-            putByteArray(ZipUtil.unZlib(Base64Decoder.decode(link.substringAfter("?"))))
+            putByteArray(ZipUtil.unZlib(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(link.substringAfter("?"))))
         }.requireBean()
     } else {
         val type = link.substring("exclave://".length).substringBefore(":")
         ProxyEntity(type = TypeMap[type] ?: error("Type $type not found")).apply {
-            putByteArray(Base64Decoder.decode(link.substringAfter(":").substringAfter(":")))
+            putByteArray(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(link.substringAfter(":").substringAfter(":")))
         }.requireBean()
     }
 }
@@ -43,7 +42,7 @@ fun AbstractBean.exportBackup(): String {
     var link = "exclave://"
     link += TypeMap.reversed[ProxyEntity().putBean(this).type]
     link += "?"
-    link += Base64Encoder.encodeUrlSafe(ZipUtil.zlib(KryoConverters.serialize(this), 9))
+    link += Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(ZipUtil.zlib(KryoConverters.serialize(this), 9))
     return link
 }
 
@@ -51,7 +50,7 @@ fun AbstractBean.exportBackup(): String {
 fun ProxyGroup.exportBackup(): String {
     var link = "exclave://subscription?"
     export = true
-    link += Base64Encoder.encodeUrlSafe(ZipUtil.zlib(KryoConverters.serialize(this), 9))
+    link += Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(ZipUtil.zlib(KryoConverters.serialize(this), 9))
     export = false
     return link
 }

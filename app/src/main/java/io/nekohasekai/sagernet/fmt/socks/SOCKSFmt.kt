@@ -19,7 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt.socks
 
-import io.nekohasekai.sagernet.ktx.decodeBase64UrlSafe
+import io.nekohasekai.sagernet.ktx.decodeBase64
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 
@@ -28,7 +28,7 @@ fun parseSOCKS(link: String): SOCKSBean {
     if (url.scheme == "socks" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
         // old v2rayNG format
         // This format is broken if username and/or password contains ":".
-        val plainUri = link.substring("socks://".length).substringBefore("#").decodeBase64UrlSafe()
+        val plainUri = link.substring("socks://".length).substringBefore("#").decodeBase64()
         return SOCKSBean().apply {
             protocol = SOCKSBean.PROTOCOL_SOCKS5
             serverAddress = plainUri.substringAfterLast("@").substringBeforeLast(":").removePrefix("[").removeSuffix("]")
@@ -38,15 +38,15 @@ fun parseSOCKS(link: String): SOCKSBean {
             name = url.fragment
         }
     }
-    if (url.scheme == "socks" && url.password.isEmpty() && url.username.decodeBase64UrlSafe().contains(":")) {
+    if (url.scheme == "socks" && url.password.isEmpty() && url.username.decodeBase64().contains(":")) {
         // new v2rayNG format
         // This format is broken if username and/or password contains ":".
         return SOCKSBean().apply {
             protocol = SOCKSBean.PROTOCOL_SOCKS5
             serverAddress = url.host
             serverPort = url.port
-            username = url.username.decodeBase64UrlSafe().substringBefore(":")
-            password = url.username.decodeBase64UrlSafe().substringAfter(":")
+            username = url.username.decodeBase64().substringBefore(":")
+            password = url.username.decodeBase64().substringAfter(":")
             name = url.fragment
         }
     }

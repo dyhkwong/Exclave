@@ -38,7 +38,6 @@ import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.LoaderOptions
-import org.yaml.snakeyaml.TypeDescription
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import org.yaml.snakeyaml.nodes.Tag
@@ -254,7 +253,7 @@ object RawUpdater : GroupUpdater() {
             }
         } catch (_: Exception) {}
         try {
-            parseShareLinks(text.decodeBase64UrlSafe()).takeIf { it.isNotEmpty() }?.let {
+            parseShareLinks(text.decodeBase64()).takeIf { it.isNotEmpty() }?.let {
                 return it
             }
         } catch (e: SubscriptionFoundException) {

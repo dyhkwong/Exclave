@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.core.codec.Base64
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
@@ -31,6 +30,7 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedQuicSecurity
+import kotlin.io.encoding.Base64
 
 @Suppress("UNCHECKED_CAST")
 fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
@@ -90,8 +90,8 @@ fun parseV2ray5Outbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                                     it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                                 }
                                                 if (cert != null && key != null) {
-                                                    v2rayBean.mtlsCertificate = Base64.decodeStr(cert)
-                                                    v2rayBean.mtlsCertificatePrivateKey = Base64.decodeStr(key)
+                                                    v2rayBean.mtlsCertificate = String(Base64.decode(cert))
+                                                    v2rayBean.mtlsCertificatePrivateKey = String(Base64.decode(key))
                                                 }
                                             }
                                         }

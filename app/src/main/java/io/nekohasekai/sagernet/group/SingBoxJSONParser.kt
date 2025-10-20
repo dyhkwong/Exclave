@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.core.codec.Base64
 import cn.hutool.core.lang.UUID
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -44,6 +43,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedVmessMethod
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
+import kotlin.io.encoding.Base64
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -797,9 +797,10 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                     if (it.size == 3) {
                         reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                     }
-                } ?: Base64.decode(outbound.getString("reserved"))?.also {
-                    if (it.size == 3) {
-                        reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
+                } ?: outbound.getString("reserved")?.also {
+                    val arr = Base64.decode(it)
+                    if (arr.size == 3) {
+                        reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
                     }
                 }
             }
@@ -833,9 +834,10 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
-                    } ?: Base64.decode(peer.getString("reserved"))?.also {
-                        if (it.size == 3) {
-                            reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
+                    } ?: peer.getString("reserved")?.also {
+                        val arr = Base64.decode(it)
+                        if (arr.size == 3) {
+                            reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
                         }
                     }
                 })
@@ -893,10 +895,11 @@ fun parseSingBoxEndpoint(endpoint: Map<String, Any?>): List<AbstractBean> {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
-                    } ?: Base64.decode(peer.getString("reserved"))?.also {
-                        if (it.size == 3) {
-                            reserved = listOf(it[0].toUByte().toInt().toString(), it[1].toUByte().toInt().toString(), it[2].toUByte().toInt().toString()).joinToString(",")
-                        }
+                    } ?: peer.getString("reserved")?.also {
+                        val arr = Base64.decode(it)
+                        if (arr.size == 3) {
+                        reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
+                    }
                     }
                 })
             }

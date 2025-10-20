@@ -17,7 +17,6 @@
  *                                                                            *
  ******************************************************************************/
 
-import cn.hutool.core.codec.Base64
 import com.android.build.api.dsl.*
 import com.android.build.gradle.AbstractAppExtension
 import com.android.build.gradle.internal.api.ApkVariantOutputImpl
@@ -27,6 +26,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import java.util.*
+import kotlin.io.encoding.Base64
 
 private val Project.android
     get() = extensions.getByName<CommonExtension<BuildFeatures, BuildType, DefaultConfig, ProductFlavor, AndroidResources, Installation>>(
@@ -52,8 +52,7 @@ fun Project.requireLocalProperties(): Properties {
 
         val base64 = System.getenv("LOCAL_PROPERTIES")
         if (!base64.isNullOrBlank()) {
-
-            localProperties.load(StringInputStream(Base64.decodeStr(base64)))
+            localProperties.load(StringInputStream(String(Base64.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL).decode(base64))))
         } else if (project.rootProject.file("local.properties").exists()) {
             localProperties.load(rootProject.file("local.properties").inputStream())
         }

@@ -23,7 +23,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
-import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
@@ -122,6 +121,7 @@ import io.nekohasekai.sagernet.ktx.toHysteriaPort
 import io.nekohasekai.sagernet.ktx.unescapeLineFeed
 import io.nekohasekai.sagernet.utils.PackageCache
 import libcore.Libcore
+import kotlin.io.encoding.Base64
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -1133,11 +1133,11 @@ fun buildV2RayConfig(
                                         mtu = bean.mtu
                                         val values = bean.reserved.listByLineOrComma()
                                         if (values.size == 3) {
-                                            val reserved0 = values[0].toIntOrNull()
-                                            val reserved1 = values[1].toIntOrNull()
-                                            val reserved2 = values[2].toIntOrNull()
+                                            val reserved0 = values[0].toUByteOrNull()
+                                            val reserved1 = values[1].toUByteOrNull()
+                                            val reserved2 = values[2].toUByteOrNull()
                                             if (reserved0 != null && reserved1 != null && reserved2 != null) {
-                                                reserved = listOf(reserved0, reserved1, reserved2)
+                                                reserved = listOf(reserved0.toInt(), reserved1.toInt(), reserved2.toInt())
                                             }
                                         } else {
                                             val array = Base64.decode(bean.reserved)
