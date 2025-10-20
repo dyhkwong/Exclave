@@ -188,11 +188,19 @@ class MainActivity : ThemedActivity(),
                             }
                         }
                     }
-                    setNegativeButton(android.R.string.cancel) { _, _ ->
-                        exitProcess(0)
-                    }
                     setOnCancelListener { _ ->
-                        exitProcess(0)
+                        DataStore.configurationStore.putBoolean(
+                            if (Libcore.buildWithClash()) "gplv3OnlyAccepted"
+                            else "gplv3OrLaterAccepted", true)
+                        if (DataStore.configurationStore.getBoolean("permissionRequested") != true) {
+                            DataStore.configurationStore.putBoolean("permissionRequested", true)
+                            PackageCache.awaitLoadSync()
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                if (app.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
+                                }
+                            }
+                        }
                     }
                 }.show()
             }
