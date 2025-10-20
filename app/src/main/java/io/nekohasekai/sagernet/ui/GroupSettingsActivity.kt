@@ -34,7 +34,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.*
-import cn.hutool.core.util.NumberUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
@@ -221,7 +220,8 @@ class GroupSettingsActivity(
         val subscriptionAutoUpdateDelay = findPreference<EditTextPreference>(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY)!!
         subscriptionAutoUpdateDelay.isEnabled = subscriptionAutoUpdate.isChecked
         subscriptionAutoUpdateDelay.setOnPreferenceChangeListener { _, newValue ->
-            NumberUtil.isInteger(newValue as String) && newValue.toInt() >= 15
+            newValue as String
+            newValue.toIntOrNull() != null && newValue.toInt() >= 15
         }
         subscriptionAutoUpdate.setOnPreferenceChangeListener { _, newValue ->
             subscriptionAutoUpdateDelay.isEnabled = (newValue as Boolean)

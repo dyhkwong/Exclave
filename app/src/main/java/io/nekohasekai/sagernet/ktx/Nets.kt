@@ -19,8 +19,8 @@
 
 package io.nekohasekai.sagernet.ktx
 
-import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.BuildConfig
+import libcore.Libcore
 import libcore.URL
 import java.net.IDN
 import java.net.InetSocketAddress
@@ -41,14 +41,14 @@ fun URL.addPathSegments(vararg segments: String) {
 }
 
 fun String.wrapIDN(): String {
-    if (this.isIpAddress()) {
+    if (Libcore.isIP(this)) {
         return this
     }
     return IDN.toUnicode(this, IDN.ALLOW_UNASSIGNED)
 }
 
 fun String.unwrapIDN(): String {
-    if (this.isIpAddress() || this.all { it.code < 128 }) {
+    if (Libcore.isIP(this) || this.all { it.code < 128 }) {
         return this
     }
     return try {
@@ -58,20 +58,8 @@ fun String.unwrapIDN(): String {
     }
 }
 
-fun String.isIpAddress(): Boolean {
-    return this.isIpv4Address() || this.isIpv6Address()
-}
-
-fun String.isIpv4Address(): Boolean {
-    return Validator.isIpv4(this)
-}
-
-fun String.isIpv6Address(): Boolean {
-    return Validator.isIpv6(this)
-}
-
 fun joinHostPort(host: String, port: Int): String {
-    if (Validator.isIpv6(host)) {
+    if (Libcore.isIPv6(host)) {
         return "[$host]:$port"
     }
     return "$host:$port"
@@ -82,6 +70,24 @@ fun String.unwrapHost(): String {
         return substring(1, length - 1).unwrapHost()
     }
     return this
+}
+
+fun isURL(url: String): Boolean {
+    try {
+        Libcore.parseURL(url)
+        return true
+    } catch (_: Exception) {
+        return false
+    }
+}
+
+fun isHTTPorHTTPSURL(url: String): Boolean {
+    try {
+        val u = Libcore.parseURL(url)
+        return (u.scheme == "http" || u.scheme == "https")
+    } catch (_: Exception) {
+        return false
+    }
 }
 
 fun mkPort(): Int {

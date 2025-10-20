@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import cn.hutool.core.util.StrUtil;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
 
@@ -41,13 +40,13 @@ public class GsonConverters {
 
     @TypeConverter
     public static List toList(String value) {
-        if (StrUtil.isBlank(value)) return CollectionsKt.listOf();
+        if (value == null || value.isBlank()) return CollectionsKt.listOf();
         return GsonsKt.getGson().fromJson(value, List.class);
     }
 
     @TypeConverter
     public static Set toSet(String value) {
-        if (StrUtil.isBlank(value)) return SetsKt.setOf();
+        if (value == null || value.isBlank()) return SetsKt.setOf();
         return GsonsKt.getGson().fromJson(value, Set.class);
     }
 

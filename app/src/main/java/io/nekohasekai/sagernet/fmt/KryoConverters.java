@@ -28,8 +28,6 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.util.ArrayUtil;
 import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean;
 import io.nekohasekai.sagernet.fmt.brook.BrookBean;
@@ -69,8 +67,8 @@ public class KryoConverters {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteBufferOutput buffer = KryosKt.byteBuffer(out);
         bean.serializeToBuffer(buffer);
-        IoUtil.flush(buffer);
-        IoUtil.close(buffer);
+        buffer.flush();
+        buffer.close();
         return out.toByteArray();
     }
 
@@ -89,157 +87,157 @@ public class KryoConverters {
 
     @TypeConverter
     public static SOCKSBean socksDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new SOCKSBean(), bytes);
     }
 
     @TypeConverter
     public static HttpBean httpDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new HttpBean(), bytes);
     }
 
     @TypeConverter
     public static ShadowsocksBean shadowsocksDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ShadowsocksBean(), bytes);
     }
 
     @TypeConverter
     public static ShadowsocksRBean shadowsocksRDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ShadowsocksRBean(), bytes);
     }
 
     @TypeConverter
     public static VMessBean vmessDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new VMessBean(), bytes);
     }
 
     @TypeConverter
     public static VLESSBean vlessDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new VLESSBean(), bytes);
     }
 
     @TypeConverter
     public static TrojanBean trojanDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new TrojanBean(), bytes);
     }
 
     @TypeConverter
     public static TrojanGoBean trojanGoDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new TrojanGoBean(), bytes);
     }
 
     @TypeConverter
     public static NaiveBean naiveDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new NaiveBean(), bytes);
     }
 
     @TypeConverter
     public static BrookBean brookDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new BrookBean(), bytes);
     }
 
     @TypeConverter
     public static HysteriaBean hysteriaDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new HysteriaBean(), bytes);
     }
 
     @TypeConverter
     public static Hysteria2Bean hysteria2Deserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new Hysteria2Bean(), bytes);
     }
 
     @TypeConverter
     public static SSHBean sshDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new SSHBean(), bytes);
     }
 
     @TypeConverter
     public static WireGuardBean wireguardDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new WireGuardBean(), bytes);
     }
 
     @TypeConverter
     public static MieruBean mieruDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new MieruBean(), bytes);
     }
 
     @TypeConverter
     public static TuicBean tuicDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new TuicBean(), bytes);
     }
 
     @TypeConverter
     public static Tuic5Bean tuic5Deserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new Tuic5Bean(), bytes);
     }
 
     @TypeConverter
     public static ShadowTLSBean shadowtlsDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ShadowTLSBean(), bytes);
     }
 
     @TypeConverter
     public static JuicityBean juicityDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new JuicityBean(), bytes);
     }
 
     @TypeConverter
     public static Http3Bean http3Deserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new Http3Bean(), bytes);
     }
 
     @TypeConverter
     public static AnyTLSBean anytlsDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new AnyTLSBean(), bytes);
     }
 
     @TypeConverter
     public static ShadowQUICBean shadowquicDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ShadowQUICBean(), bytes);
     }
 
     @TypeConverter
     public static ConfigBean configDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ConfigBean(), bytes);
     }
 
     @TypeConverter
     public static ChainBean chainDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ChainBean(), bytes);
     }
 
     @TypeConverter
     public static BalancerBean balancerBeanDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new BalancerBean(), bytes);
     }
 
     @TypeConverter
     public static SubscriptionBean subscriptionDeserialize(byte[] bytes) {
-        if (ArrayUtil.isEmpty(bytes)) return null;
+        if (bytes == null || bytes.length == 0) return null;
         return deserialize(new SubscriptionBean(), bytes);
     }
 

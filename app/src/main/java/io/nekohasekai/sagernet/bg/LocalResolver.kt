@@ -23,12 +23,12 @@ import android.net.Network
 import android.os.Build
 import android.os.CancellationSignal
 import androidx.annotation.RequiresApi
-import cn.hutool.core.lang.Validator
 import io.nekohasekai.sagernet.ktx.tryResume
 import io.nekohasekai.sagernet.ktx.tryResumeWithException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
+import libcore.Libcore
 import libcore.LocalResolver
 import java.net.InetAddress
 import java.net.UnknownHostException
@@ -98,16 +98,16 @@ interface LocalResolver : LocalResolver {
             val underlyingNetwork = underlyingNetwork ?: error("upstream network not found")
             val answer = try {
                 underlyingNetwork.getAllByName(domain)
-            } catch (e: UnknownHostException) {
+            } catch (_: UnknownHostException) {
                 return ""
             }
             val filtered = mutableListOf<String>()
             when {
                 network.endsWith("4") -> for (address in answer) {
-                    address.hostAddress?.takeIf { Validator.isIpv4(it) }?.also { filtered.add(it) }
+                    address.hostAddress?.takeIf { Libcore.isIPv4(it) }?.also { filtered.add(it) }
                 }
                 network.endsWith("6") -> for (address in answer) {
-                    address.hostAddress?.takeIf { Validator.isIpv6(it) }?.also { filtered.add(it) }
+                    address.hostAddress?.takeIf { Libcore.isIPv6(it) }?.also { filtered.add(it) }
                 }
                 else -> filtered.addAll(answer.mapNotNull { it.hostAddress })
             }

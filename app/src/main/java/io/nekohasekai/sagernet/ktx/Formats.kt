@@ -43,7 +43,11 @@ import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuard
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.util.zip.Deflater
+import java.util.zip.Inflater
 import kotlin.io.encoding.Base64
+import kotlin.io.use
 
 @Suppress("DEPRECATION")
 fun JSONObject.toStringPretty(): String {
@@ -216,4 +220,37 @@ fun parseShareLinks(text: String): List<AbstractBean> {
 fun <T : Serializable> T.applyDefaultValues(): T {
     initializeDefaultValues()
     return this
+}
+
+fun ByteArray.zlibCompress(level: Int): ByteArray {
+    // Compress the bytes
+    // 1 to 4 bytes/char for UTF-8
+    val output = ByteArray(size * 4)
+    val compressor = Deflater(level).apply {
+        setInput(this@zlibCompress)
+        finish()
+    }
+    val compressedDataLength: Int = compressor.deflate(output)
+    compressor.end()
+    return output.copyOfRange(0, compressedDataLength)
+}
+
+fun ByteArray.zlibDecompress(): ByteArray {
+    val inflater = Inflater()
+    val outputStream = ByteArrayOutputStream()
+
+    return outputStream.use {
+        val buffer = ByteArray(1024)
+
+        inflater.setInput(this)
+
+        var count = -1
+        while (count != 0) {
+            count = inflater.inflate(buffer)
+            outputStream.write(buffer, 0, count)
+        }
+
+        inflater.end()
+        outputStream.toByteArray()
+    }
 }

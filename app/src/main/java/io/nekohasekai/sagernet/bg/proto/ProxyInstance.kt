@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.bg.proto
 
-import cn.hutool.core.util.NumberUtil
 import com.v2ray.core.app.observatory.OutboundStatus
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.SagerNet
@@ -74,27 +73,28 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         val time = (System.currentTimeMillis() / 1000) - 300
         for (observatoryTag in config.observatoryTags) {
             val profileId = observatoryTag.substringAfter("global-")
-            if (NumberUtil.isLong(profileId)) {
-                val id = profileId.toLong()
-                val profile = when {
-                    id == profile.id -> profile
-                    statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
-                    else -> SagerDatabase.proxyDao.getById(id)
-                } ?: continue
-
-                if (profile.status > 0) v2rayPoint.updateStatus(
-                    config.observerTag,
-                    OutboundStatus.newBuilder()
-                        .setOutboundTag(observatoryTag)
-                        .setAlive(profile.status == 1)
-                        .setDelay(profile.ping.toLong())
-                        .setLastErrorReason(profile.error ?: "")
-                        .setLastTryTime(time)
-                        .setLastSeenTime(time)
-                        .build()
-                        .toByteArray()
-                )
+            val id = profileId.toLongOrNull()
+            if (id == null) {
+                continue
             }
+            val profile = when {
+                id == profile.id -> profile
+                statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity
+                else -> SagerDatabase.proxyDao.getById(id)
+            } ?: continue
+
+            if (profile.status > 0) v2rayPoint.updateStatus(
+                config.observerTag,
+                OutboundStatus.newBuilder()
+                    .setOutboundTag(observatoryTag)
+                    .setAlive(profile.status == 1)
+                    .setDelay(profile.ping.toLong())
+                    .setLastErrorReason(profile.error ?: "")
+                    .setLastTryTime(time)
+                    .setLastSeenTime(time)
+                    .build()
+                    .toByteArray()
+            )
         }
     }
 
@@ -108,8 +108,8 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
         }
         val status = OutboundStatus.parseFrom(statusPb)
         val profileId = status.outboundTag.substringAfter("global-")
-        if (NumberUtil.isLong(profileId)) {
-            val id = profileId.toLong()
+        val id = profileId.toLongOrNull()
+        if (id != null) {
             val profile = when {
                 id == profile.id -> profile
                 statsOutbounds.containsKey(id) -> statsOutbounds[id]!!.proxyEntity

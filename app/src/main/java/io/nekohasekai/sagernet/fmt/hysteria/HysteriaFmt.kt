@@ -152,13 +152,13 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         if (protocol == HysteriaBean.PROTOCOL_FAKETCP || usePortHopping) {
             // Hysteria port hopping is incompatible with chain proxy
             if (usePortHopping) {
-                it.put("server", if (serverAddress.isIpv6Address()) {
+                it.put("server", if (Libcore.isIPv6(serverAddress)) {
                     "[$serverAddress]:$serverPorts"
                 } else {
                     "$serverAddress:$serverPorts"
                 })
             } else {
-                it.put("server", if (serverAddress.isIpv6Address()) {
+                it.put("server", if (Libcore.isIPv6(serverAddress)) {
                     "[" + serverAddress + "]:" + serverPorts.toHysteriaPort()
                 } else {
                     serverAddress + ":" + serverPorts.toHysteriaPort()

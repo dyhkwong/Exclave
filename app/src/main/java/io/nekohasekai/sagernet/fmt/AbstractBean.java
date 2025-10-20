@@ -32,12 +32,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cn.hutool.core.clone.Cloneable;
 import io.nekohasekai.sagernet.ExtraType;
 import io.nekohasekai.sagernet.ktx.KryosKt;
 import io.nekohasekai.sagernet.ktx.NetsKt;
 
-public abstract class AbstractBean extends Serializable implements Cloneable<AbstractBean> {
+public abstract class AbstractBean extends Serializable {
 
     public String serverAddress;
     public Integer serverPort;

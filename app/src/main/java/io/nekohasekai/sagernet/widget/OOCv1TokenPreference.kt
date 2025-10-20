@@ -107,7 +107,9 @@ class OOCv1TokenPreference : EditTextPreference {
                                     isValid = false
                                     linkLayout.error = "certSha256 must be a SHA-256 hexadecimal string"
                                 }
-                                !certSha256.all { it.isLowerCase() || it.isDigit() } -> {
+                                !certSha256.all {
+                                    (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f')
+                                } -> {
                                     isValid = false
                                     linkLayout.error = "certSha256 must be a hexadecimal string with lowercase letters"
                                 }

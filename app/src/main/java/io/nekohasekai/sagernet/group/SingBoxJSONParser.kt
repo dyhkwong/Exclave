@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.core.lang.UUID
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
@@ -280,11 +279,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 "vmess" -> {
                     v2rayBean as VMessBean
                     outbound.optStr("uuid")?.also {
-                        v2rayBean.uuid = try {
-                            UUID.fromString(it).toString()
-                        } catch (_: Exception) {
-                            uuid5(it)
-                        }
+                        v2rayBean.uuid = uuidOrGenerate(it)
                     }
                     outbound.optStr("security")?.also {
                         if (it !in supportedVmessMethod) return listOf()
@@ -305,11 +300,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 "vless" -> {
                     v2rayBean as VLESSBean
                     outbound.optStr("uuid")?.also {
-                        v2rayBean.uuid = try {
-                            UUID.fromString(it).toString()
-                        } catch (_: Exception) {
-                            uuid5(it)
-                        }
+                        v2rayBean.uuid = uuidOrGenerate(it)
                     }
                     v2rayBean.packetEncoding = when (outbound.optStr("packet_encoding")) {
                         "packetaddr" -> "packet"

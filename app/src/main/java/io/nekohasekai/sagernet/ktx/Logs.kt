@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.ktx
 
 import android.util.Log
-import cn.hutool.core.util.StrUtil
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -28,7 +27,7 @@ object Logs {
 
     private fun mkTag(): String {
         val stackTrace = Thread.currentThread().stackTrace
-        return StrUtil.subAfter(stackTrace[4].className, ".", true)
+        return stackTrace[4].className.substringAfterLast(".")
     }
 
     fun v(message: String) {

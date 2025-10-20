@@ -22,12 +22,9 @@ package io.nekohasekai.sagernet.fmt.v2ray;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import cn.hutool.core.lang.UUID;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
-import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
-import io.nekohasekai.sagernet.ktx.UUIDsKt;
 
 public abstract class StandardV2RayBean extends AbstractBean {
 
@@ -581,14 +578,6 @@ public abstract class StandardV2RayBean extends AbstractBean {
         bean.singMuxMinStreams = singMuxMinStreams;
         bean.singMuxMaxStreams = singMuxMaxStreams;
         bean.singMuxPadding = singMuxPadding;
-    }
-
-    public String uuidOrGenerate() {
-        try {
-            return UUID.fromString(uuid).toString(false);
-        } catch (Exception ignored) {
-            return UUIDsKt.uuid5(uuid);
-        }
     }
 
 }

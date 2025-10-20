@@ -19,7 +19,6 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray
 
-import cn.hutool.core.lang.UUID
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
@@ -123,11 +122,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             }
         }
     } else {
-        bean.uuid = try {
-            UUID.fromString(url.username).toString(false)
-        } catch (_: Exception) {
-            uuid5(url.username)
-        }
+        bean.uuid = uuidOrGenerate(url.username)
     }
 
     if (bean is VMessBean) {
@@ -403,11 +398,7 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
         serverPort = json.optIntOrNull("port")
             ?: json.optStringOrNull("port")?.takeIf { it.isNotEmpty() }?.toIntOrNull() ?: error("invalid port")
         uuid = json.optStringOrNull("id")?.let {
-            try {
-                UUID.fromString(it).toString(false)
-            } catch (_: Exception) {
-                uuid5(it)
-            }
+            uuidOrGenerate(it)
         }
         alterId = json.optIntOrNull("aid")
             ?: json.optStringOrNull("aid")?.takeIf { it.isNotEmpty() }?.toIntOrNull()
@@ -569,11 +560,11 @@ fun StandardV2RayBean.toUri(): String? {
             }
         }
         is VMessBean -> {
-            builder.username = uuidOrGenerate()
+            builder.username = uuidOrGenerate(uuid)
             builder.addQueryParameter("encryption", encryption)
         }
         is VLESSBean -> {
-            builder.username = uuidOrGenerate()
+            builder.username = uuidOrGenerate(uuid)
             when (encryption) {
                 "none" -> builder.addQueryParameter("encryption", "none")
                 "" -> error("unsupported vless encryption")

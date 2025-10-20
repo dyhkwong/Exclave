@@ -52,7 +52,6 @@ import io.nekohasekai.sagernet.ktx.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.core.net.toUri
-import cn.hutool.core.lang.Validator.isUrl
 import io.nekohasekai.sagernet.utils.ZxingQRCodeAnalyzer
 import libcore.Libcore
 
@@ -160,7 +159,7 @@ class ScannerActivity : ThemedActivity() {
             try {
                 val results = RawUpdater.parseRaw(value)
                 if (results.isNullOrEmpty()) {
-                    if (value.listByLine().size == 1 && isUrl(value)) {
+                    if (value.listByLine().size == 1 && isHTTPorHTTPSURL(value)) {
                         val builder = Libcore.newURL("exclave").apply {
                             host = "subscription"
                         }
@@ -232,7 +231,7 @@ class ScannerActivity : ThemedActivity() {
                                     BinaryBitmap(GlobalHistogramBinarizer(source)),
                                     mapOf(DecodeHintType.TRY_HARDER to true)
                                 )
-                            } catch (e: NotFoundException) {
+                            } catch (_: NotFoundException) {
                                 qrReader.decode(
                                     BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
                                     mapOf(DecodeHintType.TRY_HARDER to true)
@@ -256,7 +255,7 @@ class ScannerActivity : ThemedActivity() {
                                     }
                                 }
                             } else {
-                                if (result.text.listByLine().size == 1 && isUrl(result.text)) {
+                                if (result.text.listByLine().size == 1 && isHTTPorHTTPSURL(result.text)) {
                                     val builder = Libcore.newURL("exclave").apply {
                                         host = "subscription"
                                     }

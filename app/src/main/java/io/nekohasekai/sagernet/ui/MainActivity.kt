@@ -40,7 +40,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
-import cn.hutool.core.util.ZipUtil
 import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
 import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_END
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -250,7 +249,7 @@ class MainActivity : ThemedActivity(),
             val data = uri.encodedQuery.takeIf { !it.isNullOrBlank() } ?: return
             try {
                 group = KryoConverters.deserialize(
-                    ProxyGroup().apply { export = true }, ZipUtil.unZlib(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(data))
+                    ProxyGroup().apply { export = true }, Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(data).zlibDecompress()
                 ).apply {
                     export = false
                 }

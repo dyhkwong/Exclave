@@ -111,7 +111,6 @@ import io.nekohasekai.sagernet.group.optObject
 import io.nekohasekai.sagernet.group.optStr
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.filterIsInstance
-import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
@@ -119,8 +118,8 @@ import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.mkPort
 import io.nekohasekai.sagernet.ktx.optStringOrNull
 import io.nekohasekai.sagernet.ktx.toHysteriaPort
-import io.nekohasekai.sagernet.ktx.toStringPretty
 import io.nekohasekai.sagernet.ktx.unescapeLineFeed
+import io.nekohasekai.sagernet.ktx.uuidOrGenerate
 import io.nekohasekai.sagernet.utils.PackageCache
 import kotlin.io.encoding.Base64
 import libcore.Libcore
@@ -486,7 +485,7 @@ fun buildV2RayConfig(
                         type = "field"
                         outboundTag = TAG_DIRECT
                         when {
-                            bean.host.isIpAddress() -> {
+                            Libcore.isIP(bean.host) -> {
                                 ip = listOf(bean.host)
                                 if (DataStore.domainStrategy != "AsIs") {
                                     skipDomain = true
@@ -495,7 +494,7 @@ fun buildV2RayConfig(
                             bean.host.isNotEmpty() -> {
                                 domains = listOf(bean.host)
                             }
-                            bean.serverAddress.isIpAddress() -> {
+                            Libcore.isIP(bean.serverAddress) -> {
                                 ip = listOf(bean.serverAddress)
                                 if (DataStore.domainStrategy != "AsIs") {
                                     skipDomain = true
@@ -598,7 +597,7 @@ fun buildV2RayConfig(
                                                     port = bean.serverPort
                                                     users = listOf(VMessOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            id = bean.uuidOrGenerate()
+                                                            id = uuidOrGenerate(bean.uuid)
                                                             if (bean.alterId > 0) {
                                                                 alterId = bean.alterId
                                                             }
@@ -636,7 +635,7 @@ fun buildV2RayConfig(
                                                     port = bean.serverPort
                                                     users = listOf(VLESSOutboundConfigurationObject.ServerObject.UserObject()
                                                         .apply {
-                                                            id = bean.uuidOrGenerate()
+                                                            id = uuidOrGenerate(bean.uuid)
                                                             encryption = bean.encryption
                                                             if (bean.flow.isNotEmpty()) {
                                                                 flow = bean.flow
@@ -2037,7 +2036,7 @@ fun buildV2RayConfig(
                     bean.serverAddresses.listByLineOrComma().forEach {
                         when {
                             it.isEmpty() -> {}
-                            it.isIpAddress() -> {
+                            Libcore.isIP(it) -> {
                                 bypassIP.add(it)
                             }
                             else -> {
@@ -2046,7 +2045,7 @@ fun buildV2RayConfig(
                         }
                     }
                 } else {
-                    if (!serverAddress.isIpAddress()) {
+                    if (!Libcore.isIP(serverAddress)) {
                         bypassDomainSkipFakeDns.add("full:$serverAddress")
                     } else {
                         bypassIP.add(serverAddress)
@@ -2084,7 +2083,7 @@ fun buildV2RayConfig(
             try {
                 if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
                     val url = Libcore.parseURL(it)
-                    if (!url.host.isIpAddress()) {
+                    if (!Libcore.isIP(url.host)) {
                         bypassDomainSkipFakeDns.add("full:${url.host}")
                     }
                 }
@@ -2095,7 +2094,7 @@ fun buildV2RayConfig(
             try {
                 if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
                     val url = Libcore.parseURL(it)
-                    if (!url.host.isIpAddress()) {
+                    if (!Libcore.isIP(url.host)) {
                         bootstrapDomain.add("full:${url.host}")
                     }
                 }
@@ -2395,7 +2394,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
 
 
     return V2rayBuildResult(
-        config.toStringPretty(),
+        config.toString(),
         emptyList(),
         false, // requireWs
         0, // wsPort

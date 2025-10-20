@@ -17,13 +17,12 @@
  *                                                                            *
  ******************************************************************************/
 
-import cn.hutool.crypto.digest.DigestUtil
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.gradle.api.Project
 import org.kohsuke.github.GitHubBuilder
 import java.io.File
-import java.util.*
+import java.security.MessageDigest
 
 fun Project.downloadAssets(update: Boolean) {
     val assetsDir = File(projectDir, "src/main/assets")
@@ -57,7 +56,7 @@ fun Project.downloadAssets(update: Boolean) {
 
     val geoipChecksum = downloader.newCall(
         Request.Builder().url(geoipDatSha256sum).build()
-    ).execute().body.string().trim().substringBefore(" ").uppercase(Locale.ROOT)
+    ).execute().body.string().trim().substringBefore(" ")
 
     var count = 0
 
@@ -72,14 +71,19 @@ fun Project.downloadAssets(update: Boolean) {
             geoipFile.outputStream().use { out -> it.copyTo(out) }
         }
 
-        val fileSha256 = DigestUtil.sha256Hex(geoipFile).uppercase(Locale.ROOT)
-        if (fileSha256 != geoipChecksum) {
+        val messageDigest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteArray(1024)
+        geoipFile.inputStream().use { fis ->
+            var bytesRead: Int
+            while (fis.read(buffer).also { bytesRead = it } != -1) {
+                messageDigest.update(buffer, 0, bytesRead)
+            }
+        }
+        val fileSha256 = messageDigest.digest().joinToString("") { "%02x".format(it) }
+
+        if (fileSha256 != geoipChecksum.lowercase()) {
             System.err.println(
-                "Error verifying ${geoipFile.name}: \nLocal: ${
-                    fileSha256.uppercase(
-                        Locale.ROOT
-                    )
-                }\nRemote: $geoipChecksum"
+                "Error verifying ${geoipFile.name}: \nLocal: $fileSha256\nRemote: ${geoipChecksum.lowercase()}"
             )
             if (count > 3) error("Exit")
             System.err.println("Retrying...")
@@ -117,7 +121,7 @@ fun Project.downloadAssets(update: Boolean) {
 
     val geositeChecksum = downloader.newCall(
         Request.Builder().url(geositeDatSha256sum).build()
-    ).execute().body.string().trim().substringBefore(" ").uppercase(Locale.ROOT)
+    ).execute().body.string().trim().substringBefore(" ")
 
     count = 0
 
@@ -132,14 +136,19 @@ fun Project.downloadAssets(update: Boolean) {
             geositeFile.outputStream().use { out -> it.copyTo(out) }
         }
 
-        val fileSha256 = DigestUtil.sha256Hex(geositeFile).uppercase(Locale.ROOT)
-        if (fileSha256 != geositeChecksum) {
+        val messageDigest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteArray(1024)
+        geositeFile.inputStream().use { fis ->
+            var bytesRead: Int
+            while (fis.read(buffer).also { bytesRead = it } != -1) {
+                messageDigest.update(buffer, 0, bytesRead)
+            }
+        }
+        val fileSha256 = messageDigest.digest().joinToString("") { "%02x".format(it) }
+
+        if (fileSha256 != geositeChecksum.lowercase()) {
             System.err.println(
-                "Error verifying ${geositeFile.name}: \nLocal: ${
-                    fileSha256.uppercase(
-                        Locale.ROOT
-                    )
-                }\nRemote: $geositeChecksum"
+                "Error verifying ${geositeFile.name}: \nLocal: $fileSha256\nRemote: ${geositeChecksum.lowercase()}"
             )
             if (count > 3) error("Exit")
             System.err.println("Retrying...")

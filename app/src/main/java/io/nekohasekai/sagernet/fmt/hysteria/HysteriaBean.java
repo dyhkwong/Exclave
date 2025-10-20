@@ -30,6 +30,7 @@ import io.nekohasekai.sagernet.database.DataStore;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 import io.nekohasekai.sagernet.ktx.NetsKt;
+import libcore.Libcore;
 
 public class HysteriaBean extends AbstractBean {
 
@@ -195,7 +196,7 @@ public class HysteriaBean extends AbstractBean {
 
     @Override
     public String displayAddress() {
-        if (NetsKt.isIpv6Address(serverAddress)) {
+        if (Libcore.isIPv6(serverAddress)) {
             return "[" + serverAddress + "]:" + serverPorts;
         } else {
             return NetsKt.wrapIDN(serverAddress) + ":" + serverPorts;

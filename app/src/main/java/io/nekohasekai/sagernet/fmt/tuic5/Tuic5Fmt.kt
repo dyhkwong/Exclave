@@ -18,7 +18,6 @@
 
 package io.nekohasekai.sagernet.fmt.tuic5
 
-import cn.hutool.core.lang.UUID
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
@@ -41,12 +40,26 @@ val supportedTuic5RelayMode = arrayOf("native", "quic")
 
 fun parseTuic(server: String): AbstractBean {
     var link = Libcore.parseURL(server)
-    try {
+    if (server.length >= 46 && !server.contains("version=")
+        && server.substring(7, 15).all {
+            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
+        } && server.substring(15, 16) == "-"
+        && server.substring(16, 20).all {
+            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
+        } && server.substring(20, 21) == "-"
+        && server.substring(21, 25).all {
+            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
+        } && server.substring(25, 26) == "-"
+        && server.substring(26, 30).all {
+            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
+        } && server.substring(30, 31) == "-"
+        && server.substring(31, 43).all {
+            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
+        } && server.substring(43, 46) == "%3A"
+    ) {
         // v2rayN broken format
-        if (server.length > 46 && UUID.fromString(server.substring(7, 43)) != null && server.substring(43, 46) == "%3A" && !server.contains("version=")) {
-            link = Libcore.parseURL(server.substring(0, 43) + ":" + server.substring(46, server.length))
-        }
-    } catch (_: Exception) {}
+        link = Libcore.parseURL(server.substring(0, 43) + ":" + server.substring(46, server.length))
+    }
     val version = link.queryParameter("version")
     if (version == "4" || (version != "5" && link.password.isEmpty())) {
         return TuicBean().apply {

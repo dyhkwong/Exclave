@@ -20,7 +20,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.core.lang.UUID
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
@@ -215,11 +214,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     bean.sni = proxy.getClashString("servername")
                 }
                 proxy.getClashString("uuid")?.also {
-                    bean.uuid = try {
-                        UUID.fromString(it).toString()
-                    } catch (_: Exception) {
-                        uuid5(it)
-                    }
+                    bean.uuid = uuidOrGenerate(it)
                 }
             }
             if (bean.security == "tls") {

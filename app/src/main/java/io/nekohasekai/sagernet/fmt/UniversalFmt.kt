@@ -19,16 +19,17 @@
 
 package io.nekohasekai.sagernet.fmt
 
-import cn.hutool.core.util.ZipUtil
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.ProxyGroup
+import io.nekohasekai.sagernet.ktx.zlibCompress
+import io.nekohasekai.sagernet.ktx.zlibDecompress
 import kotlin.io.encoding.Base64
 
 fun parseBackupLink(link: String): AbstractBean {
     return if (link.contains("?")) {
         val type = link.substring("exclave://".length).substringBefore("?")
         ProxyEntity(type = TypeMap[type] ?: error("Type $type not found")).apply {
-            putByteArray(ZipUtil.unZlib(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(link.substringAfter("?"))))
+            putByteArray(Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(link.substringAfter("?")).zlibDecompress())
         }.requireBean()
     } else {
         val type = link.substring("exclave://".length).substringBefore(":")
@@ -42,7 +43,7 @@ fun AbstractBean.exportBackup(): String {
     var link = "exclave://"
     link += TypeMap.reversed[ProxyEntity().putBean(this).type]
     link += "?"
-    link += Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(ZipUtil.zlib(KryoConverters.serialize(this), 9))
+    link += Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(KryoConverters.serialize(this).zlibCompress(9))
     return link
 }
 
@@ -50,7 +51,7 @@ fun AbstractBean.exportBackup(): String {
 fun ProxyGroup.exportBackup(): String {
     var link = "exclave://subscription?"
     export = true
-    link += Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(ZipUtil.zlib(KryoConverters.serialize(this), 9))
+    link += Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(KryoConverters.serialize(this).zlibCompress(9))
     export = false
     return link
 }

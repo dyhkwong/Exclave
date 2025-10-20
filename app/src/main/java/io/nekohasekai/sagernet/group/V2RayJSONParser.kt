@@ -20,7 +20,6 @@
 
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.core.lang.UUID
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
@@ -426,11 +425,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             settings.optStr("id")?.also {
-                                v2rayBean.uuid = try {
-                                    UUID.fromString(it).toString()
-                                } catch (_: Exception) {
-                                    uuid5(it)
-                                }
+                                v2rayBean.uuid = uuidOrGenerate(it)
                             }
                             settings.optStr("security")?.lowercase()?.also {
                                 if (it !in supportedVmessMethod) return listOf()
@@ -456,11 +451,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                             } ?: return listOf()
                             vnext.optArray("users")?.filterIsInstance<JSONObject>()?.get(0)?.also { user ->
                                 user.optStr("id")?.also {
-                                    v2rayBean.uuid = try {
-                                        UUID.fromString(it).toString()
-                                    } catch (_: Exception) {
-                                        uuid5(it)
-                                    }
+                                    v2rayBean.uuid = uuidOrGenerate(it)
                                 }
                                 user.optStr("security")?.lowercase()?.also {
                                     if (it !in supportedVmessMethod) return listOf()
@@ -501,11 +492,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                                 v2rayBean.serverPort = it
                             } ?: return listOf()
                             settings.optStr("id")?.also {
-                                v2rayBean.uuid = try {
-                                    UUID.fromString(it).toString()
-                                } catch (_: Exception) {
-                                    uuid5(it)
-                                }
+                                v2rayBean.uuid = uuidOrGenerate(it)
                             }
                             settings.optStr("flow")?.also {
                                 when (it) {
@@ -542,11 +529,7 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                             } ?: return listOf()
                             vnext.optArray("users")?.filterIsInstance<JSONObject>()?.get(0)?.also { user ->
                                 user.optStr("id")?.also {
-                                    v2rayBean.uuid = try {
-                                        UUID.fromString(it).toString()
-                                    } catch (_: Exception) {
-                                        uuid5(it)
-                                    }
+                                    v2rayBean.uuid = uuidOrGenerate(it)
                                 }
                                 user.optStr("flow")?.also {
                                     when (it) {
