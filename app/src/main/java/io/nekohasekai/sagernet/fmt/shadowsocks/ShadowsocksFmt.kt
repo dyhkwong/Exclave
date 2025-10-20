@@ -22,8 +22,11 @@ package io.nekohasekai.sagernet.fmt.shadowsocks
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.ktx.decodeBase64
+import io.nekohasekai.sagernet.ktx.optIntOrNull
+import io.nekohasekai.sagernet.ktx.optStringOrNull
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
+import org.json.JSONObject
 import kotlin.io.encoding.Base64
 
 val supportedShadowsocksMethod = arrayOf(
@@ -160,13 +163,13 @@ fun ShadowsocksBean.toUri(): String? {
 
 }
 
-fun parseShadowsocksConfig(config: Map<String, Any?>): ShadowsocksBean? {
+fun parseShadowsocksConfig(config: JSONObject): ShadowsocksBean? {
     return ShadowsocksBean().apply {
-        serverAddress = config["server"] as? String ?: return null
-        serverPort = config["server_port"] as? Int ?: return null
-        password = config["password"] as? String
+        serverAddress = config.optStringOrNull("server") ?: return null
+        serverPort = config.optIntOrNull("server_port") ?: return null
+        password = config.optStringOrNull("password")
 
-        var m = (config["method"] as? String)?.lowercase()
+        var m = config.optStringOrNull("method")?.lowercase()
         if (!m.isNullOrEmpty() && m.contains("_") && !m.contains("-")) {
             m = m.replace("_", "-")
         }
@@ -181,12 +184,12 @@ fun parseShadowsocksConfig(config: Map<String, Any?>): ShadowsocksBean? {
             "", null -> error("unsupported method") // different impl has different default value
             else -> error("unsupported method")
         }
-        val pluginId = when (val id = config["plugin"] as? String) {
+        val pluginId = when (val id = config.optStringOrNull("plugin")) {
             "simple-obfs" -> "obfs-local"
             else -> id
         }
         if (!pluginId.isNullOrEmpty()) {
-            plugin = PluginOptions(pluginId, config["plugin_opts"] as? String).toString(trimId = false)
+            plugin = PluginOptions(pluginId, config.optStringOrNull("plugin_opts")).toString(trimId = false)
         }
         name = config["remarks"] as? String
     }

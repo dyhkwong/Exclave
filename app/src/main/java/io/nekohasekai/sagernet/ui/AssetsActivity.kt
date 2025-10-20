@@ -34,7 +34,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import cn.hutool.json.JSONObject
 import com.google.android.material.snackbar.Snackbar
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -45,6 +44,7 @@ import io.nekohasekai.sagernet.databinding.LayoutAssetsBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import libcore.Libcore
+import org.json.JSONObject
 import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -339,7 +339,7 @@ class AssetsActivity : ThemedActivity() {
             }.execute()
 
             val release = JSONObject(response.contentString)
-            val tagName = release.getStr("tag_name")
+            val tagName = release.getString("tag_name")
 
             if (tagName == localVersion) {
                 onMainDispatcher {
@@ -349,9 +349,9 @@ class AssetsActivity : ThemedActivity() {
             }
 
             val releaseAssets = release.getJSONArray("assets").filterIsInstance<JSONObject>()
-            val assetToDownload = releaseAssets.find { it.getStr("name") == fileName }
+            val assetToDownload = releaseAssets.find { it.getString("name") == fileName }
                 ?: error("File $fileName not found in release ${release["url"]}")
-            val browserDownloadUrl = assetToDownload.getStr("browser_download_url")
+            val browserDownloadUrl = assetToDownload.getString("browser_download_url")
 
             response = client.newRequest().apply {
                 setURL(browserDownloadUrl)

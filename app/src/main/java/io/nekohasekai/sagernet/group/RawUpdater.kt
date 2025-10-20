@@ -21,8 +21,6 @@
 package io.nekohasekai.sagernet.group
 
 import androidx.core.net.toUri
-import cn.hutool.json.JSONObject
-import cn.hutool.json.JSONUtil
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
@@ -36,6 +34,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardConfig
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import org.json.JSONObject
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
@@ -247,10 +246,8 @@ object RawUpdater : GroupUpdater() {
             }
         } catch (_: Exception) {}
         try {
-            JSONUtil.parse(Libcore.stripJSON(text))?.let { json ->
-                if (json !is JSONObject) return null
-                return parseJSONConfig(json).takeIf { it.isNotEmpty() }
-            }
+            return parseJSONConfig(JSONObject(Libcore.stripJSON(text)))
+                .takeIf { it.isNotEmpty() }
         } catch (_: Exception) {}
         try {
             parseShareLinks(text.decodeBase64()).takeIf { it.isNotEmpty() }?.let {
@@ -277,42 +274,42 @@ object RawUpdater : GroupUpdater() {
     @Suppress("UNCHECKED_CAST")
     private fun parseJSONConfig(json: JSONObject): List<AbstractBean> {
         when {
-            json.containsKey("proxies") -> {
+            json.hasCaseInsensitive("proxies") -> {
                 // Clash YAML
                 return listOf()
             }
-            json.getInt("version") != null && json.containsKey("servers") -> {
+            json.optIntOrNull("version") != null && json.has("servers") -> {
                 // SIP008
                 val beans = ArrayList<AbstractBean>()
-                (json["servers"] as? List<Map<String, Any?>>)?.forEach { server ->
+                json.optJSONArray("servers")?.filterIsInstance<JSONObject>()?.forEach { server ->
                     parseShadowsocksConfig(server)?.let {
                         beans.add(it)
                     }
                 }
                 return beans
             }
-            json.contains("type") -> {
+            json.has("type") -> {
                 return parseSingBoxEndpoint(json).takeIf { it.isNotEmpty() }
                     ?: parseSingBoxOutbound(json)
             }
-            json.contains("protocol") -> {
+            json.hasCaseInsensitive("protocol") -> {
                 return parseV2ray5Outbound(json).takeIf { it.isNotEmpty() }
                     ?: parseV2RayOutbound(json)
             }
             else -> {
                 val beans = ArrayList<AbstractBean>()
-                json.getArray("endpoints")?.forEach { endpoint ->
+                json.optArray("endpoints")?.filterIsInstance<JSONObject>()?.forEach { endpoint ->
                     beans.addAll(parseSingBoxEndpoint(endpoint))
                 }
-                json.getArray("outbounds")?.forEach { outbound ->
+                json.optArray("outbounds")?.filterIsInstance<JSONObject>()?.forEach { outbound ->
                     when {
-                        outbound.contains("protocol") -> {
+                        outbound.hasCaseInsensitive("protocol") -> {
                             beans.addAll(
                                 parseV2ray5Outbound(outbound).takeIf { it.isNotEmpty() } ?:
                                 parseV2RayOutbound(outbound)
                             )
                         }
-                        outbound.contains("type") -> {
+                        outbound.has("type") -> {
                             beans.addAll(parseSingBoxOutbound(outbound))
                         }
                     }

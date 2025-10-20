@@ -26,7 +26,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.*
-import cn.hutool.json.JSONException
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.BootReceiver
 import io.nekohasekai.sagernet.R
@@ -513,8 +512,8 @@ class BaseService {
                     preInit()
                     try {
                         proxy.init(data.proxy?.service is VpnService)
-                    } catch (jsonEx: JSONException) {
-                        error(jsonEx.readableMessage.replace("cn.hutool.json.", ""))
+                    } catch (e: Exception) {
+                        error(e.readableMessage)
                     }
                     proxy.processes = GuardedProcessPool {
                         Logs.w(it)

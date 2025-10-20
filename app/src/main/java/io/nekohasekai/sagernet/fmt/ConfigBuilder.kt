@@ -23,8 +23,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
 import com.github.shadowsocks.plugin.PluginConfiguration
 import com.github.shadowsocks.plugin.PluginManager
 import com.google.gson.JsonSyntaxException
@@ -106,22 +104,28 @@ import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig.WireGuardOutboundConfigurat
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
+import io.nekohasekai.sagernet.group.optArray
+import io.nekohasekai.sagernet.group.optBool
+import io.nekohasekai.sagernet.group.optInteger
+import io.nekohasekai.sagernet.group.optObject
+import io.nekohasekai.sagernet.group.optStr
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.group.getAny
-import io.nekohasekai.sagernet.group.getBoolean
-import io.nekohasekai.sagernet.group.getInteger
-import io.nekohasekai.sagernet.group.getString
+import io.nekohasekai.sagernet.ktx.filterIsInstance
 import io.nekohasekai.sagernet.ktx.isIpAddress
 import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.mkPort
+import io.nekohasekai.sagernet.ktx.optStringOrNull
 import io.nekohasekai.sagernet.ktx.toHysteriaPort
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import io.nekohasekai.sagernet.ktx.unescapeLineFeed
 import io.nekohasekai.sagernet.utils.PackageCache
-import libcore.Libcore
 import kotlin.io.encoding.Base64
+import libcore.Libcore
+import org.json.JSONArray
+import org.json.JSONObject
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -1008,30 +1012,39 @@ fun buildV2RayConfig(
                                                     mode = bean.splithttpMode
                                                 }
                                                 if (bean.splithttpExtra.isNotEmpty()) {
-                                                    JSONObject(bean.splithttpExtra).also { extra ->
-                                                        // fuck RPRX `extra`
-                                                        extra.getInteger("scMaxEachPostBytes")?.also {
-                                                            scMaxEachPostBytes = it.toString()
-                                                        } ?: extra.getString("scMaxEachPostBytes")?.also {
-                                                            scMaxEachPostBytes = it
+                                                    try {
+                                                        JSONObject(bean.splithttpExtra).also { extra ->
+                                                            // fuck RPRX `extra`
+                                                            extra.optInteger("scMaxEachPostBytes")?.also {
+                                                                scMaxEachPostBytes = it.toString()
+                                                            } ?: extra.optStr("scMaxEachPostBytes")?.also {
+                                                                scMaxEachPostBytes = it
+                                                            }
+                                                            extra.optInteger("scMinPostsIntervalMs")?.also {
+                                                                scMinPostsIntervalMs = it.toString()
+                                                            } ?: extra.optStr("scMinPostsIntervalMs")?.also {
+                                                                scMinPostsIntervalMs = it
+                                                            }
+                                                            extra.optInteger("xPaddingBytes")?.also {
+                                                                xPaddingBytes = it.toString()
+                                                            } ?: extra.optStr("xPaddingBytes")?.also {
+                                                                xPaddingBytes = it
+                                                            }
+                                                            extra.optBool("noGRPCHeader")?.also {
+                                                                noGRPCHeader = it
+                                                            }
+                                                            @Suppress("UNCHECKED_CAST")
+                                                            extra.optObject("headers")?.also {
+                                                                headers = mutableMapOf<String, String>()
+                                                                for (key in it.keys()) {
+                                                                    it.optStringOrNull(key)?.also { value ->
+                                                                        headers[key] = value
+                                                                    }
+                                                                }
+                                                            }
                                                         }
-                                                        extra.getInteger("scMinPostsIntervalMs")?.also {
-                                                            scMinPostsIntervalMs = it.toString()
-                                                        } ?: extra.getString("scMinPostsIntervalMs")?.also {
-                                                            scMinPostsIntervalMs = it
-                                                        }
-                                                        extra.getInteger("xPaddingBytes")?.also {
-                                                            xPaddingBytes = it.toString()
-                                                        } ?: extra.getString("xPaddingBytes")?.also {
-                                                            xPaddingBytes = it
-                                                        }
-                                                        extra.getBoolean("noGRPCHeader")?.also {
-                                                            noGRPCHeader = it
-                                                        }
-                                                        @Suppress("UNCHECKED_CAST")
-                                                        (extra.getAny("headers") as? Map<String, String>)?.also {
-                                                            headers = it
-                                                        }
+                                                    } catch (e: Exception) {
+                                                        error(e)
                                                     }
                                                 }
                                                 if (bean.shUseBrowserForwarder) {
@@ -1718,7 +1731,11 @@ fun buildV2RayConfig(
                 }
                 val observatoryItem = MultiObservatoryObject.MultiObservatoryItem().apply {
                     tag = "observer-$tagOutbound"
-                    settings = JSONObject(observatory)
+                    settings = mutableMapOf<String, Any>()
+                    settings.put("probeURL", observatory.probeURL)
+                    settings.put("probeInterval", observatory.probeInterval)
+                    settings.put("enableConcurrency", observatory.enableConcurrency)
+                    settings.put("subjectSelector", observatory.subjectSelector)
                 }
                 if (multiObservatory == null) multiObservatory = MultiObservatoryObject().apply {
                     observers = mutableListOf()
@@ -1977,10 +1994,6 @@ fun buildV2RayConfig(
         outbounds.add(OutboundObject().apply {
             tag = TAG_BLOCK
             protocol = "blackhole"
-            /* settings = LazyOutboundConfigurationObject(this,
-                 BlackholeOutboundConfigurationObject().apply {
-                     keepConnection = true
-                 })*/
         })
 
         if (!forTest && DataStore.requireDnsInbound && DataStore.localDNSPort > 0) {
@@ -2289,7 +2302,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
 
     val bean = proxy.configBean!!
     val config = JSONObject(bean.content)
-    val inbounds = config.getJSONArray("inbounds")
+    val inbounds = config.optArray("inbounds")
         ?.filterIsInstance<JSONObject>()
         ?.map { gson.fromJson(it.toString(), InboundObject::class.java) }
         ?.toMutableList() ?: ArrayList()
@@ -2331,34 +2344,12 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
         })
     }
 
-    /* var requireWs = false
-    var wsPort = 0
-    if (config.containsKey("browserForwarder")) {
-        config["browserForwarder"] = JSONObject(gson.toJson(BrowserForwarderObject().apply {
-            requireWs = true
-            listenAddr = LOCALHOST
-            listenPort = mkPort()
-            wsPort = listenPort
-        }))
-    }
-
-    var requireSh = false
-    var shPort = 0
-    if (config.containsKey("browserDialer")) {
-        config["browserDialer"] = JSONObject(gson.toJson(BrowserDialerObject().apply {
-            requireSh = true
-            listenAddr = LOCALHOST
-            listenPort = mkPort()
-            shPort = listenPort
-        }))
-    } */
-
     val outbounds = try {
-        config.getJSONArray("outbounds")?.filterIsInstance<JSONObject>()?.map { it ->
+        config.optArray("outbounds")?.filterIsInstance<JSONObject>()?.map { it ->
             gson.fromJson(it.toString().takeIf { it.isNotEmpty() } ?: "{}",
                 OutboundObject::class.java)
         }?.toMutableList()
-    } catch (e: JsonSyntaxException) {
+    } catch (_: JsonSyntaxException) {
         null
     }
     var flushOutbounds = false
@@ -2396,10 +2387,10 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
     }
 
     inbounds.forEach { it.init() }
-    config["inbounds"] = JSONArray(inbounds.map { JSONObject(gson.toJson(it)) })
+    config.put("inbounds", JSONArray(inbounds.map { JSONObject(gson.toJson(it)) }))
     if (flushOutbounds) {
         outbounds!!.forEach { it.init() }
-        config["outbounds"] = JSONArray(outbounds.map { JSONObject(gson.toJson(it)) })
+        config.put("outbounds", JSONArray(outbounds.map { JSONObject(gson.toJson(it)) }))
     }
 
 

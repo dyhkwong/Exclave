@@ -43,13 +43,14 @@ import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedVmessMethod
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
+import org.json.JSONObject
 import kotlin.io.encoding.Base64
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
 @Suppress("UNCHECKED_CAST")
-fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
-    when (val type = outbound["type"]) {
+fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
+    when (val type = outbound.optStringOrNull("type")) {
         "shadowsocks", "trojan", "vmess", "vless", "socks", "http" -> {
             val v2rayBean = when (type) {
                 "shadowsocks" -> ShadowsocksBean()
@@ -60,36 +61,36 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 "http" -> HttpBean()
                 else -> return listOf()
             }.apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("type")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                outbound.getInteger("server_port")?.also {
+                outbound.optInteger("server_port")?.also {
                     serverPort = it
                 } ?: return listOf()
             }
             when (type) {
                 "trojan", "vmess", "vless" -> {
-                    outbound.getObject("transport")?.takeIf { !it.isEmpty() }?.also { transport ->
-                        when (transport["type"]) {
+                    outbound.optObject("transport")?.takeIf { it.length() > 0 }?.also { transport ->
+                        when (transport.optStr("type")) {
                             "ws" -> {
                                 v2rayBean.type = "ws"
-                                transport.getString("path")?.also {
+                                transport.optStr("path")?.also {
                                     v2rayBean.path = it
                                 }
-                                transport.getObject("headers")?.also { headers ->
-                                    (headers.getArray("host") as? List<String>)?.get(0)?.also {
+                                transport.optObject("headers")?.also { headers ->
+                                    headers.optArray("host")?.filterIsInstance<String>()?.get(0)?.also {
                                         v2rayBean.host = it
-                                    } ?: headers.getString("host")?.also {
+                                    } ?: headers.optStr("host")?.also {
                                         v2rayBean.host = it
                                     }
                                 }
-                                transport.getInteger("max_early_data")?.also {
+                                transport.optInteger("max_early_data")?.also {
                                     v2rayBean.maxEarlyData = it
                                 }
-                                transport.getString("early_data_header_name")?.also {
+                                transport.optStr("early_data_header_name")?.also {
                                     v2rayBean.earlyDataHeaderName = it
                                 }
                             }
@@ -98,37 +99,36 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                 v2rayBean.headerType = "http"
                                 // Difference from v2ray-core
                                 // TLS is not enforced. If TLS is not configured, plain HTTP 1.1 is used.
-                                outbound.getObject("tls")?.also {
-                                    if (it.getBoolean("enabled") == true) {
+                                outbound.optObject("tls")?.also {
+                                    if (it.optBool("enabled") == true) {
                                         v2rayBean.type = "http"
                                         v2rayBean.headerType = null
                                     }
                                 }
-                                transport.getString("path")?.also {
+                                transport.optStr("path")?.also {
                                     v2rayBean.path = it
                                 }
-                                (transport.getArray("host") as? List<String>)?.also {
+                                transport.optArray("host")?.filterIsInstance<String>()?.also {
                                     v2rayBean.host = it.joinToString("\n")
-                                } ?: transport.getString("host")?.also {
+                                } ?: transport.optStr("host")?.also {
                                     v2rayBean.host = it
                                 }
-
                             }
                             "quic" -> {
                                 v2rayBean.type = "quic"
                             }
                             "grpc" -> {
                                 v2rayBean.type = "grpc"
-                                transport.getString("service_name")?.also {
+                                transport.optStr("service_name")?.also {
                                     v2rayBean.grpcServiceName = it
                                 }
                             }
                             "httpupgrade" -> {
                                 v2rayBean.type = "httpupgrade"
-                                transport.getString("host")?.also {
+                                transport.optStr("host")?.also {
                                     v2rayBean.host = it
                                 }
-                                transport.getString("path")?.also {
+                                transport.optStr("path")?.also {
                                     v2rayBean.path = it
                                 }
                             }
@@ -139,32 +139,32 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
             }
             when (type) {
                 "trojan", "vmess", "vless", "http" -> {
-                    outbound.getObject("tls")?.also { tls ->
-                        (tls.getBoolean("enabled"))?.also { enabled ->
+                    outbound.optObject("tls")?.also { tls ->
+                        (tls.optBool("enabled"))?.also { enabled ->
                             if (enabled) {
                                 v2rayBean.security = "tls"
-                                tls.getString("server_name")?.also {
+                                tls.optStr("server_name")?.also {
                                     v2rayBean.sni = it
                                 }
-                                tls.getBoolean("insecure")?.also {
+                                tls.optBool("insecure")?.also {
                                     v2rayBean.allowInsecure = it
                                 }
-                                (tls.getArray("alpn") as? List<String>)?.also {
+                                tls.optArray("alpn")?.filterIsInstance<String>()?.also {
                                     v2rayBean.alpn = it.joinToString("\n")
-                                } ?: tls.getString("alpn")?.also {
+                                } ?: tls.optStr("alpn")?.also {
                                     v2rayBean.alpn = it
                                 }
                                 if (v2rayBean.alpn == null && v2rayBean.type == "quic") {
                                     // https://github.com/SagerNet/sing-box/pull/1934
                                     v2rayBean.alpn = "h3"
                                 }
-                                if (!tls.contains("certificate_path")) {
+                                if (!tls.hasCaseInsensitive("certificate_path")) {
                                     var cert: String? = null
-                                    (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                                    tls.optArray("certificate")?.filterIsInstance<String>()?.also { certificate ->
                                         cert = certificate.joinToString("\n").takeIf {
                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                         }
-                                    } ?: tls.getString("certificate")?.also { certificate ->
+                                    } ?: tls.optStr("certificate")?.also { certificate ->
                                         cert = certificate.takeIf {
                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                         }
@@ -173,23 +173,23 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                         v2rayBean.certificates = cert
                                     }
                                 }
-                                if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                                if (!tls.hasCaseInsensitive("client_certificate_path") && !tls.hasCaseInsensitive("client_key_path")) {
                                     var cert: String? = null
-                                    (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                                    tls.optArray("client_certificate")?.filterIsInstance<String>()?.also { clientCert ->
                                         cert = clientCert.joinToString("\n").takeIf {
                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                         }
-                                    } ?: tls.getString("client_certificate")?.also { clientCert ->
+                                    } ?: tls.optStr("client_certificate")?.also { clientCert ->
                                         cert = clientCert.takeIf {
                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                         }
                                     }
                                     var key: String? = null
-                                    (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                                    tls.optArray("client_key")?.filterIsInstance<String>()?.also { clientKey ->
                                         key = clientKey.joinToString("\n").takeIf {
                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                         }
-                                    } ?: tls.getString("client_key")?.also { clientKey ->
+                                    } ?: tls.optStr("client_key")?.also { clientKey ->
                                         key = clientKey.takeIf {
                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                         }
@@ -199,21 +199,21 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                         v2rayBean.mtlsCertificatePrivateKey = key
                                     }
                                 }
-                                (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
+                                tls.optArray("certificate_public_key_sha256")?.filterIsInstance<String>()?.also {
                                     v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                     v2rayBean.allowInsecure = true
-                                } ?: tls.getString("certificate_public_key_sha256")?.also {
+                                } ?: tls.optStr("certificate_public_key_sha256")?.also {
                                     v2rayBean.pinnedPeerCertificatePublicKeySha256 = it
                                     v2rayBean.allowInsecure = true
                                 }
-                                tls.getObject("reality")?.also { reality ->
-                                    reality.getBoolean("enabled")?.also { enabled ->
+                                tls.optObject("reality")?.also { reality ->
+                                    reality.optBool("enabled")?.also { enabled ->
                                         if (enabled) {
                                             v2rayBean.security = "reality"
-                                            reality.getString("public_key")?.also {
+                                            reality.optStr("public_key")?.also {
                                                 v2rayBean.realityPublicKey = it
                                             }
-                                            reality.getString("short_id")?.also {
+                                            reality.optStr("short_id")?.also {
                                                 v2rayBean.realityShortId = it
                                             }
                                         }
@@ -227,7 +227,7 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
             when (type) {
                 "socks" -> {
                     v2rayBean as SOCKSBean
-                    outbound.getString("version")?.also {
+                    outbound.optStr("version")?.also {
                         v2rayBean.protocol = when (it) {
                             "4" -> SOCKSBean.PROTOCOL_SOCKS4
                             "4a" -> SOCKSBean.PROTOCOL_SOCKS4A
@@ -235,68 +235,68 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             else -> return listOf()
                         }
                     }
-                    outbound.getString("username")?.also {
+                    outbound.optStr("username")?.also {
                         v2rayBean.username = it
                     }
-                    outbound.getString("password")?.also {
+                    outbound.optStr("password")?.also {
                         v2rayBean.password = it
                     }
                 }
                 "http" -> {
                     v2rayBean as HttpBean
-                    outbound.getString("path")?.also {
+                    outbound.optStr("path")?.also {
                         if (it != "" && it != "/") {
                             // unsupported
                             return listOf()
                         }
                     }
-                    outbound.getString("username")?.also {
+                    outbound.optStr("username")?.also {
                         v2rayBean.username = it
                     }
-                    outbound.getString("password")?.also {
+                    outbound.optStr("password")?.also {
                         v2rayBean.password = it
                     }
                 }
                 "shadowsocks" -> {
                     v2rayBean as ShadowsocksBean
-                    outbound.getString("method")?.also {
+                    outbound.optStr("method")?.also {
                         if (it !in supportedShadowsocksMethod) return listOf()
                         v2rayBean.method = it
                     }
-                    outbound.getString("password")?.also {
+                    outbound.optStr("password")?.also {
                         v2rayBean.password = it
                     }
-                    outbound.getString("plugin")?.takeIf { it.isNotEmpty() }?.also { pluginId ->
+                    outbound.optStr("plugin")?.takeIf { it.isNotEmpty() }?.also { pluginId ->
                         if (pluginId != "obfs-local" && pluginId != "v2ray-plugin") return listOf()
-                        v2rayBean.plugin = PluginOptions(pluginId, outbound.getString("plugin_opts")).toString(trimId = false)
+                        v2rayBean.plugin = PluginOptions(pluginId, outbound.optStr("plugin_opts")).toString(trimId = false)
                     }
                 }
                 "trojan" -> {
                     v2rayBean as TrojanBean
-                    outbound.getString("password")?.also {
+                    outbound.optStr("password")?.also {
                         v2rayBean.password = it
                     }
                 }
                 "vmess" -> {
                     v2rayBean as VMessBean
-                    outbound.getString("uuid")?.also {
+                    outbound.optStr("uuid")?.also {
                         v2rayBean.uuid = try {
                             UUID.fromString(it).toString()
                         } catch (_: Exception) {
                             uuid5(it)
                         }
                     }
-                    outbound.getString("security")?.also {
+                    outbound.optStr("security")?.also {
                         if (it !in supportedVmessMethod) return listOf()
                         v2rayBean.encryption = it
                     }
-                    outbound.getInteger("alter_id")?.also {
+                    outbound.optInteger("alter_id")?.also {
                         v2rayBean.alterId = it
                     }
-                    outbound.getBoolean("global_padding")?.also {
+                    outbound.optBool("global_padding")?.also {
                         v2rayBean.experimentalAuthenticatedLength = it
                     }
-                    v2rayBean.packetEncoding = when (outbound.getString("packet_encoding")) {
+                    v2rayBean.packetEncoding = when (outbound.optStr("packet_encoding")) {
                         "packetaddr" -> "packet"
                         "xudp" -> "xudp"
                         else -> "none"
@@ -304,19 +304,19 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                 }
                 "vless" -> {
                     v2rayBean as VLESSBean
-                    outbound.getString("uuid")?.also {
+                    outbound.optStr("uuid")?.also {
                         v2rayBean.uuid = try {
                             UUID.fromString(it).toString()
                         } catch (_: Exception) {
                             uuid5(it)
                         }
                     }
-                    v2rayBean.packetEncoding = when (outbound.getString("packet_encoding")) {
+                    v2rayBean.packetEncoding = when (outbound.optStr("packet_encoding")) {
                         "packetaddr" -> "packet"
                         "xudp", null -> "xudp"
                         else -> "none"
                     }
-                    outbound.getString("flow")?.also {
+                    outbound.optStr("flow")?.also {
                         when (it) {
                             "" -> {}
                             "xtls-rprx-vision" -> {
@@ -332,51 +332,51 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
         }
         "hysteria2" -> {
             val hysteria2Bean = Hysteria2Bean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                (outbound.getInteger("server_port")?.also {
+                (outbound.optInteger("server_port")?.also {
                     serverPorts = it.toString()
-                } ?: (outbound.getArray("server_ports") as? List<String>)?.also {
+                } ?: outbound.optArray("server_ports")?.filterIsInstance<String>()?.also {
                     serverPorts = it.joinToString(",").replace(":", "-")
-                } ?: outbound.getString("server_ports")?.also {
+                } ?: outbound.optStr("server_ports")?.also {
                     serverPorts = it.replace(":", "-")
                 }) ?: return listOf()
                 if (!serverPorts.isValidHysteriaPort()) {
                     return listOf()
                 }
-                outbound.getString("hop_interval")?.also { interval ->
+                outbound.optStr("hop_interval")?.also { interval ->
                     try {
                         val duration = Duration.parse(interval)
                         hopInterval = duration.toLong(DurationUnit.SECONDS).takeIf { it > 0 }
                     } catch (_: Exception) {}
                 }
-                outbound.getString("password")?.also {
+                outbound.optStr("password")?.also {
                     auth = it
                 }
-                outbound.getObject("tls")?.also { tls ->
-                    if (tls.getBoolean("enabled") != true) {
+                outbound.optObject("tls")?.also { tls ->
+                    if (tls.optBool("enabled") != true) {
                         return listOf()
                     }
-                    if (tls.getObject("reality")?.getBoolean("enabled") == true) {
+                    if (tls.optObject("reality")?.optBool("enabled") == true) {
                         return listOf()
                     }
-                    tls.getString("server_name")?.also {
+                    tls.optStr("server_name")?.also {
                         sni = it
                     }
-                    tls.getBoolean("insecure")?.also {
+                    tls.optBool("insecure")?.also {
                         allowInsecure = it
                     }
-                    if (!tls.contains("certificate_path")) {
+                    if (!tls.hasCaseInsensitive("certificate_path")) {
                         var cert: String? = null
-                        (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                        tls.optArray("certificate")?.filterIsInstance<String>()?.also { certificate ->
                             cert = certificate.joinToString("\n").takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
-                        } ?: tls.getString("certificate")?.also { certificate ->
+                        } ?: tls.optStr("certificate")?.also { certificate ->
                             cert = certificate.takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
@@ -385,23 +385,23 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             certificates = cert
                         }
                     }
-                    if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                    if (!tls.hasCaseInsensitive("client_certificate_path") && !tls.hasCaseInsensitive("client_key_path")) {
                         var cert: String? = null
-                        (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                        tls.optArray("client_certificate")?.filterIsInstance<String>()?.also { clientCert ->
                             cert = clientCert.joinToString("\n").takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
-                        } ?: tls.getString("client_certificate")?.also { clientCert ->
+                        } ?: tls.optStr("client_certificate")?.also { clientCert ->
                             cert = clientCert.takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
                         }
                         var key: String? = null
-                        (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                        tls.optArray("client_key")?.filterIsInstance<String>()?.also { clientKey ->
                             key = clientKey.joinToString("\n").takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                             }
-                        } ?: tls.getString("client_key")?.also { clientKey ->
+                        } ?: tls.optStr("client_key")?.also { clientKey ->
                             key = clientKey.takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                             }
@@ -411,86 +411,80 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             mtlsCertificatePrivateKey = key
                         }
                     }
-                    (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
+                    tls.optArray("certificate_public_key_sha256")?.filterIsInstance<String>()?.also {
                         pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         allowInsecure = true
-                    } ?: tls.getString("certificate_public_key_sha256")?.also {
+                    } ?: tls.optStr("certificate_public_key_sha256")?.also {
                         pinnedPeerCertificatePublicKeySha256 = it
                         allowInsecure = true
                     }
                 } ?: return listOf()
-                outbound.getObject("obfs")?.also { obfuscation ->
-                    obfuscation.getString("type")?.takeIf { it.isNotEmpty() }?.also { type ->
+                outbound.optObject("obfs")?.also { obfuscation ->
+                    obfuscation.optStr("type")?.takeIf { it.isNotEmpty() }?.also { type ->
                         if (type != "salamander") return listOf()
-                        obfuscation.getString("password")?.also {
+                        obfuscation.optStr("password")?.also {
                             obfs = it
                         }
                     }
                 }
-                /*outbound.getInt("up_mbps")?.also {
-                    uploadMbps = it
-                }
-                outbound.getInt("down_mbps")?.also {
-                    downloadMbps = it
-                }*/
             }
             return listOf(hysteria2Bean)
         }
         "hysteria" -> {
             val hysteriaBean = HysteriaBean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                (outbound.getInteger("server_port")?.also {
+                (outbound.optInteger("server_port")?.also {
                     serverPorts = it.toString()
-                } ?: (outbound.getArray("server_ports") as? List<String>)?.also {
+                } ?: outbound.optArray("server_ports")?.filterIsInstance<String>()?.also {
                     serverPorts = it.joinToString(",").replace(":", "-")
-                } ?: outbound.getString("server_ports")?.also {
+                } ?: outbound.optStr("server_ports")?.also {
                     serverPorts = it.replace(":", "-")
                 }) ?: return listOf()
                 if (!serverPorts.isValidHysteriaPort()) {
                     return listOf()
                 }
-                outbound.getString("hop_interval")?.also { interval ->
+                outbound.optStr("hop_interval")?.also { interval ->
                     try {
                         val duration = Duration.parse(interval)
                         hopInterval = duration.toLong(DurationUnit.SECONDS).takeIf { it > 0 }
                     } catch (_: Exception) {}
                 }
-                if (outbound.getString("auth")?.isNotEmpty() == true) {
+                if (outbound.optStr("auth")?.isNotEmpty() == true) {
                     authPayloadType = HysteriaBean.TYPE_BASE64
-                    outbound.getString("auth")?.also {
+                    outbound.optStr("auth")?.also {
                         authPayload = it
                     }
                 }
-                if (outbound.getString("auth_str")?.isNotEmpty() == true) {
+                if (outbound.optStr("auth_str")?.isNotEmpty() == true) {
                     authPayloadType = HysteriaBean.TYPE_STRING
-                    outbound.getString("auth_str")?.also {
+                    outbound.optStr("auth_str")?.also {
                         authPayload = it
                     }
                 }
-                outbound.getString("obfs")?.also {
+                outbound.optStr("obfs")?.also {
                     obfuscation = it
                 }
-                outbound.getObject("tls")?.also { tls ->
-                    if (tls.getBoolean("enabled") != true) {
+                outbound.optObject("tls")?.also { tls ->
+                    if (tls.optBool("enabled") != true) {
                         return listOf()
                     }
-                    if (tls.getObject("reality")?.getBoolean("enabled") == true) {
+                    if (tls.optObject("reality")?.optBool("enabled") == true) {
                         return listOf()
                     }
-                    tls.getString("server_name")?.also {
+                    tls.optStr("server_name")?.also {
                         sni = it
                     }
-                    (tls.getArray("alpn") as? List<String>)?.also {
+                    tls.optArray("alpn")?.filterIsInstance<String>()?.also {
                         alpn = it[0]
-                    } ?: tls.getString("alpn")?.also {
+                    } ?: tls.optStr("alpn")?.also {
                         alpn = it
                     }
-                    tls.getBoolean("insecure")?.also {
+                    tls.optBool("insecure")?.also {
                         allowInsecure = it
                     }
                 } ?: return listOf()
@@ -499,58 +493,58 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
         }
         "tuic" -> {
             val tuic5Bean = Tuic5Bean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                outbound.getInteger("server_port")?.also {
+                outbound.optInteger("server_port")?.also {
                     serverPort = it
                 } ?: return listOf()
-                outbound.getString("uuid")?.also {
+                outbound.optStr("uuid")?.also {
                     uuid = it
                 }
-                outbound.getString("password")?.also {
+                outbound.optStr("password")?.also {
                     password = it
                 }
-                outbound.getString("congestion_control")?.also {
+                outbound.optStr("congestion_control")?.also {
                     congestionControl = if (it in supportedTuic5CongestionControl) it else "cubic"
                 }
-                outbound.getString("udp_relay_mode")?.also {
+                outbound.optStr("udp_relay_mode")?.also {
                     udpRelayMode = if (it in supportedTuic5RelayMode) it else "native"
                 }
-                outbound.getBoolean("zero_rtt_handshake")?.also {
+                outbound.optBool("zero_rtt_handshake")?.also {
                     zeroRTTHandshake = it
                 }
-                outbound.getObject("tls")?.also { tls ->
-                    if (tls.getBoolean("enabled") != true) {
+                outbound.optObject("tls")?.also { tls ->
+                    if (tls.optBool("enabled") != true) {
                         return listOf()
                     }
-                    if (tls.getObject("reality")?.getBoolean("enabled") == true) {
+                    if (tls.optObject("reality")?.optBool("enabled") == true) {
                         return listOf()
                     }
-                    tls.getString("server_name")?.also {
+                    tls.optStr("server_name")?.also {
                         sni = it
                     }
-                    (tls.getArray("alpn") as? List<String>)?.also {
+                    tls.optArray("alpn")?.filterIsInstance<String>()?.also {
                         alpn = it.joinToString("\n")
-                    } ?: tls.getString("alpn")?.also {
+                    } ?: tls.optStr("alpn")?.also {
                         alpn = it
                     }
-                    tls.getBoolean("insecure")?.also {
+                    tls.optBool("insecure")?.also {
                         allowInsecure = it
                     }
-                    tls.getBoolean("disable_sni")?.also {
+                    tls.optBool("disable_sni")?.also {
                         disableSNI = it
                     }
-                    if (!tls.contains("certificate_path")) {
+                    if (!tls.hasCaseInsensitive("certificate_path")) {
                         var cert: String? = null
-                        (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                        tls.optArray("certificate")?.filterIsInstance<String>()?.also { certificate ->
                             cert = certificate.joinToString("\n").takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
-                        } ?: tls.getString("certificate")?.also { certificate ->
+                        } ?: tls.optStr("certificate")?.also { certificate ->
                             cert = certificate.takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
@@ -559,23 +553,23 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             certificates = cert
                         }
                     }
-                    if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                    if (!tls.hasCaseInsensitive("client_certificate_path") && !tls.hasCaseInsensitive("client_key_path")) {
                         var cert: String? = null
-                        (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                        tls.optArray("client_certificate")?.filterIsInstance<String>()?.also { clientCert ->
                             cert = clientCert.joinToString("\n").takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
-                        } ?: tls.getString("client_certificate")?.also { clientCert ->
+                        } ?: tls.optStr("client_certificate")?.also { clientCert ->
                             cert = clientCert.takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                             }
                         }
                         var key: String? = null
-                        (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                        tls.optArray("client_key")?.filterIsInstance<String>()?.also { clientKey ->
                             key = clientKey.joinToString("\n").takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                             }
-                        } ?: tls.getString("client_key")?.also { clientKey ->
+                        } ?: tls.optStr("client_key")?.also { clientKey ->
                             key = clientKey.takeIf {
                                 it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                             }
@@ -585,10 +579,10 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                             mtlsCertificatePrivateKey = key
                         }
                     }
-                    (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
+                    tls.optArray("certificate_public_key_sha256")?.filterIsInstance<String>()?.also {
                         pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                         allowInsecure = true
-                    } ?: tls.getString("certificate_public_key_sha256")?.also {
+                    } ?: tls.optStr("certificate_public_key_sha256")?.also {
                         pinnedPeerCertificatePublicKeySha256 = it
                         allowInsecure = true
                     }
@@ -598,34 +592,34 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
         }
         "ssh" -> {
             val sshBean = SSHBean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                outbound.getInteger("server_port")?.also {
+                outbound.optInteger("server_port")?.also {
                     serverPort = it
                 } ?: return listOf()
-                outbound.getString("user")?.also {
+                outbound.optStr("user")?.also {
                     username = it
                 }
-                if (outbound.getString("password")?.isNotEmpty() == true) {
+                if (outbound.optStr("password")?.isNotEmpty() == true) {
                     authType = SSHBean.AUTH_TYPE_PASSWORD
-                    outbound.getString("password")?.also {
+                    outbound.optStr("password")?.also {
                         password = it
                     }
                 }
-                if (outbound.getString("private_key")?.isNotEmpty() == true) {
+                if (outbound.optStr("private_key")?.isNotEmpty() == true) {
                     authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
-                    outbound.getString("private_key")?.also {
+                    outbound.optStr("private_key")?.also {
                         privateKey = it
                     }
-                    outbound.getString("private_key_passphrase")?.also {
+                    outbound.optStr("private_key_passphrase")?.also {
                         privateKeyPassphrase = it
                     }
                 }
-                (outbound.getArray("host_key") as? List<String>)?.also {
+                outbound.optArray("host_key")?.filterIsInstance<String>()?.also {
                     publicKey = it.joinToString("\n")
                 }
             }
@@ -634,37 +628,37 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
         "ssr" -> {
             // removed in v1.6.0
             val ssrBean = ShadowsocksRBean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                outbound.getInteger("server_port")?.also {
+                outbound.optInteger("server_port")?.also {
                     serverPort = it
                 } ?: return listOf()
-                outbound.getString("method")?.also {
+                outbound.optStr("method")?.also {
                     if (it !in supportedShadowsocksRMethod) return listOf()
                     method = it
                 }
-                outbound.getString("password")?.also {
+                outbound.optStr("password")?.also {
                     password = it
                 }
-                outbound.getString("obfs")?.also {
+                outbound.optStr("obfs")?.also {
                     obfs = when (it) {
                         "tls1.2_ticket_fastauth" -> "tls1.2_ticket_auth"
                         in supportedShadowsocksRObfs -> it
                         else -> return listOf()
                     }
                 }
-                outbound.getString("obfs_param")?.also {
+                outbound.optStr("obfs_param")?.also {
                     obfsParam = it
                 }
-                outbound.getString("protocol")?.also {
+                outbound.optStr("protocol")?.also {
                     if (it !in supportedShadowsocksRProtocol) return listOf()
                     protocol = it
                 }
-                outbound.getString("protocol_param")?.also {
+                outbound.optStr("protocol_param")?.also {
                     protocolParam = it
                 }
             }
@@ -672,37 +666,37 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
         }
         "anytls" -> {
             val anytlsBean = AnyTLSBean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("server")?.also {
+                outbound.optStr("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                outbound.getInteger("server_port")?.also {
+                outbound.optInteger("server_port")?.also {
                     serverPort = it
                 } ?: return listOf()
-                outbound.getObject("tls")?.also { tls ->
-                    (tls.getBoolean("enabled"))?.also { enabled ->
+                outbound.optObject("tls")?.also { tls ->
+                    (tls.optBool("enabled"))?.also { enabled ->
                         if (enabled) {
                             security = "tls"
-                            tls.getString("server_name")?.also {
+                            tls.optStr("server_name")?.also {
                                 sni = it
                             }
-                            tls.getBoolean("insecure")?.also {
+                            tls.optBool("insecure")?.also {
                                 allowInsecure = it
                             }
-                            (tls.getArray("alpn") as? List<String>)?.also {
+                            tls.optArray("alpn")?.filterIsInstance<String>()?.also {
                                 alpn = it.joinToString("\n")
-                            } ?: tls.getString("alpn")?.also {
+                            } ?: tls.optStr("alpn")?.also {
                                 alpn = it
                             }
-                            if (!tls.contains("certificate_path")) {
+                            if (!tls.hasCaseInsensitive("certificate_path")) {
                                 var cert: String? = null
-                                (tls.getArray("certificate") as? List<String>)?.also { certificate ->
+                                tls.optArray("certificate")?.filterIsInstance<String>()?.also { certificate ->
                                     cert = certificate.joinToString("\n").takeIf {
                                         it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                     }
-                                } ?: tls.getString("certificate")?.also { certificate ->
+                                } ?: tls.optStr("certificate")?.also { certificate ->
                                     cert = certificate.takeIf {
                                         it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                     }
@@ -711,23 +705,23 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                     certificates = cert
                                 }
                             }
-                            if (!tls.contains("client_certificate_path") && !tls.contains("client_key_path")) {
+                            if (!tls.hasCaseInsensitive("client_certificate_path") && !tls.hasCaseInsensitive("client_key_path")) {
                                 var cert: String? = null
-                                (tls.getArray("client_certificate") as? List<String>)?.also { clientCert ->
+                                tls.optArray("client_certificate")?.filterIsInstance<String>()?.also { clientCert ->
                                     cert = clientCert.joinToString("\n").takeIf {
                                         it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                     }
-                                } ?: tls.getString("client_certificate")?.also { clientCert ->
+                                } ?: tls.optStr("client_certificate")?.also { clientCert ->
                                     cert = clientCert.takeIf {
                                         it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                     }
                                 }
                                 var key: String? = null
-                                (tls.getArray("client_key") as? List<String>)?.also { clientKey ->
+                                tls.optArray("client_key")?.filterIsInstance<String>()?.also { clientKey ->
                                     key = clientKey.joinToString("\n").takeIf {
                                         it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                     }
-                                } ?: tls.getString("client_key")?.also { clientKey ->
+                                } ?: tls.optStr("client_key")?.also { clientKey ->
                                     key = clientKey.takeIf {
                                         it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                     }
@@ -737,21 +731,21 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
                                     mtlsCertificatePrivateKey = key
                                 }
                             }
-                            (tls.getArray("certificate_public_key_sha256") as? List<String>)?.also {
+                            tls.optArray("certificate_public_key_sha256")?.filterIsInstance<String>()?.also {
                                 pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
                                 allowInsecure = true
-                            } ?: tls.getString("certificate_public_key_sha256")?.also {
+                            } ?: tls.optStr("certificate_public_key_sha256")?.also {
                                 pinnedPeerCertificatePublicKeySha256 = it
                                 allowInsecure = true
                             }
-                            tls.getObject("reality")?.also { reality ->
-                                reality.getBoolean("enabled")?.also { enabled ->
+                            tls.optObject("reality")?.also { reality ->
+                                reality.optBool("enabled")?.also { enabled ->
                                     if (enabled) {
                                         security = "reality"
-                                        reality.getString("public_key")?.also {
+                                        reality.optStr("public_key")?.also {
                                             realityPublicKey = it
                                         }
-                                        reality.getString("short_id")?.also {
+                                        reality.optStr("short_id")?.also {
                                             realityShortId = it
                                         }
                                     }
@@ -766,75 +760,75 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
             return listOf(anytlsBean)
         }
         "wireguard" -> {
-            if (outbound.contains("address")) {
+            if (outbound.hasCaseInsensitive("address")) {
                 // wireguard endpoint format introduced in 1.11.0-alpha.19
                 return listOf()
             }
             val beanList = mutableListOf<WireGuardBean>()
             val bean = WireGuardBean().apply {
-                outbound["tag"]?.toString()?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
-                outbound.getString("private_key")?.also {
+                outbound.optStr("private_key")?.also {
                     privateKey = it
                 }
-                outbound.getString("peer_public_key")?.also {
+                outbound.optStr("peer_public_key")?.also {
                     peerPublicKey = it
                 }
-                outbound.getString("pre_shared_key")?.also {
+                outbound.optStr("pre_shared_key")?.also {
                     peerPreSharedKey = it
                 }
                 mtu = 1408
-                outbound.getInteger("mtu")?.takeIf { it > 0 }?.also {
+                outbound.optInteger("mtu")?.takeIf { it > 0 }?.also {
                     mtu = it
                 }
-                (outbound.getArray("local_address") as? List<String>)?.also {
+                outbound.optArray("local_address")?.filterIsInstance<String>()?.also {
                     localAddress = it.joinToString("\n")
-                } ?: outbound.getString("local_address")?.also {
+                } ?: outbound.optStr("local_address")?.also {
                     localAddress = it
                 } ?: return listOf()
-                (outbound.getArray("reserved") as? List<Int>)?.also {
+                outbound.optArray("reserved")?.filterIsInstance<Int>()?.also {
                     if (it.size == 3) {
                         reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                     }
-                } ?: outbound.getString("reserved")?.also {
+                } ?: outbound.optStr("reserved")?.also {
                     val arr = Base64.decode(it)
                     if (arr.size == 3) {
                         reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
                     }
                 }
             }
-            if (outbound.contains("server")) {
-                outbound.getString("server")?.also {
+            if (outbound.hasCaseInsensitive("server")) {
+                outbound.optStr("server")?.also {
                     bean.serverAddress = it
                 } ?: return listOf()
-                outbound.getInteger("server_port")?.also {
+                outbound.optInteger("server_port")?.also {
                     bean.serverPort = it
                 } ?: return listOf()
                 beanList.add(bean)
             }
-            outbound.getArray("peers")?.forEach { peer ->
+            outbound.optArray("peers")?.filterIsInstance<JSONObject>()?.forEach { peer ->
                 beanList.add(bean.applyDefaultValues().clone().apply {
-                    peer.getString("server")?.also {
+                    peer.optStr("server")?.also {
                         serverAddress = it
                     }
-                    peer.getInteger("server_port")?.also {
+                    peer.optInteger("server_port")?.also {
                         serverPort = it
                     }
-                    peer.getString("public_key")?.also {
+                    peer.optStr("public_key")?.also {
                         peerPublicKey = it
                     }
-                    peer.getString("pre_shared_key")?.also {
+                    peer.optStr("pre_shared_key")?.also {
                         peerPreSharedKey = it
                     }
-                    peer.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
+                    peer.optInteger("persistent_keepalive_interval")?.takeIf { it > 0 }?.also {
                         keepaliveInterval = it
                     }
-                    (peer.getArray("reserved") as? List<Int>)?.also {
+                    peer.optArray("reserved")?.filterIsInstance<Int>()?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
-                    } ?: peer.getString("reserved")?.also {
+                    } ?: peer.optStr("reserved")?.also {
                         val arr = Base64.decode(it)
                         if (arr.size == 3) {
                             reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
@@ -849,57 +843,57 @@ fun parseSingBoxOutbound(outbound: Map<String, Any?>): List<AbstractBean> {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun parseSingBoxEndpoint(endpoint: Map<String, Any?>): List<AbstractBean> {
-    when (endpoint["type"]) {
+fun parseSingBoxEndpoint(endpoint: JSONObject): List<AbstractBean> {
+    when (endpoint.optStringOrNull("type")) {
         "wireguard" -> {
             val beanList = mutableListOf<WireGuardBean>()
-            if (endpoint.contains("local_address")) {
+            if (endpoint.hasCaseInsensitive("local_address")) {
                 // legacy wireguard outbound format
                 return listOf()
             }
             val bean = WireGuardBean().apply {
-                endpoint["tag"]?.toString()?.also {
+                endpoint.optStringOrNull("tag")?.also {
                     name = it
                 }
-                endpoint.getString("private_key")?.also {
+                endpoint.optStr("private_key")?.also {
                     privateKey = it
                 }
                 mtu = 1408
-                endpoint.getInteger("mtu")?.takeIf { it > 0 }?.also {
+                endpoint.optInteger("mtu")?.takeIf { it > 0 }?.also {
                     mtu = it
                 }
-                (endpoint.getArray("address") as? List<String>)?.also {
+                endpoint.optArray("address")?.filterIsInstance<String>()?.also {
                     localAddress = it.joinToString("\n")
-                } ?: endpoint.getString("address")?.also {
+                } ?: endpoint.optStr("address")?.also {
                     localAddress = it
                 } ?: return listOf()
             }
-            endpoint.getArray("peers")?.forEach { peer ->
+            endpoint.optArray("peers")?.filterIsInstance<JSONObject>()?.forEach { peer ->
                 beanList.add(bean.applyDefaultValues().clone().apply {
-                    peer.getString("address")?.also {
+                    peer.optStr("address")?.also {
                         serverAddress = it
                     }
-                    peer.getInteger("port")?.also {
+                    peer.optInteger("port")?.also {
                         serverPort = it
                     }
-                    peer.getString("public_key")?.also {
+                    peer.optStr("public_key")?.also {
                         peerPublicKey = it
                     }
-                    peer.getString("pre_shared_key")?.also {
+                    peer.optStr("pre_shared_key")?.also {
                         peerPreSharedKey = it
                     }
-                    peer.getString("persistent_keepalive_interval")?.toIntOrNull()?.takeIf { it > 0 }?.also {
+                    peer.optInteger("persistent_keepalive_interval")?.takeIf { it > 0 }?.also {
                         keepaliveInterval = it
                     }
-                    (peer.getArray("reserved") as? List<Int>)?.also {
+                    peer.optArray("reserved")?.filterIsInstance<Int>()?.also {
                         if (it.size == 3) {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
-                    } ?: peer.getString("reserved")?.also {
+                    } ?: peer.optStr("reserved")?.also {
                         val arr = Base64.decode(it)
                         if (arr.size == 3) {
-                        reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
-                    }
+                            reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
+                        }
                     }
                 })
             }

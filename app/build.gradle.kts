@@ -50,7 +50,6 @@ dependencies {
 
     implementation("com.google.android.material:material:1.13.0")
     implementation("cn.hutool:hutool-core:5.8.40")
-    implementation("cn.hutool:hutool-json:5.8.40")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("com.google.zxing:core:3.5.3")
 

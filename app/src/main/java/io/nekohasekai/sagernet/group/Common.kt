@@ -19,6 +19,26 @@
 
 package io.nekohasekai.sagernet.group
 
+import io.nekohasekai.sagernet.ktx.optBooleanOrNull
+import io.nekohasekai.sagernet.ktx.optIntOrNull
+import io.nekohasekai.sagernet.ktx.optLongOrNull
+import io.nekohasekai.sagernet.ktx.optStringOrNull
+import org.json.JSONArray
+import org.json.JSONObject
+import kotlin.collections.iterator
+
+fun JSONObject.hasCaseInsensitive(key: String): Boolean {
+    if (has(key)) {
+        return true
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return true
+        }
+    }
+    return false
+}
+
 fun Map<String, Any?>.contains(key: String): Boolean {
     if (this.containsKey(key)) {
         return true
@@ -43,6 +63,18 @@ fun Map<String, Any?>.getAny(key: String): Any? {
     return null
 }
 
+fun JSONObject.optStr(key: String): String? {
+    if (has(key)) {
+        return optStringOrNull(key)
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return optStringOrNull(it)
+        }
+    }
+    return null
+}
+
 fun Map<String, Any?>.getString(key: String): String? {
     if (this.contains(key)) {
         return this[key] as? String
@@ -50,6 +82,18 @@ fun Map<String, Any?>.getString(key: String): String? {
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
             return it.value as? String
+        }
+    }
+    return null
+}
+
+fun JSONObject.optInteger(key: String): Int? {
+    if (has(key)) {
+        return optIntOrNull(key)
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return optIntOrNull(it)
         }
     }
     return null
@@ -67,6 +111,30 @@ fun Map<String, Any?>.getInteger(key: String): Int? {
     return null
 }
 
+fun JSONObject.optLongInteger(key: String): Long? {
+    if (has(key)) {
+        return optLongOrNull(key)
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return optLongOrNull(it)
+        }
+    }
+    return null
+}
+
+fun JSONObject.optBool(key: String): Boolean? {
+    if (has(key)) {
+        return optBooleanOrNull(key)
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return optBooleanOrNull(it)
+        }
+    }
+    return null
+}
+
 fun Map<String, Any?>.getBoolean(key: String): Boolean? {
     if (this.contains(key)) {
         return this[key] as? Boolean
@@ -74,6 +142,18 @@ fun Map<String, Any?>.getBoolean(key: String): Boolean? {
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
             return it.value as? Boolean
+        }
+    }
+    return null
+}
+
+fun JSONObject.optObject(key: String): JSONObject? {
+    if (has(key)) {
+        return optJSONObject(key)
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return optJSONObject(it)
         }
     }
     return null
@@ -87,6 +167,18 @@ fun Map<String, Any?>.getObject(key: String): Map<String, Any?>? {
     for (it in this) {
         if (it.key.lowercase() == key.lowercase()) {
             return it.value as? Map<String, Any?>
+        }
+    }
+    return null
+}
+
+fun JSONObject.optArray(key: String): JSONArray? {
+    if (has(key)) {
+        return optJSONArray(key)
+    }
+    for (it in keys()) {
+        if (it.lowercase() == key.lowercase()) {
+            return optJSONArray(it)
         }
     }
     return null

@@ -18,14 +18,15 @@
 
 package io.nekohasekai.sagernet.fmt.tuic
 
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 
 val supportedTuicCongestionControl = arrayOf("cubic", "bbr", "new_reno")
@@ -64,49 +65,49 @@ fun TuicBean.toUri(): String {
 
 fun TuicBean.buildTuicConfig(port: Int, forExport: Boolean, cacheFile: (() -> File)?): String {
     return JSONObject().also {
-        it["relay"] = JSONObject().also {
+        it.put("relay", JSONObject().also {
             if (sni.isNotEmpty()) {
-                it["server"] = sni
-                it["ip"] = finalAddress
+                it.put("server", sni)
+                it.put("ip", finalAddress)
             } else {
-                it["server"] = serverAddress
-                it["ip"] = finalAddress
+                it.put("server", serverAddress)
+                it.put("ip", finalAddress)
             }
-            it["port"] = finalPort
-            it["token"] = token
+            it.put("port", finalPort)
+            it.put("token", token)
 
             if (caText.isNotEmpty() && cacheFile != null) {
                 val caFile = cacheFile()
                 caFile.writeText(caText)
-                it["certificates"] = JSONArray().apply {
+                it.put("certificates", JSONArray().apply {
                     put(caFile.absolutePath)
-                }
+                })
             } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
-                it["certificates"] = JSONArray().apply {
+                it.put("certificates", JSONArray().apply {
                     // workaround tuic can't load Android system root certificates without forking it
                     File("/system/etc/security/cacerts").listFiles()?.forEach { put(it) }
-                }
+                })
             }
 
-            it["udp_relay_mode"] = udpRelayMode
+            it.put("udp_relay_mode", udpRelayMode)
             if (alpn.isNotEmpty()) {
-                it["alpn"] = JSONArray(alpn.listByLineOrComma())
+                it.put("alpn", JSONArray(alpn.listByLineOrComma()))
             }
-            it["congestion_controller"] = congestionController
-            it["disable_sni"] = disableSNI
-            it["reduce_rtt"] = reduceRTT
-            it["max_udp_relay_packet_size"] = mtu
-        }
-        it["local"] = JSONObject().also {
-            it["ip"] = LOCALHOST
-            it["port"] = port
-        }
-        it["log_level"] = when (DataStore.logLevel) {
+            it.put("congestion_controller", congestionController)
+            it.put("disable_sni", disableSNI)
+            it.put("reduce_rtt", reduceRTT)
+            it.put("max_udp_relay_packet_size", mtu)
+        })
+        it.put("local", JSONObject().also {
+            it.put("ip", LOCALHOST)
+            it.put("port", port)
+        })
+        it.put("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
             else -> "off"
-        }
+        })
     }.toStringPretty()
 }

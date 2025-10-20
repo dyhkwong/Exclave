@@ -19,8 +19,6 @@
 package io.nekohasekai.sagernet.fmt.tuic5
 
 import cn.hutool.core.lang.UUID
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
@@ -32,8 +30,11 @@ import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import java.io.File
 import libcore.Libcore
+import org.json.JSONArray
+import org.json.JSONObject
 
 val supportedTuic5CongestionControl = arrayOf("cubic", "bbr", "new_reno")
 val supportedTuic5RelayMode = arrayOf("native", "quic")
@@ -186,52 +187,52 @@ fun Tuic5Bean.toUri(): String? {
 
 fun Tuic5Bean.buildTuic5Config(port: Int, forExport: Boolean, cacheFile: (() -> File)?): String {
     return JSONObject().also {
-        it["relay"] = JSONObject().also {
+        it.put("relay", JSONObject().also {
             if (sni.isNotEmpty()) {
-                it["server"] = joinHostPort(sni, finalPort)
-                it["ip"] = finalAddress
+                it.put("server", joinHostPort(sni, finalPort))
+                it.put("ip", finalAddress)
             } else {
-                it["server"] = joinHostPort(serverAddress, finalPort)
-                it["ip"] = finalAddress
+                it.put("server", joinHostPort(serverAddress, finalPort))
+                it.put("ip", finalAddress)
             }
-            it["uuid"] = uuid
-            it["password"] = password
+            it.put("uuid", uuid)
+            it.put("password", password)
 
             if (certificates.isNotEmpty() && cacheFile != null) {
                 val caFile = cacheFile()
                 caFile.writeText(certificates)
-                it["certificates"] = JSONArray().apply {
+                it.put("certificates", JSONArray().apply {
                     put(caFile.absolutePath)
-                }
+                })
             } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && certificates.isEmpty()) {
-                it["certificates"] = JSONArray().apply {
+                it.put("certificates", JSONArray().apply {
                     // https://github.com/maskedeken/tuic/commit/88e57f6e41ae8985edd8f620950e3f8e7d29e1cc
                     // workaround tuic can't load Android system root certificates without forking it
                     File("/system/etc/security/cacerts").listFiles()?.forEach { put(it) }
-                }
+                })
             }
 
-            it["udp_relay_mode"] = udpRelayMode
+            it.put("udp_relay_mode", udpRelayMode)
             if (alpn.isNotEmpty()) {
-                it["alpn"] = JSONArray(alpn.listByLineOrComma())
+                it.put("alpn", JSONArray(alpn.listByLineOrComma()))
             }
-            it["congestion_control"] = congestionControl
-            it["disable_sni"] = disableSNI
-            it["zero_rtt_handshake"] = zeroRTTHandshake
+            it.put("congestion_control", congestionControl)
+            it.put("disable_sni", disableSNI)
+            it.put("zero_rtt_handshake", zeroRTTHandshake)
             if (allowInsecure) {
-                it["skip_cert_verify"] = true
+                it.put("skip_cert_verify", true)
             }
-        }
-        it["local"] = JSONObject().also {
-            it["server"] = joinHostPort(LOCALHOST, port)
-            it["max_packet_size"] = mtu
-        }
-        it["log_level"] = when (DataStore.logLevel) {
+        })
+        it.put("local", JSONObject().also {
+            it.put("server", joinHostPort(LOCALHOST, port))
+            it.put("max_packet_size", mtu)
+        })
+        it.put("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
             else -> "error"
-        }
+        })
     }.toStringPretty()
 }

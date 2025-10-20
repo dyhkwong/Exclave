@@ -19,14 +19,15 @@
 
 package io.nekohasekai.sagernet.fmt.naive
 
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
+import org.json.JSONObject
 
 fun parseNaive(link: String): NaiveBean {
     // This format may be https://github.com/klzgrad/naiveproxy/issues/86.
@@ -85,28 +86,28 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
 
 fun NaiveBean.buildNaiveConfig(port: Int): String {
     return JSONObject().also {
-        it["listen"] = "socks://" + joinHostPort(LOCALHOST, port)
+        it.put("listen", "socks://" + joinHostPort(LOCALHOST, port))
         // NaïveProxy v130.0.6723.40-2 release notes:
         // Fixed a crash when the username or password contains the comma character `,`.
         // The comma is used for delimiting proxies in a proxy chain.
         // It must be percent-encoded in other URL components.
-        it["proxy"] = toUri(true).replace(",", "%2C")
+        it.put("proxy", toUri(true).replace(",", "%2C"))
         if (extraHeaders.isNotEmpty()) {
-            it["extra-headers"] = extraHeaders.listByLine().joinToString("\r\n")
+            it.put("extra-headers", extraHeaders.listByLine().joinToString("\r\n"))
         }
         if (sni.isNotEmpty()) {
-            it["host-resolver-rules"] = "MAP $sni $finalAddress"
+            it.put("host-resolver-rules","MAP $sni $finalAddress")
         } else {
-            it["host-resolver-rules"] = "MAP $serverAddress $finalAddress"
+            it.put("host-resolver-rules", "MAP $serverAddress $finalAddress")
         }
         if (DataStore.logLevel != LogLevel.NONE) {
-            it["log"] = ""
+            it.put("log", "")
         }
         if (insecureConcurrency > 0) {
-            it["insecure-concurrency"] = insecureConcurrency
+            it.put("insecure-concurrency", insecureConcurrency)
         }
         if (noPostQuantum) {
-            it["no-post-quantum"] = true
+            it.put("no-post-quantum", true)
         }
     }.toStringPretty()
 }

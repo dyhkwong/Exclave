@@ -19,11 +19,11 @@
 
 package io.nekohasekai.sagernet.fmt.hysteria
 
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import org.json.JSONObject
 import java.io.File
 import kotlin.io.encoding.Base64
 
@@ -152,41 +152,38 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         if (protocol == HysteriaBean.PROTOCOL_FAKETCP || usePortHopping) {
             // Hysteria port hopping is incompatible with chain proxy
             if (usePortHopping) {
-                it["server"] = if (serverAddress.isIpv6Address()) {
+                it.put("server", if (serverAddress.isIpv6Address()) {
                     "[$serverAddress]:$serverPorts"
                 } else {
                     "$serverAddress:$serverPorts"
-                }
-                if (hopInterval > 0) {
-                    it["hop_interval"] = hopInterval
-                }
+                })
             } else {
-                it["server"] = if (serverAddress.isIpv6Address()) {
+                it.put("server", if (serverAddress.isIpv6Address()) {
                     "[" + serverAddress + "]:" + serverPorts.toHysteriaPort()
                 } else {
                     serverAddress + ":" + serverPorts.toHysteriaPort()
-                }
+                })
             }
         } else {
-            it["server"] = joinHostPort(finalAddress, finalPort)
+            it.put("server", joinHostPort(finalAddress, finalPort))
         }
         when (protocol) {
             HysteriaBean.PROTOCOL_FAKETCP -> {
-                it["protocol"] = "faketcp"
+                it.put("protocol", "faketcp")
             }
             HysteriaBean.PROTOCOL_WECHAT_VIDEO -> {
-                it["protocol"] = "wechat-video"
+                it.put("protocol", "wechat-video")
             }
         }
-        it["up_mbps"] = uploadMbps
-        it["down_mbps"] = downloadMbps
-        it["socks5"] = JSONObject(mapOf("listen" to joinHostPort(LOCALHOST, port)))
+        it.put("up_mbps", uploadMbps)
+        it.put("down_mbps", downloadMbps)
+        it.put("socks5", JSONObject(mapOf("listen" to joinHostPort(LOCALHOST, port))))
         if (obfuscation.isNotEmpty()) {
-            it["obfs"] = obfuscation
+            it.put("obfs", obfuscation)
         }
         when (authPayloadType) {
-            HysteriaBean.TYPE_BASE64 -> it["auth"] = authPayload
-            HysteriaBean.TYPE_STRING -> it["auth_str"] = authPayload
+            HysteriaBean.TYPE_BASE64 -> it.put("auth", authPayload)
+            HysteriaBean.TYPE_STRING -> it.put("auth_str", authPayload)
         }
         var servername = sni
         if (!usePortHopping && protocol != HysteriaBean.PROTOCOL_FAKETCP) {
@@ -195,21 +192,21 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
             }
         }
         if (servername.isNotEmpty()) {
-            it["server_name"] = servername
+            it.put("server_name", servername)
         }
-        if (alpn.isNotEmpty()) it["alpn"] = alpn
+        if (alpn.isNotEmpty()) it.put("alpn", alpn)
         if (caText.isNotEmpty() && cacheFile != null) {
             val caFile = cacheFile()
             caFile.writeText(caText)
-            it["ca"] = caFile.absolutePath
+            it.put("ca", caFile.absolutePath)
         }
 
-        if (allowInsecure) it["insecure"] = true
-        if (streamReceiveWindow > 0) it["recv_window_conn"] = streamReceiveWindow
-        if (connectionReceiveWindow > 0) it["recv_window"] = connectionReceiveWindow
-        if (disableMtuDiscovery) it["disable_mtu_discovery"] = true
+        if (allowInsecure) it.put("insecure", true)
+        if (streamReceiveWindow > 0) it.put("recv_window_conn", streamReceiveWindow)
+        if (connectionReceiveWindow > 0) it.put("recv_window", connectionReceiveWindow)
+        if (disableMtuDiscovery) it.put("insecure", true)
 
-        it["lazy_start"] = true
-        it["fast_open"] = true
+        it.put("lazy_start", true)
+        it.put("fast_open", true)
     }.toStringPretty()
 }

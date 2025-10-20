@@ -19,12 +19,12 @@
 
 package io.nekohasekai.sagernet.fmt.juicity
 
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import org.json.JSONObject
 import java.util.Base64
 
 // invalid option
@@ -108,36 +108,36 @@ fun JuicityBean.toUri(): String? {
 
 fun JuicityBean.buildJuicityConfig(port: Int): String {
     return JSONObject().also {
-        it["listen"] = joinHostPort(LOCALHOST, port)
-        it["server"] = joinHostPort(finalAddress, finalPort)
-        it["uuid"] = uuid
-        it["password"] = password
-        it["congestion_control"] = congestionControl
+        it.put("listen", joinHostPort(LOCALHOST, port))
+        it.put("server", joinHostPort(finalAddress, finalPort))
+        it.put("uuid", uuid)
+        it.put("password", password)
+        it.put("congestion_control", congestionControl)
         if (sni.isNotEmpty()) {
-            it["sni"] = sni
+            it.put("sni", sni)
         } else {
-            it["sni"] = serverAddress
+            it.put("sni", serverAddress)
         }
         if (allowInsecure || pinnedPeerCertificateChainSha256.isNotEmpty()) {
-            it["allow_insecure"] = true
+            it.put("allow_insecure", true)
         }
         if (pinnedPeerCertificateChainSha256.isNotEmpty()) {
             val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
-            it["pinned_certchain_sha256"] = when {
+            it.put("pinned_certchain_sha256", when {
                 certChainHash.length == 64 -> {
                     Base64.getUrlEncoder().encodeToString(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
                 }
                 else -> {
                     certChainHash.replace('/', '_').replace('+', '-')
                 }
-            }
+            })
         }
-        it["log_level"] = when (DataStore.logLevel) {
+        it.put("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
             else -> "panic"
-        }
+        })
     }.toStringPretty()
 }

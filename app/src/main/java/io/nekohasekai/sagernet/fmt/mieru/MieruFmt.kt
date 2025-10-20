@@ -18,12 +18,13 @@
 
 package io.nekohasekai.sagernet.fmt.mieru
 
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
+import org.json.JSONArray
+import org.json.JSONObject
 
 fun parseMieru(link: String): MieruBean {
     val url = Libcore.parseURL(link)
@@ -130,58 +131,58 @@ fun MieruBean.toUri(): String? {
 fun MieruBean.buildMieruConfig(port: Int): String {
     return JSONObject().also {
         // Uncomment this means giving up the support for mieru < 3.13, mieru version 2 and mieru version 1.
-        /*it["advancedSettings"] = JSONObject().also {
-            it["noCheckUpdate"] = true
-        }*/
-        it["activeProfile"] = "default"
-        it["socks5Port"] = port
-        it["loggingLevel"] = when (DataStore.logLevel) {
+        /*it.put("advancedSettings", JSONObject().also {
+            it.put("noCheckUpdate", true)
+        })*/
+        it.put("activeProfile", "default")
+        it.put("socks5Port", port)
+        it.put("loggingLevel", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "TRACE"
             LogLevel.INFO -> "INFO"
             LogLevel.WARNING -> "WARN"
             LogLevel.ERROR -> "ERROR"
             else -> "FATAL"
-        }
-        it["profiles"] = JSONArray().apply {
+        })
+        it.put("profiles", JSONArray().apply {
             put(JSONObject().also {
-                it["profileName"] = "default"
-                it["user"] = JSONObject().also {
-                    it["name"] = username
-                    it["password"] = password
-                }
-                it["servers"] = JSONArray().apply {
+                it.put("profileName", "default")
+                it.put("user", JSONObject().also {
+                    it.put("name", username)
+                    it.put("password", password)
+                })
+                it.put("servers", JSONArray().apply {
                     put(JSONObject().also {
-                        it["ipAddress"] = finalAddress
-                        it["portBindings"] = JSONArray().apply {
+                        it.put("ipAddress", finalAddress)
+                        it.put("portBindings", JSONArray().apply {
                             put(JSONObject().also {
-                                it["port"] = finalPort
-                                it["protocol"] = when (protocol) {
+                                it.put("port", finalPort)
+                                it.put("protocol", when (protocol) {
                                     MieruBean.PROTOCOL_TCP -> "TCP"
                                     MieruBean.PROTOCOL_UDP -> "UDP"
                                     else -> error("unexpected protocol $protocol")
-                                }
+                                })
                             })
+                        })
+                    })
+                })
+                if (protocol == MieruBean.PROTOCOL_UDP) {
+                    it.put("mtu", mtu)
+                }
+                if (multiplexingLevel != MieruBean.MULTIPLEXING_DEFAULT) {
+                    it.put("multiplexing", JSONObject().also {
+                        when (multiplexingLevel) {
+                            MieruBean.MULTIPLEXING_OFF -> it.put("level", "MULTIPLEXING_OFF")
+                            MieruBean.MULTIPLEXING_LOW -> it.put("level","MULTIPLEXING_LOW")
+                            MieruBean.MULTIPLEXING_MIDDLE -> it.put("level", "MULTIPLEXING_MIDDLE")
+                            MieruBean.MULTIPLEXING_HIGH -> it.put("level", "MULTIPLEXING_HIGH")
                         }
                     })
                 }
-                if (protocol == MieruBean.PROTOCOL_UDP) {
-                    it["mtu"] = mtu
-                }
-                if (multiplexingLevel != MieruBean.MULTIPLEXING_DEFAULT) {
-                    it["multiplexing"] = JSONObject().also {
-                        when (multiplexingLevel) {
-                            MieruBean.MULTIPLEXING_OFF -> it["level"] = "MULTIPLEXING_OFF"
-                            MieruBean.MULTIPLEXING_LOW -> it["level"] = "MULTIPLEXING_LOW"
-                            MieruBean.MULTIPLEXING_MIDDLE -> it["level"] = "MULTIPLEXING_MIDDLE"
-                            MieruBean.MULTIPLEXING_HIGH -> it["level"] = "MULTIPLEXING_HIGH"
-                        }
-                    }
-                }
                 when (handshakeMode) {
-                    MieruBean.HANDSHAKE_STANDARD -> it["handshakeMode"] = "HANDSHAKE_STANDARD"
-                    MieruBean.HANDSHAKE_NO_WAIT -> it["handshakeMode"] = "HANDSHAKE_NO_WAIT"
+                    MieruBean.HANDSHAKE_STANDARD -> it.put("handshakeMode", "HANDSHAKE_STANDARD")
+                    MieruBean.HANDSHAKE_NO_WAIT -> it.put("handshakeMode", "HANDSHAKE_NO_WAIT")
                 }
             })
-        }
+        })
     }.toStringPretty()
 }

@@ -19,6 +19,8 @@
 
 package io.nekohasekai.sagernet.fmt;
 
+import static io.nekohasekai.sagernet.fmt.gson.GsonsKt.getGson;
+
 import androidx.annotation.NonNull;
 
 import com.esotericsoftware.kryo.io.ByteBufferInput;
@@ -31,9 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cn.hutool.core.clone.Cloneable;
-import cn.hutool.json.JSONUtil;
 import io.nekohasekai.sagernet.ExtraType;
-import io.nekohasekai.sagernet.fmt.gson.GsonsKt;
 import io.nekohasekai.sagernet.ktx.KryosKt;
 import io.nekohasekai.sagernet.ktx.NetsKt;
 
@@ -177,7 +177,7 @@ public abstract class AbstractBean extends Serializable implements Cloneable<Abs
     @NotNull
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " " + JSONUtil.formatJsonStr(GsonsKt.getGson().toJson(this));
+        return getClass().getSimpleName() + " " + getGson().toJson(this);
     }
 
     public void applyFeatureSettings(AbstractBean other) {

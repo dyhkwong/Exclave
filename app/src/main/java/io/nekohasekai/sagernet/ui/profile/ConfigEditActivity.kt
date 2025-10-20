@@ -28,7 +28,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import cn.hutool.json.JSONObject
 import com.blacksquircle.ui.editorkit.listener.OnChangeListener
 import com.blacksquircle.ui.editorkit.model.ColorScheme
 import com.blacksquircle.ui.language.base.model.SyntaxScheme
@@ -45,6 +44,7 @@ import androidx.core.graphics.toColorInt
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.ktx.readableMessage
+import org.json.JSONObject
 
 class ConfigEditActivity : ThemedActivity() {
 
@@ -153,13 +153,13 @@ class ConfigEditActivity : ThemedActivity() {
 
     fun saveAndExit() {
         try {
-            DataStore.serverConfig = JSONObject(config).toStringPretty()
+            JSONObject(config)
         } catch (e: Exception) {
-            DataStore.serverConfig = config
             MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
                 .setMessage(e.readableMessage).show()
             return
         }
+        DataStore.serverConfig = config
         finish()
     }
 

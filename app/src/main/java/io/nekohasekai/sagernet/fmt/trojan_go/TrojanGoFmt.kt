@@ -19,13 +19,14 @@
 
 package io.nekohasekai.sagernet.fmt.trojan_go
 
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
+import org.json.JSONArray
+import org.json.JSONObject
 
 fun parseTrojanGo(server: String): TrojanGoBean {
     val link = Libcore.parseURL(server)
@@ -100,32 +101,32 @@ fun TrojanGoBean.toUri(): String? {
 
 fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
     return JSONObject().also { conf ->
-        conf["run_type"] = "client"
-        conf["local_addr"] = LOCALHOST
-        conf["local_port"] = port
-        conf["remote_addr"] = finalAddress
-        conf["remote_port"] = finalPort
-        conf["password"] = JSONArray().apply {
-            add(password)
-        }
-        conf["log_level"] = when (DataStore.logLevel) {
+        conf.put("run_type", "client")
+        conf.put("local_addr", LOCALHOST)
+        conf.put("local_port", port)
+        conf.put("remote_addr", finalAddress)
+        conf.put("remote_port", finalPort)
+        conf.put("password", JSONArray().apply {
+            put(password)
+        })
+        conf.put("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> 0
             LogLevel.INFO -> 1
             LogLevel.WARNING -> 2
             LogLevel.ERROR -> 3
             else -> 5
-        }
-        if (mux) conf["mux"] = JSONObject().also {
-            it["enabled"] = true
-            it["concurrency"] = muxConcurrency
-        }
+        })
+        if (mux) conf.put("mux", JSONObject().also {
+            it.put("enabled", true)
+            it.put("concurrency", muxConcurrency)
+        })
 
         when (type) {
-            "ws" -> conf["websocket"] = JSONObject().also {
-                it["enabled"] = true
-                it["host"] = host
-                it["path"] = path
-            }
+            "ws" -> conf.put("websocket", JSONObject().also {
+                it.put("enabled", true)
+                it.put("host", host)
+                it.put("path", path)
+            })
         }
 
         var servername = sni
@@ -133,19 +134,19 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
             servername = serverAddress
         }
 
-        conf["ssl"] = JSONObject().also {
-            if (servername.isNotEmpty()) it["sni"] = servername
-            if (allowInsecure) it["verify"] = false
-            if (utlsFingerprint.isNotEmpty()) it["fingerprint"] = utlsFingerprint
-        }
+        conf.put("ssl", JSONObject().also {
+            if (servername.isNotEmpty()) it.put("sni", servername)
+            if (allowInsecure) it.put("verify", false)
+            if (utlsFingerprint.isNotEmpty()) it.put("fingerprint", utlsFingerprint)
+        })
 
         when {
             encryption == "none" -> {}
-            encryption.startsWith("ss;") -> conf["shadowsocks"] = JSONObject().also {
-                it["enabled"] = true
-                it["method"] = encryption.substringAfter(";").substringBefore(":")
-                it["password"] = encryption.substringAfter(":")
-            }
+            encryption.startsWith("ss;") -> conf.put("shadowsocks", JSONObject().also {
+                it.put("enabled", true)
+                it.put("method", encryption.substringAfter(";").substringBefore(":"))
+                it.put("password", encryption.substringAfter(":"))
+            })
         }
 
     }.toStringPretty()

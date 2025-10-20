@@ -19,7 +19,7 @@
 
 package io.nekohasekai.sagernet.group
 
-import cn.hutool.json.JSONObject
+import androidx.core.net.toUri
 import io.nekohasekai.sagernet.ExtraType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -28,7 +28,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import androidx.core.net.toUri
+import org.json.JSONObject
 
 object SIP008Updater : GroupUpdater() {
 
@@ -41,33 +41,38 @@ object SIP008Updater : GroupUpdater() {
 
         val link = subscription.link
         val sip008Response: JSONObject
-        if (link.startsWith("content://", ignoreCase = true)) {
-            val contentText = app.contentResolver.openInputStream(link.toUri())
-                ?.bufferedReader()
-                ?.readText()
+        try {
+            if (link.startsWith("content://", ignoreCase = true)) {
+                val contentText = app.contentResolver.openInputStream(link.toUri())
+                    ?.bufferedReader()
+                    ?.readText()
 
-            sip008Response = contentText?.let { JSONObject(contentText) }
-                ?: error(app.getString(R.string.no_proxies_found_in_subscription))
-        } else {
+                sip008Response = contentText?.let { JSONObject(contentText) }
+                    ?: error(app.getString(R.string.no_proxies_found_in_subscription))
+            } else {
 
-            val response = Libcore.newHttpClient().apply {
-                if (SagerNet.started && DataStore.startedProfile > 0) {
-                    useSocks5(DataStore.socksPort)
-                }
-            }.newRequest().apply {
-                setURL(subscription.link)
-                if (subscription.customUserAgent.isNotEmpty()) {
-                    setUserAgent(subscription.customUserAgent)
-                } else {
-                    setUserAgent(USER_AGENT)
-                }
-            }.execute()
+                val response = Libcore.newHttpClient().apply {
+                    if (SagerNet.started && DataStore.startedProfile > 0) {
+                        useSocks5(DataStore.socksPort)
+                    }
+                }.newRequest().apply {
+                    setURL(subscription.link)
+                    if (subscription.customUserAgent.isNotEmpty()) {
+                        setUserAgent(subscription.customUserAgent)
+                    } else {
+                        setUserAgent(USER_AGENT)
+                    }
+                }.execute()
 
-            sip008Response = JSONObject(response.contentString)
+                sip008Response = JSONObject(response.contentString)
+            }
+        } catch (_: Exception) {
+            error("invalid response")
         }
 
-        subscription.bytesUsed = sip008Response.getLong("bytes_used", -1)
-        subscription.bytesRemaining = sip008Response.getLong("bytes_remaining", -1)
+
+        subscription.bytesUsed = sip008Response.optLongOrNull("bytes_used") ?: -1
+        subscription.bytesRemaining = sip008Response.optLongOrNull("bytes_remaining") ?: -1
         subscription.applyDefaultValues()
 
         val servers = sip008Response.getJSONArray("servers").filterIsInstance<JSONObject>()
@@ -171,7 +176,7 @@ object SIP008Updater : GroupUpdater() {
 
     fun appendExtraInfo(profile: JSONObject, bean: AbstractBean) {
         bean.extraType = ExtraType.SIP008
-        bean.profileId = profile.getStr("id")
+        bean.profileId = profile.optStringOrNull("id")
     }
 
 }
