@@ -23,19 +23,22 @@ import android.os.Bundle
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.ktx.app
-import com.twofortyfouram.locale.api.Intent as ApiIntent
 
 class TaskerBundle(val bundle: Bundle) {
 
     companion object {
         fun fromIntent(intent: Intent) =
-            TaskerBundle(intent.getBundleExtra(ApiIntent.EXTRA_BUNDLE) ?: Bundle())
+            TaskerBundle(intent.getBundleExtra(EXTRA_BUNDLE) ?: Bundle())
 
         const val KEY_ACTION = "action"
         const val ACTION_START = 0
         const val ACTION_STOP = 1
 
         const val KEY_PROFILE_ID = "profile"
+
+        const val EXTRA_STRING_BLURB = "com.twofortyfouram.locale.intent.extra.BLURB"
+
+        const val EXTRA_BUNDLE = "com.twofortyfouram.locale.intent.extra.BUNDLE"
     }
 
     var action: Int
@@ -72,8 +75,8 @@ class TaskerBundle(val bundle: Bundle) {
             }
         }
         return Intent().apply {
-            putExtra(ApiIntent.EXTRA_BUNDLE, bundle)
-            putExtra(ApiIntent.EXTRA_STRING_BLURB, blurb)
+            putExtra(EXTRA_BUNDLE, bundle)
+            putExtra(EXTRA_STRING_BLURB, blurb)
         }
     }
 
