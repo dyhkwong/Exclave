@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2024 HystericalDragon <HystericalDragons@proton.me>
+Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

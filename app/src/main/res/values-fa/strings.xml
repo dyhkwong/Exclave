@@ -58,7 +58,6 @@
     <string name="app_version">نسخه</string>
     <string name="github">کد منبع</string>
     <string name="project">پروژه</string>
-    <string name="app_desc">مجموعه ابزار جامع پروکسی برای اندروید، نوشته شده در کاتلین.</string>
     <string name="menu_configuration">پیکربندی</string>
     <string name="transproxy_mode">حالت پراکسی شفاف</string>
     <string name="require_transproxy">فعالسازی پراکسی شفاف به عنوان ورودی</string>
@@ -161,8 +160,6 @@
     <string name="plugin">افزونه</string>
     <string name="ignore_battery_optimizations_sum">برخی محدودیت ها را بردارید</string>
     <string name="ignore_battery_optimizations">نادیده گرفتن بهینه سازی باتری</string>
-    <string name="donate_info">من عاشق پول هستم</string>
-    <string name="donate">حمایت مالی</string>
     <string name="deduplication">حذف داده‏ های تکراری</string>
     <string name="no_proxies_found_in_clipboard">هیچ پروکسی در کلیپ بورد یافت نشد</string>
     <string name="no_proxies_found_in_file">هیچ پروکسی در پرونده یافت نشد</string>
@@ -455,7 +452,6 @@
     <string name="hijack_dns_message">استفاده از ماژول شنود DNS برای ربایش پرس‌وجوهای DNS که به آدرس DNS تونل ارسال نمی‌شوند</string>
     <string name="alter_id">شناسه جایگزین</string>
     <string name="url">آدرس وب</string>
-    <string name="donate_to_original_author">اهدا به نویسندهٔ اصلی</string>
     <string name="available">%d میلی‌ثانیه</string>
     <string name="connection_test_url_test">تست URL</string>
     <string name="ooc_subscription_token">توکن API نسخهٔ OOCv1</string>
@@ -590,4 +586,5 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">اگر خود گواهی نامعتبر باشد، لازم است همراه با «پرش از اعتبارسنجی گواهی» استفاده شود. هر خط یک مورد، با کدگذاری hex.</string>
     <string name="mtls_certificate">گواهی mTLS</string>
     <string name="mtls_certificate_private_key">کلید خصوصی گواهی mTLS</string>
+    <string name="delete_multi_confirm_prompt">آیا مطمئن هستید که می خواهید این نمایه را حذف کنید؟</string>
 </resources>

@@ -20,7 +20,6 @@
     <string name="proxy_cat">Tjenerinnstillinger</string>
     <string name="plugin_configure">Sett opp …</string>
     <string name="ignore_battery_optimizations_sum">Fjern noen begrensninger</string>
-    <string name="donate">Doner</string>
     <string name="subscriptions">Abonnementer</string>
     <string name="not_connected">Ikke tilkoblet</string>
     <plurals name="removed">
@@ -161,7 +160,6 @@
     <string name="plugin_disabled">Funksjonshemmet</string>
     <string name="plugin">Plugg inn</string>
     <string name="ignore_battery_optimizations">Ignorer batterioptimaliseringer</string>
-    <string name="donate_info">Jeg elsker penger</string>
     <string name="deduplication">Deduplisering</string>
     <string name="no_proxies_found_in_clipboard">Ingen fullmakter ble funnet i utklippstavlen</string>
     <string name="no_proxies_found_in_file">Ingen fullmakter ble funnet i filen</string>
@@ -301,7 +299,6 @@
     <string name="tile_title">Bytter</string>
     <string name="quick_toggle">Veksle</string>
     <string name="menu_configuration">Konfigurasjon</string>
-    <string name="app_desc">Den universelle proxy -verktøykjeden for Android, skrevet i Kotlin.</string>
     <string name="group_filter">Raffinering</string>
     <string name="obfs">Obfs</string>
     <string name="speed">%s/s</string>

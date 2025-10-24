@@ -180,17 +180,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                     .build())
                             }
                         }
-                        addItem(MaterialAboutActionItem.Builder()
-                            .icon(R.drawable.ic_baseline_card_giftcard_24)
-                            .text(R.string.donate_to_original_author)
-                            .subText(R.string.donate_info)
-                            .setOnClickAction {
-                                startActivity(Intent(
-                                    Intent.ACTION_VIEW,
-                                    "https://sekai.icu/sponsors/".toUri()
-                                ))
-                            }
-                            .build())
                     }
                     .build())
                 .addCard(MaterialAboutCard.Builder()

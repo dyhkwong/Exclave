@@ -93,7 +93,6 @@
     <string name="app_version">Версия</string>
     <string name="github">Исходный код</string>
     <string name="project">Проект</string>
-    <string name="app_desc">Универсальный набор инструментов прокси для Android, написанный на Kotlin.</string>
     <plurals name="added">
         <item quantity="one">Добавлен %d элемент</item>
         <item quantity="few">Добавлено %d элемента</item>
@@ -190,8 +189,6 @@
     <string name="plugin">Плагин</string>
     <string name="ignore_battery_optimizations_sum">Снять некоторые ограничения</string>
     <string name="ignore_battery_optimizations">Игнорировать оптимизации батареи</string>
-    <string name="donate_info">Я люблю деньги</string>
-    <string name="donate">Донатить</string>
     <string name="deduplication">Дедупликация</string>
     <string name="no_proxies_found_in_clipboard">В буфере обмена не найдено ни одного прокси</string>
     <string name="no_proxies_found_in_file">В файле не найдено прокси-серверов</string>
@@ -504,7 +501,6 @@
     <string name="splithttp_mode">Режим</string>
     <string name="tuic_v5_provider">Реализация TUIC v5</string>
     <string name="backup_all_profiles">Бэкап всех профилей</string>
-    <string name="donate_to_original_author">Пожертвовать автору</string>
     <string name="mieru_multiplexing_level">Уровень мультиплексирования</string>
     <string name="hysteria_init_stream_receive_window">Окно приема потока инициализации QUIC</string>
     <string name="route_asset_add_url">Добавить URL-адрес</string>
@@ -597,4 +593,5 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">Используйте с пропуском проверки сертификата, если сам сертификат ненадёжный или недействительный. Один на строку в шестнадцатеричном коде.</string>
     <string name="mtls_certificate">Сертификат для mTLS</string>
     <string name="mtls_certificate_private_key">Закрытый ключ сертификата для mTLS</string>
+    <string name="delete_multi_confirm_prompt">Удалить эту группу?</string>
 </resources>

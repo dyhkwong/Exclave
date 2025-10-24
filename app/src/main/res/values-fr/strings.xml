@@ -5,11 +5,9 @@
     <string name="delete">Retirer</string>
     <string name="add_profile_methods_scan_qr_code">Scannez le code QR</string>
     <string name="share_qr_nfc">Code QR</string>
-    <string name="donate">Faire un don</string>
     <string name="plugin">Greffon</string>
     <string name="ignore_battery_optimizations_sum">Retirer certaines restrictions</string>
     <string name="ignore_battery_optimizations">Ignorer l\'optimisation de la batterie</string>
-    <string name="donate_info">J\'adore l\'argent</string>
     <string name="apply">Appliquer</string>
     <string name="license">Licence</string>
     <string name="follow_system">Selon le système</string>
@@ -77,7 +75,6 @@
     <string name="app_version">Version</string>
     <string name="github">Code source</string>
     <string name="project">Projet</string>
-    <string name="app_desc">La chaîne d\'outils proxy universelle pour Android, écrite en Kotlin.</string>
     <string name="hysteria_upload_mbps">Vitesse maximale de téléversement (en Mb/s)</string>
     <string name="hysteria_download_mbps">Vitesse de téléchargement maximale (en Mb/s)</string>
     <string name="group_deleted">Supprimé :

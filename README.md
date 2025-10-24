@@ -31,7 +31,7 @@ Google will soon block apps from directly installing (or so-called "sideloading"
 
 ## License
 
-    Copyright (C) 2023 by dyhkwong
+    Copyright (C) 2023 dyhkwong
     Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
 
     This program (except for all files in directory "library/core/clash") is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -91,8 +91,8 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
 
 ## Acknowledgment
 
-- [Shadowsocks](https://github.com/shadowsocks/shadowsocks-android) by [Mygod](https://github.com/Mygod), [madeye](https://github.com/madeye), et al.
-- [SagerNet](https://github.com/SagerNet/SagerNet) by [nekohasekai](https://github.com/nekohasekai) et al.
-- [Matsuri](https://github.com/MatsuriDayo/Matsuri) by [arm64v8a](https://github.com/arm64v8a) et al.
-- [NekoBox](https://github.com/MatsuriDayo/NekoBoxForAndroid) by [arm64v8a](https://github.com/arm64v8a) et al.
-- [husi](https://github.com/xchacha20-poly1305/husi) by [xchacha20-poly1305](https://github.com/xchacha20-poly1305) et al.
+- [Shadowsocks](https://github.com/shadowsocks/shadowsocks-android)
+- [SagerNet](https://github.com/SagerNet/SagerNet)
+- [Matsuri](https://github.com/MatsuriDayo/Matsuri)
+- [NekoBox](https://github.com/MatsuriDayo/NekoBoxForAndroid)
+- [husi](https://github.com/xchacha20-poly1305/husi)

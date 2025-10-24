@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_desc">適用於 Android 的通用代理工具鏈，由 Kotlin 編寫。</string>
     <string name="project">專案</string>
     <string name="github">原始碼</string>
     <string name="app_version">版本</string>
@@ -236,7 +235,6 @@
     <string name="no_proxies_found_in_file">未在此檔案中找到代理</string>
     <string name="no_proxies_found_in_clipboard">未在剪貼簿中找到代理</string>
     <string name="deduplication">重複資料刪除</string>
-    <string name="donate">捐贈</string>
     <string name="ignore_battery_optimizations">忽略電池效能最佳化</string>
     <string name="ignore_battery_optimizations_sum">移除一些限制</string>
     <string name="ss_cat">Shadowsocks 設定</string>
@@ -262,7 +260,6 @@
     <string name="connection_test_clear_results">清除測試結果</string>
     <string name="connection_test_domain_not_found">網域不存在</string>
     <string name="connection_test_refused">連線被拒</string>
-    <string name="donate_info">世界很可愛 請給世界錢</string>
     <string name="connection_test_unreachable">無法連線</string>
     <string name="connection_test_timeout">逾時</string>
     <string name="append_http_proxy">為 VPN 附加 HTTP 代理</string>

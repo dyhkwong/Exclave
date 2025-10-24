@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_desc">适用于 Android 之通用代理工具，使用 Kotlin 编写。</string>
     <string name="project">项目</string>
     <string name="github">源代码</string>
     <string name="app_version">版本</string>
@@ -198,9 +197,6 @@
     <string name="file_manager_missing">您的设备缺少 Android 标准文件选择器，请安装一个，如质感文件。</string>
     <string name="restart">重载代理服务以应用修改</string>
     <string name="theme">主题</string>
-    <string name="donate_to_original_author">向原作者捐款</string>
-    <string name="donate">捐款</string>
-    <string name="donate_info">世界很可爱 请给世界钱</string>
     <string name="extra_headers">附加头</string>
     <string name="username">用户名</string>
     <string name="group_diff">变化（%s）</string>
@@ -590,4 +586,5 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">如果证书本身无效则需要配合“跳过证书验证”使用。每行一个，hex 编码。</string>
     <string name="mtls_certificate">mTLS 证书</string>
     <string name="mtls_certificate_private_key">mTLS 证书私钥</string>
+    <string name="delete_multi_confirm_prompt">您确定要删除这些服务器配置吗？</string>
 </resources>

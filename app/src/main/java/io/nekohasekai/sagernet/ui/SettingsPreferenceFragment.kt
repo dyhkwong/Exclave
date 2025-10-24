@@ -326,6 +326,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val useLocalDnsAsDirectDns = findPreference<SwitchPreference>(Key.USE_LOCAL_DNS_AS_DIRECT_DNS)!!
         val directDns = findPreference<EditTextPreference>(Key.DIRECT_DNS)!!
+        directDns.onPreferenceChangeListener = reloadListener
         useLocalDnsAsDirectDns.setOnPreferenceChangeListener { _, newValue ->
             directDns.isEnabled = newValue == false
             needReload()
@@ -336,6 +337,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         val useLocalDnsAsBootstrapDns = findPreference<SwitchPreference>(Key.USE_LOCAL_DNS_AS_BOOTSTRAP_DNS)!!
         val bootstrapDns = findPreference<EditTextPreference>(Key.BOOTSTRAP_DNS)!!
+        bootstrapDns.onPreferenceChangeListener = reloadListener
         useLocalDnsAsBootstrapDns.setOnPreferenceChangeListener { _, newValue ->
             bootstrapDns.isEnabled = newValue == false
             needReload()

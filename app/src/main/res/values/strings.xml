@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Exclave</string>
-    <string name="app_desc">The universal proxy toolchain for Android, written in Kotlin.</string>
     <string name="project">Project</string>
     <string name="github">Source code</string>
     <string name="app_version">Version</string>
@@ -259,9 +258,6 @@
     <string name="no_proxies_found_in_file">No proxy found in the file</string>
     <string name="no_proxies_found_in_clipboard">No proxy found in the clipboard</string>
     <string name="deduplication">Deduplication</string>
-    <string name="donate_to_original_author">Donate to original author</string>
-    <string name="donate">Donate</string>
-    <string name="donate_info">I love money</string>
     <string name="ignore_battery_optimizations">Ignore battery optimizations</string>
     <string name="ignore_battery_optimizations_sum">Remove some restrictions</string>
     <!-- plugin -->
@@ -628,6 +624,5 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">Use with "skip certificate verification" if the certificate itself is untrusted or invalid. One per line in hex encoding.</string>
     <string name="mtls_certificate">mTLS certificate</string>
     <string name="mtls_certificate_private_key">mTLS certificate private key</string>
-    <string name="license_gpl_v3_only" translatable="false">Copyright (C) 2023 by dyhkwong\nCopyright (C) 2021 by nekohasekai &lt;contact-sagernet@sekai.icu&gt;\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see &lt;https://www.gnu.org/licenses/&gt;.</string>
-    <string name="license_gpl_v3_or_later" translatable="false">Copyright (C) 2023 by dyhkwong\nCopyright (C) 2021 by nekohasekai &lt;contact-sagernet@sekai.icu&gt;\n\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program. If not, see &lt;https://www.gnu.org/licenses/&gt;.</string>
+    <string name="delete_multi_confirm_prompt">Are you sure you want to remove these profiles?</string>
 </resources>

@@ -88,7 +88,6 @@
     <string name="app_version">Versi</string>
     <string name="github">Kode sumber</string>
     <string name="project">Proyek</string>
-    <string name="app_desc">Peranti proxy universal untuk Android, ditulis dalam Kotlin.</string>
     <string name="ssh_auth_type_none">Kosong</string>
     <string name="no_statistics">Belum ada statistik</string>
     <string name="menu_tools">Alat</string>
@@ -184,12 +183,10 @@
     <string name="ws_host">Host Soket Web</string>
     <string name="header_type">Jenis Tajuk</string>
     <string name="security">Enkripsi lapisan transportasi</string>
-    <string name="donate_info">Saya Suka UANG</string>
     <string name="route_warn">Pastikan Anda telah membaca dokumentasi sebelum menambahkan aturan tambahan, jika tidak, Anda mungkin tidak dapat terhubung ke Internet.</string>
     <string name="probe_url">URL Tes Khusus</string>
     <string name="open_settings">Buka Pengaturan</string>
     <string name="no_proxies_found_in_clipboard">Tidak ditemukan proksi di papan klip</string>
-    <string name="donate">Donasi</string>
     <string name="ignore_battery_optimizations">Abaikan Pengoptimalan Baterai</string>
     <string name="ignore_battery_optimizations_sum">Hapus beberapa larangan</string>
     <string name="plugin_disabled">Dimatikan</string>

@@ -4,7 +4,6 @@
     <string name="app_version">Sürüm</string>
     <string name="github">Kaynak kodu</string>
     <string name="project">Proje</string>
-    <string name="app_desc">Android için Kotlin ile yazılmış evrensel vekil sunucu araç zinciri.</string>
     <string name="enable_dns_routing">DNS Yönlendirmesini Etkinleştir</string>
     <string name="direct_dns">Direkt DNS</string>
     <string name="remote_dns">Uzak DNS</string>
@@ -257,8 +256,6 @@
     <string name="plugin">Eklenti</string>
     <string name="ignore_battery_optimizations_sum">Bazı kısıtlamaları kaldır</string>
     <string name="ignore_battery_optimizations">Pil optimizasyonlarını devre dışı bırak</string>
-    <string name="donate_info">Paraya aşığım</string>
-    <string name="donate">Bağış yap</string>
     <string name="deduplication">Tekilleştirme</string>
     <string name="no_proxies_found_in_clipboard">Kopyalama panosunda vekil sunucu bulunamadı</string>
     <string name="no_proxies_found_in_file">Dosya içinde vekil sunucu bulunamadı</string>

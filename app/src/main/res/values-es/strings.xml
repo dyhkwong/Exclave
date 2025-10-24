@@ -2,7 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="UnusedQuantity">
     <string name="github">Código fuente</string>
     <string name="project">Proyecto</string>
-    <string name="app_desc">La cadena de herramientas proxy universal para Android, escrita en Kotlin.</string>
     <string name="version_x">Versión (%s)</string>
     <string name="app_version">Versión</string>
     <string name="always_show_address_sum">Muestra siempre la dirección del servidor en la tarjeta de configuración</string>
@@ -15,8 +14,6 @@
     <string name="proxy_cat">Ajustes del servidor</string>
     <string name="plugin_auto_connect_unlock_only">Este plugin podría no funcionar con la conexión automática</string>
     <string name="plugin_disabled">Desactivado</string>
-    <string name="donate_info">Me encanta el dinero</string>
-    <string name="donate">Donar</string>
     <string name="no_proxies_found_in_clipboard">No se encontró ningún proxy en el portapapeles</string>
     <string name="no_proxies_found_in_file">No se encontró ningún proxy en el archivo</string>
     <string name="no_proxies_found_in_subscription">No se encontró ningún proxy en la suscripción</string>
@@ -517,7 +514,6 @@
     <string name="fileSize_tebibyte">TiB</string>
     <string name="fileSize_pebibyte">PiB</string>
     <string name="hijack_dns_message">Secuestra las consultas DNS que no se envían a la dirección DNS de TUN con el escaneo de DNS</string>
-    <string name="donate_to_original_author">Donar al autor original</string>
     <string name="available">%d ms</string>
     <string name="traffic_uplink">%s | %s/s ↑</string>
     <string name="traffic_downlink">%s | %s/s ↓</string>
@@ -593,4 +589,5 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">Utilícelo para omitir la verificación del certificado si el propio certificado no es de confianza o no es válido. Uno por línea en codificación hexadecimal.</string>
     <string name="mtls_certificate">Certificado mTLS</string>
     <string name="mtls_certificate_private_key">Clave privada del certificado mTLS</string>
+    <string name="delete_multi_confirm_prompt">¿Realmente quieres eliminar este grupo?</string>
 </resources>

@@ -544,7 +544,7 @@ class ConfigurationFragment @JvmOverloads constructor(
                         onMainDispatcher {
                             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.confirm)
                                 .setMessage(
-                                    getString(R.string.delete_confirm_prompt) + "\n" +
+                                    getString(R.string.delete_multi_confirm_prompt) + "\n" +
                                             toClear.mapIndexedNotNull { index, proxyEntity ->
                                                 if (index < 20) {
                                                     proxyEntity.displayName()
@@ -592,7 +592,18 @@ class ConfigurationFragment @JvmOverloads constructor(
                     if (toClear.isNotEmpty()) {
                         onMainDispatcher {
                             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.confirm)
-                                .setMessage(R.string.delete_confirm_prompt)
+                                .setMessage(
+                                    getString(R.string.delete_multi_confirm_prompt) + "\n" +
+                                            toClear.mapIndexedNotNull { index, proxyEntity ->
+                                                if (index < 20) {
+                                                    proxyEntity.displayName()
+                                                } else if (index == 20) {
+                                                    "......"
+                                                } else {
+                                                    null
+                                                }
+                                            }.joinToString("\n")
+                                )
                                 .setPositiveButton(android.R.string.ok) { _, _ ->
                                     for (profile in toClear) {
                                         adapter.groupFragments[DataStore.selectedGroup]?.adapter?.apply {

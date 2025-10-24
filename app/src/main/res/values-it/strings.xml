@@ -5,7 +5,6 @@
     <string name="app_version">Versione</string>
     <string name="github">Codice sorgente</string>
     <string name="project">Progetto</string>
-    <string name="app_desc">La toolchain proxy universale per Android, scritta in Kotlin.</string>
     <string name="service_mode_vpn">VPN</string>
     <string name="no_proxies_found_in_file">Nessun proxy trovato nel file</string>
     <string name="no_proxies_found_in_clipboard">Nessun proxy trovato nella clipboard</string>
@@ -31,7 +30,6 @@
     <string name="undo">Annulla</string>
     <string name="connecting">Connessione…</string>
     <string name="vpn_connected">Connesso, tocca per verificare la connessione</string>
-    <string name="donate_info">Me piase i schei</string>
     <string name="ignore_battery_optimizations">Ignora le ottimizzazioni della batteria</string>
     <string name="ignore_battery_optimizations_sum">Rimuovi alcune restrizioni</string>
     <string name="plugin">Plugin</string>
@@ -121,7 +119,6 @@
     <string name="balancer_settings">Impostazioni Balancer</string>
     <string name="enable_dns_routing">Abilita l\'instradamento DNS</string>
     <string name="clear_selections">Cancella selezione</string>
-    <string name="donate">Donazione</string>
     <string name="plugin_disabled">Disabilitato</string>
     <string name="always_show_address">Mostra sempre l\'indirizzo</string>
     <string name="settings">Impostazioni</string>

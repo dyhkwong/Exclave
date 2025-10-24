@@ -2083,7 +2083,7 @@ fun buildV2RayConfig(
             try {
                 if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
                     val url = Libcore.parseURL(it)
-                    if (!Libcore.isIP(url.host)) {
+                    if (!url.host.isEmpty() && !Libcore.isIP(url.host)) {
                         bypassDomainSkipFakeDns.add("full:${url.host}")
                     }
                 }
@@ -2094,7 +2094,7 @@ fun buildV2RayConfig(
             try {
                 if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
                     val url = Libcore.parseURL(it)
-                    if (!Libcore.isIP(url.host)) {
+                    if (!url.host.isEmpty() && !Libcore.isIP(url.host)) {
                         bootstrapDomain.add("full:${url.host}")
                     }
                 }
@@ -2141,7 +2141,7 @@ fun buildV2RayConfig(
                             address = it
                             domains = bootstrapDomain.toList() // v2fly/v2ray-core#1558, v2fly/v2ray-core#1855
                             queryStrategy = directDnsQueryStrategy
-                            if (!it.contains("+local://") && it != "localhost") {
+                            if (!it.lowercase().contains("+local://") && it.lowercase() != "localhost") {
                                 tag = TAG_DNS_DIRECT
                                 hasDnsTagDirect = true
                             }
@@ -2157,7 +2157,7 @@ fun buildV2RayConfig(
                             // skip fake DNS for server addresses and DNS server addresses
                             domains = bypassDomainSkipFakeDns.toList()
                             queryStrategy = directDnsQueryStrategy
-                            if (!it.contains("+local://") && it != "localhost") {
+                            if (!it.lowercase().contains("+local://") && it.lowercase() != "localhost") {
                                 tag = TAG_DNS_DIRECT
                                 hasDnsTagDirect = true
                             }
