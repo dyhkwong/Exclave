@@ -2018,6 +2018,9 @@ fun buildV2RayConfig(
             settings = LazyOutboundConfigurationObject(this,
                 DNSOutboundConfigurationObject().apply {
                     userLevel = 1
+                    if (DataStore.experimentalFlags.split("\n").any { it == "lookupAsExchange=true" }) {
+                        lookupAsExchange = true
+                    }
                 })
         })
 

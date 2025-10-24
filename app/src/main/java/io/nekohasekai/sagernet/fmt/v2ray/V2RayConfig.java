@@ -740,6 +740,7 @@ public class V2RayConfig {
         public Boolean overrideResponseTTL;
         public Integer responseTTL;
         public String nonIPQuery;
+        public Boolean lookupAsExchange;
 
     }
 
