@@ -50,6 +50,11 @@
             app:title="@string/extra_headers"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="serverCertificates"
+            app:title="@string/certificates"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
             app:dialogMessage="@string/naive_insecure_concurrency_summary"
             app:icon="@drawable/ic_baseline_warning_24"
             app:key="serverInsecureConcurrency"

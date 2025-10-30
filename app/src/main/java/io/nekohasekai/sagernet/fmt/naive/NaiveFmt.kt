@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.ktx.queryParameter
 import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
 import org.json.JSONObject
+import java.io.File
 
 fun parseNaive(link: String): NaiveBean {
     // This format may be https://github.com/klzgrad/naiveproxy/issues/86.

@@ -42,6 +42,7 @@ public class NaiveBean extends AbstractBean {
     public Integer insecureConcurrency;
     public Boolean noPostQuantum;
     public String sni;
+    public String certificate;
 
     @Override
     public void initializeDefaultValues() {
@@ -54,11 +55,12 @@ public class NaiveBean extends AbstractBean {
         if (insecureConcurrency == null) insecureConcurrency = 0;
         if (noPostQuantum == null) noPostQuantum = false;
         if (sni == null) sni = "";
+        if (certificate == null) certificate = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(5);
+        output.writeInt(6);
         super.serialize(output);
         output.writeString(proto);
         output.writeString(username);
@@ -67,6 +69,7 @@ public class NaiveBean extends AbstractBean {
         output.writeInt(insecureConcurrency);
         output.writeBoolean(noPostQuantum);
         output.writeString(sni);
+        output.writeString(certificate);
     }
 
     @Override
@@ -89,6 +92,9 @@ public class NaiveBean extends AbstractBean {
         if (version >= 5) {
             sni = input.readString();
         }
+        if (version >= 6) {
+            certificate = input.readString();
+        }
     }
 
     @Override
@@ -103,6 +109,7 @@ public class NaiveBean extends AbstractBean {
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof NaiveBean bean)) return;
         bean.noPostQuantum = noPostQuantum;
+        bean.certificate = certificate;
     }
 
     @NotNull

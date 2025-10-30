@@ -250,6 +250,17 @@ abstract class V2RayInstance(
                         configFile.writeText(config)
                         cacheFiles.add(configFile)
 
+                        if (bean.certificate.isNotEmpty()) {
+                            val caFile = File(
+                                context.noBackupFilesDir,
+                                "naive_" + SystemClock.elapsedRealtime() + ".ca"
+                            )
+                            caFile.parentFile?.mkdirs()
+                            caFile.writeText(bean.certificate)
+                            cacheFiles.add(caFile)
+                            env["SSL_CERT_FILE"] = caFile.absolutePath
+                        }
+
                         val commands = mutableListOf(
                             initPlugin("naive-plugin").path, configFile.absolutePath
                         )

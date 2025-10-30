@@ -44,6 +44,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         DataStore.serverInsecureConcurrency = insecureConcurrency
         DataStore.serverNaiveNoPostQuantum = noPostQuantum
         DataStore.serverSNI = sni
+        DataStore.serverCertificates = certificate
     }
 
     override fun NaiveBean.serialize() {
@@ -57,6 +58,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         insecureConcurrency = DataStore.serverInsecureConcurrency
         noPostQuantum = DataStore.serverNaiveNoPostQuantum
         sni = DataStore.serverSNI
+        certificate = DataStore.serverCertificates
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
