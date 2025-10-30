@@ -412,7 +412,16 @@ abstract class V2RayInstance(
                             "-c",
                             configFile.absolutePath,
                         )
-                        
+                        if (bean.certificates.isNotEmpty()) {
+                            val caFile = File(
+                                context.noBackupFilesDir,
+                                "juicity_" + SystemClock.elapsedRealtime() + ".ca"
+                            )
+                            caFile.parentFile?.mkdirs()
+                            caFile.writeText(bean.certificates)
+                            cacheFiles.add(caFile)
+                            env["SSL_CERT_FILE"] = caFile.absolutePath
+                        }
                         processes.start(commands, env)
                     }
                     bean is ShadowQUICBean -> {

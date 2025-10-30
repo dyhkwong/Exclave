@@ -47,6 +47,11 @@
             app:summary="@string/allow_insecure_sum"
             app:title="@string/allow_insecure" />
         <EditTextPreference
+            app:icon="@drawable/ic_baseline_vpn_key_24"
+            app:key="serverCertificates"
+            app:title="@string/certificates"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
             app:dialogMessage="@string/pinned_peer_certificate_sha256_base64_dialog_message"
             app:icon="@drawable/ic_baseline_push_pin_24"
             app:key="serverPinnedCertificateChain"
