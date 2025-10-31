@@ -31,7 +31,6 @@ import androidx.core.text.isDigitsOnly
 
 object Executable {
     private val EXECUTABLES = setOf(
-        "libtrojan.so",
         "libtrojan-go.so",
         "libnaive.so",
         "libbrook.so",
@@ -41,6 +40,7 @@ object Executable {
         "libtuic.so",
         "libtuic5.so",
         "libjuicity.so",
+        "libshadowquic.so",
     )
 
     fun killAll() {

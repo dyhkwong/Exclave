@@ -443,7 +443,6 @@ data class ProxyEntity(
             TYPE_BROOK -> true
             TYPE_MIERU -> true
             TYPE_TUIC -> true
-            TYPE_JUICITY -> true
             TYPE_SHADOWQUIC -> true
 
             else -> false

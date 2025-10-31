@@ -962,6 +962,52 @@ fun parseV2RayOutbound(outbound: JSONObject): List<AbstractBean> {
                     } ?: tlsSettings.optStr("alpn")?.also {
                         tuic5Bean.alpn = it.split(",").joinToString("\n")
                     }
+                    tlsSettings.optArray("certificates")?.filterIsInstance<JSONObject>()?.asReversed()?.forEach { certificate ->
+                        when (certificate.optStr("usage")?.lowercase()) {
+                            null, "", "encipherment" -> {
+                                if (!certificate.hasCaseInsensitive("certificateFile") && !certificate.hasCaseInsensitive("keyFile")) {
+                                    val cert = certificate.optArray("certificate")?.filterIsInstance<String>()?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                    val key = certificate.optArray("key")?.filterIsInstance<String>()?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                    }
+                                    if (cert != null && key != null) {
+                                        tuic5Bean.mtlsCertificate = cert
+                                        tuic5Bean.mtlsCertificatePrivateKey = key
+                                    }
+                                }
+                            }
+                            "verify" -> {
+                                if (!certificate.hasCaseInsensitive("certificateFile")) {
+                                    val cert = certificate.optArray("certificate")?.filterIsInstance<String>()?.joinToString("\n")?.takeIf {
+                                        it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                    }
+                                    if (cert != null) {
+                                        tuic5Bean.certificates = cert
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    tlsSettings.optArray("pinnedPeerCertificateChainSha256")?.filterIsInstance<String>()?.also {
+                        tuic5Bean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                        tlsSettings.optBool("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            tuic5Bean.allowInsecure = allowInsecure
+                        }
+                    }
+                    tlsSettings.optArray("pinnedPeerCertificatePublicKeySha256")?.filterIsInstance<String>()?.also {
+                        tuic5Bean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                        tlsSettings.optBool("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            tuic5Bean.allowInsecure = allowInsecure
+                        }
+                    }
+                    tlsSettings.optArray("pinnedPeerCertificateSha256")?.filterIsInstance<String>()?.also {
+                        tuic5Bean.pinnedPeerCertificateSha256 = it.joinToString("\n")
+                        tlsSettings.optBool("allowInsecureIfPinnedPeerCertificate")?.also { allowInsecure ->
+                            tuic5Bean.allowInsecure = allowInsecure
+                        }
+                    }
                 }
                 settings.optBool("disableSNI")?.also {
                     tuic5Bean.disableSNI = it
