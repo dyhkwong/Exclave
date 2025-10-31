@@ -72,15 +72,6 @@ fun String.unwrapHost(): String {
     return this
 }
 
-fun isURL(url: String): Boolean {
-    try {
-        Libcore.parseURL(url)
-        return true
-    } catch (_: Exception) {
-        return false
-    }
-}
-
 fun isHTTPorHTTPSURL(url: String): Boolean {
     try {
         val u = Libcore.parseURL(url)
@@ -109,35 +100,24 @@ fun String.listByLineOrComma(): List<String> {
 
 fun String.isValidHysteriaPort(): Boolean {
     if (this.toIntOrNull() != null) {
-        return this.toInt() in 1..65535
+        return this.toInt() in 0..65535
     }
     val portRanges = this.split(",")
-    if (portRanges.isEmpty()) {
-        val parts = this.split("-")
-        if (parts.size != 2) {
-            return false
-        }
-        val from = parts[0].toIntOrNull()
-        val to = parts[1].toIntOrNull()
-        return from != null && from in 1..65535 && to != null && to in 1..65535 && from <= to
-    }
     for (portRange in portRanges) {
         if (portRange.toIntOrNull() != null) {
-            if (portRange.toInt() <= 0 || portRange.toInt() >= 65536) {
+            if (portRange.toInt() < 0 || portRange.toInt() > 65535) {
                 return false
             }
-        } else if (portRange.contains("-")) {
+        } else {
             val parts = portRange.split("-")
             if (parts.size != 2) {
                 return false
             }
             val from = parts[0].toIntOrNull()
             val to = parts[1].toIntOrNull()
-            if (from == null || to == null || from <= 0 || from >= 65536 || to <= 0 || to >= 65536 || from > to) {
+            if (from == null || to == null || from < 0 || from > 65535 || to < 0 || to > 65535) {
                 return false
             }
-        } else {
-            return false
         }
     }
     return true
@@ -149,49 +129,39 @@ fun String.isValidHysteriaMultiPort(): Boolean {
 
 fun String.toHysteriaPort(): Int {
     if (this.toIntOrNull() != null) {
-        if (this.toInt() in 1..65535) {
+        if (this.toInt() in 0..65535) {
             return this.toInt()
         }
         error("invalid port range")
     }
     val portRanges = this.split(",")
-    if (portRanges.isEmpty()) {
-        val parts = this.split("-")
-        if (parts.size == 2) {
-            val from = parts[0].toIntOrNull()
-            val to = parts[1].toIntOrNull()
-            if (from != null && from in 1..65535 && to != null && to in 1..65535 && from <= to) {
-                return Random.nextInt(from, to + 1)
-            }
-        }
-        error("invalid port range")
-    }
     val fromList: MutableList<Int> = mutableListOf()
     val toList: MutableList<Int> = mutableListOf()
     var len = 0
     for (portRange in portRanges) {
         if (portRange.toIntOrNull() != null) {
-            if (portRange.toInt() <= 0 || portRange.toInt() >= 65536) {
+            if (portRange.toInt() < 0 || portRange.toInt() > 65535) {
                 error("invalid port range")
             }
             fromList.add(portRange.toInt())
             toList.add(portRange.toInt())
             len++
-        } else if (portRange.contains("-")) {
+        } else {
             val parts = portRange.split("-")
             if (parts.size != 2) {
                 error("invalid port range")
             }
-            val from = parts[0].toIntOrNull()
-            val to = parts[1].toIntOrNull()
-            if (from == null || to == null || from <= 0 || from >= 65536 || to <= 0 || to >= 65536 || from > to) {
+            var from = parts[0].toIntOrNull()
+            var to = parts[1].toIntOrNull()
+            if (from == null || to == null || from < 0 || from > 65535 || to < 0 || to > 65535) {
                 error("invalid port range")
+            }
+            if (from > to) {
+                from = to.also { to = from }
             }
             fromList.add(from)
             toList.add(to)
             len += to - from + 1
-        } else {
-            error("invalid port range")
         }
     }
     val portIndex = Random.nextInt(0, len)
