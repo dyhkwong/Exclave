@@ -62,8 +62,5 @@ func UrlTest(instance *V2RayInstance, inbound string, link string, timeout int32
 		return 0, err
 	}
 	resp.Body.Close()
-	if resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("unexpected response status: %d", resp.StatusCode)
-	}
 	return int32(time.Since(start).Milliseconds()), nil
 }
