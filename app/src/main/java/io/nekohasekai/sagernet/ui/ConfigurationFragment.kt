@@ -1722,8 +1722,8 @@ class ConfigurationFragment @JvmOverloads constructor(
                         val index = it.configurationIdList.indexOf(proxyEntity.id)
                         if (index >= 0) {
                             it.remove(index)
+                            undoManager.remove(index to proxyEntity)
                         }
-                        undoManager.remove(index to proxyEntity)
                     }
                 }
 
