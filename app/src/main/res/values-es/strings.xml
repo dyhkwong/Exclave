@@ -589,5 +589,5 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">Utilícelo para omitir la verificación del certificado si el propio certificado no es de confianza o no es válido. Uno por línea en codificación hexadecimal.</string>
     <string name="mtls_certificate">Certificado mTLS</string>
     <string name="mtls_certificate_private_key">Clave privada del certificado mTLS</string>
-    <string name="delete_multi_confirm_prompt">¿Realmente quieres eliminar este grupo?</string>
+    <string name="delete_multi_confirm_prompt">¿Realmente quieres eliminar estos perfiles?</string>
 </resources>
