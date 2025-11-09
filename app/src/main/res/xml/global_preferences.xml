@@ -230,6 +230,7 @@
             app:title="@string/hysteria2_provider"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_flip_camera_android_24"
             app:key="hysteriaEnablePortHopping"
             app:summary="@string/hysteria_enable_port_hopping_sum"
@@ -273,6 +274,10 @@
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="enableFragmentForDirect"
             app:title="@string/enable_fragment_for_direct" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_cached"
+            app:key="interruptReusedConnections"
+            app:title="@string/interrupt_reused_connections" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">

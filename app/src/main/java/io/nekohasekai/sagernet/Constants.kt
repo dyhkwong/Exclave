@@ -105,6 +105,8 @@ object Key {
     const val PROVIDER_JUICITY = "providerJuicity"
     const val PROVIDER_ROOT_CA = "providerRootCA"
 
+    const val INTERRUPT_REUSED_CONNECTIONS = "interruptReusedConnections"
+
     const val TUN_IMPLEMENTATION = "tunImplementation"
     const val ENABLE_PCAP = "enablePcap"
     const val MTU = "mtu"

@@ -265,8 +265,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var providerHysteria2 by configurationStore.stringToInt(Key.PROVIDER_HYSTERIA2) { 1 }
     var providerTuic5 by configurationStore.stringToInt(Key.PROVIDER_TUIC5) { 1 }
     var providerJuicity by configurationStore.stringToInt(Key.PROVIDER_JUICITY) { 1 }
-    var hysteriaEnablePortHopping by configurationStore.boolean(Key.HYSTERIA_ENABLE_PORT_HOPPING)
+    var hysteriaEnablePortHopping by configurationStore.boolean(Key.HYSTERIA_ENABLE_PORT_HOPPING) { true }
     var providerRootCA by configurationStore.stringToInt(Key.PROVIDER_ROOT_CA) { 1 }
+    var interruptReusedConnections by configurationStore.boolean(Key.INTERRUPT_REUSED_CONNECTIONS)
 
     // cache
 

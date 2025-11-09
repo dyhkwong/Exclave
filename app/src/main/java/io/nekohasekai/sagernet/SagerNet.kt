@@ -259,6 +259,8 @@ class SagerNet : Application(),
             }
         }
 
+        var currentNetwork: Network? = null
+
         fun reloadNetwork(network: Network?) {
             val capabilities = connectivity.getNetworkCapabilities(network) ?: return
             val networkType = when {
@@ -283,6 +285,11 @@ class SagerNet : Application(),
                 ssid = wifiInfo?.ssid
             }
             Libcore.setSSID(ssid?.trim { it == '"' } ?: "")
+
+            if (DataStore.interruptReusedConnections && currentNetwork != null && currentNetwork != network) {
+                Libcore.interfaceUpdate()
+            }
+            currentNetwork = network
         }
 
         fun startService() = ContextCompat.startForegroundService(
