@@ -21,7 +21,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
-          go-version: 1.24.9
+          go-version: 1.24.10
           cache-dependency-path: "plugin/juicity/src/main/go/juicity/go.sum"
       - name: Setup Java
         uses: actions/setup-java@v4
