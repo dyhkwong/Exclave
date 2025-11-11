@@ -11,4 +11,10 @@
           android:icon="@drawable/ic_action_done"
           android:alphabeticShortcut="s"
           app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_create_shortcut"
+        android:title="@string/create_shortcut"
+        android:icon="@drawable/ic_action_done"
+        android:alphabeticShortcut="q"
+        android:visible="false"
+        app:showAsAction="never"/>
 </menu>

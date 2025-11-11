@@ -626,4 +626,5 @@
     <string name="mtls_certificate_private_key">mTLS certificate private key</string>
     <string name="delete_multi_confirm_prompt">Are you sure you want to remove these profiles?</string>
     <string name="interrupt_reused_connections">Interrupt reused connections when network changes</string>
+    <string name="create_shortcut">Create shortcut</string>
 </resources>

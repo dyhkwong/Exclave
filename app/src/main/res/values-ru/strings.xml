@@ -595,4 +595,5 @@
     <string name="mtls_certificate_private_key">Закрытый ключ сертификата для mTLS</string>
     <string name="delete_multi_confirm_prompt">Удалить эти профили?</string>
     <string name="interrupt_reused_connections">Прерывать повторные подключения при изменении сети</string>
+    <string name="create_shortcut">Создать ярлык</string>
 </resources>

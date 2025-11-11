@@ -588,4 +588,5 @@
     <string name="mtls_certificate_private_key">mTLS 证书私钥</string>
     <string name="delete_multi_confirm_prompt">您确定要删除这些服务器配置吗？</string>
     <string name="interrupt_reused_connections">网络变化时打断被复用的连接</string>
+    <string name="create_shortcut">创建快捷方式</string>
 </resources>

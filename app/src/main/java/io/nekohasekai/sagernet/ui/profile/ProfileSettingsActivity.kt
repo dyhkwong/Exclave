@@ -19,12 +19,17 @@
 
 package io.nekohasekai.sagernet.ui.profile
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.LayoutRes
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -35,6 +40,7 @@ import com.esotericsoftware.kryo.io.ByteBufferInput
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.QuickToggleShortcut
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
@@ -174,6 +180,11 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.profile_config_menu, menu)
+        menu.findItem(R.id.action_create_shortcut)?.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && DataStore.editingId > 0L) {
+                isVisible = true
+            }
+        }
         return true
     }
 
@@ -198,6 +209,22 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
         R.id.action_apply -> {
             runOnDefaultDispatcher {
                 saveAndExit()
+            }
+            true
+        }
+        R.id.action_create_shortcut -> {
+            val entity = SagerDatabase.proxyDao.getById(DataStore.editingId)
+            if (entity != null) {
+                val shortcut = ShortcutInfoCompat.Builder(this, "shortcut-profile-${entity.id}")
+                    .setShortLabel(entity.displayName())
+                    .setLongLabel(entity.displayName())
+                    .setIcon(IconCompat.createWithResource(this, R.drawable.ic_qu_shadowsocks_foreground))
+                    .setIntent(Intent(this, QuickToggleShortcut::class.java).apply {
+                            action = Intent.ACTION_MAIN
+                            putExtra("profile", entity.id)
+                        }
+                    ).build()
+                ShortcutManagerCompat.requestPinShortcut(this, shortcut, null)
             }
             true
         }

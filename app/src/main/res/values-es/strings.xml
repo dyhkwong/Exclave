@@ -590,4 +590,5 @@
     <string name="mtls_certificate">Certificado mTLS</string>
     <string name="mtls_certificate_private_key">Clave privada del certificado mTLS</string>
     <string name="delete_multi_confirm_prompt">¿Realmente quieres eliminar estos perfiles?</string>
+    <string name="create_shortcut">Crear acceso directo</string>
 </resources>
