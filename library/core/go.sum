@@ -64,8 +64,8 @@ github.com/dyhkwong/hysteria/extras/v2 v2.6.5-1 h1:7lfUyNhsaWZn33uTI5wBPU9gxwb+C
 github.com/dyhkwong/hysteria/extras/v2 v2.6.5-1/go.mod h1:U9bMr1zLFdGxOCdbDTEHVaWfOhBOihqLui9OE9e+lkw=
 github.com/dyhkwong/sing-juicity v0.1.0-beta.2 h1:mOO+GB14RA4Hi9x46CstYU4yHaU12RQLwa1T9DL3D90=
 github.com/dyhkwong/sing-juicity v0.1.0-beta.2/go.mod h1:O4/8J+DiNqhf+YMNZ2opfowUBFmZatYLH2tJTtq8tU4=
-github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251109145905-723f3d2d8c0d h1:/+kGY/axaij9M8e1nCpRQbnmBePcfWI/ZNqDi8baOMo=
-github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251109145905-723f3d2d8c0d/go.mod h1:4nw4vhz7SVkqbxnIg0ydQ7WjBt0A8MqbK29ggq+npHw=
+github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251111114448-52790c89677f h1:CsZSJCN/nTc5IDGTuBRaurWuKIJP8tfjvCB63q6FYmQ=
+github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251111114448-52790c89677f/go.mod h1:a4k3WCZ1vq3Ak/cpen6jOzyl8dYXzty6Jgu48agz2HA=
 github.com/ebfe/rc2 v0.0.0-20131011165748-24b9757f5521 h1:fBHFH+Y/GPGFGo7LIrErQc3p2MeAhoIQNgaxPWYsSxk=
 github.com/ebfe/rc2 v0.0.0-20131011165748-24b9757f5521/go.mod h1:ucvhdsUCE3TH0LoLRb6ShHiJl8e39dGlx6A4g/ujlow=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
@@ -215,8 +215,8 @@ github.com/pion/transport v0.8.10 h1:lTiobMEw2PG6BH/mgIVqTV2mBp/mPT+IJLaN8ZxgdHk
 github.com/pion/transport v0.8.10/go.mod h1:tBmha/UCjpum5hqTWhfAEs3CO4/tHSg0MYRhSzR+CZ8=
 github.com/pion/transport/v2 v2.2.4 h1:41JJK6DZQYSeVLxILA2+F4ZkKb4Xd/tFJZRFZQ9QAlo=
 github.com/pion/transport/v2 v2.2.4/go.mod h1:q2U/tf9FEfnSBGSW6w5Qp5PFWRLRj3NjLhCCgpRK4p0=
-github.com/pion/transport/v3 v3.1.0 h1:5a4odaipq2w85aUNZilOk04AnWsOlqQSMzAsGnWiFPI=
-github.com/pion/transport/v3 v3.1.0/go.mod h1:+c2eewC5WJQHiAA46fkMMzoYZSuGzA/7E2FPrOYHctQ=
+github.com/pion/transport/v3 v3.1.1 h1:Tr684+fnnKlhPceU+ICdrw6KKkTms+5qHMgw6bIkYOM=
+github.com/pion/transport/v3 v3.1.1/go.mod h1:+c2eewC5WJQHiAA46fkMMzoYZSuGzA/7E2FPrOYHctQ=
 github.com/pires/go-proxyproto v0.8.1 h1:9KEixbdJfhrbtjpz/ZwCdWDD2Xem0NZ38qMYaASJgp0=
 github.com/pires/go-proxyproto v0.8.1/go.mod h1:ZKAAyp3cgy5Y5Mo4n9AlScrkCZwUy0g3Jf+slqQVcuU=
 github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

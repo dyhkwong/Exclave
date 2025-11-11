@@ -48,7 +48,7 @@ require (
 	github.com/pion/logging v0.2.4 // indirect
 	github.com/pion/sctp v1.7.6 // indirect
 	github.com/pion/transport/v2 v2.2.4 // indirect
-	github.com/pion/transport/v3 v3.1.0 // indirect
+	github.com/pion/transport/v3 v3.1.1 // indirect
 	github.com/pires/go-proxyproto v0.8.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
@@ -92,4 +92,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251109145905-723f3d2d8c0d
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251111114448-52790c89677f
