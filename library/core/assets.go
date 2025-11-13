@@ -33,13 +33,10 @@ const (
 )
 
 var (
+	assetsAccess       sync.Mutex
 	assetsPrefix       string
 	internalAssetsPath string
 	externalAssetsPath string
-)
-
-var (
-	assetsAccess sync.Mutex
 )
 
 func InitializeV2Ray(internalAssets string, externalAssets string, prefix string, caProvider int32) error {
@@ -47,43 +44,24 @@ func InitializeV2Ray(internalAssets string, externalAssets string, prefix string
 	internalAssetsPath = internalAssets
 	externalAssetsPath = externalAssets
 
-	filesystem.NewFileSeeker = func(path string) (io.ReadSeekCloser, error) {
+	fileSeeker := func(path string) (io.ReadSeekCloser, error) {
 		_, fileName := filepath.Split(path)
-
-		paths := []string{
-			externalAssetsPath + fileName,
-			internalAssetsPath + fileName,
+		if _, err := os.Stat(externalAssetsPath + fileName); err == nil {
+			return os.Open(externalAssetsPath + fileName)
 		}
-
-		var err error
-
-		for _, path = range paths {
-			_, err = os.Stat(path)
-			if err == nil {
-				return os.Open(path)
-			}
+		if _, err := os.Stat(internalAssetsPath + fileName); err == nil {
+			return os.Open(internalAssetsPath + fileName)
 		}
-
-		file, err := asset.Open(assetsPrefix + fileName)
-		if err == nil {
+		if file, err := asset.Open(assetsPrefix + fileName); err == nil {
 			return file, nil
 		}
-
-		for _, path = range paths {
-			_, err = os.Stat(path)
-			if err == nil {
-				return os.Open(path)
-			}
-			if !os.IsNotExist(err) {
-				return nil, err
-			}
-		}
-
-		return nil, err
+		return nil, newError("asset ", fileName, " not found")
 	}
 
+	filesystem.NewFileSeeker = fileSeeker
+
 	filesystem.NewFileReader = func(path string) (io.ReadCloser, error) {
-		return filesystem.NewFileSeeker(path)
+		return fileSeeker(path)
 	}
 
 	UpdateSystemRoots(caProvider)
