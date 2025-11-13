@@ -37,7 +37,7 @@ jobs:
           go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.8
           go install github.com/sagernet/gomobile/cmd/gobind@v0.1.8
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 21
@@ -54,7 +54,7 @@ jobs:
         run: |
           ./run lib core
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           path: app/libs/libcore.aar
           name: "LibCore"
@@ -73,7 +73,7 @@ jobs:
           APK=$(dirname "$APK")
           echo "APK=$APK" >> $GITHUB_ENV
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: APKs
           path: ${{ env.APK }}
@@ -88,7 +88,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: APKs
           path: artifacts
