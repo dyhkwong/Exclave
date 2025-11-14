@@ -2156,6 +2156,7 @@ fun buildV2RayConfig(
                                 tag = TAG_DNS_DIRECT
                                 hasDnsTagDirect = true
                             }
+                            fallbackStrategy = "disabled"
                         }
                     }
                 })
