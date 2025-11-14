@@ -2145,22 +2145,6 @@ fun buildV2RayConfig(
                     }
                 }
             })
-            if (bootstrapDomain.isNotEmpty()) {
-                dns.servers.addAll(bootstrapDNS.map {
-                    DnsObject.StringOrServerObject().apply {
-                        valueY = DnsObject.ServerObject().apply {
-                            address = it
-                            domains = bootstrapDomain.toList() // v2fly/v2ray-core#1558, v2fly/v2ray-core#1855
-                            queryStrategy = directDnsQueryStrategy
-                            if (!it.lowercase().contains("+local://") && it.lowercase() != "localhost") {
-                                tag = TAG_DNS_DIRECT
-                                hasDnsTagDirect = true
-                            }
-                            fallbackStrategy = "disabled"
-                        }
-                    }
-                })
-            }
             if (bypassDomainSkipFakeDns.isNotEmpty()) {
                 dns.servers.addAll(directDNS.map {
                     DnsObject.StringOrServerObject().apply {
@@ -2208,6 +2192,22 @@ fun buildV2RayConfig(
                                         }
                                     })
                                 }
+                            }
+                            fallbackStrategy = "disabled"
+                        }
+                    }
+                })
+            }
+            if (bootstrapDomain.isNotEmpty()) {
+                dns.servers.addAll(bootstrapDNS.map {
+                    DnsObject.StringOrServerObject().apply {
+                        valueY = DnsObject.ServerObject().apply {
+                            address = it
+                            domains = bootstrapDomain.toList() // v2fly/v2ray-core#1558, v2fly/v2ray-core#1855
+                            queryStrategy = directDnsQueryStrategy
+                            if (!it.lowercase().contains("+local://") && it.lowercase() != "localhost") {
+                                tag = TAG_DNS_DIRECT
+                                hasDnsTagDirect = true
                             }
                             fallbackStrategy = "disabled"
                         }
