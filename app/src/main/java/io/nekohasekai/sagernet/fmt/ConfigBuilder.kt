@@ -2085,9 +2085,13 @@ fun buildV2RayConfig(
         remoteDNS.forEach {
             try {
                 if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
-                    val url = Libcore.parseURL(it)
-                    if (!url.host.isEmpty() && !Libcore.isIP(url.host)) {
-                        bypassDomainSkipFakeDns.add("full:${url.host}")
+                    if (it.contains("://")) {
+                        val url = Libcore.parseURL(it)
+                        if (!Libcore.isIP(url.host)) {
+                            bypassDomainSkipFakeDns.add("full:${url.host}")
+                        }
+                    } else if (!Libcore.isIP(it)) {
+                        bypassDomainSkipFakeDns.add("full:$it")
                     }
                 }
             } catch (_: Exception) {}
@@ -2096,9 +2100,13 @@ fun buildV2RayConfig(
         directDNS.forEach {
             try {
                 if (it.lowercase() != "localhost" && it.lowercase() != "fakedns") {
-                    val url = Libcore.parseURL(it)
-                    if (!url.host.isEmpty() && !Libcore.isIP(url.host)) {
-                        bootstrapDomain.add("full:${url.host}")
+                    if (it.contains("://")) {
+                        val url = Libcore.parseURL(it)
+                        if (!Libcore.isIP(url.host)) {
+                            bootstrapDomain.add("full:${url.host}")
+                        }
+                    } else if (!Libcore.isIP(it)) {
+                        bootstrapDomain.add("full:$it")
                     }
                 }
             } catch (_: Exception) {}
