@@ -90,6 +90,12 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
         link.queryParameter("insecure")?.takeIf { it == "1" || it == "true" }?.also {
             allowInsecure = true
         }
+        link.queryParameter("allow_insecure")?.takeIf { it == "1" || it == "true" }?.also {
+            allowInsecure = true
+        }
+        link.queryParameter("allowInsecure")?.takeIf { it == "1" || it == "true" }?.also {
+            allowInsecure = true
+        }
         link.queryParameter("pinSHA256")?.also {
             // https://github.com/apernet/hysteria/blob/922128e425a700c5bc01290e7a9560f182fe451b/app/cmd/client.go#L882-L889
             pinnedPeerCertificateSha256 = it.replace(":", "").replace("-", "").lowercase()

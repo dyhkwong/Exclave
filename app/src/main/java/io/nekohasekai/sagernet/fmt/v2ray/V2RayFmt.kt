@@ -197,11 +197,17 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             }
             // bad format from where?
             url.queryParameter("allowInsecure")?.let {
-                if (it == "1" || it.lowercase() == "true") {
+                if (it == "1" || it == "true") {
                     bean.allowInsecure = true // non-standard
                 }
-            } ?: url.queryParameter("insecure")?.let {
-                if (it == "1" || it.lowercase() == "true") {
+            }
+            url.queryParameter("insecure")?.let {
+                if (it == "1" || it == "true") {
+                    bean.allowInsecure = true // non-standard
+                }
+            }
+            url.queryParameter("allow_insecure")?.let {
+                if (it == "1" || it == "true") {
                     bean.allowInsecure = true // non-standard
                 }
             }
@@ -505,7 +511,13 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
                 if (it == "1" || it.lowercase() == "true") {
                     bean.allowInsecure = true // non-standard
                 }
-            } ?: json.optStringOrNull("insecure")?.let { // Boolean or Int or String
+            }
+            json.optStringOrNull("insecure")?.let { // Boolean or Int or String
+                if (it == "1" || it.lowercase() == "true") {
+                    bean.allowInsecure = true // non-standard
+                }
+            }
+            json.optStringOrNull("allowInsecure")?.let { // Boolean or Int or String
                 if (it == "1" || it.lowercase() == "true") {
                     bean.allowInsecure = true // non-standard
                 }

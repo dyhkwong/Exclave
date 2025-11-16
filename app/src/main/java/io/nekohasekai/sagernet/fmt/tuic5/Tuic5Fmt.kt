@@ -154,7 +154,8 @@ fun parseTuic(server: String): AbstractBean {
                 zeroRTTHandshake = true
             }
         (link.queryParameter("allow_insecure") ?: link.queryParameter("allow-insecure") ?:
-        link.queryParameter("insecure"))?.takeIf { it == "1" || it == "true" }?.let {
+        link.queryParameter("insecure") ?: link.queryParameter("allowInsecure"))
+            ?.takeIf { it == "1" || it == "true" }?.let {
             allowInsecure = true
         }
         link.fragment?.let {

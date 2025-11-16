@@ -33,7 +33,13 @@ fun parseAnyTLS(url: String): AnyTLSBean {
         link.queryParameter("sni")?.also {
             sni = it
         }
-        link.queryParameter("insecure")?.takeIf { it == "1" }?.also {
+        link.queryParameter("insecure")?.takeIf { it == "1" || it == "true" }?.also {
+            allowInsecure = true
+        }
+        link.queryParameter("allow_insecure")?.takeIf { it == "1" || it == "true" }?.also {
+            allowInsecure = true
+        }
+        link.queryParameter("allowInsecure")?.takeIf { it == "1" || it == "true" }?.also {
             allowInsecure = true
         }
     }
