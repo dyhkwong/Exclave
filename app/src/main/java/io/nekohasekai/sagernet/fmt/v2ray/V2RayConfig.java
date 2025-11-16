@@ -1443,8 +1443,13 @@ public class V2RayConfig {
         public EnrolmentConfigObject connectionEnrolment;
         public Boolean sequenceWatermarkingEnabled;
         public static class EnrolmentConfigObject {
-            public Long primaryIngressOutbound;
-            public Long primaryEgressOutbound;
+            public String primaryIngressOutbound;
+            public String primaryEgressOutbound;
+            public List<String> bootstrapIngressURL;
+            public List<String> bootstrapEgressURL;
+            public BootstrapIngressConfigurationObject bootstrapIngressConfig;
+            public BootstrapEgressConfigurationObject bootstrapEgressConfig;
+            public String bootstrapEgressOutbound;
         }
         public static class TLSMirrorTimeSpecConfigObject {
             public Long baseNanoseconds;
@@ -1482,6 +1487,18 @@ public class V2RayConfig {
                     public List<String> values;
                 }
             }
+        }
+        public static class BootstrapIngressConfigurationObject {
+            public RequestObject.RoundTripperObject roundTripperServer;
+            public String listen;
+        }
+        public static class BootstrapEgressConfigurationObject {
+            public RequestObject.RoundTripperObject roundTripperClient;
+            public TLSObject tlsSettings;
+            public UTLSObject utlsSettings;
+            public String dest;
+            public String outboundTag;
+            public String serverIdentity;
         }
     }
 
