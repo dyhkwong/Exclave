@@ -124,6 +124,11 @@ func ProbeCertQUIC(ctx context.Context, address, sni string, alpn []string, useS
 }
 
 func ProbeCert(host string, port int32, sni, alpn string, protocol string, useSOCKS5 bool, socksPort int32) *CertProbeResult {
+	if len(host) == 0 {
+		return &CertProbeResult{
+			Error: "empty host",
+		}
+	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -163,16 +168,18 @@ func ProbeCert(host string, port int32, sni, alpn string, protocol string, useSO
 		Cert: builder.String(),
 	}
 	opts := x509.VerifyOptions{
-		DNSName:       sni,
 		Intermediates: x509.NewCertPool(),
+	}
+	if len(sni) > 0 {
+		opts.DNSName = sni
+	} else {
+		opts.DNSName = host
 	}
 	for _, cert := range certs[1:] {
 		opts.Intermediates.AddCert(cert)
 	}
 	if _, verifyErr := certs[0].Verify(opts); verifyErr != nil {
 		result.VerifyError = verifyErr.Error()
-	} else if len(sni) == 0 {
-		result.VerifyError = "ServerName is not specified in the tls.Config, VerifyHostname skipped"
 	}
 	return result
 }
