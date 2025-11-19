@@ -60,7 +60,7 @@ fun parseSingBoxOutbound(outbound: JSONObject): List<AbstractBean> {
                 "http" -> HttpBean()
                 else -> return listOf()
             }.apply {
-                outbound.optStringOrNull("type")?.also {
+                outbound.optStringOrNull("tag")?.also {
                     name = it
                 }
                 outbound.optStr("server")?.also {
