@@ -401,13 +401,11 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
     // https://github.com/2dust/v2rayN/wiki/Description-of-VMess-share-link
     val bean = VMessBean().apply {
         serverAddress = json.optStringOrNull("add")?.takeIf { it.isNotEmpty() } ?: error("missing server address")
-        serverPort = json.optIntOrNull("port")
-            ?: json.optStringOrNull("port")?.takeIf { it.isNotEmpty() }?.toIntOrNull() ?: error("invalid port")
+        serverPort = json.optIntOrNull("port") ?: error("invalid port") // String or Int, org.json support this
         uuid = json.optStringOrNull("id")?.let {
             uuidOrGenerate(it)
         }
-        alterId = json.optIntOrNull("aid")
-            ?: json.optStringOrNull("aid")?.takeIf { it.isNotEmpty() }?.toIntOrNull()
+        alterId = json.optIntOrNull("aid") // String or Int, org.json support this
         json.optStringOrNull("scy")?.takeIf { it.isNotEmpty() }?.let {
             if (it !in supportedVmessMethod) error("unsupported vmess encryption")
             encryption = it
@@ -506,21 +504,9 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
             // See https://github.com/2dust/v2rayNG/blob/5db2df77a01144b8f3d40116f8c183153f181d05/V2rayNG/app/src/main/java/com/v2ray/ang/handler/V2rayConfigManager.kt#L1077-L1242
             bean.sni = json.optStringOrNull("sni")?.takeIf { it.isNotEmpty() } ?: host?.split(",")?.get(0)
             bean.alpn = json.optStringOrNull("alpn")?.takeIf { it.isNotEmpty() }?.split(",")?.joinToString("\n")
-            // bad format from where?
-            json.optStringOrNull("allowInsecure")?.let { // Boolean or Int or String
-                if (it == "1" || it.lowercase() == "true") {
-                    bean.allowInsecure = true // non-standard
-                }
-            }
-            json.optStringOrNull("insecure")?.let { // Boolean or Int or String
-                if (it == "1" || it.lowercase() == "true") {
-                    bean.allowInsecure = true // non-standard
-                }
-            }
-            json.optStringOrNull("allowInsecure")?.let { // Boolean or Int or String
-                if (it == "1" || it.lowercase() == "true") {
-                    bean.allowInsecure = true // non-standard
-                }
+            json.optIntOrNull("insecure")?.takeIf { it == 1 }?.let {
+                // String or Int, org.json support this
+                bean.allowInsecure = true
             }
             // json.getStringOrNull("fp")
         }
@@ -528,7 +514,8 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
     }
 
     // https://github.com/2dust/v2rayN/blob/737d563ebb66d44504c3a9f51b7dcbb382991dfd/v2rayN/v2rayN/Handler/ConfigHandler.cs#L701-L743
-    if (json.optStringOrNull("v").isNullOrEmpty() || json.optString("v").toInt() < 2) {
+    // String or Int, org.json support this
+    if (!json.has("v") || (json.optIntOrNull("v") != null && json.optIntOrNull("v")!! < 2)) {
         when (net) {
             "ws", "h2" -> {
                 host?.replace(" ", "")?.split(";")?.let {
