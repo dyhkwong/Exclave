@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet.group
 
 import androidx.core.net.toUri
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.ExtraType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -28,7 +29,6 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import org.json.JSONObject
 
 object SIP008Updater : GroupUpdater() {
 
@@ -40,14 +40,14 @@ object SIP008Updater : GroupUpdater() {
     ) {
 
         val link = subscription.link
-        val sip008Response: JSONObject
+        val sip008Response: JsonObject
         try {
             if (link.startsWith("content://", ignoreCase = true)) {
                 val contentText = app.contentResolver.openInputStream(link.toUri())
                     ?.bufferedReader()
                     ?.readText()
 
-                sip008Response = contentText?.let { JSONObject(contentText) }
+                sip008Response = contentText?.let { parseJson(contentText).asJsonObject }
                     ?: error(app.getString(R.string.no_proxies_found_in_subscription))
             } else {
 
@@ -64,27 +64,29 @@ object SIP008Updater : GroupUpdater() {
                     }
                 }.execute()
 
-                sip008Response = JSONObject(response.contentString)
+                sip008Response = parseJson(response.contentString).asJsonObject
             }
         } catch (_: Exception) {
             error("invalid response")
         }
 
 
-        subscription.bytesUsed = sip008Response.optLongOrNull("bytes_used") ?: -1
-        subscription.bytesRemaining = sip008Response.optLongOrNull("bytes_remaining") ?: -1
+        subscription.bytesUsed = sip008Response.getLong("bytes_used") ?: -1
+        subscription.bytesRemaining = sip008Response.getLong("bytes_remaining") ?: -1
         subscription.applyDefaultValues()
 
-        val servers = sip008Response.getJSONArray("servers").filterIsInstance<JSONObject>()
+        val servers = sip008Response.getArray("servers")
 
         var profiles = mutableListOf<AbstractBean>()
 
         val pattern = Regex(subscription.nameFilter)
-        for (profile in servers) {
-            val bean = parseShadowsocksConfig(profile) ?: continue
-            appendExtraInfo(profile, bean)
-            if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
-                profiles.add(bean)
+        if (servers != null) {
+            for (profile in servers) {
+                val bean = parseShadowsocksConfig(profile) ?: continue
+                appendExtraInfo(profile, bean)
+                if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
+                    profiles.add(bean)
+                }
             }
         }
 
@@ -174,9 +176,9 @@ object SIP008Updater : GroupUpdater() {
         )
     }
 
-    fun appendExtraInfo(profile: JSONObject, bean: AbstractBean) {
+    fun appendExtraInfo(profile: JsonObject, bean: AbstractBean) {
         bean.extraType = ExtraType.SIP008
-        bean.profileId = profile.optStringOrNull("id")
+        bean.profileId = profile.getString("id")
     }
 
 }

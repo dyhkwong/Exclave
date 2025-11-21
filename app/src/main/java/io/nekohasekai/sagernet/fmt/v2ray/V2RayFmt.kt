@@ -19,10 +19,10 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray
 
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import org.json.JSONObject
 
 val supportedVmessMethod = arrayOf(
     "auto", "aes-128-gcm", "chacha20-poly1305", "none", "zero"
@@ -70,10 +70,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     if (url.scheme == "vmess" && url.port == 0 && url.username.isEmpty() && url.password.isEmpty()) {
         val decoded = link.substring("vmess://".length).substringBefore("#").decodeBase64()
         try {
-            return parseV2RayN(JSONObject(decoded))
-        } catch (_: Exception) {
-            null
-        }
+            return parseV2RayN(parseJson(decoded).asJsonObject)
+        } catch (_: Exception) {}
 
         if (decoded.filterNot { it.isWhitespace() }.contains("=vmess,")) {
             // vmess://{BASE64_ENCODED}
@@ -280,8 +278,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             bean.type = "splithttp"
             url.queryParameter("extra")?.let { extra ->
                 try {
-                    val json = JSONObject(extra)
-                    if (json.length() > 0) {
+                    val json = parseJson(extra).asJsonObject
+                    if (!json.isEmpty) {
                         // fuck RPRX `extra`
                         bean.splithttpExtra = json.toString()
                     }
@@ -397,32 +395,33 @@ fun parseV2Ray(link: String): StandardV2RayBean {
     return bean
 }
 
-private fun parseV2RayN(json: JSONObject): VMessBean {
+private fun parseV2RayN(json: JsonObject): VMessBean {
     // https://github.com/2dust/v2rayN/wiki/Description-of-VMess-share-link
     val bean = VMessBean().apply {
-        serverAddress = json.optStringOrNull("add")?.takeIf { it.isNotEmpty() } ?: error("missing server address")
-        serverPort = json.optIntOrNull("port") ?: error("invalid port") // String or Int, org.json support this
-        uuid = json.optStringOrNull("id")?.let {
+        serverAddress = json.getString("add")?.takeIf { it.isNotEmpty() } ?: error("missing server address")
+        serverPort = (json.getString("port")?.toIntOrNull()
+            ?: json.getInt("port"))?: error("invalid port")
+        uuid = json.getString("id")?.let {
             uuidOrGenerate(it)
         }
-        alterId = json.optIntOrNull("aid") // String or Int, org.json support this
-        json.optStringOrNull("scy")?.takeIf { it.isNotEmpty() }?.let {
+        alterId = json.getString("aid")?.toIntOrNull() ?: json.getInt("aid")
+        json.getString("scy")?.takeIf { it.isNotEmpty() }?.let {
             if (it !in supportedVmessMethod) error("unsupported vmess encryption")
             encryption = it
         }
-        name = json.optStringOrNull("ps")?.takeIf { it.isNotEmpty() }
+        name = json.getString("ps")?.takeIf { it.isNotEmpty() }
     }
 
-    val net = json.optStringOrNull("net")
+    val net = json.getString("net")
     bean.type = when (net) {
         "h2" -> "http"
         "xhttp" -> "splithttp"
         "tcp", "kcp", "ws", "http", "quic", "grpc", "httpupgrade", "splithttp" -> net
         else -> "tcp"
     }
-    val type = json.optStringOrNull("type")?.takeIf { it.isNotEmpty() }
-    val host = json.optStringOrNull("host")?.takeIf { it.isNotEmpty() }
-    val path = json.optStringOrNull("path")?.takeIf { it.isNotEmpty() }
+    val type = json.getString("type")?.takeIf { it.isNotEmpty() }
+    val host = json.getString("host")?.takeIf { it.isNotEmpty() }
+    val path = json.getString("path")?.takeIf { it.isNotEmpty() }
 
     when (bean.type) {
         "tcp" -> {
@@ -497,15 +496,17 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
         }
     }
 
-    when (val security = json.optStringOrNull("tls")) {
+    when (val security = json.getString("tls")) {
         "tls", "reality" -> {
             bean.security = security
-            bean.name = json.optStringOrNull("ps")?.takeIf { it.isNotEmpty() }
+            bean.name = json.getString("ps")?.takeIf { it.isNotEmpty() }
             // See https://github.com/2dust/v2rayNG/blob/5db2df77a01144b8f3d40116f8c183153f181d05/V2rayNG/app/src/main/java/com/v2ray/ang/handler/V2rayConfigManager.kt#L1077-L1242
-            bean.sni = json.optStringOrNull("sni")?.takeIf { it.isNotEmpty() } ?: host?.split(",")?.get(0)
-            bean.alpn = json.optStringOrNull("alpn")?.takeIf { it.isNotEmpty() }?.split(",")?.joinToString("\n")
-            json.optIntOrNull("insecure")?.takeIf { it == 1 }?.let {
-                // String or Int, org.json support this
+            bean.sni = json.getString("sni")?.takeIf { it.isNotEmpty() } ?: host?.split(",")?.get(0)
+            bean.alpn = json.getString("alpn")?.takeIf { it.isNotEmpty() }?.split(",")?.joinToString("\n")
+            json.getString("insecure")?.takeIf { it == "1" }?.let {
+                bean.allowInsecure = true
+            }
+            json.getInt("insecure")?.takeIf { it == 1 }?.let {
                 bean.allowInsecure = true
             }
             // json.getStringOrNull("fp")
@@ -514,8 +515,9 @@ private fun parseV2RayN(json: JSONObject): VMessBean {
     }
 
     // https://github.com/2dust/v2rayN/blob/737d563ebb66d44504c3a9f51b7dcbb382991dfd/v2rayN/v2rayN/Handler/ConfigHandler.cs#L701-L743
-    // String or Int, org.json support this
-    if (!json.has("v") || (json.optIntOrNull("v") != null && json.optIntOrNull("v")!! < 2)) {
+    if (!json.contains("v")
+        || (json.getString("v") != null && json.getString("v")!!.toIntOrNull() != null && json.getString("v")!!.toIntOrNull()!! < 2)
+        || (json.getInt("v") != null && json.getInt("v")!! < 2)) {
         when (net) {
             "ws", "h2" -> {
                 host?.replace(" ", "")?.split(";")?.let {
@@ -663,7 +665,7 @@ fun StandardV2RayBean.toUri(): String? {
             }
             builder.addQueryParameter("mode", splithttpMode)
             if (splithttpExtra.isNotEmpty()) {
-                JSONObject(splithttpExtra).takeIf { it.length() > 0 }?.let {
+                parseJson(splithttpExtra).asJsonObject?.takeIf { !it.isEmpty }?.let {
                     // fuck RPRX `extra`
                     builder.addQueryParameter("extra", it.toString())
                 }

@@ -44,7 +44,6 @@ import io.nekohasekai.sagernet.databinding.LayoutAssetsBinding
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.widget.UndoSnackbarManager
 import libcore.Libcore
-import org.json.JSONObject
 import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -338,8 +337,8 @@ class AssetsActivity : ThemedActivity() {
                 setURL("https://api.github.com/repos/$repo/releases/latest")
             }.execute()
 
-            val release = JSONObject(response.contentString)
-            val tagName = release.getString("tag_name")
+            val release = parseJson(response.contentString).asJsonObject
+            val tagName = release.getString("tag_name")?: error("tag_name not found in release ${release["url"]}")
 
             if (tagName == localVersion) {
                 onMainDispatcher {
@@ -348,8 +347,8 @@ class AssetsActivity : ThemedActivity() {
                 return
             }
 
-            val releaseAssets = release.getJSONArray("assets").filterIsInstance<JSONObject>()
-            val assetToDownload = releaseAssets.find { it.getString("name") == fileName }
+            val releaseAssets = release.getArray("assets")
+            val assetToDownload = releaseAssets?.find { it.getString("name") == fileName }
                 ?: error("File $fileName not found in release ${release["url"]}")
             val browserDownloadUrl = assetToDownload.getString("browser_download_url")
 

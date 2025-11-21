@@ -19,14 +19,14 @@
 
 package io.nekohasekai.sagernet.fmt.trojan_go
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
-import org.json.JSONArray
-import org.json.JSONObject
 
 fun parseTrojanGo(server: String): TrojanGoBean {
     val link = Libcore.parseURL(server)
@@ -100,32 +100,32 @@ fun TrojanGoBean.toUri(): String? {
 }
 
 fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
-    return JSONObject().also { conf ->
-        conf.put("run_type", "client")
-        conf.put("local_addr", LOCALHOST)
-        conf.put("local_port", port)
-        conf.put("remote_addr", finalAddress)
-        conf.put("remote_port", finalPort)
-        conf.put("password", JSONArray().apply {
-            put(password)
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
+        addProperty("run_type", "client")
+        addProperty("local_addr", LOCALHOST)
+        addProperty("local_port", port)
+        addProperty("remote_addr", finalAddress)
+        addProperty("remote_port", finalPort)
+        add("password", JsonArray().apply {
+            add(password)
         })
-        conf.put("log_level", when (DataStore.logLevel) {
+        addProperty("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> 0
             LogLevel.INFO -> 1
             LogLevel.WARNING -> 2
             LogLevel.ERROR -> 3
             else -> 5
         })
-        if (mux) conf.put("mux", JSONObject().also {
-            it.put("enabled", true)
-            it.put("concurrency", muxConcurrency)
+        if (mux) add("mux", JsonObject().apply {
+            addProperty("enabled", true)
+            addProperty("concurrency", muxConcurrency)
         })
 
         when (type) {
-            "ws" -> conf.put("websocket", JSONObject().also {
-                it.put("enabled", true)
-                it.put("host", host)
-                it.put("path", path)
+            "ws" -> add("websocket", JsonObject().apply {
+                addProperty("enabled", true)
+                addProperty("host", host)
+                addProperty("path", path)
             })
         }
 
@@ -134,20 +134,20 @@ fun TrojanGoBean.buildTrojanGoConfig(port: Int): String {
             servername = serverAddress
         }
 
-        conf.put("ssl", JSONObject().also {
-            if (servername.isNotEmpty()) it.put("sni", servername)
-            if (allowInsecure) it.put("verify", false)
-            if (utlsFingerprint.isNotEmpty()) it.put("fingerprint", utlsFingerprint)
+        add("ssl", JsonObject().apply {
+            if (servername.isNotEmpty()) addProperty("sni", servername)
+            if (allowInsecure) addProperty("verify", false)
+            if (utlsFingerprint.isNotEmpty()) addProperty("fingerprint", utlsFingerprint)
         })
 
         when {
             encryption == "none" -> {}
-            encryption.startsWith("ss;") -> conf.put("shadowsocks", JSONObject().also {
-                it.put("enabled", true)
-                it.put("method", encryption.substringAfter(";").substringBefore(":"))
-                it.put("password", encryption.substringAfter(":"))
+            encryption.startsWith("ss;") -> add("shadowsocks", JsonObject().apply {
+                addProperty("enabled", true)
+                addProperty("method", encryption.substringAfter(";").substringBefore(":"))
+                addProperty("password", encryption.substringAfter(":"))
             })
         }
 
-    }.toStringPretty()
+    })
 }

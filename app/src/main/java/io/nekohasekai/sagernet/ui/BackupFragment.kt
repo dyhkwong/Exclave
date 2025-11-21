@@ -33,6 +33,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.jakewharton.processphoenix.ProcessPhoenix
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
@@ -44,8 +47,6 @@ import io.nekohasekai.sagernet.databinding.LayoutBackupBinding
 import io.nekohasekai.sagernet.databinding.LayoutImportBinding
 import io.nekohasekai.sagernet.databinding.LayoutProgressBinding
 import io.nekohasekai.sagernet.ktx.*
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 import kotlin.io.encoding.Base64
 
@@ -151,41 +152,41 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
     }
 
     fun doBackup(profile: Boolean, rule: Boolean, setting: Boolean): String {
-        val out = JSONObject()
-        out.put("version", 1)
+        val out = JsonObject()
+        out.addProperty("version", 1)
         if (profile) {
-            out.put("profiles", JSONArray().apply {
+            out.add("profiles", JsonArray().apply {
                 SagerDatabase.proxyDao.getAll().forEach {
-                    put(it.toBase64Str())
+                    add(it.toBase64Str())
                 }
             })
 
-            out.put("groups", JSONArray().apply {
+            out.add("groups", JsonArray().apply {
                 SagerDatabase.groupDao.allGroups().forEach {
-                    put(it.toBase64Str())
+                    add(it.toBase64Str())
                 }
             })
         }
         if (rule) {
-            out.put("rules", JSONArray().apply {
+            out.add("rules", JsonArray().apply {
                 SagerDatabase.rulesDao.allRules().forEach {
-                    put(it.toBase64Str())
+                    add(it.toBase64Str())
                 }
             })
-            out.put("assets", JSONArray().apply {
+            out.add("assets", JsonArray().apply {
                 SagerDatabase.assetDao.getAll().forEach {
-                    put(it.toBase64Str())
+                    add(it.toBase64Str())
                 }
             })
         }
         if (setting) {
-            out.put("settings", JSONArray().apply {
+            out.add("settings", JsonArray().apply {
                 PublicDatabase.kvPairDao.all().forEach {
-                    put(it.toBase64Str())
+                    add(it.toBase64Str())
                 }
             })
         }
-        return out.toStringPretty()
+        return GsonBuilder().setPrettyPrinting().create().toJson(out)
     }
 
     val importFile = registerForActivityResult(ActivityResultContracts.GetContent()) { file ->
@@ -220,29 +221,29 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
         }
 
         val content = try {
-            JSONObject((requireContext().contentResolver.openInputStream(file) ?: return).use {
+            parseJson((requireContext().contentResolver.openInputStream(file) ?: return).use {
                 it.bufferedReader().readText()
-            })
+            }).asJsonObject
         } catch (e: Exception) {
             Logs.w(e)
             invalid()
             return
         }
-        val version = content.optIntOrNull("version")
-        if (version != 1) {
+        val version = content.getInt("version")
+        if (version == null || version != 1) {
             invalid()
             return
         }
 
         onMainDispatcher {
             val import = LayoutImportBinding.inflate(layoutInflater)
-            if (!content.has("profiles")) {
+            if (!content.contains("profiles")) {
                 import.backupConfigurations.isVisible = false
             }
-            if (!content.has("rules")) {
+            if (!content.contains("rules")) {
                 import.backupRules.isVisible = false
             }
-            if (!content.has("settings")) {
+            if (!content.contains("settings")) {
                 import.backupSettings.isVisible = false
             }
             MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.backup_import)
@@ -285,11 +286,11 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
     }
 
     fun finishImport(
-        content: JSONObject, profile: Boolean, rule: Boolean, setting: Boolean
+        content: JsonObject, profile: Boolean, rule: Boolean, setting: Boolean
     ) {
-        if (profile && content.has("profiles")) {
+        if (profile && content.contains("profiles")) {
             val profiles = mutableListOf<ProxyEntity>()
-            content.optJSONArray("profiles")?.filterIsInstance<String>()?.forEach {
+            content.getStringArray("profiles")?.forEach {
                 val data = Base64.decode(it)
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
@@ -301,7 +302,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
             SagerDatabase.proxyDao.insert(profiles)
 
             val groups = mutableListOf<ProxyGroup>()
-            content.optJSONArray("groups")?.filterIsInstance<String>()?.forEach {
+            content.getStringArray("groups")?.forEach {
                 val data = Base64.decode(it)
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
@@ -312,9 +313,9 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
             SagerDatabase.groupDao.reset()
             SagerDatabase.groupDao.insert(groups)
         }
-        if (rule && content.has("rules")) {
+        if (rule && content.contains("rules")) {
             val rules = mutableListOf<RuleEntity>()
-            content.optJSONArray("rules")?.filterIsInstance<String>()?.forEach {
+            content.getStringArray("rules")?.forEach {
                 val data = Base64.decode(it)
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
@@ -326,7 +327,7 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
             SagerDatabase.rulesDao.insert(rules)
 
             val assets = mutableListOf<AssetEntity>()
-            content.optJSONArray("assets")?.filterIsInstance<String>()?.forEach {
+            content.getStringArray("assets")?.forEach {
                 val data = Base64.decode(it)
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)
@@ -337,9 +338,9 @@ class BackupFragment : NamedFragment(R.layout.layout_backup) {
             SagerDatabase.assetDao.reset()
             SagerDatabase.assetDao.insert(assets)
         }
-        if (setting && content.has("settings")) {
+        if (setting && content.contains("settings")) {
             val settings = mutableListOf<KeyValuePair>()
-            content.optJSONArray("settings")?.filterIsInstance<String>()?.forEach {
+            content.getStringArray("settings")?.forEach {
                 val data = Base64.decode(it)
                 val parcel = Parcel.obtain()
                 parcel.unmarshall(data, 0, data.size)

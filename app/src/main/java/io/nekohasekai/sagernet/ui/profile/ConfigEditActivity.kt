@@ -43,8 +43,8 @@ import io.nekohasekai.sagernet.utils.Theme
 import androidx.core.graphics.toColorInt
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.ktx.parseJsonLeniently
 import io.nekohasekai.sagernet.ktx.readableMessage
-import org.json.JSONObject
 
 class ConfigEditActivity : ThemedActivity() {
 
@@ -151,9 +151,10 @@ class ConfigEditActivity : ThemedActivity() {
         outState.putBoolean(KEY_DIRTY, dirty)
     }
 
+    @SuppressLint("CheckResult")
     fun saveAndExit() {
         try {
-            JSONObject(config)
+            parseJsonLeniently(config).asJsonObject
         } catch (e: Exception) {
             MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
                 .setMessage(e.readableMessage).show()

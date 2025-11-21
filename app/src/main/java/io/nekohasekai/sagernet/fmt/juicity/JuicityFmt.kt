@@ -19,12 +19,13 @@
 
 package io.nekohasekai.sagernet.fmt.juicity
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import org.json.JSONObject
 import java.util.Base64
 
 // invalid option
@@ -107,23 +108,23 @@ fun JuicityBean.toUri(): String? {
 }
 
 fun JuicityBean.buildJuicityConfig(port: Int): String {
-    return JSONObject().also {
-        it.put("listen", joinHostPort(LOCALHOST, port))
-        it.put("server", joinHostPort(finalAddress, finalPort))
-        it.put("uuid", uuid)
-        it.put("password", password)
-        it.put("congestion_control", congestionControl)
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
+        addProperty("listen", joinHostPort(LOCALHOST, port))
+        addProperty("server", joinHostPort(finalAddress, finalPort))
+        addProperty("uuid", uuid)
+        addProperty("password", password)
+        addProperty("congestion_control", congestionControl)
         if (sni.isNotEmpty()) {
-            it.put("sni", sni)
+            addProperty("sni", sni)
         } else {
-            it.put("sni", serverAddress)
+            addProperty("sni", serverAddress)
         }
         if (allowInsecure || pinnedPeerCertificateChainSha256.isNotEmpty()) {
-            it.put("allow_insecure", true)
+            addProperty("allow_insecure", true)
         }
         if (pinnedPeerCertificateChainSha256.isNotEmpty()) {
             val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
-            it.put("pinned_certchain_sha256", when {
+            addProperty("pinned_certchain_sha256", when {
                 certChainHash.length == 64 -> {
                     Base64.getUrlEncoder().encodeToString(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
                 }
@@ -132,12 +133,12 @@ fun JuicityBean.buildJuicityConfig(port: Int): String {
                 }
             })
         }
-        it.put("log_level", when (DataStore.logLevel) {
+        addProperty("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
             else -> "panic"
         })
-    }.toStringPretty()
+    })
 }

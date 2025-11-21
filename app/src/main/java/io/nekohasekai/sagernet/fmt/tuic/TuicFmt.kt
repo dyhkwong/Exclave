@@ -18,15 +18,15 @@
 
 package io.nekohasekai.sagernet.fmt.tuic
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
-import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 
 val supportedTuicCongestionControl = arrayOf("cubic", "bbr", "new_reno")
@@ -64,50 +64,52 @@ fun TuicBean.toUri(): String {
 }
 
 fun TuicBean.buildTuicConfig(port: Int, forExport: Boolean, cacheFile: (() -> File)?): String {
-    return JSONObject().also {
-        it.put("relay", JSONObject().also {
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
+        add("relay", JsonObject().apply {
             if (sni.isNotEmpty()) {
-                it.put("server", sni)
-                it.put("ip", finalAddress)
+                addProperty("server", sni)
+                addProperty("ip", finalAddress)
             } else {
-                it.put("server", serverAddress)
-                it.put("ip", finalAddress)
+                addProperty("server", serverAddress)
+                addProperty("ip", finalAddress)
             }
-            it.put("port", finalPort)
-            it.put("token", token)
+            addProperty("port", finalPort)
+            addProperty("token", token)
 
             if (caText.isNotEmpty() && cacheFile != null) {
                 val caFile = cacheFile()
                 caFile.writeText(caText)
-                it.put("certificates", JSONArray().apply {
-                    put(caFile.absolutePath)
+                add("certificates", JsonArray().apply {
+                    add(caFile.absolutePath)
                 })
             } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && caText.isEmpty()) {
-                it.put("certificates", JSONArray().apply {
+                add("certificates", JsonArray().apply {
                     // workaround tuic can't load Android system root certificates without forking it
-                    File("/system/etc/security/cacerts").listFiles()?.forEach { put(it) }
+                    File("/system/etc/security/cacerts").listFiles()?.forEach { add(it.absolutePath) }
                 })
             }
 
-            it.put("udp_relay_mode", udpRelayMode)
+            addProperty("udp_relay_mode", udpRelayMode)
             if (alpn.isNotEmpty()) {
-                it.put("alpn", JSONArray(alpn.listByLineOrComma()))
+                add("alpn", JsonArray().apply {
+                    alpn.listByLineOrComma().forEach { add(it) }
+                })
             }
-            it.put("congestion_controller", congestionController)
-            it.put("disable_sni", disableSNI)
-            it.put("reduce_rtt", reduceRTT)
-            it.put("max_udp_relay_packet_size", mtu)
+            addProperty("congestion_controller", congestionController)
+            addProperty("disable_sni", disableSNI)
+            addProperty("reduce_rtt", reduceRTT)
+            addProperty("max_udp_relay_packet_size", mtu)
         })
-        it.put("local", JSONObject().also {
-            it.put("ip", LOCALHOST)
-            it.put("port", port)
+        add("local", JsonObject().apply {
+            addProperty("ip", LOCALHOST)
+            addProperty("port", port)
         })
-        it.put("log_level", when (DataStore.logLevel) {
+        addProperty("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
             else -> "off"
         })
-    }.toStringPretty()
+    })
 }

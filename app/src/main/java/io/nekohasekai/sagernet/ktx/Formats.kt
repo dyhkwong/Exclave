@@ -19,8 +19,6 @@
 
 package io.nekohasekai.sagernet.ktx
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.parseAnyTLS
@@ -41,67 +39,20 @@ import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic5.parseTuic
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuard
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.zip.Deflater
 import java.util.zip.Inflater
 import kotlin.io.encoding.Base64
 import kotlin.io.use
 
-@Suppress("DEPRECATION")
-fun JSONObject.toStringPretty(): String {
-    return GsonBuilder().setPrettyPrinting().create().toJson(JsonParser.parseString(this.toString()))
-}
-
-inline fun <reified T : Any> JSONArray.filterIsInstance(): List<T> {
-    val list = mutableListOf<T>()
-    for (i in 0 until this.length()) {
-        if (this[i] is T) list.add(this[i] as T)
-    }
-    return list
-}
-
-fun JSONObject.optStringOrNull(key: String): String? {
-    return try {
-        getString(key)
-    } catch (_: Exception) {
-        null
-    }
-}
-
-fun JSONObject.optIntOrNull(key: String): Int? {
-    return try {
-        getInt(key)
-    } catch (_: Exception) {
-        null
-    }
-}
-
-fun JSONObject.optBooleanOrNull(key: String): Boolean? {
-    return try {
-        getBoolean(key)
-    } catch (_: Exception) {
-        null
-    }
-}
-
-fun JSONObject.optLongOrNull(key: String): Long? {
-    return try {
-        getLong(key)
-    } catch (_: Exception) {
-        null
-    }
-}
-
 fun String.decodeBase64(): String {
     if (this.contains("-") || this.contains("_")) {
         return String(Base64.UrlSafe.withPadding(Base64.PaddingOption.PRESENT_OPTIONAL).decode(this))
     }
     if (this.contains("+") || this.contains("/")) {
-        return String(Base64.Default.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
+        return String(Base64.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
     }
-    return String(Base64.Default.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
+    return String(Base64.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
 }
 
 class SubscriptionFoundException(val link: String) : RuntimeException()

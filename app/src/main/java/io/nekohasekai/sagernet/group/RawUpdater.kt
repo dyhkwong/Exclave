@@ -34,7 +34,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocksConfig
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuardConfig
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import org.json.JSONObject
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
@@ -43,6 +42,7 @@ import org.yaml.snakeyaml.nodes.Tag
 import org.yaml.snakeyaml.representer.Representer
 import org.yaml.snakeyaml.resolver.Resolver
 import java.util.regex.Pattern
+
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object RawUpdater : GroupUpdater() {
@@ -235,7 +235,7 @@ object RawUpdater : GroupUpdater() {
             val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
                 override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
                     when (tag) {
-                        Tag.FLOAT -> null
+                        Tag.FLOAT -> {}
                         Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
                         else -> super.addImplicitResolver(tag, regexp, first, limit)
                     }
@@ -246,7 +246,7 @@ object RawUpdater : GroupUpdater() {
             }
         } catch (_: Exception) {}
         try {
-            return parseJSONConfig(JSONObject(Libcore.stripJSON(text)))
+            return parseJSONConfig(text)
                 .takeIf { it.isNotEmpty() }
         } catch (_: Exception) {}
         try {
@@ -272,47 +272,58 @@ object RawUpdater : GroupUpdater() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun parseJSONConfig(json: JSONObject): List<AbstractBean> {
+    private fun parseJSONConfig(text: String): List<AbstractBean> {
+        val jsonElement = parseJson(stripJson(text, stripTrailingCommas = true))
+        if (!jsonElement.isJsonObject) {
+            return listOf()
+        }
+        val jsonObject = jsonElement.asJsonObject
+        val beans = ArrayList<AbstractBean>()
         when {
-            json.hasCaseInsensitive("proxies") -> {
+            jsonObject.contains("proxies", ignoreCase = true) -> {
                 // Clash YAML
                 return listOf()
             }
-            json.optIntOrNull("version") != null && json.has("servers") -> {
+            jsonObject.getInt("version") != null && jsonObject.contains("servers") -> {
                 // SIP008
-                val beans = ArrayList<AbstractBean>()
-                json.optJSONArray("servers")?.filterIsInstance<JSONObject>()?.forEach { server ->
+                val element = parseJson(text)
+                if (!element.isJsonObject) {
+                    return listOf()
+                }
+                element.asJsonObject.getArray("servers")?.forEach { server ->
                     parseShadowsocksConfig(server)?.let {
                         beans.add(it)
                     }
                 }
                 return beans
             }
-            json.has("type") -> {
-                return parseSingBoxEndpoint(json).takeIf { it.isNotEmpty() }
-                    ?: parseSingBoxOutbound(json)
+            jsonObject.contains("type") -> {
+                // sing-box outbound/endpoint
+                return parseSingBoxEndpoint(jsonObject).takeIf { it.isNotEmpty() }
+                    ?: parseSingBoxOutbound(jsonObject)
             }
-            json.hasCaseInsensitive("protocol") -> {
-                return parseV2ray5Outbound(json).takeIf { it.isNotEmpty() }
-                    ?: parseV2RayOutbound(json)
+            jsonObject.contains("protocol", ignoreCase = true) -> {
+                // V2Ray JSONv4 outbound or V2Ray JSONv5 outbound
+                return parseV2Ray5Outbound(jsonObject).takeIf { it.isNotEmpty() }
+                    ?: parseV2RayOutbound(jsonObject)
             }
             else -> {
-                val beans = ArrayList<AbstractBean>()
-                json.optArray("endpoints")?.filterIsInstance<JSONObject>()?.forEach { endpoint ->
-                    beans.addAll(parseSingBoxEndpoint(endpoint))
-                }
-                json.optArray("outbounds")?.filterIsInstance<JSONObject>()?.forEach { outbound ->
+                jsonObject.getArray("outbounds", ignoreCase = true)?.forEach {
                     when {
-                        outbound.hasCaseInsensitive("protocol") -> {
-                            beans.addAll(
-                                parseV2ray5Outbound(outbound).takeIf { it.isNotEmpty() } ?:
-                                parseV2RayOutbound(outbound)
-                            )
+                        it.contains("protocol", ignoreCase = true) -> {
+                            // V2Ray JSONv4 or V2Ray JSONv5
+                            return parseV2Ray5Outbound(it).takeIf { it.isNotEmpty() }
+                                ?: parseV2RayOutbound(it)
                         }
-                        outbound.has("type") -> {
-                            beans.addAll(parseSingBoxOutbound(outbound))
+                        it.contains("type") -> {
+                            // sing-box
+                            beans.addAll(parseSingBoxOutbound(it))
                         }
                     }
+                }
+                jsonObject.getArray("endpoints", ignoreCase = true)?.forEach {
+                    // sing-box
+                    beans.addAll(parseSingBoxEndpoint(it))
                 }
                 return beans
             }

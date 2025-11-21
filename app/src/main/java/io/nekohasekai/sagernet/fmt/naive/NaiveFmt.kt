@@ -19,16 +19,13 @@
 
 package io.nekohasekai.sagernet.fmt.naive
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
-import io.nekohasekai.sagernet.ktx.joinHostPort
-import io.nekohasekai.sagernet.ktx.listByLine
-import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.toStringPretty
+import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import org.json.JSONObject
-import java.io.File
 
 fun parseNaive(link: String): NaiveBean {
     // This format may be https://github.com/klzgrad/naiveproxy/issues/86.
@@ -86,29 +83,29 @@ fun NaiveBean.toUri(proxyOnly: Boolean = false): String {
 }
 
 fun NaiveBean.buildNaiveConfig(port: Int): String {
-    return JSONObject().also {
-        it.put("listen", "socks://" + joinHostPort(LOCALHOST, port))
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
+        addProperty("listen", "socks://" + joinHostPort(LOCALHOST, port))
         // NaïveProxy v130.0.6723.40-2 release notes:
         // Fixed a crash when the username or password contains the comma character `,`.
         // The comma is used for delimiting proxies in a proxy chain.
         // It must be percent-encoded in other URL components.
-        it.put("proxy", toUri(true).replace(",", "%2C"))
+        addProperty("proxy", toUri(true).replace(",", "%2C"))
         if (extraHeaders.isNotEmpty()) {
-            it.put("extra-headers", extraHeaders.listByLine().joinToString("\r\n"))
+            addProperty("extra-headers", extraHeaders.listByLine().joinToString("\r\n"))
         }
         if (sni.isNotEmpty()) {
-            it.put("host-resolver-rules","MAP $sni $finalAddress")
+            addProperty("host-resolver-rules","MAP $sni $finalAddress")
         } else {
-            it.put("host-resolver-rules", "MAP $serverAddress $finalAddress")
+            addProperty("host-resolver-rules", "MAP $serverAddress $finalAddress")
         }
         if (DataStore.logLevel != LogLevel.NONE) {
-            it.put("log", "")
+            addProperty("log", "")
         }
         if (insecureConcurrency > 0) {
-            it.put("insecure-concurrency", insecureConcurrency)
+            addProperty("insecure-concurrency", insecureConcurrency)
         }
         if (noPostQuantum) {
-            it.put("no-post-quantum", true)
+            addProperty("no-post-quantum", true)
         }
-    }.toStringPretty()
+    })
 }

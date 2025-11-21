@@ -18,13 +18,13 @@
 
 package io.nekohasekai.sagernet.fmt.mieru
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.toStringPretty
 import libcore.Libcore
-import org.json.JSONArray
-import org.json.JSONObject
 
 fun parseMieru(link: String): MieruBean {
     val url = Libcore.parseURL(link)
@@ -129,34 +129,34 @@ fun MieruBean.toUri(): String? {
 }
 
 fun MieruBean.buildMieruConfig(port: Int): String {
-    return JSONObject().also {
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
         // Uncomment this means giving up the support for mieru < 3.13, mieru version 2 and mieru version 1.
-        /*it.put("advancedSettings", JSONObject().also {
-            it.put("noCheckUpdate", true)
+        /*add("advancedSettings", JsonObject().apply {
+            addProperty("noCheckUpdate", true)
         })*/
-        it.put("activeProfile", "default")
-        it.put("socks5Port", port)
-        it.put("loggingLevel", when (DataStore.logLevel) {
+        addProperty("activeProfile", "default")
+        addProperty("socks5Port", port)
+        addProperty("loggingLevel", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "TRACE"
             LogLevel.INFO -> "INFO"
             LogLevel.WARNING -> "WARN"
             LogLevel.ERROR -> "ERROR"
             else -> "FATAL"
         })
-        it.put("profiles", JSONArray().apply {
-            put(JSONObject().also {
-                it.put("profileName", "default")
-                it.put("user", JSONObject().also {
-                    it.put("name", username)
-                    it.put("password", password)
+        add("profiles", JsonArray().apply {
+            add(JsonObject().apply {
+                addProperty("profileName", "default")
+                add("user", JsonObject().apply {
+                    addProperty("name", username)
+                    addProperty("password", password)
                 })
-                it.put("servers", JSONArray().apply {
-                    put(JSONObject().also {
-                        it.put("ipAddress", finalAddress)
-                        it.put("portBindings", JSONArray().apply {
-                            put(JSONObject().also {
-                                it.put("port", finalPort)
-                                it.put("protocol", when (protocol) {
+                add("servers", JsonArray().apply {
+                    add(JsonObject().apply {
+                        addProperty("ipAddress", finalAddress)
+                        add("portBindings", JsonArray().apply {
+                            add(JsonObject().apply {
+                                addProperty("port", finalPort)
+                                addProperty("protocol", when (protocol) {
                                     MieruBean.PROTOCOL_TCP -> "TCP"
                                     MieruBean.PROTOCOL_UDP -> "UDP"
                                     else -> error("unexpected protocol $protocol")
@@ -166,23 +166,23 @@ fun MieruBean.buildMieruConfig(port: Int): String {
                     })
                 })
                 if (protocol == MieruBean.PROTOCOL_UDP) {
-                    it.put("mtu", mtu)
+                    addProperty("mtu", mtu)
                 }
                 if (multiplexingLevel != MieruBean.MULTIPLEXING_DEFAULT) {
-                    it.put("multiplexing", JSONObject().also {
+                    add("multiplexing", JsonObject().apply {
                         when (multiplexingLevel) {
-                            MieruBean.MULTIPLEXING_OFF -> it.put("level", "MULTIPLEXING_OFF")
-                            MieruBean.MULTIPLEXING_LOW -> it.put("level","MULTIPLEXING_LOW")
-                            MieruBean.MULTIPLEXING_MIDDLE -> it.put("level", "MULTIPLEXING_MIDDLE")
-                            MieruBean.MULTIPLEXING_HIGH -> it.put("level", "MULTIPLEXING_HIGH")
+                            MieruBean.MULTIPLEXING_OFF -> addProperty("level", "MULTIPLEXING_OFF")
+                            MieruBean.MULTIPLEXING_LOW -> addProperty("level","MULTIPLEXING_LOW")
+                            MieruBean.MULTIPLEXING_MIDDLE -> addProperty("level", "MULTIPLEXING_MIDDLE")
+                            MieruBean.MULTIPLEXING_HIGH -> addProperty("level", "MULTIPLEXING_HIGH")
                         }
                     })
                 }
                 when (handshakeMode) {
-                    MieruBean.HANDSHAKE_STANDARD -> it.put("handshakeMode", "HANDSHAKE_STANDARD")
-                    MieruBean.HANDSHAKE_NO_WAIT -> it.put("handshakeMode", "HANDSHAKE_NO_WAIT")
+                    MieruBean.HANDSHAKE_STANDARD -> addProperty("handshakeMode", "HANDSHAKE_STANDARD")
+                    MieruBean.HANDSHAKE_NO_WAIT -> addProperty("handshakeMode", "HANDSHAKE_NO_WAIT")
                 }
             })
         })
-    }.toStringPretty()
+    })
 }

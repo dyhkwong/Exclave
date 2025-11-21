@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.group
 
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
@@ -30,15 +31,11 @@ import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedQuicSecurity
-import io.nekohasekai.sagernet.ktx.filterIsInstance
-import io.nekohasekai.sagernet.ktx.optBooleanOrNull
-import io.nekohasekai.sagernet.ktx.optStringOrNull
-import org.json.JSONObject
+import io.nekohasekai.sagernet.ktx.*
 import kotlin.io.encoding.Base64
 
-@Suppress("UNCHECKED_CAST")
-fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
-    when (val type = outbound.optStringOrNull("protocol")) {
+fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
+    when (val type = outbound.getString("protocol")) {
         "shadowsocks", "trojan", "vmess", "vless", "socks", "http", "shadowsocks2022" -> {
             val v2rayBean = when (type) {
                 "shadowsocks", "shadowsocks2022" -> ShadowsocksBean()
@@ -49,52 +46,52 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                 "http" -> HttpBean()
                 else -> return listOf()
             }.apply {
-                outbound.optStringOrNull("tag")?.also {
+                outbound.getString("tag")?.also {
                     name = it
                 }
             }
-            outbound.optJSONObject("streamSettings")?.also { streamSettings ->
-                if (streamSettings.hasCaseInsensitive("network") || streamSettings.hasCaseInsensitive("tlsSettings")
-                    || streamSettings.hasCaseInsensitive("xtlsSettings") || streamSettings.hasCaseInsensitive("utlsSettings")
-                    || streamSettings.hasCaseInsensitive("tcpSettings") || streamSettings.hasCaseInsensitive("kcpSettings")
-                    || streamSettings.hasCaseInsensitive("wsSettings") || streamSettings.hasCaseInsensitive("httpSettings")
-                    || streamSettings.hasCaseInsensitive("grpcSettings") || streamSettings.hasCaseInsensitive("gunSettings")
-                    || streamSettings.hasCaseInsensitive("quicSettings") || streamSettings.hasCaseInsensitive("hy2Settings")
-                    || streamSettings.hasCaseInsensitive("rawSettings") || streamSettings.hasCaseInsensitive("splithttpSettings")
-                    || streamSettings.hasCaseInsensitive("xhttpSettings")
+            outbound.getObject("streamSettings")?.also { streamSettings ->
+                if (streamSettings.contains("network", ignoreCase = true) || streamSettings.contains("tlsSettings", ignoreCase = true)
+                    || streamSettings.contains("xtlsSettings", ignoreCase = true) || streamSettings.contains("utlsSettings", ignoreCase = true)
+                    || streamSettings.contains("tcpSettings", ignoreCase = true) || streamSettings.contains("kcpSettings", ignoreCase = true)
+                    || streamSettings.contains("wsSettings", ignoreCase = true) || streamSettings.contains("httpSettings", ignoreCase = true)
+                    || streamSettings.contains("grpcSettings", ignoreCase = true) || streamSettings.contains("gunSettings", ignoreCase = true)
+                    || streamSettings.contains("quicSettings", ignoreCase = true) || streamSettings.contains("hy2Settings", ignoreCase = true)
+                    || streamSettings.contains("rawSettings", ignoreCase = true) || streamSettings.contains("splithttpSettings", ignoreCase = true)
+                    || streamSettings.contains("xhttpSettings", ignoreCase = true)
                 ) { // jsonv4
                     return listOf()
                 }
-                streamSettings.optStringOrNull("security")?.also { security ->
+                streamSettings.getString("security")?.also { security ->
                     when (security) {
                         "none", "" -> {}
                         "tls", "utls" -> {
                             v2rayBean.security = "tls"
-                            val securitySettings = streamSettings.optJSONObject("securitySettings")
+                            val securitySettings = streamSettings.getObject("securitySettings")
                             val tls = if (security == "tls") {
                                 securitySettings
                             } else {
-                                securitySettings?.optJSONObject("tlsConfig")
-                                    ?: securitySettings?.optJSONObject("tls_config")
+                                securitySettings?.getObject("tlsConfig")
+                                    ?: securitySettings?.getObject("tls_config")
                             }
                             tls?.also { tlsConfig ->
-                                (tlsConfig.optStringOrNull("serverName") ?: tlsConfig.optStringOrNull("server_name"))?.also {
+                                (tlsConfig.getString("serverName") ?: tlsConfig.getString("server_name"))?.also {
                                     v2rayBean.sni = it
                                 }
-                                tlsConfig.optJSONArray("nextProtocol")?.filterIsInstance<String>()?.also {
+                                tlsConfig.getStringArray("nextProtocol")?.also {
                                     v2rayBean.alpn = it.joinToString("\n")
-                                } ?: tlsConfig.optJSONArray("next_protocol")?.filterIsInstance<String>()?.also {
+                                } ?: tlsConfig.getStringArray("next_protocol")?.also {
                                     v2rayBean.alpn = it.joinToString("\n")
                                 }
-                                tlsConfig.optJSONArray("certificate")?.filterIsInstance<JSONObject>()?.asReversed()?.forEach { certificate ->
-                                    when (certificate.optStringOrNull("usage")) {
+                                tlsConfig.getArray("certificate")?.asReversed()?.forEach { certificate ->
+                                    when (certificate.getString("usage")) {
                                         null, "ENCIPHERMENT" -> {
                                             if (!certificate.has("certificateFile") && !certificate.has("certificate_file")
                                                 && !certificate.has("keyFile") && !certificate.has("key_file")) {
-                                                val cert = certificate.optStringOrNull("Certificate")?.takeIf {
+                                                val cert = certificate.getString("Certificate")?.takeIf {
                                                     it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                                 }
-                                                val key = certificate.optStringOrNull("Key")?.takeIf {
+                                                val key = certificate.getString("Key")?.takeIf {
                                                     it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                                 }
                                                 if (cert != null && key != null) {
@@ -105,7 +102,7 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                         }
                                         "AUTHORITY_VERIFY" -> {
                                             if (!certificate.has("certificateFile") && !certificate.has("certificate_file")) {
-                                                val cert = certificate.optStringOrNull("Certificate")?.takeIf {
+                                                val cert = certificate.getString("Certificate")?.takeIf {
                                                     it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                                 }
                                                 if (cert != null) {
@@ -115,11 +112,11 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                         }
                                     }
                                 }
-                                (tlsConfig.optJSONArray("pinnedPeerCertificateChainSha256")?.filterIsInstance<String>()
-                                    ?: tlsConfig.optJSONArray("pinned_peer_certificate_chain_sha256")?.filterIsInstance<String>())?.also {
+                                (tlsConfig.getStringArray("pinnedPeerCertificateChainSha256")
+                                    ?: tlsConfig.getStringArray("pinned_peer_certificate_chain_sha256"))?.also {
                                     v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
-                                    (tlsConfig.optBooleanOrNull("allowInsecureIfPinnedPeerCertificate")
-                                        ?: tlsConfig.optBooleanOrNull("allow_insecure_if_pinned_peer_certificate"))?.also { allowInsecure ->
+                                    (tlsConfig.getBoolean("allowInsecureIfPinnedPeerCertificate")
+                                        ?: tlsConfig.getBoolean("allow_insecure_if_pinned_peer_certificate"))?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
@@ -128,23 +125,23 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                         else -> return listOf()
                     }
                 }
-                streamSettings.optStringOrNull("transport")?.also { transport ->
+                streamSettings.getString("transport")?.also { transport ->
                     when (transport) {
                         "tcp", "" -> {
                             v2rayBean.type = "tcp"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                (transportSettings.optJSONObject("headerSettings")
-                                    ?: transportSettings.optJSONObject("header_settings"))?.also { headerSettings ->
-                                        when (headerSettings.optStringOrNull("@type")) {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                (transportSettings.getObject("headerSettings")
+                                    ?: transportSettings.getObject("header_settings"))?.also { headerSettings ->
+                                        when (headerSettings.getString("@type")) {
                                             "v2ray.core.transport.internet.headers.http.Config" -> {
                                                 v2rayBean.headerType = "http"
-                                                headerSettings.optJSONObject("request")?.also { request ->
-                                                    request.optJSONArray("uri")?.filterIsInstance<String>()?.also {
+                                                headerSettings.getObject("request")?.also { request ->
+                                                    request.getStringArray("uri")?.also {
                                                         v2rayBean.path = it.joinToString("\n")
                                                     }
-                                                    request.optJSONArray("header")?.filterIsInstance<JSONObject>()?.forEach {
-                                                        if (it.optStringOrNull("name")?.lowercase() == "host") {
-                                                            v2rayBean.host = it.optJSONArray("value")?.filterIsInstance<String>()?.joinToString("\n")
+                                                    request.getArray("header")?.forEach {
+                                                        if (it.getString("name")?.lowercase() == "host") {
+                                                            v2rayBean.host = it.getStringArray("value")?.joinToString("\n")
                                                         }
                                                     }
                                                 }
@@ -155,13 +152,13 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                         }
                         "kcp" -> {
                             v2rayBean.type = "kcp"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("seed")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("seed")?.also {
                                     v2rayBean.mKcpSeed = it
                                 }
-                                (transportSettings.optJSONObject("headerConfig")
-                                    ?: transportSettings.optJSONObject("header_config"))?.also { headerConfig ->
-                                    when (headerConfig.optStringOrNull("@type")) {
+                                (transportSettings.getObject("headerConfig")
+                                    ?: transportSettings.getObject("header_config"))?.also { headerConfig ->
+                                    when (headerConfig.getString("@type")) {
                                         null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
                                         "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
                                         "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
@@ -176,49 +173,49 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                         }
                         "ws" -> {
                             v2rayBean.type = "ws"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("path")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("path")?.also {
                                     v2rayBean.path = it
                                 }
-                                (transportSettings.optV2Ray5Int("maxEarlyData")
-                                    ?: transportSettings.optV2Ray5Int("max_early_data"))?.also {
+                                (transportSettings.getInt("maxEarlyData")
+                                    ?: transportSettings.getInt("max_early_data"))?.also {
                                     v2rayBean.maxEarlyData = it
                                 }
-                                (transportSettings.optStringOrNull("earlyDataHeaderName")
-                                    ?: transportSettings.optStringOrNull("early_data_header_name"))?.also {
+                                (transportSettings.getString("earlyDataHeaderName")
+                                    ?: transportSettings.getString("early_data_header_name"))?.also {
                                     v2rayBean.earlyDataHeaderName = it
                                 }
-                                transportSettings.optJSONArray("header")?.filterIsInstance<JSONObject>()?.forEach {
-                                    if (it.optStringOrNull("key")?.lowercase() == "host") {
-                                        v2rayBean.host = it.optJSONArray("value")?.filterIsInstance<String>()?.joinToString("\n")
+                                transportSettings.getArray("header")?.forEach {
+                                    if (it.getString("key")?.lowercase() == "host") {
+                                        v2rayBean.host = it.getStringArray("value")?.joinToString("\n")
                                     }
                                 }
                             }
                         }
                         "h2" -> {
                             v2rayBean.type = "http"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("path")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("path")?.also {
                                     v2rayBean.path = it
                                 }
-                                transportSettings.optJSONArray("host")?.filterIsInstance<String>()?.also {
+                                transportSettings.getStringArray("host")?.also {
                                     v2rayBean.host = it.joinToString("\n")
                                 }
                             }
                         }
                         "quic" -> {
                             v2rayBean.type = "quic"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("security")?.lowercase()?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("security")?.lowercase()?.also {
                                     if (it !in supportedQuicSecurity) return listOf()
                                     v2rayBean.quicSecurity = it
                                 }
-                                transportSettings.optStringOrNull("key")?.also {
+                                transportSettings.getString("key")?.also {
                                     v2rayBean.quicKey = it
                                 }
-                                (transportSettings.optJSONObject("headerConfig")
-                                    ?: transportSettings.optJSONObject("header_config"))?.also { headerConfig ->
-                                    when (headerConfig.optStringOrNull("@type")) {
+                                (transportSettings.getObject("headerConfig")
+                                    ?: transportSettings.getObject("header_config"))?.also { headerConfig ->
+                                    when (headerConfig.getString("@type")) {
                                         null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
                                         "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.headerType = "none"
                                         "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.headerType = "srtp"
@@ -233,53 +230,53 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                         }
                         "grpc" -> {
                             v2rayBean.type = "grpc"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                (transportSettings.optStringOrNull("serviceName")
-                                    ?: transportSettings.optStringOrNull("service_name"))?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                (transportSettings.getString("serviceName")
+                                    ?: transportSettings.getString("service_name"))?.also {
                                     v2rayBean.grpcServiceName = it
                                 }
                             }
                         }
                         "httpupgrade" -> {
                             v2rayBean.type = "httpupgrade"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("path")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("path")?.also {
                                     v2rayBean.path = it
                                 }
-                                transportSettings.optStringOrNull("host")?.also {
+                                transportSettings.getString("host")?.also {
                                     v2rayBean.host = it
                                 }
-                                (transportSettings.optV2Ray5Int("maxEarlyData")
-                                    ?: transportSettings.optV2Ray5Int("max_early_data"))?.also {
+                                (transportSettings.getInt("maxEarlyData")
+                                    ?: transportSettings.getInt("max_early_data"))?.also {
                                     v2rayBean.maxEarlyData = it
                                 }
-                                (transportSettings.optStringOrNull("earlyDataHeaderName")
-                                    ?: transportSettings.optStringOrNull("early_data_header_name"))?.also {
+                                (transportSettings.getString("earlyDataHeaderName")
+                                    ?: transportSettings.getString("early_data_header_name"))?.also {
                                     v2rayBean.earlyDataHeaderName = it
                                 }
                             }
                         }
                         "meek" -> {
                             v2rayBean.type = "meek"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("url")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("url")?.also {
                                     v2rayBean.meekUrl = it
                                 }
                             }
                         }
                         "mekya" -> {
                             v2rayBean.type = "mekya"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("url")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("url")?.also {
                                     v2rayBean.mekyaUrl = it
                                 }
-                                transportSettings.optJSONObject("kcp")?.also { kcp ->
-                                    kcp.optStringOrNull("seed")?.also {
+                                transportSettings.getObject("kcp")?.also { kcp ->
+                                    kcp.getString("seed")?.also {
                                         v2rayBean.mekyaKcpSeed = it
                                     }
-                                    (kcp.optJSONObject("headerConfig")
-                                        ?: kcp.optJSONObject("header_config"))?.also { headerConfig ->
-                                        when (headerConfig.optStringOrNull("@type")) {
+                                    (kcp.getObject("headerConfig")
+                                        ?: kcp.getObject("header_config"))?.also { headerConfig ->
+                                        when (headerConfig.getString("@type")) {
                                             null, "types.v2fly.org/v2ray.core.transport.internet.headers.noop.Config",
                                             "types.v2fly.org/v2ray.core.transport.internet.headers.noop.ConnectionConfig" -> v2rayBean.mekyaKcpHeaderType = "none"
                                             "types.v2fly.org/v2ray.core.transport.internet.headers.srtp.Config" -> v2rayBean.mekyaKcpHeaderType = "srtp"
@@ -295,8 +292,8 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                         }
                         "hysteria2" -> {
                             v2rayBean.type = "hysteria2"
-                            streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                                transportSettings.optStringOrNull("password")?.also {
+                            streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                                transportSettings.getString("password")?.also {
                                     v2rayBean.hy2Password = it
                                 }
                             }
@@ -306,20 +303,20 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                 }
             }
 
-            outbound.optJSONObject("settings")?.also { settings ->
-                if (settings.hasCaseInsensitive("servers") || settings.hasCaseInsensitive("vnext")) { // jsonv4
+            outbound.getObject("settings")?.also { settings ->
+                if (settings.contains("servers", ignoreCase = true) || settings.contains("vnext", ignoreCase = true)) { // jsonv4
                     return listOf()
                 }
-                settings.optStringOrNull("address")?.also {
+                settings.getString("address")?.also {
                     v2rayBean.serverAddress = it
                 } ?: return listOf()
-                settings.optV2Ray5Int("port")?.also {
+                settings.getInt("port")?.also {
                     v2rayBean.serverPort = it
                 } ?: return listOf()
                 when (type) {
                     "shadowsocks" -> {
                         v2rayBean as ShadowsocksBean
-                        settings.optStringOrNull("method")?.lowercase()?.also {
+                        settings.getString("method")?.lowercase()?.also {
                             v2rayBean.method = when (it) {
                                 in supportedShadowsocksMethod -> it
                                 "aes_128_gcm", "aead_aes_128_gcm" -> "aes-128-gcm"
@@ -331,38 +328,38 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
                                 else -> return listOf()
                             }
                         }
-                        settings.optStringOrNull("password")?.also {
+                        settings.getString("password")?.also {
                             v2rayBean.password = it
                         }
                     }
                     "trojan" -> {
                         v2rayBean as TrojanBean
-                        settings.optStringOrNull("password")?.also {
+                        settings.getString("password")?.also {
                             v2rayBean.password = it
                         }
                     }
                     "vmess" -> {
                         v2rayBean as VMessBean
-                        settings.optStringOrNull("uuid")?.also {
+                        settings.getString("uuid")?.also {
                             v2rayBean.uuid = it
                         }
                     }
                     "vless" -> {
                         v2rayBean as VLESSBean
-                        settings.optStringOrNull("uuid")?.also {
+                        settings.getString("uuid")?.also {
                             v2rayBean.uuid = it
                         }
                     }
                     "shadowsocks2022" -> {
                         v2rayBean as ShadowsocksBean
-                        settings.optStringOrNull("method")?.also {
+                        settings.getString("method")?.also {
                             if (it !in supportedShadowsocks2022Method)
                                 return listOf()
                             v2rayBean.method = it
                         }
-                        settings.optStringOrNull("psk")?.also { psk ->
+                        settings.getString("psk")?.also { psk ->
                             v2rayBean.password = psk
-                            settings.optJSONArray("ipsk")?.filterIsInstance<String>()?.also { ipsk ->
+                            settings.getStringArray("ipsk")?.also { ipsk ->
                                 v2rayBean.password = ipsk.joinToString(":") + ":" + psk
                             }
                         }
@@ -373,35 +370,35 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
         }
         "hysteria2" -> {
             val hysteria2Bean = Hysteria2Bean().apply {
-                outbound.optStringOrNull("tag")?.also {
+                outbound.getString("tag")?.also {
                     name = it
                 }
             }
-            outbound.optJSONObject("streamSettings")?.also { streamSettings ->
-                if (streamSettings.optStringOrNull("security") != "tls") {
+            outbound.getObject("streamSettings")?.also { streamSettings ->
+                if (streamSettings.getString("security") != "tls") {
                     return listOf()
                 }
-                if (streamSettings.optStringOrNull("transport") != "hysteria2") {
+                if (streamSettings.getString("transport") != "hysteria2") {
                     return listOf()
                 }
-                streamSettings.optJSONObject("securitySettings")?. also { securitySettings ->
-                    (securitySettings.optStringOrNull("serverName")
-                        ?: securitySettings.optStringOrNull("server_name"))?.also {
+                streamSettings.getObject("securitySettings")?. also { securitySettings ->
+                    (securitySettings.getString("serverName")
+                        ?: securitySettings.getString("server_name"))?.also {
                         hysteria2Bean.sni = it
                     }
                 }
-                streamSettings.optJSONObject("transportSettings")?.also { transportSettings ->
-                    transportSettings.optStringOrNull("password")?.also {
+                streamSettings.getObject("transportSettings")?.also { transportSettings ->
+                    transportSettings.getString("password")?.also {
                         hysteria2Bean.auth = it
                     }
                 }
             }
-            outbound.optJSONObject("settings")?.also { settings ->
-                settings.optJSONArray("server")?.filterIsInstance<JSONObject>()?.forEach { server ->
-                    server.optStringOrNull("address")?.also {
+            outbound.getObject("settings")?.also { settings ->
+                settings.getArray("server")?.forEach { server ->
+                    server.getString("address")?.also {
                         hysteria2Bean.serverAddress = it
                     } ?: return listOf()
-                    server.optV2Ray5Int("port")?.also {
+                    server.getInt("port")?.also {
                         hysteria2Bean.serverPorts = it.toString()
                     } ?: return listOf()
                 }
@@ -412,12 +409,19 @@ fun parseV2ray5Outbound(outbound: JSONObject): List<AbstractBean> {
     }
 }
 
-private fun JSONObject.optV2Ray5Int(key: String): Int? {
-    if (this.has(key)) {
-        return when (val value = this.opt(key)) {
-            is Int -> return value
-            is String -> return value.toInt()
-            else -> null
+private fun JsonObject.getInt(key: String): Int? {
+    if (has(key)) {
+        val value = get(key)
+        try {
+            when {
+                value.isJsonPrimitive && value.asJsonPrimitive.isNumber -> {
+                    return value.asInt
+                }
+                value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
+                    return value.asString.toIntOrNull()
+                }
+            }
+        } catch (_: Exception) {
         }
     }
     return null

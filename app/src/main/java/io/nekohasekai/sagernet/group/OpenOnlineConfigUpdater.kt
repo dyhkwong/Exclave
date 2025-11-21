@@ -20,6 +20,7 @@
 package io.nekohasekai.sagernet.group
 
 import com.github.shadowsocks.plugin.PluginOptions
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.ExtraType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
@@ -29,7 +30,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import libcore.URL
-import org.json.JSONObject
 
 object OpenOnlineConfigUpdater : GroupUpdater() {
 
@@ -39,13 +39,13 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         userInterface: GroupManager.Interface?,
         byUser: Boolean
     ) {
-        val apiToken: JSONObject
+        val apiToken: JsonObject
         val baseLink: URL
         val certSha256: String?
         try {
-            apiToken = JSONObject(subscription.token)
+            apiToken = parseJson(subscription.token).asJsonObject
 
-            val version = apiToken.optIntOrNull("version")
+            val version = apiToken.getInt("version")
             if (version != 1) {
                 if (version != null) {
                     error("Unsupported OOC version $version")
@@ -53,7 +53,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                     error("Missing field: version")
                 }
             }
-            val baseUrl = apiToken.optStringOrNull("baseUrl")
+            val baseUrl = apiToken.getString("baseUrl")
             when {
                 baseUrl.isNullOrEmpty() -> {
                     error("Missing field: baseUrl")
@@ -66,21 +66,21 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 }
                 else -> baseLink = Libcore.parseURL(baseUrl)
             }
-            val secret = apiToken.optStringOrNull("secret")
+            val secret = apiToken.getString("secret")
             if (secret.isNullOrEmpty()) error("Missing field: secret")
             baseLink.addPathSegments(secret, "ooc/v1")
 
-            val userId = apiToken.optStringOrNull("userId")
+            val userId = apiToken.getString("userId")
             if (userId.isNullOrEmpty()) error("Missing field: userId")
             baseLink.addPathSegments(userId)
-            certSha256 = apiToken.optStringOrNull("certSha256")
+            certSha256 = apiToken.getString("certSha256")
             if (!certSha256.isNullOrEmpty()) {
                 when {
                     certSha256.length != 64 -> {
                         error("certSha256 must be a SHA-256 hexadecimal string")
                     }
                     !certSha256.all {
-                        (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f')
+                        (it in '0'..'9') || (it in 'a'..'f')
 
                     } -> {
                         error("certSha256 must be a hexadecimal string with lowercase letters")
@@ -104,15 +104,15 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         }.execute()
 
         val oocResponse = try {
-            JSONObject(response.contentString)
+            parseJson(response.contentString).asJsonObject
         } catch(_: Exception) {
             error("invalid response")
         }
-        subscription.username = oocResponse.optStringOrNull("username") ?: ""
-        subscription.bytesUsed = oocResponse.optLongOrNull("bytesUsed") ?: -1
-        subscription.bytesRemaining = oocResponse.optLongOrNull("bytesRemaining") ?: -1
-        subscription.expiryDate = oocResponse.optLongOrNull("expiryDate") ?: -1
-        subscription.protocols = oocResponse.optJSONArray("protocols")?.filterIsInstance<String>()
+        subscription.username = oocResponse.getString("username") ?: ""
+        subscription.bytesUsed = oocResponse.getLong("bytesUsed") ?: -1
+        subscription.bytesRemaining = oocResponse.getLong("bytesRemaining") ?: -1
+        subscription.expiryDate = oocResponse.getLong("expiryDate") ?: -1
+        subscription.protocols = oocResponse.getStringArray("protocols")
             ?: error("missing protocols")
         subscription.applyDefaultValues()
 
@@ -126,19 +126,19 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
 
         val pattern = Regex(subscription.nameFilter)
         for (protocol in subscription.protocols) {
-            val profilesInProtocol = oocResponse.optJSONArray(protocol)?.filterIsInstance<JSONObject>()
+            val profilesInProtocol = oocResponse.getArray(protocol)
                 ?: error("missing protocol $protocol settings")
 
             if (protocol == "shadowsocks") for (profile in profilesInProtocol) {
                 val bean = ShadowsocksBean()
 
-                bean.name = profile.optStringOrNull("name")
-                bean.serverAddress = profile.optStringOrNull("address") ?: error("missing address")
-                bean.serverPort = profile.optIntOrNull("port") ?: error("missing port")
-                bean.method = profile.optStringOrNull("method") ?: error("missing method")
-                bean.password = profile.optStringOrNull("password")
+                bean.name = profile.getString("name")
+                bean.serverAddress = profile.getString("address") ?: error("missing address")
+                bean.serverPort = profile.getInt("port") ?: error("missing port")
+                bean.method = profile.getString("method") ?: error("missing method")
+                bean.password = profile.getString("password")
 
-                val pluginId = when (val id = profile.optStringOrNull("pluginName")) {
+                val pluginId = when (val id = profile.getString("pluginName")) {
                     "simple-obfs" -> "obfs-local"
                     else -> id
                 }
@@ -146,7 +146,7 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                     // TODO: check plugin exists
                     // TODO: check pluginVersion
                     // TODO: support pluginArguments
-                    bean.plugin = PluginOptions(pluginId, profile.optStringOrNull("pluginOptions")).toString(trimId = false)
+                    bean.plugin = PluginOptions(pluginId, profile.getString("pluginOptions")).toString(trimId = false)
                 }
 
                 appendExtraInfo(profile, bean)
@@ -243,12 +243,12 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
         )
     }
 
-    fun appendExtraInfo(profile: JSONObject, bean: AbstractBean) {
+    fun appendExtraInfo(profile: JsonObject, bean: AbstractBean) {
         bean.extraType = ExtraType.OOCv1
-        bean.profileId = profile.optStringOrNull("id")
-        bean.group = profile.optStringOrNull("group")
-        bean.owner = profile.optStringOrNull("owner")
-        bean.tags = profile.optJSONArray("tags")?.filterIsInstance<String>()
+        bean.profileId = profile.getString("id")
+        bean.group = profile.getString("group")
+        bean.owner = profile.getString("owner")
+        bean.tags = profile.getStringArray("tags")
     }
 
     val supportedProtocols = arrayOf("shadowsocks")

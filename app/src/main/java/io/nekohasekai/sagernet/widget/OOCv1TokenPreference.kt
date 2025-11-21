@@ -25,11 +25,11 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import com.takisoft.preferencex.EditTextPreference
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.ktx.optIntOrNull
-import io.nekohasekai.sagernet.ktx.optStringOrNull
+import io.nekohasekai.sagernet.ktx.getInt
+import io.nekohasekai.sagernet.ktx.getString
+import io.nekohasekai.sagernet.ktx.parseJson
 import io.nekohasekai.sagernet.ktx.readableMessage
 import libcore.Libcore
-import org.json.JSONObject
 
 class OOCv1TokenPreference : EditTextPreference {
 
@@ -58,8 +58,8 @@ class OOCv1TokenPreference : EditTextPreference {
                 }
                 var isValid = true
                 try {
-                    val tokenObject = JSONObject(editText.text.toString())
-                    val version = tokenObject.optIntOrNull("version")
+                    val tokenObject = parseJson(editText.text.toString()).asJsonObject
+                    val version = tokenObject.getInt("version")
                     if (version != 1) {
                         isValid = false
                         if (version != null) {
@@ -69,7 +69,7 @@ class OOCv1TokenPreference : EditTextPreference {
                         }
                     }
                     if (isValid) {
-                        val baseUrl = tokenObject.optStringOrNull("baseUrl")
+                        val baseUrl = tokenObject.getString("baseUrl")
                         when {
                             baseUrl.isNullOrEmpty() -> {
                                 linkLayout.error = "Missing field: baseUrl"
@@ -91,16 +91,16 @@ class OOCv1TokenPreference : EditTextPreference {
                             }
                         }
                     }
-                    if (isValid && tokenObject.optStringOrNull("secret").isNullOrEmpty()) {
+                    if (isValid && tokenObject.getString("secret").isNullOrEmpty()) {
                         isValid = false
                         linkLayout.error = "Missing field: secret"
                     }
-                    if (isValid && tokenObject.optStringOrNull("userId").isNullOrEmpty()) {
+                    if (isValid && tokenObject.getString("userId").isNullOrEmpty()) {
                         isValid = false
                         linkLayout.error = "Missing field: userId"
                     }
                     if (isValid) {
-                        val certSha256 = tokenObject.optStringOrNull("certSha256")
+                        val certSha256 = tokenObject.getString("certSha256")
                         if (!certSha256.isNullOrEmpty()) {
                             when {
                                 certSha256.length != 64 -> {
@@ -108,7 +108,7 @@ class OOCv1TokenPreference : EditTextPreference {
                                     linkLayout.error = "certSha256 must be a SHA-256 hexadecimal string"
                                 }
                                 !certSha256.all {
-                                    (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f')
+                                    (it in '0'..'9') || (it in 'a'..'f')
                                 } -> {
                                     isValid = false
                                     linkLayout.error = "certSha256 must be a hexadecimal string with lowercase letters"

@@ -19,11 +19,12 @@
 
 package io.nekohasekai.sagernet.fmt.hysteria
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
-import org.json.JSONObject
 import java.io.File
 import kotlin.io.encoding.Base64
 
@@ -148,42 +149,44 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
     }
     val usePortHopping = DataStore.hysteriaEnablePortHopping && serverPorts.isValidHysteriaMultiPort()
 
-    return JSONObject().also {
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
         if (protocol == HysteriaBean.PROTOCOL_FAKETCP || usePortHopping) {
             // Hysteria port hopping is incompatible with chain proxy
             if (usePortHopping) {
-                it.put("server", if (Libcore.isIPv6(serverAddress)) {
+                addProperty("server", if (Libcore.isIPv6(serverAddress)) {
                     "[$serverAddress]:$serverPorts"
                 } else {
                     "$serverAddress:$serverPorts"
                 })
             } else {
-                it.put("server", if (Libcore.isIPv6(serverAddress)) {
+                addProperty("server", if (Libcore.isIPv6(serverAddress)) {
                     "[" + serverAddress + "]:" + serverPorts.toHysteriaPort()
                 } else {
                     serverAddress + ":" + serverPorts.toHysteriaPort()
                 })
             }
         } else {
-            it.put("server", joinHostPort(finalAddress, finalPort))
+            addProperty("server", joinHostPort(finalAddress, finalPort))
         }
         when (protocol) {
             HysteriaBean.PROTOCOL_FAKETCP -> {
-                it.put("protocol", "faketcp")
+                addProperty("protocol", "faketcp")
             }
             HysteriaBean.PROTOCOL_WECHAT_VIDEO -> {
-                it.put("protocol", "wechat-video")
+                addProperty("protocol", "wechat-video")
             }
         }
-        it.put("up_mbps", uploadMbps)
-        it.put("down_mbps", downloadMbps)
-        it.put("socks5", JSONObject(mapOf("listen" to joinHostPort(LOCALHOST, port))))
+        addProperty("up_mbps", uploadMbps)
+        addProperty("down_mbps", downloadMbps)
+        add("socks5", JsonObject().apply {
+            addProperty("listen", joinHostPort(LOCALHOST, port))
+        })
         if (obfuscation.isNotEmpty()) {
-            it.put("obfs", obfuscation)
+            addProperty("obfs", obfuscation)
         }
         when (authPayloadType) {
-            HysteriaBean.TYPE_BASE64 -> it.put("auth", authPayload)
-            HysteriaBean.TYPE_STRING -> it.put("auth_str", authPayload)
+            HysteriaBean.TYPE_BASE64 -> addProperty("auth", authPayload)
+            HysteriaBean.TYPE_STRING -> addProperty("auth_str", authPayload)
         }
         var servername = sni
         if (!usePortHopping && protocol != HysteriaBean.PROTOCOL_FAKETCP) {
@@ -192,21 +195,21 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
             }
         }
         if (servername.isNotEmpty()) {
-            it.put("server_name", servername)
+            addProperty("server_name", servername)
         }
-        if (alpn.isNotEmpty()) it.put("alpn", alpn)
+        if (alpn.isNotEmpty()) addProperty("alpn", alpn)
         if (caText.isNotEmpty() && cacheFile != null) {
             val caFile = cacheFile()
             caFile.writeText(caText)
-            it.put("ca", caFile.absolutePath)
+            addProperty("ca", caFile.absolutePath)
         }
 
-        if (allowInsecure) it.put("insecure", true)
-        if (streamReceiveWindow > 0) it.put("recv_window_conn", streamReceiveWindow)
-        if (connectionReceiveWindow > 0) it.put("recv_window", connectionReceiveWindow)
-        if (disableMtuDiscovery) it.put("disable_mtu_discovery", true)
+        if (allowInsecure) addProperty("insecure", true)
+        if (streamReceiveWindow > 0) addProperty("recv_window_conn", streamReceiveWindow)
+        if (connectionReceiveWindow > 0) addProperty("recv_window", connectionReceiveWindow)
+        if (disableMtuDiscovery) addProperty("disable_mtu_discovery", true)
 
-        it.put("lazy_start", true)
-        it.put("fast_open", true)
-    }.toStringPretty()
+        addProperty("lazy_start", true)
+        addProperty("fast_open", true)
+    })
 }

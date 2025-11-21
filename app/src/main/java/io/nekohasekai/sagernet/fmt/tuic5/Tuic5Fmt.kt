@@ -19,6 +19,9 @@
 
 package io.nekohasekai.sagernet.fmt.tuic5
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.database.DataStore
@@ -30,11 +33,8 @@ import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
-import io.nekohasekai.sagernet.ktx.toStringPretty
 import java.io.File
 import libcore.Libcore
-import org.json.JSONArray
-import org.json.JSONObject
 
 val supportedTuic5CongestionControl = arrayOf("cubic", "bbr", "new_reno")
 val supportedTuic5RelayMode = arrayOf("native", "quic")
@@ -43,19 +43,19 @@ fun parseTuic(server: String): AbstractBean {
     var link = Libcore.parseURL(server)
     if (server.length >= 46 && !server.contains("version=")
         && server.substring(7, 15).all {
-            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
-        } && server.substring(15, 16) == "-"
+            (it in '0'..'9') || (it in 'a'..'f') || (it in 'A'..'F')
+        } && server[15] == '-'
         && server.substring(16, 20).all {
-            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
-        } && server.substring(20, 21) == "-"
+            (it in '0'..'9') || (it in 'a'..'f') || (it in 'A'..'F')
+        } && server[20] == '-'
         && server.substring(21, 25).all {
-            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
-        } && server.substring(25, 26) == "-"
+            (it in '0'..'9') || (it in 'a'..'f') || (it in 'A'..'F')
+        } && server[25] == '-'
         && server.substring(26, 30).all {
-            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
-        } && server.substring(30, 31) == "-"
+            (it in '0'..'9') || (it in 'a'..'f') || (it in 'A'..'F')
+        } && server[30] == '-'
         && server.substring(31, 43).all {
-            (it >= '0' && it <= '9') || (it >= 'a' && it <= 'f') || (it >= 'A' && it <= 'F')
+            (it in '0'..'9') || (it in 'a'..'f') || (it in 'A'..'F')
         } && server.substring(43, 46) == "%3A"
     ) {
         // v2rayN broken format
@@ -201,53 +201,55 @@ fun Tuic5Bean.toUri(): String? {
 }
 
 fun Tuic5Bean.buildTuic5Config(port: Int, forExport: Boolean, cacheFile: (() -> File)?): String {
-    return JSONObject().also {
-        it.put("relay", JSONObject().also {
+    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
+        add("relay", JsonObject().apply {
             if (sni.isNotEmpty()) {
-                it.put("server", joinHostPort(sni, finalPort))
-                it.put("ip", finalAddress)
+                addProperty("server", joinHostPort(sni, finalPort))
+                addProperty("ip", finalAddress)
             } else {
-                it.put("server", joinHostPort(serverAddress, finalPort))
-                it.put("ip", finalAddress)
+                addProperty("server", joinHostPort(serverAddress, finalPort))
+                addProperty("ip", finalAddress)
             }
-            it.put("uuid", uuid)
-            it.put("password", password)
+            addProperty("uuid", uuid)
+            addProperty("password", password)
 
             if (certificates.isNotEmpty() && cacheFile != null) {
                 val caFile = cacheFile()
                 caFile.writeText(certificates)
-                it.put("certificates", JSONArray().apply {
-                    put(caFile.absolutePath)
+                add("certificates", JsonArray().apply {
+                    add(caFile.absolutePath)
                 })
             } else if (!forExport && DataStore.providerRootCA == RootCAProvider.SYSTEM && certificates.isEmpty()) {
-                it.put("certificates", JSONArray().apply {
+                add("certificates", JsonArray().apply {
                     // https://github.com/maskedeken/tuic/commit/88e57f6e41ae8985edd8f620950e3f8e7d29e1cc
                     // workaround tuic can't load Android system root certificates without forking it
-                    File("/system/etc/security/cacerts").listFiles()?.forEach { put(it) }
+                    File("/system/etc/security/cacerts").listFiles()?.forEach { add(it.absolutePath) }
                 })
             }
 
-            it.put("udp_relay_mode", udpRelayMode)
+            addProperty("udp_relay_mode", udpRelayMode)
             if (alpn.isNotEmpty()) {
-                it.put("alpn", JSONArray(alpn.listByLineOrComma()))
+                add("alpn", JsonArray().apply {
+                    alpn.listByLineOrComma().forEach { add(it) }
+                })
             }
-            it.put("congestion_control", congestionControl)
-            it.put("disable_sni", disableSNI)
-            it.put("zero_rtt_handshake", zeroRTTHandshake)
+            addProperty("congestion_control", congestionControl)
+            addProperty("disable_sni", disableSNI)
+            addProperty("zero_rtt_handshake", zeroRTTHandshake)
             if (allowInsecure) {
-                it.put("skip_cert_verify", true)
+                addProperty("skip_cert_verify", true)
             }
         })
-        it.put("local", JSONObject().also {
-            it.put("server", joinHostPort(LOCALHOST, port))
-            it.put("max_packet_size", mtu)
+        add("local", JsonObject().apply {
+            addProperty("server", joinHostPort(LOCALHOST, port))
+            addProperty("max_packet_size", mtu)
         })
-        it.put("log_level", when (DataStore.logLevel) {
+        addProperty("log_level", when (DataStore.logLevel) {
             LogLevel.DEBUG -> "trace"
             LogLevel.INFO -> "info"
             LogLevel.WARNING -> "warn"
             LogLevel.ERROR -> "error"
             else -> "error"
         })
-    }.toStringPretty()
+    })
 }
