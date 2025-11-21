@@ -204,7 +204,7 @@ fun HysteriaBean.buildHysteriaConfig(port: Int, cacheFile: (() -> File)?): Strin
         if (allowInsecure) it.put("insecure", true)
         if (streamReceiveWindow > 0) it.put("recv_window_conn", streamReceiveWindow)
         if (connectionReceiveWindow > 0) it.put("recv_window", connectionReceiveWindow)
-        if (disableMtuDiscovery) it.put("insecure", true)
+        if (disableMtuDiscovery) it.put("disable_mtu_discovery", true)
 
         it.put("lazy_start", true)
         it.put("fast_open", true)

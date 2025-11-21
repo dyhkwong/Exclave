@@ -302,7 +302,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         bean.packetEncoding = "xudp"
                     } else return listOf()
                 }
-                when (val encryption = proxy.getString("encryption")) {
+                when (val encryption = proxy.getClashString("encryption")) {
                     "", "none", null -> bean.encryption = "none"
                     else -> {
                         val parts = encryption.split(".")
