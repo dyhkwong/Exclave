@@ -562,4 +562,9 @@
     <string name="delete_multi_confirm_prompt">Удалить эти профили?</string>
     <string name="interrupt_reused_connections">Прерывать повторные подключения при изменении сети</string>
     <string name="create_shortcut">Создать ярлык</string>
+    <string name="mieru_port_range">Диапазон портов сервера</string>
+    <string name="cag_grpc">Настройки gRPC</string>
+    <string name="grpc_service_name_compat">Совместимость имён служб gRPC</string>
+    <string name="grpc_service_name_compat_sum">Обеспечить совместимость с критическими изменениями Xray, но потерять совместимость с серверами, не основанными на Xray.</string>
+    <string name="grpc_multi_mode">Multi mode (многорежимный)</string>
 </resources>
