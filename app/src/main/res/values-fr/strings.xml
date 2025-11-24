@@ -33,9 +33,6 @@
     <string name="apps">Applications</string>
     <string name="clear_profiles_message">Êtes-vous sûr(e) de vouloir supprimer ce groupe \?</string>
     <string name="profile_import_message">Confirmez-vous que vous voulez importer le profil %s \?</string>
-    <string name="group_filter_tags_nf">Aucune étiquette dans cet abonnement</string>
-    <string name="group_filter_tags">Étiquettes</string>
-    <string name="group_filter_groups">Groupes</string>
     <string name="general_settings">Paramètres de l\'appli</string>
     <string name="cag_route">Paramètres d\'itinéraire</string>
     <string name="service_mode">Mode service</string>
@@ -102,7 +99,6 @@
     <string name="plugin_unknown">Greffon %s inconnu</string>
     <string name="clear_traffic_statistics">Effacer les statistiques du trafic</string>
     <string name="ws_browser_forwarding">Transfert de Navigateur</string>
-    <string name="group_filter">Filtre</string>
     <string name="clear_profiles">Effacer</string>
     <string name="always_show_address">Toujours afficher l\'adresse</string>
     <string name="undo">Annuler</string>
@@ -190,9 +186,7 @@
         <item quantity="many"/>
         <item quantity="other">%d éléments supprimés</item>
     </plurals>
-    <string name="ooc_warning">Notice</string>
     <string name="subscription_update_message">Mise à jour de %s…</string>
-    <string name="group_filter_owners">Propriétaires</string>
     <string name="group_order">Ordre</string>
     <string name="group_order_origin">Origine</string>
     <string name="traffic_active">Actif</string>
@@ -230,7 +224,6 @@
     <string name="subscription_settings">Préférences de souscription</string>
     <string name="group_type">Type du groupe</string>
     <string name="subscription_type">Type de souscription</string>
-    <string name="group_filter_groups_nf">Aucun groupe pour cette souscription</string>
     <string name="subscription_used">%s utilisé</string>
     <string name="group_order_by_delay">Par délai</string>
     <string name="route_bypass_ip">Règle IP pour %s</string>
@@ -291,13 +284,11 @@
     <string name="no_proxies_found_in_clipboard">Aucun proxy trouve dans le presse-papiers</string>
     <string name="not_connected">Non connecté</string>
     <string name="connection_test">Test de connexion</string>
-    <string name="ooc_subscription_token_invalid">Jeton OOCv1 invalide</string>
     <string name="update_when_connected_only">Mettre à jour que quand connecté</string>
     <string name="auto_update_delay">Délai de mise à jour automatique (en minutes)</string>
     <string name="auto_update">Mise à jour auto</string>
     <string name="subscription_traffic">%s utilisé(s) / %s restant(s)</string>
     <string name="subscription_import">Importer une souscription</string>
-    <string name="group_filter_owners_nf">Aucun propriétaire dans cette souscription</string>
     <string name="profile_import">Importer un profil</string>
     <string name="stun_attest_loading">Cela peut prendre quelques minutes…</string>
     <string name="network_wifi">Wifi</string>

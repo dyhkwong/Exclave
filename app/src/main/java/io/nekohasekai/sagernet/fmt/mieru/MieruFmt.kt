@@ -18,11 +18,7 @@
 
 package io.nekohasekai.sagernet.fmt.mieru
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import io.nekohasekai.sagernet.LogLevel
-import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 
@@ -40,10 +36,9 @@ fun parseMieru(link: String): MieruBean {
             // just let the URL library pick one for now.
             port.toIntOrNull()?.let {
                 serverPort = it
-            } ?: port.substringBefore("-").toIntOrNull()?.let {
-                // Multi port format, use the first port only for now.
-                serverPort = it
-            } ?: error("unknown port: $port")
+            } ?: {
+                portRange = port
+            }
         } ?: error("no port specified")
         url.queryParameter("protocol")?.let {
             // There can be multiple queries named `protocol`,
@@ -54,9 +49,9 @@ fun parseMieru(link: String): MieruBean {
                 else -> error("unknown protocol: $it")
             }
         } ?: error("no protocol specified")
-        url.queryParameter("mtu")?.toIntOrNull()?.let {
+        /*url.queryParameter("mtu")?.toIntOrNull()?.let {
             mtu = it
-        }
+        }*/
         url.queryParameter("multiplexing")?.let {
             when (it) {
                 "MULTIPLEXING_OFF" -> multiplexingLevel = MieruBean.MULTIPLEXING_OFF
@@ -91,16 +86,20 @@ fun MieruBean.toUri(): String? {
     if (name.isNotEmpty()) {
         builder.addQueryParameter("profile", name)
     }
-    builder.addQueryParameter("port", serverPort.toString())
+    if (portRange.isNotEmpty()) {
+        builder.addQueryParameter("port", portRange.listByLineOrComma()[0])
+    } else {
+        builder.addQueryParameter("port", serverPort.toString())
+    }
     when (protocol) {
         MieruBean.PROTOCOL_TCP -> {
             builder.addQueryParameter("protocol", "TCP")
         }
         MieruBean.PROTOCOL_UDP -> {
             builder.addQueryParameter("protocol", "UDP")
-            if (mtu > 0) {
+            /*if (mtu > 0) {
                 builder.addQueryParameter("mtu", mtu.toString())
-            }
+            }*/
         }
     }
     when (multiplexingLevel) {
@@ -126,63 +125,4 @@ fun MieruBean.toUri(): String? {
         }
     }
     return builder.string
-}
-
-fun MieruBean.buildMieruConfig(port: Int): String {
-    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
-        // Uncomment this means giving up the support for mieru < 3.13, mieru version 2 and mieru version 1.
-        /*add("advancedSettings", JsonObject().apply {
-            addProperty("noCheckUpdate", true)
-        })*/
-        addProperty("activeProfile", "default")
-        addProperty("socks5Port", port)
-        addProperty("loggingLevel", when (DataStore.logLevel) {
-            LogLevel.DEBUG -> "TRACE"
-            LogLevel.INFO -> "INFO"
-            LogLevel.WARNING -> "WARN"
-            LogLevel.ERROR -> "ERROR"
-            else -> "FATAL"
-        })
-        add("profiles", JsonArray().apply {
-            add(JsonObject().apply {
-                addProperty("profileName", "default")
-                add("user", JsonObject().apply {
-                    addProperty("name", username)
-                    addProperty("password", password)
-                })
-                add("servers", JsonArray().apply {
-                    add(JsonObject().apply {
-                        addProperty("ipAddress", finalAddress)
-                        add("portBindings", JsonArray().apply {
-                            add(JsonObject().apply {
-                                addProperty("port", finalPort)
-                                addProperty("protocol", when (protocol) {
-                                    MieruBean.PROTOCOL_TCP -> "TCP"
-                                    MieruBean.PROTOCOL_UDP -> "UDP"
-                                    else -> error("unexpected protocol $protocol")
-                                })
-                            })
-                        })
-                    })
-                })
-                if (protocol == MieruBean.PROTOCOL_UDP) {
-                    addProperty("mtu", mtu)
-                }
-                if (multiplexingLevel != MieruBean.MULTIPLEXING_DEFAULT) {
-                    add("multiplexing", JsonObject().apply {
-                        when (multiplexingLevel) {
-                            MieruBean.MULTIPLEXING_OFF -> addProperty("level", "MULTIPLEXING_OFF")
-                            MieruBean.MULTIPLEXING_LOW -> addProperty("level","MULTIPLEXING_LOW")
-                            MieruBean.MULTIPLEXING_MIDDLE -> addProperty("level", "MULTIPLEXING_MIDDLE")
-                            MieruBean.MULTIPLEXING_HIGH -> addProperty("level", "MULTIPLEXING_HIGH")
-                        }
-                    })
-                }
-                when (handshakeMode) {
-                    MieruBean.HANDSHAKE_STANDARD -> addProperty("handshakeMode", "HANDSHAKE_STANDARD")
-                    MieruBean.HANDSHAKE_NO_WAIT -> addProperty("handshakeMode", "HANDSHAKE_NO_WAIT")
-                }
-            })
-        })
-    })
 }

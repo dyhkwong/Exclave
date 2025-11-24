@@ -40,7 +40,6 @@ import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.database.*
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
 import io.nekohasekai.sagernet.ktx.Logs
@@ -48,7 +47,6 @@ import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.utils.DirectBoot
-import io.nekohasekai.sagernet.widget.UserAgentPreference
 
 @Suppress("UNCHECKED_CAST")
 class GroupSettingsActivity(
@@ -84,7 +82,6 @@ class GroupSettingsActivity(
         val subscription = subscription ?: SubscriptionBean().applyDefaultValues()
         DataStore.subscriptionType = subscription.type
         DataStore.subscriptionLink = subscription.link
-        DataStore.subscriptionToken = subscription.token
         DataStore.subscriptionDeduplication = subscription.deduplication
         DataStore.subscriptionUpdateWhenConnectedOnly = subscription.updateWhenConnectedOnly
         DataStore.subscriptionUserAgent = subscription.customUserAgent
@@ -115,7 +112,6 @@ class GroupSettingsActivity(
             subscription = (subscription ?: SubscriptionBean().applyDefaultValues()).apply {
                 type = DataStore.subscriptionType
                 link = DataStore.subscriptionLink
-                token = DataStore.subscriptionToken
                 deduplication = DataStore.subscriptionDeduplication
                 updateWhenConnectedOnly = DataStore.subscriptionUpdateWhenConnectedOnly
                 customUserAgent = DataStore.subscriptionUserAgent
@@ -197,22 +193,6 @@ class GroupSettingsActivity(
         updateGroupType()
         groupType.setOnPreferenceChangeListener { _, newValue ->
             updateGroupType((newValue as String).toInt())
-            true
-        }
-
-        val subscriptionType = findPreference<SimpleMenuPreference>(Key.SUBSCRIPTION_TYPE)!!
-        val subscriptionLink = findPreference<EditTextPreference>(Key.SUBSCRIPTION_LINK)!!
-        val subscriptionToken = findPreference<EditTextPreference>(Key.SUBSCRIPTION_TOKEN)!!
-        val subscriptionUserAgent = findPreference<UserAgentPreference>(Key.SUBSCRIPTION_USER_AGENT)!!
-
-        fun updateSubscriptionType(subscriptionType: Int = DataStore.subscriptionType) {
-            subscriptionLink.isVisible = subscriptionType != SubscriptionType.OOCv1
-            subscriptionToken.isVisible = subscriptionType == SubscriptionType.OOCv1
-            subscriptionUserAgent.notifyChanged()
-        }
-        updateSubscriptionType()
-        subscriptionType.setOnPreferenceChangeListener { _, newValue ->
-            updateSubscriptionType((newValue as String).toInt())
             true
         }
 

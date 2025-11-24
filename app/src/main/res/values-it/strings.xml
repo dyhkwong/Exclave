@@ -54,16 +54,12 @@
     <string name="confirm">Conferma</string>
     <string name="missing_plugin">Plugin Mancante</string>
     <string name="profile_requiring_plugin">Il profilo %s richiede il plugin %s, ma non è installato.</string>
-    <string name="group_filter_tags">Tag</string>
-    <string name="group_filter_tags_nf">Nessun tag in questa sottoscrizione</string>
-    <string name="group_filter_owners_nf">Nessun proprietario in questa sottoscrizione</string>
     <string name="subscription_used">%s Utilizzato</string>
     <string name="subscription_traffic">%s Utilizzato / %s Rimanente</string>
     <string name="subscription_import">Importa iscrizione</string>
     <string name="subscription_import_message">Confermi di voler importare l\'iscrizione %s\? Se proviene da una fonte non attendibile, fare ciò potrebbe causare IP leak.</string>
     <string name="profile_import_message">Confermi di voler importare il profilo %s\?</string>
     <string name="hysteria_auth_type">Tipo di Autenticazione</string>
-    <string name="hysteria_auth_payload">Payload di Autenticazione</string>
     <string name="hysteria_download_mbps">Velocità Massima di Download (in Mbps)</string>
     <string name="menu_group">Gruppo</string>
     <string name="group_status_empty">Gruppo Vuoto</string>
@@ -173,9 +169,6 @@
     <string name="update_settings">Aggiorna Impostazioni</string>
     <string name="auto_update">Aggiornamento Automatico</string>
     <string name="auto_update_delay">Ritardo Aggiornamento Automatico (in minuti)</string>
-    <string name="group_filter">Filtro</string>
-    <string name="group_filter_ns">Per utilizzare la funzione di filtraggio è necessaria la sottoscrizione a OOCv1</string>
-    <string name="group_filter_groups_nf">Nessun gruppo in questa sottoscrizione</string>
     <string name="hysteria_upload_mbps">Velocità Massima di Upload (in Mbps)</string>
     <string name="require_transproxy">Abilita Transproxy in Entrata</string>
     <string name="security">Crittografia del layer di trasporto</string>
@@ -187,8 +180,6 @@
     <string name="show_system_apps">Mostra le app di sistema</string>
     <string name="share">Condividi</string>
     <string name="add_profile">Aggiungi profilo</string>
-    <string name="group_filter_groups">Gruppi</string>
-    <string name="group_filter_owners">Proprietari</string>
     <string name="profile_import">Importa profilo</string>
     <string name="ws_path">Percorso del WebSocket</string>
     <string name="quic_key">Chiave QUIC</string>
@@ -258,9 +249,6 @@
     <string name="subscription">Iscrizione</string>
     <string name="subscription_settings">Impostazioni Iscrizione</string>
     <string name="group_type">Tipo Gruppo</string>
-    <string name="ooc_subscription_token_invalid">Token OOCv1 non valido</string>
-    <string name="ooc_warning">Attenzione</string>
-    <string name="ooc_missing_protocol">La sottoscrizione richiede il supporto per il protocollo %s, ma non è stato trovato. I profili non supportati verranno ignorati.</string>
     <string name="service_subscription">Servizio Aggiornamento Iscrizioni</string>
     <string name="subscription_update">Aggiornamento Iscrizione</string>
     <string name="subscription_update_message">Aggiornamento %s…</string>
@@ -319,7 +307,6 @@
     <string name="obfs">Offuscamento</string>
     <string name="obfs_param">Parametri Offuscamento</string>
     <string name="experimental_settings">Sperimentale</string>
-    <string name="hysteria_disable_mtu_discovery">Disabilita il Rilevamento Path MTU</string>
     <string name="group_order_by_name">Per Nome</string>
     <string name="group_order_by_delay">Per Delay</string>
     <string name="plugin_exists_but_on_shit_system">Il profilo %s richiede il plugin %s, ma il produttore del tuo dispositivo (solitamente qualche campione dello spionaggio e produttore di malware) ha manomesso il vostro Android, rendendo il plugin inutilizzabile.</string>
@@ -338,8 +325,6 @@
     <string name="open_settings">Apri le Impostazioni</string>
     <string name="app_no_launcher">L\'app non ha un\'interfaccia.</string>
     <string name="experimental_no_termination_signal">Non inviare il segnale di terminazione singola duplex per la connessione TCP quando viene trasferita su VMess. Questo renderà alcune applicazioni inutilizzabili.</string>
-    <string name="hysteria_stream_receive_window">Finestra di Ricezione Stream QUIC</string>
-    <string name="hysteria_connection_receive_window">Finestra di Ricezione Connessione QUIC</string>
     <string name="group_order_origin">Origine</string>
     <string name="traffic_stats">Statistiche</string>
     <plurals name="tcp_connections">

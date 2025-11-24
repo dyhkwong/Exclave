@@ -26,8 +26,6 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
-import io.nekohasekai.sagernet.ProtocolProvider;
-import io.nekohasekai.sagernet.database.DataStore;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 import io.nekohasekai.sagernet.ktx.NetsKt;
@@ -45,32 +43,11 @@ public class Hysteria2Bean extends AbstractBean {
     public Boolean allowInsecure;
     public Long uploadMbps;
     public Long downloadMbps;
-    public Boolean disableMtuDiscovery;
-    public Integer initStreamReceiveWindow;
-    public Integer maxStreamReceiveWindow;
-    public Integer initConnReceiveWindow;
-    public Integer maxConnReceiveWindow;
     public String serverPorts;
     public Long hopInterval;
     public String echConfig;
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
-
-    @Override
-    public boolean canMapping() {
-        if (!DataStore.INSTANCE.getHysteriaEnablePortHopping()) {
-            return true;
-        }
-        return !NetsKt.isValidHysteriaMultiPort(serverPorts);
-    }
-
-    @Override
-    public boolean needProtect() {
-        if (DataStore.INSTANCE.getProviderHysteria2() == ProtocolProvider.CORE) {
-            return false;
-        }
-        return !canMapping();
-    }
 
     @Override
     public void initializeDefaultValues() {
@@ -85,11 +62,6 @@ public class Hysteria2Bean extends AbstractBean {
         if (allowInsecure == null) allowInsecure = false;
         if (uploadMbps == null) uploadMbps = 0L;
         if (downloadMbps == null) downloadMbps = 0L;
-        if (disableMtuDiscovery == null) disableMtuDiscovery = false;
-        if (initStreamReceiveWindow == null) initStreamReceiveWindow = 0;
-        if (maxStreamReceiveWindow == null) maxStreamReceiveWindow = 0;
-        if (initConnReceiveWindow == null) initConnReceiveWindow = 0;
-        if (maxConnReceiveWindow == null) maxConnReceiveWindow = 0;
         if (serverPorts == null) serverPorts = "1080";
         if (hopInterval == null) hopInterval = 0L;
         if (echConfig == null) echConfig = "";
@@ -99,7 +71,7 @@ public class Hysteria2Bean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(4);
+        output.writeInt(5);
         super.serialize(output);
         output.writeString(auth);
         output.writeString(obfs);
@@ -111,11 +83,6 @@ public class Hysteria2Bean extends AbstractBean {
         output.writeBoolean(allowInsecure);
         output.writeLong(uploadMbps);
         output.writeLong(downloadMbps);
-        output.writeBoolean(disableMtuDiscovery);
-        output.writeInt(initStreamReceiveWindow);
-        output.writeInt(maxStreamReceiveWindow);
-        output.writeInt(initConnReceiveWindow);
-        output.writeInt(maxConnReceiveWindow);
         output.writeString(serverPorts);
         output.writeLong(hopInterval);
         output.writeString(echConfig);
@@ -147,11 +114,13 @@ public class Hysteria2Bean extends AbstractBean {
         } else {
             downloadMbps = input.readLong();
         }
-        disableMtuDiscovery = input.readBoolean();
-        initStreamReceiveWindow = input.readInt();
-        maxStreamReceiveWindow = input.readInt();
-        initConnReceiveWindow = input.readInt();
-        maxConnReceiveWindow = input.readInt();
+        if (version < 5) {
+            input.readBoolean(); // disableMtuDiscovery, removed
+            input.readInt(); // initStreamReceiveWindow, removed
+            input.readInt(); // maxStreamReceiveWindow, removed
+            input.readInt(); // initConnReceiveWindow, removed
+            input.readInt(); // maxConnReceiveWindow, removed
+        }
         if (version < 2) {
             serverPorts = serverPort.toString();
         }
@@ -178,7 +147,6 @@ public class Hysteria2Bean extends AbstractBean {
         }
         bean.uploadMbps = uploadMbps;
         bean.downloadMbps = downloadMbps;
-        bean.disableMtuDiscovery = disableMtuDiscovery;
         if (bean.pinnedPeerCertificateSha256 == null || bean.pinnedPeerCertificateSha256.isEmpty() && !pinnedPeerCertificateSha256.isEmpty()) {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
@@ -195,10 +163,6 @@ public class Hysteria2Bean extends AbstractBean {
         }
         bean.echConfig = echConfig;
         bean.hopInterval = hopInterval;
-        bean.initConnReceiveWindow = initConnReceiveWindow;
-        bean.initStreamReceiveWindow = initStreamReceiveWindow;
-        bean.maxConnReceiveWindow = maxConnReceiveWindow;
-        bean.maxStreamReceiveWindow = maxStreamReceiveWindow;
     }
 
     @Override
@@ -213,22 +177,6 @@ public class Hysteria2Bean extends AbstractBean {
     @Override
     public String network() {
         return "udp";
-    }
-
-    public boolean canUsePluginImplementation() {
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificatePublicKeySha256).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateChainSha256).isEmpty()) {
-            return false;
-        }
-        if (NetsKt.listByLineOrComma(pinnedPeerCertificateSha256).size() > 1) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
-            return false;
-        }
-        return true;
     }
 
     @NotNull

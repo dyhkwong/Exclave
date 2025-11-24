@@ -22,10 +22,8 @@ package io.nekohasekai.sagernet.ktx
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.parseAnyTLS
-import io.nekohasekai.sagernet.fmt.brook.parseBrook
 import io.nekohasekai.sagernet.fmt.http.parseHttp
 import io.nekohasekai.sagernet.fmt.http3.parseHttp3
-import io.nekohasekai.sagernet.fmt.hysteria.parseHysteria
 import io.nekohasekai.sagernet.fmt.hysteria2.parseHysteria2
 import io.nekohasekai.sagernet.fmt.juicity.parseJuicity
 import io.nekohasekai.sagernet.fmt.mieru.parseMieru
@@ -35,7 +33,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocks.parseShadowsocks
 import io.nekohasekai.sagernet.fmt.shadowsocksr.parseShadowsocksR
 import io.nekohasekai.sagernet.fmt.socks.parseSOCKS
 import io.nekohasekai.sagernet.fmt.ssh.parseSSH
-import io.nekohasekai.sagernet.fmt.trojan_go.parseTrojanGo
 import io.nekohasekai.sagernet.fmt.tuic5.parseTuic
 import io.nekohasekai.sagernet.fmt.v2ray.parseV2Ray
 import io.nekohasekai.sagernet.fmt.wireguard.parseWireGuard
@@ -96,10 +93,6 @@ fun parseShareLinks(text: String): List<AbstractBean> {
             runCatching {
                 entities.add(parseV2Ray(this))
             }
-        } else if (startsWith("trojan-go://", ignoreCase = true)) {
-            runCatching {
-                entities.add(parseTrojanGo(this))
-            }
         } else if (startsWith("ss://", ignoreCase = true)) {
             runCatching {
                 entities.add(parseShadowsocks(this))
@@ -112,15 +105,6 @@ fun parseShareLinks(text: String): List<AbstractBean> {
             || startsWith("naive+quic", ignoreCase = true)) {
             runCatching {
                 entities.add(parseNaive(this))
-            }
-        } else if (startsWith("brook://", ignoreCase = true)) {
-            runCatching {
-                entities.add(parseBrook(this))
-            }
-        } else if (startsWith("hysteria://", ignoreCase = true)
-            || startsWith("hy://", ignoreCase = true)) {
-            runCatching {
-                entities.add(parseHysteria(this))
             }
         } else if (startsWith("hysteria2://", ignoreCase = true)
             || startsWith("hy2://", ignoreCase = true)) {

@@ -25,7 +25,7 @@
             app:title="@string/password"
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
-            app:defaultValue="1"
+            app:defaultValue="2"
             app:entries="@array/shadowtls_protocol_version_value"
             app:entryValues="@array/shadowtls_protocol_version_value"
             app:icon="@drawable/ic_baseline_compare_arrows_24"

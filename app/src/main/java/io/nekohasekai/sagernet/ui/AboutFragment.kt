@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.ui
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -44,13 +43,10 @@ import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
-import io.nekohasekai.sagernet.fmt.PluginEntry
-import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.snackbar
-import io.nekohasekai.sagernet.plugin.PluginManager
 import libcore.Libcore
 
 class AboutFragment : ToolbarFragment(R.layout.layout_about) {
@@ -138,29 +134,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             ))
                         }
                         .build())
-                    .apply {
-                        val m = enumValues<PluginEntry>().associateBy { it.pluginId }
-                        for (plugin in PluginManager.fetchPlugins()) {
-                            if (!m.containsKey(plugin.id)) continue
-                            try {
-                                addItem(MaterialAboutActionItem.Builder()
-                                    .icon(R.drawable.ic_baseline_nfc_24)
-                                    .text(getString(R.string.version_x, plugin.id))
-                                    .subText("v" + plugin.versionName)
-                                    .setOnClickAction {
-                                        startActivity(Intent().apply {
-                                            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                            data = Uri.fromParts(
-                                                "package", plugin.packageName, null
-                                            )
-                                        })
-                                    }
-                                    .build())
-                            } catch (e: Exception) {
-                                Logs.w(e)
-                            }
-                        }
-                    }
                     .apply {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             val pm = activityContext.getSystemService(Context.POWER_SERVICE) as PowerManager

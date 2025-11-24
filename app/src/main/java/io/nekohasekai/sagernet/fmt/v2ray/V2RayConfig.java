@@ -713,6 +713,8 @@ public class V2RayConfig {
                     return AnyTLSOutboundConfigurationObject.class;
                 case "juicity":
                     return JuicityOutboundConfigurationObject.class;
+                case "mieru":
+                    return MieruOutboundConfigurationObject.class;
             }
             return null;
         }
@@ -750,7 +752,6 @@ public class V2RayConfig {
         public String timeout;
         public String redirect;
         public Integer userLevel;
-        public String protocolReplacement;
 
     }
 
@@ -1040,8 +1041,20 @@ public class V2RayConfig {
         public Integer port;
         public String uuid;
         public String password;
-        public String congestionControl;
         public TLSObject tlsSettings;
+
+    }
+
+    public static class MieruOutboundConfigurationObject implements OutboundConfigurationObject {
+
+        public String address;
+        public Integer port;
+        public List<String> portRange;
+        public String username;
+        public String password;
+        public String protocol;
+        public String multiplexing;
+        public String handshakeMode;
 
     }
 
@@ -1081,8 +1094,6 @@ public class V2RayConfig {
         public SplitHTTPObject splithttpSettings;
         public SplitHTTPObject xhttpSettings;
         public MekyaObject mekyaSettings;
-        public DTLSObject dtlsSettings;
-        public RequestObject requestSettings;
         public SockoptObject sockopt;
 
         public static class SockoptObject {
@@ -1278,6 +1289,8 @@ public class V2RayConfig {
     public static class GrpcObject {
 
         public String serviceName;
+        public Boolean serviceNameCompat;
+        public Boolean multiMode;
 
     }
 
@@ -1358,149 +1371,6 @@ public class V2RayConfig {
 
     }
 
-    public static class DTLSObject {
-
-        public String mode;
-        public String psk;
-        public Integer mtu;
-        public Integer replayProtectionWindow;
-
-    }
-
-    public static class RequestObject {
-
-        public AssemblerObject assembler;
-        public RoundTripperObject roundTripper;
-
-        public static class AssemblerObject {
-            public String type;
-            public SimpleClientObject simpleClientSettings;
-            public SimpleServerObject simpleServerSettings;
-            public PacketConnClientObject packetconnClientSettings;
-            public PacketConnServerObject packetconnServerSettings;
-            public static class SimpleClientObject {
-                public Integer maxWriteSize;
-                public Integer waitSubsequentWriteMs;
-                public Integer initialPollingIntervalMs;
-                public Integer maxPollingIntervalMs;
-                public Integer minPollingIntervalMs;
-                public Float backoffFactor;
-                public Integer failedRetryIntervalMs;
-            }
-            public static class SimpleServerObject {
-                public Integer maxWriteSize;
-            }
-            public static class PacketConnClientObject {
-                public String underlyingNetwork;
-                public KcpObject kcpSettings;
-                public DTLSObject dtlsSettings;
-                public Integer maxWriteDelay;
-                public Integer maxRequestSize;
-                public Integer pollingIntervalInitial;
-            }
-            public static class PacketConnServerObject {
-                public String underlyingNetwork;
-                public KcpObject kcpSettings;
-                public DTLSObject dtlsSettings;
-                public Integer maxWriteSize;
-                public Integer maxWriteDurationMs;
-                public Integer maxSimultaneousWriteConnection;
-                public Integer packetWritingBuffer;
-            }
-        }
-
-        public static class RoundTripperObject {
-            public String type;
-            public HttprtClientObject httprtClientSettings;
-            public HttprtServerObject httprtServerSettings;
-            public static class HttprtClientObject {
-                public HttprtHTTPObject http;
-                public Boolean allowHTTP;
-                public Integer h2PoolSize;
-            }
-            public static class HttprtServerObject {
-                public HttprtHTTPObject http;
-                public String noDecodingSessionTag;
-            }
-            public static class HttprtHTTPObject {
-                public String path;
-                public String urlPrefix;
-            }
-        }
-
-    }
-
-    public static class TLSMirrorObject {
-        public String forwardAddress;
-        public Integer forwardPort;
-        public String forwardTag;
-        public String carrierConnectionTag;
-        public EmbeddedTrafficGeneratorConfigObject embeddedTrafficGenerator;
-        public String primaryKey;
-        public List<Integer> explicitNonceCiphersuites;
-        public TLSMirrorTimeSpecConfigObject deferInstanceDerivedWriteTime;
-        public TransportLayerPaddingConfigObject transportLayerPadding;
-        public EnrolmentConfigObject connectionEnrolment;
-        public Boolean sequenceWatermarkingEnabled;
-        public static class EnrolmentConfigObject {
-            public String primaryIngressOutbound;
-            public String primaryEgressOutbound;
-            public List<String> bootstrapIngressURL;
-            public List<String> bootstrapEgressURL;
-            public BootstrapIngressConfigurationObject bootstrapIngressConfig;
-            public BootstrapEgressConfigurationObject bootstrapEgressConfig;
-            public String bootstrapEgressOutbound;
-        }
-        public static class TLSMirrorTimeSpecConfigObject {
-            public Long baseNanoseconds;
-            public Long uniformRandomMultiplierNanoseconds;
-        }
-        public static class TransportLayerPaddingConfigObject {
-            public Boolean enabled;
-        }
-        public static class EmbeddedTrafficGeneratorConfigObject {
-            public List<StepObject> steps;
-            public TLSObject tlsSettings;
-            public UTLSObject utlsSettings;
-            public static class StepObject {
-                public String name;
-                public String host;
-                public String path;
-                public String method;
-                public List<NextStepObject> nextStep;
-                public Boolean connectionReady;
-                public List<HeaderObject> headers;
-                public Boolean connectionRecallExit;
-                public TrafficGeneratorTimeSpecConfigObject waitTime;
-                public Boolean h2DoNotWaitForDownloadFinish;
-                public static class TrafficGeneratorTimeSpecConfigObject {
-                    public Long baseNanoseconds;
-                    public Long uniformRandomMultiplierNanoseconds;
-                }
-                public static class NextStepObject {
-                    public Integer weight;
-                    public Integer gotoLocation;
-                }
-                public static class HeaderObject {
-                    public String name;
-                    public String value;
-                    public List<String> values;
-                }
-            }
-        }
-        public static class BootstrapIngressConfigurationObject {
-            public RequestObject.RoundTripperObject roundTripperServer;
-            public String listen;
-        }
-        public static class BootstrapEgressConfigurationObject {
-            public RequestObject.RoundTripperObject roundTripperClient;
-            public TLSObject tlsSettings;
-            public UTLSObject utlsSettings;
-            public String dest;
-            public String outboundTag;
-            public String serverIdentity;
-        }
-    }
 
     public Map<String, Object> stats;
 

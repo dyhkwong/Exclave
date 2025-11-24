@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
-import io.nekohasekai.sagernet.ktx.NetsKt;
 
 public class JuicityBean extends AbstractBean {
 
@@ -37,7 +36,6 @@ public class JuicityBean extends AbstractBean {
     public String password;
     public String sni;
     public Boolean allowInsecure;
-    public String congestionControl; // https://github.com/daeuniverse/softwind/blob/6daa40f6b7a5cb9a0c44ea252e86fcb3440a7a0e/protocol/tuic/common/congestion.go#L15
     public String certificates;
     public String pinnedPeerCertificateChainSha256; // was “pinnedCertChainSha256”
     public String pinnedPeerCertificatePublicKeySha256;
@@ -53,7 +51,6 @@ public class JuicityBean extends AbstractBean {
         if (password == null) password = "";
         if (sni == null) sni = "";
         if (allowInsecure == null) allowInsecure = false;
-        if (congestionControl == null) congestionControl = "bbr";
         if (certificates == null) certificates = "";
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
         if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
@@ -65,13 +62,12 @@ public class JuicityBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(password);
         output.writeString(sni);
         output.writeBoolean(allowInsecure);
-        output.writeString(congestionControl);
         output.writeString(certificates);
         output.writeString(pinnedPeerCertificateChainSha256);
         output.writeString(pinnedPeerCertificatePublicKeySha256);
@@ -89,7 +85,9 @@ public class JuicityBean extends AbstractBean {
         password = input.readString();
         sni = input.readString();
         allowInsecure = input.readBoolean();
-        congestionControl = input.readString();
+        if (version < 4) {
+            input.readString(); // congestionControl, removed
+        }
         if (version >= 3) {
             certificates = input.readString();
         }
@@ -111,28 +109,6 @@ public class JuicityBean extends AbstractBean {
     @Override
     public String network() {
         return "udp";
-    }
-
-    public boolean canUsePluginImplementation() {
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificatePublicKeySha256).isEmpty()) {
-            return false;
-        }
-        if (NetsKt.listByLineOrComma(pinnedPeerCertificateChainSha256).size() > 1) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateSha256).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(mtlsCertificate).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(mtlsCertificatePrivateKey).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
-            return false;
-        }
-        return true;
     }
 
     @Override

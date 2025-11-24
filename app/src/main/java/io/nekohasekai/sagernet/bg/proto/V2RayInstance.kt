@@ -26,7 +26,6 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import io.nekohasekai.sagernet.LogLevel
 import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.bg.AbstractInstance
@@ -36,28 +35,12 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.fmt.V2rayBuildResult
-import io.nekohasekai.sagernet.fmt.brook.BrookBean
-import io.nekohasekai.sagernet.fmt.brook.buildBrookConfig
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
-import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
-import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
-import io.nekohasekai.sagernet.fmt.hysteria2.buildHysteria2Config
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
-import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
-import io.nekohasekai.sagernet.fmt.juicity.buildJuicityConfig
-import io.nekohasekai.sagernet.fmt.mieru.MieruBean
-import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
 import io.nekohasekai.sagernet.fmt.shadowquic.buildshadowQUICConfig
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
-import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.fmt.tuic.TuicBean
-import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
-import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
-import io.nekohasekai.sagernet.fmt.tuic5.buildTuic5Config
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.*
@@ -102,77 +85,9 @@ abstract class V2RayInstance(
         for ((_, chain) in config.index) {
             chain.entries.forEachIndexed { _, (port, profile) ->
                 when (val bean = profile.requireBean()) {
-                    is TrojanGoBean -> {
-                        initPlugin("trojan-go-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildTrojanGoConfig(port)
-                    }
                     is NaiveBean -> {
                         initPlugin("naive-plugin")
                         pluginConfigs[port] = profile.type to bean.buildNaiveConfig(port)
-                    }
-                    is BrookBean -> {
-                        initPlugin("brook-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildBrookConfig(port)
-                    }
-                    is HysteriaBean -> {
-                        initPlugin("hysteria-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildHysteriaConfig(port) {
-                            File(
-                                app.noBackupFilesDir,
-                                "hysteria_" + SystemClock.elapsedRealtime() + ".ca"
-                            ).apply {
-                                parentFile?.mkdirs()
-                                cacheFiles.add(this)
-                            }
-                        }
-                    }
-                    is Hysteria2Bean -> {
-                        initPlugin("hysteria2-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildHysteria2Config(
-                            port,
-                            isVpn = isVpn,
-                            cacheFile = { type ->
-                                File(
-                                    app.noBackupFilesDir,
-                                    "hysteria2_" + SystemClock.elapsedRealtime() + "." + type
-                                ).apply {
-                                    parentFile?.mkdirs()
-                                    cacheFiles.add(this)
-                                }
-                            },
-                        )
-                    }
-                    is MieruBean -> {
-                        initPlugin("mieru-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildMieruConfig(port)
-                    }
-                    is TuicBean -> {
-                        initPlugin("tuic-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildTuicConfig(port, forExport = false) {
-                            File(
-                                app.noBackupFilesDir,
-                                "tuic_" + SystemClock.elapsedRealtime() + ".ca"
-                            ).apply {
-                                parentFile?.mkdirs()
-                                cacheFiles.add(this)
-                            }
-                        }
-                    }
-                    is Tuic5Bean -> {
-                        initPlugin("tuic5-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildTuic5Config(port, forExport = false) {
-                            File(
-                                app.noBackupFilesDir,
-                                "tuic5_" + SystemClock.elapsedRealtime() + ".ca"
-                            ).apply {
-                                parentFile?.mkdirs()
-                                cacheFiles.add(this)
-                            }
-                        }
-                    }
-                    is JuicityBean -> {
-                        initPlugin("juicity-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildJuicityConfig(port)
                     }
                     is ShadowQUICBean -> {
                         initPlugin("shadowquic-plugin")
@@ -225,21 +140,6 @@ abstract class V2RayInstance(
                     externalInstances.containsKey(port) -> {
                         externalInstances[port]!!.launch()
                     }
-                    bean is TrojanGoBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "trojan_go_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("trojan-go-plugin").path, "-config", configFile.absolutePath
-                        )
-
-                        processes.start(commands, env)
-                    }
                     bean is NaiveBean -> {
                         val configFile = File(
                             context.noBackupFilesDir,
@@ -267,165 +167,6 @@ abstract class V2RayInstance(
                             initPlugin("naive-plugin").path, configFile.absolutePath
                         )
 
-                        processes.start(commands, env)
-                    }
-                    bean is BrookBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "brook_" + SystemClock.elapsedRealtime()
-                        )
-
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("brook-plugin").path,
-                            configFile.absolutePath
-                        )
-
-                        processes.start(commands, env)
-                    }
-                    bean is HysteriaBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "hysteria_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("hysteria-plugin").path,
-                            "--no-check",
-                            "--config",
-                            configFile.absolutePath,
-                            "--log-level",
-                            when (DataStore.logLevel) {
-                                LogLevel.DEBUG -> "trace"
-                                LogLevel.INFO -> "info"
-                                LogLevel.WARNING -> "warn"
-                                LogLevel.ERROR -> "error"
-                                else -> "panic"
-                            },
-                            "client"
-                        )
-
-                        if (bean.protocol == HysteriaBean.PROTOCOL_FAKETCP) {
-                            commands.addAll(0, listOf("su", "-c"))
-                        }
-
-                        processes.start(commands, env)
-                    }
-                    bean is Hysteria2Bean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "hysteria2_" + SystemClock.elapsedRealtime() + ".yaml"
-                        )
-
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("hysteria2-plugin").path,
-                            "--disable-update-check",
-                            "--config",
-                            configFile.absolutePath,
-                            "--log-level",
-                            when (DataStore.logLevel) {
-                                LogLevel.DEBUG -> "debug"
-                                LogLevel.INFO -> "info"
-                                LogLevel.WARNING -> "warn"
-                                LogLevel.ERROR -> "error"
-                                else -> "error"
-                            },
-                            "client"
-                        )
-
-                        processes.start(commands, env)
-                    }
-                    bean is MieruBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "mieru_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        env["MIERU_CONFIG_JSON_FILE"] = configFile.absolutePath
-
-                        val commands = mutableListOf(
-                            initPlugin("mieru-plugin").path, "run"
-                        )
-
-                        processes.start(commands, env)
-                    }
-                    bean is TuicBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "tuic_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("tuic-plugin").path,
-                            "-c",
-                            configFile.absolutePath,
-                        )
-
-                        processes.start(commands, env)
-                    }
-                    bean is Tuic5Bean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "tuic5_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-
-                        val commands = mutableListOf(
-                            initPlugin("tuic5-plugin").path,
-                            "-c",
-                            configFile.absolutePath,
-                        )
-
-                        processes.start(commands, env)
-                    }
-                    bean is JuicityBean -> {
-                        val configFile = File(
-                            context.noBackupFilesDir,
-                            "juicity_" + SystemClock.elapsedRealtime() + ".json"
-                        )
-                        configFile.parentFile?.mkdirs()
-                        configFile.writeText(config)
-                        cacheFiles.add(configFile)
-                        val commands = mutableListOf(
-                            initPlugin("juicity-plugin").path,
-                            "run",
-                            "-c",
-                            configFile.absolutePath,
-                        )
-                        if (bean.certificates.isNotEmpty()) {
-                            val caFile = File(
-                                context.noBackupFilesDir,
-                                "juicity_" + SystemClock.elapsedRealtime() + ".ca"
-                            )
-                            caFile.parentFile?.mkdirs()
-                            caFile.writeText(bean.certificates)
-                            cacheFiles.add(caFile)
-                            env["SSL_CERT_FILE"] = caFile.absolutePath
-                            // disable system directories
-                            env["SSL_CERT_DIR"] = "/not_exists"
-                        }
                         processes.start(commands, env)
                     }
                     bean is ShadowQUICBean -> {

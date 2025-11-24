@@ -29,7 +29,7 @@ import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
-import io.nekohasekai.sagernet.fmt.juicity.supportedJuicityCongestionControl
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocks2022Method
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocksMethod
@@ -278,6 +278,9 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             (streamSettings.getObject("grpcSettings") ?: streamSettings.getObject("gunSettings"))?.also { grpcSettings ->
                                 grpcSettings.getString("serviceName")?.also {
                                     v2rayBean.grpcServiceName = it
+                                }
+                                grpcSettings.getBoolean("multiMode")?.also {
+                                    v2rayBean.grpcMultiMode = it // Xray private
                                 }
                             }
                         }
@@ -1217,9 +1220,6 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                 settings.getString("password")?.also {
                     juicityBean.password = it
                 }
-                settings.getString("congestionControl")?.also {
-                    juicityBean.congestionControl = if (it in supportedJuicityCongestionControl) it else "bbr"
-                }
                 settings.getObject("tlsSettings")?.also { tlsSettings ->
                     tlsSettings.getString("serverName")?.also {
                         juicityBean.sni = it
@@ -1276,6 +1276,56 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                 }
             }
             return listOf(juicityBean)
+        }
+        "mieru" -> {
+            val mieruBean = MieruBean()
+            outbound.getObject("settings")?.also { settings ->
+                outbound.getString("tag")?.also {
+                    mieruBean.name = it
+                }
+                settings.getString("address")?.also {
+                    mieruBean.serverAddress = it
+                } ?: return listOf()
+                settings.getPort("port")?.also {
+                    mieruBean.serverPort = it
+                }
+                settings.getStringArray("portRange")?.also {
+                    mieruBean.portRange = it.joinToString("\n")
+                }
+                if (mieruBean.serverPort == null && mieruBean.portRange == null) {
+                    return listOf()
+                }
+                settings.getString("username")?.also {
+                    mieruBean.username = it
+                }
+                settings.getString("password")?.also {
+                    mieruBean.password = it
+                }
+                settings.getString("protocol")?.also {
+                    mieruBean.protocol = when (it) {
+                        "tcp", "" -> MieruBean.PROTOCOL_TCP
+                        "udp" -> MieruBean.PROTOCOL_UDP
+                        else -> return listOf()
+                    }
+                }
+                settings.getString("multiplex")?.also {
+                    mieruBean.multiplexingLevel = when (it) {
+                        "off" -> MieruBean.MULTIPLEXING_OFF
+                        "low" -> MieruBean.MULTIPLEXING_LOW
+                        "middle" -> MieruBean.MULTIPLEXING_MIDDLE
+                        "high" -> MieruBean.MULTIPLEXING_HIGH
+                        else -> MieruBean.MULTIPLEXING_DEFAULT
+                    }
+                }
+                settings.getString("handshakeMode")?.also {
+                    mieruBean.handshakeMode = when (it) {
+                        "standard" -> MieruBean.HANDSHAKE_STANDARD
+                        "nowait" -> MieruBean.HANDSHAKE_NO_WAIT
+                        else -> MieruBean.HANDSHAKE_DEFAULT
+                    }
+                }
+            }
+            return listOf(mieruBean)
         }
         "wireguard" -> {
             val beanList = mutableListOf<WireGuardBean>()

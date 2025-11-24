@@ -99,10 +99,6 @@ object Key {
     const val SHOW_GROUP_NAME = "showGroupName"
 
     const val SHADOWSOCKS_2022_IMPLEMENTATION = "shadowsocks2022Implementation"
-    const val PROVIDER_HYSTERIA2 = "providerHysteria2"
-    const val HYSTERIA_ENABLE_PORT_HOPPING = "hysteriaEnablePortHopping"
-    const val PROVIDER_TUIC5 = "providerTuic5"
-    const val PROVIDER_JUICITY = "providerJuicity"
     const val PROVIDER_ROOT_CA = "providerRootCA"
 
     const val INTERRUPT_REUSED_CONNECTIONS = "interruptReusedConnections"
@@ -120,6 +116,7 @@ object Key {
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"
     const val FRAGMENT_METHOD = "fragmentMethod"
     const val REALITY_DISABLE_X25519MLKEM768 = "realityDisableX25519Mlkem768"
+    const val GRPC_SERVICE_NAME_COMPAT = "grpcServiceNameCompat"
 
     const val APP_TRAFFIC_STATISTICS = "appTrafficStatistics"
     const val PROFILE_TRAFFIC_STATISTICS = "profileTrafficStatistics"
@@ -181,6 +178,10 @@ object Key {
     const val SERVER_REALITY_FINGERPRINT = "serverRealityFingerprint"
     const val SERVER_REALITY_DISABLE_X25519MLKEM768 = "serverRealityDisableX25519Mlkem768"
 
+    const val SERVER_GRPC_CATAGORY = "serverGrpcCategory"
+    const val SERVER_GRPC_SERVICE_NAME_COMPAT = "serverGrpcServiceNameCompat"
+    const val SERVER_GRPC_MULTI_MODE = "serverGrpcMultiMode"
+
     const val SERVER_MEKYA_KCP_SEED = "serverMekyaKcpSeed"
     const val SERVER_MEKYA_KCP_HEADER_TYPE = "serverMekyaKcpHeaderType"
     const val SERVER_MEKYA_URL = "serverMekyaUrl"
@@ -188,26 +189,16 @@ object Key {
     const val SERVER_SECURITY_CATEGORY = "serverSecurityCategory"
     const val SERVER_WS_CATEGORY = "serverWsCategory"
     const val SERVER_SH_CATEGORY = "serverShCategory"
-    const val SERVER_SS_CATEGORY = "serverSsCategory"
     const val SERVER_HEADERS = "serverHeaders"
     const val SERVER_ALLOW_INSECURE = "serverAllowInsecure"
 
     const val SERVER_AUTH_TYPE = "serverAuthType"
     const val SERVER_UPLOAD_SPEED = "serverUploadSpeed"
     const val SERVER_DOWNLOAD_SPEED = "serverDownloadSpeed"
-    const val SERVER_STREAM_RECEIVE_WINDOW = "serverStreamReceiveWindow"
-    const val SERVER_CONNECTION_RECEIVE_WINDOW = "serverConnectionReceiveWindow"
-    const val SERVER_DISABLE_MTU_DISCOVERY = "serverDisableMtuDiscovery"
-    const val SERVER_INIT_STREAM_RECEIVE_WINDOW = "serverInitStreamReceiveWindow"
-    const val SERVER_MAX_STREAM_RECEIVE_WINDOW = "serverMaxStreamReceiveWindow"
-    const val SERVER_INIT_CONN_RECEIVE_WINDOW = "serverInitConnReceiveWindow"
-    const val SERVER_MAX_CONN_RECEIVE_WINDOW = "serverMaxConnReceiveWindow"
 
     const val SERVER_VMESS_EXPERIMENTS_CATEGORY = "serverVMessExperimentsCategory"
     const val SERVER_VMESS_EXPERIMENTAL_AUTHENTICATED_LENGTH = "serverVMessExperimentalAuthenticatedLength"
     const val SERVER_VMESS_EXPERIMENTAL_NO_TERMINATION_SIGNAL = "serverVMessExperimentalNoTerminationSignal"
-
-    const val SERVER_MUX_CATEGORY = "serverMuxCategory"
     const val SERVER_MUX = "serverMux"
     const val SERVER_MUX_CONCURRENCY = "serverMuxConcurrency"
     const val SERVER_MUX_PACKET_ENCODING = "serverMuxPacketEncoding"
@@ -218,14 +209,7 @@ object Key {
     const val SERVER_MTU = "serverMTU"
     const val SERVER_SS_EXPERIMENTS_CATEGORY = "serverSsExperimentsCategory"
     const val SERVER_REDUCED_IV_HEAD_ENTROPY = "serverReducedIvHeadEntropy"
-    const val SERVER_WITHOUT_BROOK_PROTOCOL = "serverWithoutBrookProtocol"
-    const val SERVER_BROOK_UDP_OVER_TCP = "serverBrookUdpOverTcp"
-    const val SERVER_BROOK_TLS_FINGERPRINT = "serverBrookTlsFingerprint"
-    const val SERVER_BROOK_FRAGMENT = "serverBrookFragment"
     const val SERVER_BROOK_UDP_OVER_STREAM = "serverBrookUdpOverStream"
-    const val SERVER_BROOK_CLIENT_HKDF_INFO = "serverBrookClientHkdfInfo"
-    const val SERVER_BROOK_SERVER_HKDF_INFO = "serverBrookServerHkdfInfo"
-    const val SERVER_BROOK_TOKEN = "serverBrookToken"
 
     const val SERVER_UDP_RELAY_MODE = "serverUDPRelayMode"
     const val SERVER_CONGESTION_CONTROLLER = "serverCongestionController"
@@ -245,7 +229,6 @@ object Key {
     const val SERVER_HOP_INTERVAL = "serverHopInterval"
 
     const val SERVER_NAIVE_NO_POST_QUANTUM = "serverNaiveNoPostQuantum"
-    const val SERVER_JUICITY_CONGESTION_CONTROL = "serverJuicityCongestionControl"
 
     const val SERVER_SING_UOT_CATEGORY = "serverSingUotCategory"
     const val SERVER_SING_MUX_CATEGORY = "serverSingMuxCategory"
@@ -292,7 +275,6 @@ object Key {
     const val GROUP_SUBSCRIPTION = "groupSubscription"
     const val SUBSCRIPTION_TYPE = "subscriptionType"
     const val SUBSCRIPTION_LINK = "subscriptionLink"
-    const val SUBSCRIPTION_TOKEN = "subscriptionToken"
     const val SUBSCRIPTION_DEDUPLICATION = "subscriptionDeduplication"
     const val SUBSCRIPTION_UPDATE = "subscriptionUpdate"
     const val SUBSCRIPTION_UPDATE_WHEN_CONNECTED_ONLY = "subscriptionUpdateWhenConnectedOnly"
@@ -316,11 +298,6 @@ object TunImplementation {
     const val SYSTEM = 1
 }
 
-object ProtocolProvider {
-    const val PLUGIN = 0
-    const val CORE = 1
-}
-
 object Shadowsocks2022Implementation {
     const val SAGERNET_SING_SHADOWSOCKS2 = 0
     const val V2FLY_V2RAY_CORE = 1
@@ -339,13 +316,13 @@ object GroupType {
 
 object SubscriptionType {
     const val RAW = 0
-    const val OOCv1 = 1
+    const val OOCv1 = 1 // removed
     const val SIP008 = 2
 }
 
 object ExtraType {
     const val NONE = 0
-    const val OOCv1 = 1
+    const val OOCv1 = 1 // removed
     const val SIP008 = 2
 }
 

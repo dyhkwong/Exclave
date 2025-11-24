@@ -39,26 +39,8 @@
                         android:id="@+id/action_new_hysteria2"
                         android:title="@string/action_hysteria2" />
                     <item
-                        android:id="@+id/action_new_tuic5"
-                        android:title="@string/action_tuic5" />
-                    <item
-                        android:id="@+id/action_new_socks"
-                        android:title="@string/action_socks" />
-                    <item
-                        android:id="@+id/action_new_http"
-                        android:title="@string/action_http" />
-                    <item
-                        android:id="@+id/action_new_http3"
-                        android:title="@string/action_http3" />
-                    <item
                         android:id="@+id/action_new_anytls"
                         android:title="@string/action_anytls" />
-                    <item
-                        android:id="@+id/action_new_ssh"
-                        android:title="@string/action_ssh" />
-                    <item
-                        android:id="@+id/action_new_wg"
-                        android:title="@string/action_wireguard" />
                     <item
                         android:id="@+id/action_new_naive"
                         android:title="@string/action_naive" />
@@ -66,11 +48,11 @@
                         android:id="@+id/action_new_mieru"
                         android:title="@string/action_mieru" />
                     <item
+                        android:id="@+id/action_new_tuic5"
+                        android:title="@string/action_tuic5" />
+                    <item
                         android:id="@+id/action_new_juicity"
                         android:title="@string/action_juicity" />
-                    <item
-                        android:id="@+id/action_new_shadowquic"
-                        android:title="@string/action_shadowquic" />
                     <item
                         android:id="@+id/action_new_config"
                         android:title="@string/custom_config" />
@@ -84,23 +66,29 @@
                         android:title="@string/more">
                         <menu>
                             <item
-                                android:id="@+id/action_new_ssr"
-                                android:title="@string/action_shadowsocksr" />
+                                android:id="@+id/action_new_socks"
+                                android:title="@string/action_socks" />
                             <item
-                                android:id="@+id/action_new_brook"
-                                android:title="@string/action_brook" />
+                                android:id="@+id/action_new_http"
+                                android:title="@string/action_http" />
                             <item
-                                android:id="@+id/action_new_tuic"
-                                android:title="@string/action_tuic" />
+                                android:id="@+id/action_new_http3"
+                                android:title="@string/action_http3" />
                             <item
-                                android:id="@+id/action_new_hysteria"
-                                android:title="@string/action_hysteria" />
+                                android:id="@+id/action_new_ssh"
+                                android:title="@string/action_ssh" />
                             <item
-                                android:id="@+id/action_new_trojan_go"
-                                android:title="@string/action_trojan_go" />
+                                android:id="@+id/action_new_wg"
+                                android:title="@string/action_wireguard" />
                             <item
                                 android:id="@+id/action_new_shadowtls"
                                 android:title="@string/action_shadowtls" />
+                            <item
+                                android:id="@+id/action_new_shadowquic"
+                                android:title="@string/action_shadowquic" />
+                            <item
+                                android:id="@+id/action_new_ssr"
+                                android:title="@string/action_shadowsocksr" />
                         </menu>
                     </item>
                 </menu>
@@ -146,21 +134,6 @@
                     android:id="@+id/action_order_by_delay"
                     android:title="@string/group_order_by_delay" />
             </group>
-        </menu>
-    </item>
-    <item
-        android:id="@+id/action_group_filter"
-        android:title="@string/group_filter">
-        <menu>
-            <item
-                android:id="@+id/action_filter_groups"
-                android:title="@string/group_filter_groups" />
-            <item
-                android:id="@+id/group_filter_owners"
-                android:title="@string/group_filter_owners" />
-            <item
-                android:id="@+id/action_filter_tags"
-                android:title="@string/group_filter_tags" />
         </menu>
     </item>
 

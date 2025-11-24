@@ -19,17 +19,9 @@
 
 package io.nekohasekai.sagernet.fmt.juicity
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
-import io.nekohasekai.sagernet.LogLevel
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
 import java.util.Base64
-
-// invalid option
-val supportedJuicityCongestionControl = arrayOf("cubic", "bbr", "new_reno")
 
 fun parseJuicity(url: String): JuicityBean {
     val link = Libcore.parseURL(url)
@@ -44,12 +36,6 @@ fun parseJuicity(url: String): JuicityBean {
         }
         link.queryParameter("allow_insecure")?.also {
             allowInsecure = (it == "1" || it == "true")
-        }
-        link.queryParameter("congestion_control")?.also {
-            congestionControl = when (it) {
-                in supportedJuicityCongestionControl -> it
-                else -> "bbr"
-            }
         }
         link.queryParameter("pinned_certchain_sha256")?.also {
             pinnedPeerCertificateChainSha256 = when {
@@ -79,7 +65,7 @@ fun JuicityBean.toUri(): String? {
     if (password.isNotEmpty()) {
         builder.password = password
     }
-    builder.addQueryParameter("congestion_control", congestionControl)
+    builder.addQueryParameter("congestion_control", "bbr")
     if (sni.isNotEmpty()) {
         builder.addQueryParameter("sni", sni)
     }
@@ -105,40 +91,4 @@ fun JuicityBean.toUri(): String? {
         builder.addQueryParameter("allow_insecure", "1")
     }
     return builder.string
-}
-
-fun JuicityBean.buildJuicityConfig(port: Int): String {
-    return GsonBuilder().setPrettyPrinting().create().toJson(JsonObject().apply {
-        addProperty("listen", joinHostPort(LOCALHOST, port))
-        addProperty("server", joinHostPort(finalAddress, finalPort))
-        addProperty("uuid", uuid)
-        addProperty("password", password)
-        addProperty("congestion_control", congestionControl)
-        if (sni.isNotEmpty()) {
-            addProperty("sni", sni)
-        } else {
-            addProperty("sni", serverAddress)
-        }
-        if (allowInsecure || pinnedPeerCertificateChainSha256.isNotEmpty()) {
-            addProperty("allow_insecure", true)
-        }
-        if (pinnedPeerCertificateChainSha256.isNotEmpty()) {
-            val certChainHash = pinnedPeerCertificateChainSha256.listByLineOrComma()[0].replace(":", "")
-            addProperty("pinned_certchain_sha256", when {
-                certChainHash.length == 64 -> {
-                    Base64.getUrlEncoder().encodeToString(certChainHash.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
-                }
-                else -> {
-                    certChainHash.replace('/', '_').replace('+', '-')
-                }
-            })
-        }
-        addProperty("log_level", when (DataStore.logLevel) {
-            LogLevel.DEBUG -> "trace"
-            LogLevel.INFO -> "info"
-            LogLevel.WARNING -> "warn"
-            LogLevel.ERROR -> "error"
-            else -> "panic"
-        })
-    })
 }

@@ -43,12 +43,12 @@ import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.gson.gson
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
+import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
 import io.nekohasekai.sagernet.fmt.shadowtls.ShadowTLSBean
@@ -111,7 +111,6 @@ import io.nekohasekai.sagernet.ktx.getBoolean
 import io.nekohasekai.sagernet.ktx.getInt
 import io.nekohasekai.sagernet.ktx.getObject
 import io.nekohasekai.sagernet.ktx.getString
-import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
@@ -973,6 +972,12 @@ fun buildV2RayConfig(
                                         "grpc" -> {
                                             grpcSettings = GrpcObject().apply {
                                                 serviceName = bean.grpcServiceName
+                                                if (DataStore.grpcServiceNameCompat || bean.grpcServiceNameCompat) {
+                                                    serviceNameCompat = true
+                                                }
+                                                if (bean.grpcMultiMode) {
+                                                    multiMode = true
+                                                }
                                             }
                                         }
                                         "meek" -> {
@@ -1215,7 +1220,7 @@ fun buildV2RayConfig(
                                                 password = bean.obfs
                                             }
                                         }
-                                        if (bean.serverPorts.isValidHysteriaMultiPort() && DataStore.hysteriaEnablePortHopping) {
+                                        if (bean.serverPorts.isNotEmpty()) {
                                             hopPorts = bean.serverPorts
                                             if (bean.hopInterval > 0) {
                                                 hopInterval = bean.hopInterval
@@ -1516,7 +1521,6 @@ fun buildV2RayConfig(
                                         port = bean.serverPort
                                         uuid = bean.uuid
                                         password = bean.password
-                                        congestionControl = bean.congestionControl
                                         tlsSettings = TLSObject().apply {
                                             if (bean.sni.isNotEmpty()) {
                                                 serverName = bean.sni
@@ -1568,6 +1572,36 @@ fun buildV2RayConfig(
                                             if (bean.echConfig.isNotEmpty()) {
                                                 echConfig = bean.echConfig
                                             }
+                                        }
+                                    }
+                                )
+                            } else if (bean is MieruBean) {
+                                protocol = "mieru"
+                                settings = LazyOutboundConfigurationObject(this,
+                                    V2RayConfig.MieruOutboundConfigurationObject().apply {
+                                        address = bean.serverAddress
+                                        if (bean.portRange.isNotEmpty()) {
+                                            portRange = bean.portRange.listByLineOrComma()
+                                        } else {
+                                            port = bean.serverPort
+                                        }
+                                        username = bean.username
+                                        password = bean.password
+                                        when (bean.protocol) {
+                                            MieruBean.PROTOCOL_TCP -> protocol = "tcp"
+                                            MieruBean.PROTOCOL_UDP -> protocol = "udp"
+                                        }
+                                        when (bean.multiplexingLevel) {
+                                            MieruBean.MULTIPLEXING_DEFAULT -> multiplexing = "default"
+                                            MieruBean.MULTIPLEXING_OFF -> multiplexing = "off"
+                                            MieruBean.MULTIPLEXING_LOW -> multiplexing = "low"
+                                            MieruBean.MULTIPLEXING_MIDDLE -> multiplexing = "middle"
+                                            MieruBean.MULTIPLEXING_HIGH -> multiplexing = "high"
+                                        }
+                                        when (bean.handshakeMode) {
+                                            MieruBean.HANDSHAKE_DEFAULT -> handshakeMode = "default"
+                                            MieruBean.HANDSHAKE_STANDARD -> handshakeMode = "standard"
+                                            MieruBean.HANDSHAKE_NO_WAIT -> handshakeMode = "nowait"
                                         }
                                     }
                                 )
@@ -1661,17 +1695,7 @@ fun buildV2RayConfig(
                             DokodemoDoorInboundConfigurationObject().apply {
                                 address = bean.serverAddress
                                 network = bean.network()
-                                port = when (bean) {
-                                    is HysteriaBean -> {
-                                        bean.serverPorts.toHysteriaPort()
-                                    }
-                                    is Hysteria2Bean -> {
-                                        bean.serverPorts.toHysteriaPort()
-                                    }
-                                    else -> {
-                                        bean.serverPort
-                                    }
-                                }
+                                port = bean.serverPort
                             })
 
                         pastInboundTag = tag
@@ -1690,11 +1714,7 @@ fun buildV2RayConfig(
                             DokodemoDoorInboundConfigurationObject().apply {
                                 address = bean.serverAddress
                                 network = bean.network()
-                                port = when (bean) {
-                                    is HysteriaBean -> bean.serverPorts.toHysteriaPort()
-                                    is Hysteria2Bean -> bean.serverPorts.toHysteriaPort()
-                                    else -> bean.serverPort
-                                }
+                                port = bean.serverPort
                             })
                         routing.rules.add(RoutingObject.RuleObject().apply {
                             type = "field"

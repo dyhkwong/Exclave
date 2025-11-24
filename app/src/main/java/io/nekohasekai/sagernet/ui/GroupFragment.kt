@@ -37,7 +37,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.SubscriptionType
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.GroupManager
 import io.nekohasekai.sagernet.database.ProxyGroup
@@ -387,7 +386,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
         val groupName = binding.groupName
         val groupStatus = binding.groupStatus
         val groupTraffic = binding.groupTraffic
-        val groupUser = binding.groupUser
         val editButton = binding.edit
         val optionsButton = binding.options
         val updateButton = binding.groupUpdate
@@ -517,10 +515,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                     popup.menu.findItem(R.id.action_share).subMenu?.removeItem(R.id.action_subscription_link)
                 }
 
-                if (proxyGroup.type == GroupType.SUBSCRIPTION && proxyGroup.subscription!!.type == SubscriptionType.OOCv1) {
-                    popup.menu.findItem(R.id.action_share).subMenu?.removeItem(R.id.action_subscription_link)
-                }
-
                 popup.setOnMenuItemClickListener(this)
                 popup.show()
             }
@@ -599,8 +593,6 @@ class GroupFragment : ToolbarFragment(R.layout.layout_group),
                 groupTraffic.isVisible = false
                 groupStatus.setPadding(0, 0, 0, dp2px(4))
             }
-
-            groupUser.text = subscription?.username ?: ""
 
             runOnDefaultDispatcher {
                 val size = SagerDatabase.proxyDao.countByGroup(group.id)

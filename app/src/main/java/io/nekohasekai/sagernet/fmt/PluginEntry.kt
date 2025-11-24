@@ -26,15 +26,7 @@ enum class PluginEntry(
     val pluginId: String,
     @StringRes val nameId: Int,
 ) {
-    TrojanGo("trojan-go-plugin", R.string.action_trojan_go),
     NaiveProxy("naive-plugin", R.string.action_naive),
-    Brook("brook-plugin", R.string.action_brook),
-    Hysteria("hysteria-plugin", R.string.action_hysteria),
-    Hysteria2("hysteria2-plugin", R.string.action_hysteria2),
-    Mieru("mieru-plugin", R.string.action_mieru),
-    TUIC("tuic-plugin", R.string.action_tuic),
-    TUIC5("tuic5-plugin", R.string.action_tuic5),
-    Juicity("juicity-plugin", R.string.action_juicity),
     ShadowQUIC("shadowquic-plugin", R.string.action_shadowquic);
 
     companion object {

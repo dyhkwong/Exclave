@@ -31,15 +31,7 @@ import androidx.core.text.isDigitsOnly
 
 object Executable {
     private val EXECUTABLES = setOf(
-        "libtrojan-go.so",
         "libnaive.so",
-        "libbrook.so",
-        "libhysteria.so",
-        "libhysteria2.so",
-        "libmieru.so",
-        "libtuic.so",
-        "libtuic5.so",
-        "libjuicity.so",
         "libshadowquic.so",
     )
 

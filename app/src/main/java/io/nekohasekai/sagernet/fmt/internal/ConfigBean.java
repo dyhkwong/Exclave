@@ -24,8 +24,6 @@ import androidx.annotation.NonNull;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import io.nekohasekai.sagernet.ProtocolProvider;
-import io.nekohasekai.sagernet.database.DataStore;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class ConfigBean extends InternalBean {

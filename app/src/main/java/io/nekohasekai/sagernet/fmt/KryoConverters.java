@@ -30,10 +30,8 @@ import java.io.ByteArrayOutputStream;
 
 import io.nekohasekai.sagernet.database.SubscriptionBean;
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean;
-import io.nekohasekai.sagernet.fmt.brook.BrookBean;
 import io.nekohasekai.sagernet.fmt.http.HttpBean;
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean;
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean;
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean;
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean;
 import io.nekohasekai.sagernet.fmt.internal.ChainBean;
@@ -47,8 +45,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean;
-import io.nekohasekai.sagernet.fmt.tuic.TuicBean;
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean;
 import io.nekohasekai.sagernet.fmt.shadowtls.ShadowTLSBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean;
@@ -128,27 +124,9 @@ public class KryoConverters {
     }
 
     @TypeConverter
-    public static TrojanGoBean trojanGoDeserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return deserialize(new TrojanGoBean(), bytes);
-    }
-
-    @TypeConverter
     public static NaiveBean naiveDeserialize(byte[] bytes) {
         if (bytes == null || bytes.length == 0) return null;
         return deserialize(new NaiveBean(), bytes);
-    }
-
-    @TypeConverter
-    public static BrookBean brookDeserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return deserialize(new BrookBean(), bytes);
-    }
-
-    @TypeConverter
-    public static HysteriaBean hysteriaDeserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return deserialize(new HysteriaBean(), bytes);
     }
 
     @TypeConverter
@@ -173,12 +151,6 @@ public class KryoConverters {
     public static MieruBean mieruDeserialize(byte[] bytes) {
         if (bytes == null || bytes.length == 0) return null;
         return deserialize(new MieruBean(), bytes);
-    }
-
-    @TypeConverter
-    public static TuicBean tuicDeserialize(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
-        return deserialize(new TuicBean(), bytes);
     }
 
     @TypeConverter

@@ -29,7 +29,6 @@ import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class ShadowTLSBean extends AbstractBean {
 
-    public static final int PROTOCOL_VERSION_1 = 1;
     public static final int PROTOCOL_VERSION_2 = 2;
     public static final int PROTOCOL_VERSION_3 = 3;
 
@@ -48,7 +47,7 @@ public class ShadowTLSBean extends AbstractBean {
         if (alpn == null) alpn = "";
         if (allowInsecure == null) allowInsecure = false;
         if (certificates == null) certificates = "";
-        if (protocolVersion == null) protocolVersion = PROTOCOL_VERSION_1;
+        if (protocolVersion == null) protocolVersion = PROTOCOL_VERSION_2;
     }
 
     @Override

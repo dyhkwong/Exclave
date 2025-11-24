@@ -78,9 +78,8 @@ abstract class GroupUpdater {
                 try {
                     when (subscription.type) {
                         SubscriptionType.RAW -> RawUpdater
-                        SubscriptionType.OOCv1 -> OpenOnlineConfigUpdater
                         SubscriptionType.SIP008 -> SIP008Updater
-                        else -> error("wtf")
+                        else -> error("unsupported")
                     }.doUpdate(proxyGroup, subscription, userInterface, byUser)
                     true
                 } catch (e: Throwable) {

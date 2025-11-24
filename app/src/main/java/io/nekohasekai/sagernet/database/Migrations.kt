@@ -127,3 +127,23 @@ class SagerDatabase_Migration_14_15 : AutoMigrationSpec
     )
 )
 class SagerDatabase_Migration_22_23 : AutoMigrationSpec
+
+@DeleteColumn.Entries(
+    DeleteColumn(
+        tableName = "proxy_entities",
+        columnName = "trojanGoBean"
+    ),
+    DeleteColumn(
+        tableName = "proxy_entities",
+        columnName = "brookBean"
+    ),
+    DeleteColumn(
+        tableName = "proxy_entities",
+        columnName = "hysteriaBean"
+    ),
+    DeleteColumn(
+        tableName = "proxy_entities",
+        columnName = "tuicBean"
+    )
+)
+class SagerDatabase_Migration_31_32 : AutoMigrationSpec

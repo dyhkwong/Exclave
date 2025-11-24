@@ -24,7 +24,6 @@ import androidx.preference.EditTextPreference
 import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
@@ -42,7 +41,6 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         DataStore.serverPassword = password
         DataStore.serverSNI = sni
         DataStore.serverAllowInsecure = allowInsecure
-        DataStore.serverJuicityCongestionControl = congestionControl
         DataStore.serverCertificates = certificates
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
@@ -60,7 +58,6 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         password = DataStore.serverPassword
         sni = DataStore.serverSNI
         allowInsecure = DataStore.serverAllowInsecure
-        congestionControl = DataStore.serverJuicityCongestionControl
         certificates = DataStore.serverCertificates
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
@@ -69,9 +66,6 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
     }
-
-    lateinit var pinnedCertificateChain: EditTextPreference
-    lateinit var allowInsecure: SwitchPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,

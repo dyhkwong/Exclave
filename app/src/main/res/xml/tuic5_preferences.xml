@@ -7,7 +7,6 @@
         app:useSimpleSummaryProvider="true" />
 
     <PreferenceCategory app:title="@string/proxy_cat">
-
         <EditTextPreference
             app:icon="@drawable/ic_hardware_router"
             app:key="serverAddress"
@@ -72,11 +71,6 @@
             app:key="serverAllowInsecure"
             app:summary="@string/allow_insecure_sum"
             app:title="@string/allow_insecure" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:title="@string/core_settings"
-        app:summary="@string/core_settings_sum">
         <EditTextPreference
             app:dialogMessage="@string/pinned_peer_certificate_sha256_hex_dialog_message"
             app:icon="@drawable/ic_baseline_push_pin_24"
@@ -110,26 +104,6 @@
             app:key="serverEchConfig"
             app:title="@string/ech_config"
             app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:title="@string/plugin_settings"
-        app:summary="@string/plugin_settings_sum">
-        <EditTextPreference
-            app:icon="@drawable/baseline_public_24"
-            app:key="serverMTU"
-            app:title="@string/mtu"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:key="serverSingUotCategory"
-        app:title="sing-uot settings"
-        app:summary="@string/core_settings_sum">
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="serverSingUot"
-            app:title="Enable UDP over stream" />
     </PreferenceCategory>
 
 </PreferenceScreen>

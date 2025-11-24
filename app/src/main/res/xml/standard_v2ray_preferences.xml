@@ -284,6 +284,20 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        app:key="serverGrpcCategory"
+        app:title="@string/cag_grpc">
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_format_align_left_24"
+            app:key="serverGrpcServiceNameCompat"
+            app:title="@string/grpc_service_name_compat"
+            app:summary="@string/grpc_service_name_compat_sum" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_format_align_left_24"
+            app:key="serverGrpcMultiMode"
+            app:title="@string/grpc_multi_mode" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:key="serverVMessExperimentsCategory"
         app:title="@string/experimental_settings">
         <SwitchPreference

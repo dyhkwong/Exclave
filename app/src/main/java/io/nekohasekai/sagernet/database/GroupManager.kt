@@ -36,7 +36,6 @@ object GroupManager {
 
     interface Interface {
         suspend fun confirm(message: String): Boolean
-        suspend fun alert(message: String)
         suspend fun onUpdateSuccess(
             group: ProxyGroup,
             changed: Int,

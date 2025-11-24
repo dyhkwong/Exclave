@@ -69,6 +69,14 @@ public class HttpBean extends StandardV2RayBean {
         }
     }
 
+    public String protocolName() {
+        if (security.equals("tls")) {
+            return "HTTPS";
+        } else {
+            return "HTTP";
+        }
+    }
+
     @NotNull
     @Override
     public HttpBean clone() {

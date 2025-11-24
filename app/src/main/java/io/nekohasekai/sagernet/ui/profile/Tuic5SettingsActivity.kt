@@ -47,7 +47,6 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         DataStore.serverDisableSNI = disableSNI
         DataStore.serverSNI = sni
         DataStore.serverReduceRTT = zeroRTTHandshake
-        DataStore.serverMTU = mtu
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
@@ -71,7 +70,6 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         disableSNI = DataStore.serverDisableSNI
         sni = DataStore.serverSNI
         zeroRTTHandshake = DataStore.serverReduceRTT
-        mtu = DataStore.serverMTU
         allowInsecure = DataStore.serverAllowInsecure
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey

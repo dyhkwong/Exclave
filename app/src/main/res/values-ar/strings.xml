@@ -214,7 +214,6 @@
     <string name="route_not_asset">ليس ملف أصل: استثناء .dat، لكن %s</string>
     <string name="hysteria_download_mbps">أقصى سرعة تنزيل (بالميجابت في الثانية)</string>
     <string name="hysteria_upload_mbps">أقصى سرعة تحميل (بالميجابت في الثانية)</string>
-    <string name="hysteria_auth_payload">حمولة المصادقة</string>
     <string name="hysteria_auth_type">نوع المصادقة</string>
     <string name="hysteria_obfs">كلمة مرور التشويش</string>
     <plurals name="apps_message">
@@ -234,19 +233,10 @@
     <string name="subscription_import">اشتراك الاستيراد</string>
     <string name="subscription_traffic">%s مستخدمة / %s متبقية</string>
     <string name="subscription_used">%s مستخدمة</string>
-    <string name="group_filter_tags_nf">لا توجد علامات في هذا الاشتراك</string>
-    <string name="group_filter_groups_nf">لا توجد مجموعات في هذا الاشتراك</string>
-    <string name="group_filter_ns">مطلوب اشتراك OOCv1 لاستخدام ميزة التصفية</string>
-    <string name="group_filter_tags">العلامات</string>
-    <string name="group_filter_groups">مجموعات</string>
-    <string name="group_filter">التكرير</string>
     <string name="subscription_update_message">جاري تحديث %s …</string>
     <string name="subscription_update">تحديث الاشتراك</string>
     <string name="service_subscription">خدمة تحديث الاشتراك</string>
-    <string name="ooc_missing_protocol">يتطلب الاشتراك دعم البروتوكول %s، ولكن لا يمكن العثور عليه. سيتم تجاهل الملفات الشخصية غير المدعومة.</string>
-    <string name="ooc_warning">تحذير</string>
     <string name="update_subscription_warning">البروکسی غير متصل، هل أنت متأكد أنك تريد متابعة التحديث؟</string>
-    <string name="ooc_subscription_token_invalid">رمز OOCv1 غير صالح</string>
     <string name="profile_requiring_plugin">يتطلب ملف التعريف %s تثبيت المكون الإضافي %s، لكن لم يتم العثور عليه.</string>
     <string name="missing_plugin">في عداد المفقودين المكونات في</string>
     <string name="confirm">أكد</string>
@@ -375,9 +365,6 @@
     <string name="group_order_by_name">بالاسم</string>
     <string name="group_order_origin">أصل</string>
     <string name="group_order">ترتيب</string>
-    <string name="hysteria_disable_mtu_discovery">تعطيل اكتشاف MTU للمسار</string>
-    <string name="hysteria_connection_receive_window">نافذة تلقي اتصال QUIC</string>
-    <string name="hysteria_stream_receive_window">نافذة تلقي دفق QUIC</string>
     <string name="menu_traffic">مرور</string>
     <string name="no_statistics">لا توجد إحصاءات حتى الآن</string>
     <string name="traffic_statistics_summary">قد يزيد من استهلاك الطاقة</string>
@@ -390,7 +377,6 @@
     <string name="ssh_auth_type_none">لا شيء</string>
     <string name="probe_url">اختبار URL مخصص</string>
     <string name="route_play_store">قاعدة متجر Play لـ %s</string>
-    <string name="group_filter_owners">أصحاب</string>
     <string name="app_statistics_disabled">تم تعطيل إحصاءات حركة مرور التطبيق</string>
     <string name="profile_traffic_statistics">إحصائيات حركة المرور الشخصية</string>
     <string name="profile_traffic_statistics_summary">عند تعطيله، لن يتم احتساب حركة المرور المستخدمة</string>
@@ -399,7 +385,6 @@
     <string name="wireguard_local_address">العنوان المحلي</string>
     <string name="wireguard_public_key">المفتاح العام للأقران</string>
     <string name="wireguard_psk">مفتاح الأقران المشترك مسبقا</string>
-    <string name="group_filter_owners_nf">لا يوجد مالكون في هذا الاشتراك</string>
     <string name="language">اللغة</string>
     <string name="language_system_default">الإعداد التلقائي للنظام</string>
     <string name="fileSize_byte">بايت</string>

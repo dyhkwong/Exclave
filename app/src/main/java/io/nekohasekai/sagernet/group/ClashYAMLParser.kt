@@ -24,7 +24,6 @@ import com.github.shadowsocks.plugin.PluginOptions
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
@@ -36,10 +35,6 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.supportedShadowsocksRProtocol
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
-import io.nekohasekai.sagernet.fmt.tuic.TuicBean
-import io.nekohasekai.sagernet.fmt.tuic.supportedTuicCongestionControl
-import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
 import io.nekohasekai.sagernet.fmt.tuic5.supportedTuic5CongestionControl
 import io.nekohasekai.sagernet.fmt.tuic5.supportedTuic5RelayMode
@@ -380,26 +375,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
             if (bean is TrojanBean) {
                 proxy.getObject("ss-opts")?.also {
                     if (it.getBoolean("enabled") == true) {
-                        if (bean.security != "tls") {
-                            // unsupported
-                            return listOf()
-                        }
-                        val ssMethod = when (val method = it.getString("method")?.lowercase()) {
-                            "aes-128-gcm", "aes-256-gcm", "chacha20-ietf-poly1305" -> method
-                            "aead_aes_128_gcm", "" -> "aes-128-gcm"
-                            "aead_aes_256_gcm" -> "aes-256-gcm"
-                            "aead_chacha20_poly1305" -> "chacha20-ietf-poly1305"
-                            else -> return listOf()
-                        }
-                        val ssPassword = it.getString("password") ?: ""
-                        return listOf(TrojanGoBean().apply {
-                            serverAddress = bean.serverAddress
-                            serverPort = bean.serverPort
-                            password = bean.password
-                            sni = bean.sni
-                            allowInsecure = bean.allowInsecure
-                            encryption = "ss;$ssMethod:$ssPassword"
-                        })
+                        return listOf()
                     }
                 }
             }
@@ -447,35 +423,6 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 name = proxy.getString("name")
             })
         }
-        "hysteria" -> {
-            return listOf(HysteriaBean().apply {
-                serverAddress = proxy.getString("server") ?: return listOf()
-                serverPorts = (proxy.getString("ports")?.takeIf { it.isValidHysteriaPort() }
-                    ?: proxy.getInt("port")?.takeIf { it > 0 }?.toString()) ?: return listOf()
-                (proxy.getString("protocol") ?: proxy.getString("obfs-protocol"))?.also {
-                    protocol = when (it) {
-                        "faketcp" -> HysteriaBean.PROTOCOL_FAKETCP
-                        "wechat-video" -> HysteriaBean.PROTOCOL_WECHAT_VIDEO
-                        "udp", "" -> HysteriaBean.PROTOCOL_UDP
-                        else -> return listOf()
-                    }
-                }
-                proxy.getString("auth-str")?.takeIf { it.isNotEmpty() }?.also {
-                    authPayloadType = HysteriaBean.TYPE_STRING
-                    authPayload = it
-                }
-                proxy.getString("auth")?.takeIf { it.isNotEmpty() }?.also {
-                    authPayloadType = HysteriaBean.TYPE_BASE64
-                    authPayload = it
-                }
-                sni = proxy.getString("sni")
-                alpn = proxy.getStringArray("alpn")?.get(0)
-                allowInsecure = proxy.getBoolean("skip-cert-verify") == true
-                obfuscation = proxy.getString("obfs")?.takeIf { it.isNotEmpty() }
-                hopInterval = proxy.getString("hop-interval")?.toUIntOrNull()?.toLong()?.takeIf { it > 0 }
-                name = proxy.getString("name")
-            })
-        }
         "hysteria2" -> {
             return listOf(Hysteria2Bean().apply {
                 serverAddress = proxy.getString("server") ?: return listOf()
@@ -519,27 +466,8 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
         }
         "tuic" -> {
             if (proxy.getString("token") != null) {
-                return listOf(TuicBean().apply {
-                    serverAddress = proxy.getString("ip") ?: proxy.getString("server") ?: return listOf()
-                    serverPort = proxy.getInt("port")?.takeIf { it > 0 } ?: return listOf()
-                    token = proxy.getString("token")
-                    udpRelayMode = when (val mode = proxy.getString("udp-relay-mode")) {
-                        in supportedTuicRelayMode -> mode
-                        else -> "native"
-                    }
-                    congestionController = when (val controller = proxy.getString("congestion-controller")) {
-                        in supportedTuicCongestionControl -> controller
-                        else -> "cubic"
-                    }
-                    disableSNI = proxy.getBoolean("disable-sni") == true
-                    reduceRTT = proxy.getBoolean("reduce-rtt") == true
-                    // allowInsecure = proxy.getClashBool("skip-cert-verify") == true
-                    sni = proxy.getString("sni")
-                        ?: (if (proxy.getString("ip") != null) proxy.getString("server") else null)
-                    // https://github.com/MetaCubeX/mihomo/blob/d5243adf8911563677d3bd190b82623c93e554b7/adapter/outbound/tuic.go#L174-L178
-                    alpn = if (!proxy.contains("alpn")) "h3" else proxy.getStringArray("alpn")?.joinToString("\n")
-                    name = proxy.getString("name")
-                })
+                // v4, unsupported
+                return listOf()
             } else {
                 return listOf(Tuic5Bean().apply {
                     serverAddress = proxy.getString("ip") ?: proxy.getString("server") ?: return listOf()
@@ -588,18 +516,18 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
         "mieru" -> {
             return listOf(MieruBean().apply {
                 serverAddress = proxy.getString("server") ?: return listOf()
-                // Why yet another protocol containing port-range? Let us use the first port only for now.
-                serverPort = ((proxy.getInt("port")?.takeIf { it > 0 }
-                    ?: proxy.getString("port")?.substringBefore("-")?.toIntOrNull())
-                    ?: proxy.getString("port-range")?.substringBefore("-")?.toIntOrNull())
-                    ?: return listOf()
+                serverPort = proxy.getInt("port")
+                portRange = proxy.getStringArray("port-range")?.joinToString("\n")
+                if (serverPort == null && portRange == null) {
+                    return listOf()
+                }
                 username = proxy.getString("username")
                 password = proxy.getString("password")
                 protocol = MieruBean.PROTOCOL_TCP
                 proxy.getString("transport")?.also {
                     protocol = when (it) {
                         "TCP", "" -> MieruBean.PROTOCOL_TCP
-                        "UDP" -> MieruBean.PROTOCOL_UDP // not implemented as of mihomo v1.19.0
+                        "UDP" -> MieruBean.PROTOCOL_UDP
                         else -> return listOf()
                     }
                 }

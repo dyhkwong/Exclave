@@ -194,7 +194,6 @@
     <string name="plugin_unknown">plugin tidak ada %s</string>
     <string name="circular_reference_sum">Rute tidak dapat berisi dirinya sendiri.</string>
     <string name="action_import_msg">Impor berhasil!</string>
-    <string name="ooc_warning">Peringatan</string>
     <string name="subscriptions">Langganan</string>
     <string name="apply">Terapkan</string>
     <string name="restart">Muat ulang layanan proksi untuk menerapkan perubahan</string>
@@ -226,7 +225,6 @@
     <string name="route_play_store">Aturan Play Store untuk %s</string>
     <string name="raw">Mentah</string>
     <string name="subscription_user_agent">Agen pengguna</string>
-    <string name="ooc_missing_protocol">Langganan memerlukan dukungan untuk protokol %s, tetapi tidak dapat ditemukan. Profil yang tidak didukung akan diabaikan.</string>
     <string name="subscription_import_message">Konfirmasikan Anda ingin mengimpor langganan %s\? Jika Anda berasal dari sumber yang tidak tepercaya, melakukan hal ini dapat mengakibatkan IP Anda dan perilaku ini bocor.</string>
     <string name="group_basic">Dasar</string>
     <string name="group_settings">Pengaturan Grup</string>
@@ -286,19 +284,10 @@
     <string name="confirm">Konfirmasi</string>
     <string name="missing_plugin">Tidak Ada Plugin</string>
     <string name="profile_requiring_plugin">Profil %s membutuhkan plugin %s untuk dipasang, tetapi tidak ditemukan.</string>
-    <string name="ooc_subscription_token_invalid">Token OOCv1 tidak valid</string>
     <string name="update_subscription_warning">Proksi tidak terhubung, apakah Anda yakin ingin melanjutkan pembaruan\?</string>
     <string name="service_subscription">Layanan Pembaruan Langganan</string>
     <string name="subscription_update">Pembaruan Langganan</string>
     <string name="subscription_update_message">Memperbarui %s …</string>
-    <string name="group_filter">Filter</string>
-    <string name="group_filter_groups">Grup</string>
-    <string name="group_filter_tags">Tag</string>
-    <string name="group_filter_owners">Pemilik</string>
-    <string name="group_filter_ns">Langganan OOCv1 diperlukan untuk menggunakan fitur penyaringan</string>
-    <string name="group_filter_groups_nf">Tidak ada grup dalam langganan ini</string>
-    <string name="group_filter_tags_nf">Tidak ada tag dalam langganan ini</string>
-    <string name="group_filter_owners_nf">Tidak ada pemilik dalam langganan ini</string>
     <string name="subscription_used">%s Digunakan</string>
     <string name="subscription_import">Impor langganan</string>
     <string name="profile_import_message">Konfirmasikan Anda ingin mengimpor profil %s\?</string>
@@ -310,7 +299,6 @@
     </plurals>
     <string name="hysteria_obfs">Kata Sandi Pengaburan</string>
     <string name="hysteria_auth_type">Jenis Autentikasi</string>
-    <string name="hysteria_auth_payload">Otentikasi Payload</string>
     <string name="experimental_settings">Eksperimental</string>
     <string name="flow">Algoritme kontrol aliran</string>
     <string name="nat_filtering_behaviour">Perilaku penyaringan NAT</string>
@@ -365,11 +353,8 @@
 \n
 \nOpsi ini memetakan ulang 6 byte pertama IV menjadi karakter yang dapat dicetak, sehingga memungkinkan bagi siapa pun di jalur jaringan istimewa untuk mengidentifikasi protokol saat diaktifkan.</string>
     <string name="udp_over_tcp">UDP Melalui TCP</string>
-    <string name="without_brook_protocol">Tanpa Protokol Brook</string>
     <string name="tuic_udp_relay_mode">Mode Relai UDP</string>
-    <string name="tuic_token">Token</string>
     <string name="tuic_disable_sni">Nonaktifkan SNI</string>
-    <string name="tuic_reduce_rtt">Mengurangi RTT</string>
     <string name="tuic_congestion_controller">Congestion Controller</string>
     <string name="route_for">Aturan untuk %s</string>
     <string name="tasker_settings">Pengaturan Tugas</string>
@@ -380,9 +365,7 @@
     <string name="tasker_blurb_start_profile">Mulai profil %s</string>
     <string name="root_ca_provider">Penyedia Sertifikat Root CA</string>
     <string name="mtu">MTU</string>
-    <string name="hysteria_stream_receive_window">Jendela Penerimaan Aliran QUIC</string>
     <string name="experimental_no_termination_signal">Jangan kirim sinyal terminasi dupleks koneksi tunggal untuk koneksi TCP saat ditransfer melalui VMess. Ini akan merusak beberapa aplikasi.</string>
-    <string name="hysteria_connection_receive_window">Jendela Penerimaan Koneksi QUIC</string>
     <string name="group_order_origin">Asal</string>
     <string name="group_order_by_delay">Berdasarkan Delay</string>
     <string name="copy_label">Salin Nama</string>
@@ -406,7 +389,6 @@
     <string name="pcap_notice">File Pcap akan disimpan ke %s</string>
     <string name="tools_network">Jaringan</string>
     <string name="action_switch">Beralih</string>
-    <string name="hysteria_disable_mtu_discovery">Nonaktifkan Path MTU Discovery(Jalur Penemuan MTU)</string>
     <string name="group_order_by_name">Berdasarkan Nama</string>
     <string name="route_need_vpn">Aturan perutean `%s` bergantung pada VPN yang berlaku, sehingga diabaikan.</string>
     <string name="naive_insecure_concurrency_summary">Gunakan koneksi terowongan konkuren N agar lebih kuat dalam kondisi jaringan yang buruk. Lebih banyak koneksi membuat tunneling lebih mudah dideteksi dan kurang aman. Proyek ini mengupayakan keamanan terkuat terhadap analisis lalu lintas. Menggunakannya dengan cara yang tidak aman mengalahkan tujuannya.

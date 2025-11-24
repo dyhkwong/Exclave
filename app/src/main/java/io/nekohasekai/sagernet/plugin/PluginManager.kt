@@ -173,15 +173,7 @@ object PluginManager {
 
     private fun initNativeInternal(pluginId: String): String? {
         return when (pluginId) {
-            "brook-plugin" -> "libbrook.so"
-            "hysteria-plugin" -> "libhysteria.so"
-            "hysteria2-plugin" -> "libhysteria2.so"
-            "juicity-plugin" -> "libjuicity.so"
-            "mieru-plugin" -> "libmieru.so"
             "naive-plugin" -> "libnaive.so"
-            "trojan-go-plugin" -> "libtrojan-go.so"
-            "tuic-plugin" -> "libtuic.so"
-            "tuic5-plugin" -> "libtuic5.so"
             "shadowquic-plugin" -> "libshadowquic.so"
             else -> return null
         }.let {

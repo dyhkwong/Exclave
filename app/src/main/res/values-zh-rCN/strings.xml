@@ -274,19 +274,10 @@
     <string name="confirm">确认</string>
     <string name="missing_plugin">缺少插件</string>
     <string name="profile_requiring_plugin">配置 %s 需要插件 %s，但找不到。</string>
-    <string name="ooc_subscription_token_invalid">无效的 OOCv1 令牌</string>
-    <string name="ooc_warning">警告</string>
-    <string name="ooc_missing_protocol">该订阅要求 %s 协议支持，但找不到。不支持的配置将被忽略。</string>
     <string name="service_subscription">订阅更新服务</string>
     <string name="subscription_update">订阅更新</string>
     <string name="subscription_update_message">正在更新 %s……</string>
     <string name="update_subscription_warning">代理未连接，您确定要继续更新吗？</string>
-    <string name="group_filter">筛选</string>
-    <string name="group_filter_groups">组</string>
-    <string name="group_filter_tags">标签</string>
-    <string name="group_filter_groups_nf">该订阅中没有分组</string>
-    <string name="group_filter_tags_nf">该订阅中没有标签</string>
-    <string name="group_filter_ns">您需要一个 OOCv1 订阅以使用筛选功能</string>
     <string name="subscription_used">已用 %s</string>
     <string name="subscription_traffic">已用 %s / 剩余 %s</string>
     <string name="subscription_import">导入订阅</string>
@@ -313,13 +304,9 @@
     </plurals>
     <string name="hysteria_obfs">混淆密码</string>
     <string name="hysteria_auth_type">认证类型</string>
-    <string name="hysteria_auth_payload">认证载荷</string>
     <string name="hysteria_upload_mbps">最大上传速度（Mbps）</string>
     <string name="hysteria_download_mbps">最大下载速度（Mbps）</string>
     <string name="experimental_settings">实验性设置</string>
-    <string name="hysteria_stream_receive_window">QUIC 流接收窗口</string>
-    <string name="hysteria_connection_receive_window">QUIC 连接接收窗口</string>
-    <string name="hysteria_disable_mtu_discovery">禁用路径 MTU 发现</string>
     <string name="group_order">排序</string>
     <string name="group_order_origin">原始</string>
     <string name="group_order_by_name">名称</string>
@@ -373,8 +360,6 @@
     <string name="pcap_notice">Pcap 文件将被保存到 %s</string>
     <string name="app_traffic_statistics">应用流量统计</string>
     <string name="profile_traffic_statistics">配置流量统计</string>
-    <string name="group_filter_owners">拥有者</string>
-    <string name="group_filter_owners_nf">该订阅中没有拥有者</string>
     <string name="stun_test_summary">使用 STUN 发现客户端的 RFC 5780 中定义的 NAT 映射行为和 NAT 过滤行为。</string>
     <string name="nat_mapping_behaviour">NAT 映射行为</string>
     <string name="nat_filtering_behaviour">NAT 过滤行为</string>
@@ -422,20 +407,12 @@
 \n
 \n这个选项将 IV 的前 6 个字节重新映射为可打印的字符，启用本选项后，私密网络路径上的任何人都有可能识别该协议。</string>
     <string name="action_switch">切换</string>
-    <string name="without_brook_protocol">不含 Brook 协议</string>
     <string name="udp_over_tcp">UDP over TCP</string>
     <string name="flow">Flow</string>
     <string name="tuic_disable_sni">禁用 SNI</string>
-    <string name="tuic_reduce_rtt">降低 RTT</string>
     <string name="tuic_congestion_controller">拥塞控制</string>
     <string name="tuic_udp_relay_mode">UDP 转发模式</string>
-    <string name="tuic_token">令牌</string>
     <string name="connection_test_url_test">URL 测试</string>
-    <string name="ooc_subscription_token">OOCv1 API 令牌</string>
-    <string name="hysteria_init_stream_receive_window">QUIC 初始流接收窗口</string>
-    <string name="hysteria_max_stream_receive_window">QUIC 最大流接收窗口</string>
-    <string name="hysteria_init_conn_receive_window">QUIC 初始连接接收窗口</string>
-    <string name="hysteria_max_conn_receive_window">QUIC 最大连接接收窗口</string>
     <string name="utls_fingerprint">uTLS 指纹</string>
     <string name="route_need_location_enabled">路由规则`%s`需要获取你的**Wi-Fi SSID**，但这需要**开启位置信息**</string>
     <string name="route_need_background_location">路由规则`%s`需要获取你的**Wi-Fi SSID**，但这需要**后台位置信息权限**</string>
@@ -456,12 +433,10 @@
     <string name="action_flash_off">关闭闪光灯</string>
     <string name="hysteria_hop_interval">端口跳跃间隔（秒）</string>
     <string name="connection_test_delete_unavailable">清理不可用配置</string>
-    <string name="hysteria2_provider">Hysteria 2 提供程序</string>
     <string name="nat_stun_server_hint">STUN 服务器</string>
     <string name="brook_udp_over_stream">UDP over stream</string>
     <string name="naive_no_post_quantum">禁用后量子密钥协商</string>
     <string name="hysteria2_password">Hysteria2 密码</string>
-    <string name="juicity_congestion_control">拥塞控制</string>
     <string name="nat_type">NAT 类型</string>
     <string name="stun_legacy_test">NAT 类型测试</string>
     <string name="stun_legacy_test_summary">使用 STUN 确定客户端的 RFC 3489 中定义的 NAT 类型。</string>
@@ -477,10 +452,6 @@
     <string name="mux_settings">Mux 设置</string>
     <string name="update_subscription">更新订阅</string>
     <string name="group_not_a_subscription">此分组不是订阅。</string>
-    <string name="plugin_settings">插件设置</string>
-    <string name="plugin_settings_sum">这些选项仅对插件生效。</string>
-    <string name="hysteria_enable_port_hopping_experimental">启用 Hysteria 端口跳跃（实验性）</string>
-    <string name="hysteria_enable_port_hopping_sum">这与链式代理不兼容。如果禁用，端口跳跃范围内的一个随机端口将会被使用。</string>
     <string name="enable_fragment">启用 TLS Client Hello 分片</string>
     <string name="enable_fragment_sum">可能有助于规避 SNI 审查。该选项可能在未来被移除。</string>
     <string name="fragment_length">分片长度</string>
@@ -500,7 +471,6 @@
     <string name="ech_doh_server">ECH DoH 服务器</string>
     <string name="splithttp_mode">模式</string>
     <string name="backup_all_profiles">备份所有配置</string>
-    <string name="tuic_v5_provider">TUIC v5 提供程序</string>
     <string name="browser_forwarder_hint">请从 v2ray-core 发行下载 v2ray-extra.zip 并将 index.html 和 index.js 放置到 Android/data/%s/files，或者将 index.html 和 index.js 导入为路由资源。</string>
     <string name="mieru_multiplexing_level">多路复用级别</string>
     <string name="route_asset_add">添加路由资源</string>
@@ -513,7 +483,6 @@
     <string name="route_asset_name">资源名称</string>
     <string name="route_asset_url">资源 URL</string>
     <string name="route_asset_settings">资源设置</string>
-    <string name="core">核心</string>
     <string name="cag_httpupgrade">HTTPUpgrade 设置</string>
     <string name="regular_expression_filter">名称排除（正则表达式）</string>
     <string name="root_ca_system_and_user">系统和用户</string>
@@ -577,9 +546,6 @@
     <string name="tls_record_fragmentation">TLS 记录分片</string>
     <string name="tcp_segmentation">TCP 分段</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">TLS 记录分片和 TCP 分段</string>
-    <string name="juicity_provider">Juicity 提供程序</string>
-    <string name="core_settings">核心设置</string>
-    <string name="core_settings_sum">这些选项仅对核心生效。</string>
     <string name="pinned_peer_certificate_public_key_sha256">固定证书公钥 SHA-256</string>
     <string name="pinned_peer_certificate_sha256">固定证书 SHA-256</string>
     <string name="pinned_peer_certificate_sha256_base64_dialog_message">如果证书本身无效则需要配合“跳过证书验证”使用。每行一个，Base64 编码。</string>
@@ -589,4 +555,9 @@
     <string name="delete_multi_confirm_prompt">您确定要删除这些服务器配置吗？</string>
     <string name="interrupt_reused_connections">网络变化时打断被复用的连接</string>
     <string name="create_shortcut">创建快捷方式</string>
+    <string name="mieru_port_range">服务器端口范围</string>
+    <string name="cag_grpc">gRPC 设置</string>
+    <string name="grpc_service_name_compat">gRPC service name 兼容性</string>
+    <string name="grpc_service_name_compat_sum">兼容 Xray 的破坏性变更，但破坏与非 Xray 服务端的兼容性。</string>
+    <string name="grpc_multi_mode">Multi 模式</string>
 </resources>

@@ -47,11 +47,6 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverUploadSpeed = uploadMbps
         DataStore.serverDownloadSpeed = downloadMbps
-        DataStore.serverDisableMtuDiscovery = disableMtuDiscovery
-        DataStore.serverInitStreamReceiveWindow = initStreamReceiveWindow
-        DataStore.serverMaxStreamReceiveWindow = maxStreamReceiveWindow
-        DataStore.serverInitConnReceiveWindow = initConnReceiveWindow
-        DataStore.serverMaxConnReceiveWindow = maxConnReceiveWindow
         DataStore.serverPorts = serverPorts
         DataStore.serverHopInterval = hopInterval
         DataStore.serverEchConfig = echConfig
@@ -73,11 +68,6 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         allowInsecure = DataStore.serverAllowInsecure
         uploadMbps = DataStore.serverUploadSpeed
         downloadMbps = DataStore.serverDownloadSpeed
-        disableMtuDiscovery = DataStore.serverDisableMtuDiscovery
-        initStreamReceiveWindow = DataStore.serverInitStreamReceiveWindow
-        maxStreamReceiveWindow = DataStore.serverMaxStreamReceiveWindow
-        initConnReceiveWindow = DataStore.serverInitConnReceiveWindow
-        maxConnReceiveWindow = DataStore.serverMaxConnReceiveWindow
         serverPorts = DataStore.serverPorts
         hopInterval = DataStore.serverHopInterval
         echConfig = DataStore.serverEchConfig
@@ -99,19 +89,6 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
         findPreference<EditTextPreference>(Key.SERVER_DOWNLOAD_SPEED)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        }
-
-        findPreference<EditTextPreference>(Key.SERVER_INIT_STREAM_RECEIVE_WINDOW)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        }
-        findPreference<EditTextPreference>(Key.SERVER_MAX_STREAM_RECEIVE_WINDOW)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        }
-        findPreference<EditTextPreference>(Key.SERVER_INIT_CONN_RECEIVE_WINDOW)!!.apply {
-            setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
-        }
-        findPreference<EditTextPreference>(Key.SERVER_MAX_CONN_RECEIVE_WINDOW)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
 

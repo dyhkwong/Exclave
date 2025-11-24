@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
-import io.nekohasekai.sagernet.ktx.NetsKt;
 
 public class Tuic5Bean extends AbstractBean {
 
@@ -40,7 +39,6 @@ public class Tuic5Bean extends AbstractBean {
     public String alpn;
     public Boolean disableSNI;
     public Boolean zeroRTTHandshake;
-    public Integer mtu;
     public String sni;
     public Boolean allowInsecure;
     public String echConfig;
@@ -62,7 +60,6 @@ public class Tuic5Bean extends AbstractBean {
         if (alpn == null) alpn = "";
         if (disableSNI == null) disableSNI = false;
         if (zeroRTTHandshake == null) zeroRTTHandshake = false;
-        if (mtu == null) mtu = 1500;
         if (sni == null) sni = "";
         if (allowInsecure == null) allowInsecure = false;
         if (echConfig == null) echConfig = "";
@@ -76,7 +73,7 @@ public class Tuic5Bean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeString(password);
         output.writeString(certificates);
@@ -85,7 +82,6 @@ public class Tuic5Bean extends AbstractBean {
         output.writeString(alpn);
         output.writeBoolean(disableSNI);
         output.writeBoolean(zeroRTTHandshake);
-        output.writeInt(mtu);
         output.writeString(sni);
         output.writeString(uuid);
         output.writeBoolean(allowInsecure);
@@ -109,7 +105,9 @@ public class Tuic5Bean extends AbstractBean {
         alpn = input.readString();
         disableSNI = input.readBoolean();
         zeroRTTHandshake = input.readBoolean();
-        mtu = input.readInt();
+        if (version < 4) {
+            input.readInt(); // mtu, removed
+        }
         sni = input.readString();
         uuid = input.readString();
         if (version >= 1) {
@@ -133,31 +131,6 @@ public class Tuic5Bean extends AbstractBean {
         return "udp";
     }
 
-    public boolean canUsePluginImplementation() {
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificatePublicKeySha256).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateChainSha256).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(pinnedPeerCertificateSha256).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(mtlsCertificate).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(mtlsCertificatePrivateKey).isEmpty()) {
-            return false;
-        }
-        if (!NetsKt.listByLineOrComma(echConfig).isEmpty()) {
-            return false;
-        }
-        if (singUDPOverStream) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof Tuic5Bean bean)) return;
@@ -165,7 +138,6 @@ public class Tuic5Bean extends AbstractBean {
             bean.certificates = certificates;
         }
         bean.zeroRTTHandshake = zeroRTTHandshake;
-        bean.mtu = mtu;
         if (allowInsecure) {
             bean.allowInsecure = true;
         }

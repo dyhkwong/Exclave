@@ -181,13 +181,7 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.TrojanSettingsActivity" />
         <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TrojanGoSettingsActivity" />
-        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.NaiveSettingsActivity" />
-        <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.BrookSettingsActivity" />
-        <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.HysteriaSettingsActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.Hysteria2SettingsActivity" />
         <activity
@@ -196,8 +190,6 @@
             android:name="io.nekohasekai.sagernet.ui.profile.WireGuardSettingsActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.MieruSettingsActivity" />
-        <activity
-            android:name="io.nekohasekai.sagernet.ui.profile.TuicSettingsActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.Tuic5SettingsActivity" />
         <activity

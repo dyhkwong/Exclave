@@ -140,6 +140,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverRealityFingerprint = realityFingerprint
         DataStore.serverRealityDisableX25519Mlkem768 = realityDisableX25519Mlkem768
 
+        DataStore.serverGrpcServiceNameCompat = grpcServiceNameCompat
+        DataStore.serverGrpcMultiMode = grpcMultiMode
+
         DataStore.serverUploadSpeed = hy2UpMbps
         DataStore.serverDownloadSpeed = hy2DownMbps
         DataStore.serverPassword = hy2Password
@@ -242,6 +245,9 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         realityFingerprint = DataStore.serverRealityFingerprint
         realityDisableX25519Mlkem768 = DataStore.serverRealityDisableX25519Mlkem768
 
+        grpcServiceNameCompat = DataStore.serverGrpcServiceNameCompat
+        grpcMultiMode = DataStore.serverGrpcMultiMode
+
         hy2UpMbps = DataStore.serverUploadSpeed
         hy2DownMbps = DataStore.serverDownloadSpeed
         hy2Password = DataStore.serverPassword
@@ -318,6 +324,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var splithttpCategory: PreferenceCategory
     lateinit var splithttpMode: SimpleMenuPreference
     lateinit var splithttpExtra: EditTextPreference
+    lateinit var grpcCategory: PreferenceCategory
     lateinit var ssExperimentsCategory: PreferenceCategory
 
     lateinit var plugin: PluginPreference
@@ -402,6 +409,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         splithttpCategory = findPreference(Key.SERVER_SH_CATEGORY)!!
         splithttpMode = findPreference(Key.SERVER_SPLITHTTP_MODE)!!
         splithttpExtra = findPreference(Key.SERVER_SPLITHTTP_EXTRA)!!
+
+        grpcCategory = findPreference(Key.SERVER_GRPC_CATAGORY)!!
 
         findPreference<SwitchPreference>(Key.SERVER_WS_BROWSER_FORWARDING)!!.setOnPreferenceChangeListener { _, newValue ->
             if (newValue as Boolean) {
@@ -620,6 +629,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         }
         // Do not translate this as it is not a stable string.
         splithttpExtra.dialogMessage = "`xmux` and `downloadSettings` are not supported."
+
+        grpcCategory.isVisible = network == "grpc"
 
         when (network) {
             "tcp" -> {

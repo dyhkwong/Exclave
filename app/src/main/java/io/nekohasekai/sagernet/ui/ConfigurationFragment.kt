@@ -442,26 +442,14 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_trojan -> {
                 startActivity(Intent(requireActivity(), TrojanSettingsActivity::class.java))
             }
-            R.id.action_new_trojan_go -> {
-                startActivity(Intent(requireActivity(), TrojanGoSettingsActivity::class.java))
-            }
             R.id.action_new_naive -> {
                 startActivity(Intent(requireActivity(), NaiveSettingsActivity::class.java))
-            }
-            R.id.action_new_brook -> {
-                startActivity(Intent(requireActivity(), BrookSettingsActivity::class.java))
-            }
-            R.id.action_new_hysteria -> {
-                startActivity(Intent(requireActivity(), HysteriaSettingsActivity::class.java))
             }
             R.id.action_new_hysteria2 -> {
                 startActivity(Intent(requireActivity(), Hysteria2SettingsActivity::class.java))
             }
             R.id.action_new_mieru -> {
                 startActivity(Intent(requireActivity(), MieruSettingsActivity::class.java))
-            }
-            R.id.action_new_tuic -> {
-                startActivity(Intent(requireActivity(), TuicSettingsActivity::class.java))
             }
             R.id.action_new_tuic5 -> {
                 startActivity(Intent(requireActivity(), Tuic5SettingsActivity::class.java))
@@ -632,137 +620,6 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_connection_url_test -> {
                 urlTest()
             }
-            R.id.action_filter_groups -> {
-                runOnDefaultDispatcher filter@{
-                    val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
-
-                    if (group.subscription?.type != SubscriptionType.OOCv1) {
-                        snackbar(getString(R.string.group_filter_ns)).show()
-                        return@filter
-                    }
-
-                    val subscription = group.subscription!!
-
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
-                    val groups = profiles.mapNotNull { it.requireBean().group }
-                        .toSet()
-                        .toTypedArray()
-                    val checked = groups.map { it in subscription.selectedGroups }.toBooleanArray()
-
-                    if (groups.isEmpty()) {
-                        snackbar(getString(R.string.group_filter_groups_nf)).show()
-                        return@filter
-                    }
-
-                    onMainDispatcher {
-
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_groups)
-                            .setMultiChoiceItems(groups, checked) { _, which, isChecked ->
-                                val selected = groups[which]
-                                if (isChecked) {
-                                    subscription.selectedGroups.add(selected)
-                                } else {
-                                    subscription.selectedGroups.remove(selected)
-                                }
-                            }
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                runOnDefaultDispatcher {
-                                    GroupManager.updateGroup(group)
-                                }
-                            }
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show()
-
-                    }
-
-                }
-            }
-            R.id.group_filter_owners -> {
-                runOnDefaultDispatcher filter@{
-                    val group = SagerDatabase.groupDao.getById(DataStore.currentGroupId())!!
-
-                    if (group.subscription?.type != SubscriptionType.OOCv1) {
-                        snackbar(getString(R.string.group_filter_ns)).show()
-                        return@filter
-                    }
-
-                    val subscription = group.subscription!!
-
-                    val profiles = SagerDatabase.proxyDao.getByGroup(DataStore.currentGroupId())
-                    val owners = profiles.mapNotNull { it.requireBean().owner }
-                        .toSet()
-                        .toTypedArray()
-                    val checked = owners.map { it in subscription.selectedOwners }.toBooleanArray()
-
-                    if (owners.isEmpty()) {
-                        snackbar(getString(R.string.group_filter_owners_nf)).show()
-                        return@filter
-                    }
-
-                    onMainDispatcher {
-
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_groups)
-                            .setMultiChoiceItems(owners, checked) { _, which, isChecked ->
-                                val selected = owners[which]
-                                if (isChecked) {
-                                    subscription.selectedOwners.add(selected)
-                                } else {
-                                    subscription.selectedOwners.remove(selected)
-                                }
-                            }
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                runOnDefaultDispatcher {
-                                    GroupManager.updateGroup(group)
-                                }
-                            }
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show()
-
-                    }
-
-                }
-            }
-            R.id.action_filter_tags -> {
-                runOnDefaultDispatcher filter@{
-                    val group = DataStore.currentGroup()
-                    if (group.subscription?.type != SubscriptionType.OOCv1) {
-                        snackbar(getString(R.string.group_filter_ns)).show()
-                        return@filter
-                    }
-
-                    val subscription = group.subscription!!
-                    val profiles = SagerDatabase.proxyDao.getByGroup(group.id)
-                    val groups = profiles.flatMap { it.requireBean().tags ?: listOf() }
-                        .toSet()
-                        .toTypedArray()
-                    val checked = groups.map { it in subscription.selectedTags }.toBooleanArray()
-                    if (groups.isEmpty()) {
-                        snackbar(getString(R.string.group_filter_tags_nf)).show()
-                        return@filter
-                    }
-
-                    onMainDispatcher {
-                        MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.group_filter_tags)
-                            .setMultiChoiceItems(groups, checked) { _, which, isChecked ->
-                                val selected = groups[which]
-                                if (isChecked) {
-                                    subscription.selectedTags.add(selected)
-                                } else {
-                                    subscription.selectedTags.remove(selected)
-                                }
-                            }
-                            .setPositiveButton(android.R.string.ok) { _, _ ->
-                                runOnDefaultDispatcher {
-                                    GroupManager.updateGroup(group)
-                                }
-                            }
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show()
-
-                    }
-
-                }
-            }
             R.id.action_update_subscription -> {
                 runOnDefaultDispatcher {
                     val currentGroup = DataStore.currentGroup()
@@ -918,22 +775,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                                 !(bean.type == "splithttp" && bean.shUseBrowserForwarder)
                     }
                     else -> true
-                }
-            }
-            if (group.subscription?.type == SubscriptionType.OOCv1) {
-                val subscription = group.subscription!!
-                if (subscription.selectedGroups.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().group in subscription.selectedGroups }
-                }
-                if (subscription.selectedOwners.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { it.requireBean().owner in subscription.selectedOwners }
-                }
-                if (subscription.selectedTags.isNotEmpty()) {
-                    profilesUnfiltered = profilesUnfiltered.filter { profile ->
-                        profile.requireBean().tags.containsAll(
-                            subscription.selectedTags
-                        )
-                    }
                 }
             }
             val profiles = ConcurrentLinkedQueue(profilesUnfiltered)
@@ -1534,22 +1375,6 @@ class ConfigurationFragment @JvmOverloads constructor(
 
 
                 var newProfiles = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
-                val subscription = proxyGroup.subscription
-                if (subscription != null) {
-                    if (subscription.selectedGroups.isNotEmpty()) {
-                        newProfiles = newProfiles.filter { it.requireBean().group in subscription.selectedGroups }
-                    }
-                    if (subscription.selectedOwners.isNotEmpty()) {
-                        newProfiles = newProfiles.filter { it.requireBean().owner in subscription.selectedOwners }
-                    }
-                    if (subscription.selectedTags.isNotEmpty()) {
-                        newProfiles = newProfiles.filter { profile ->
-                            profile.requireBean().tags.containsAll(
-                                subscription.selectedTags
-                            )
-                        }
-                    }
-                }
                 when (proxyGroup.order) {
                     GroupOrder.BY_NAME -> {
                         newProfiles = newProfiles.sortedBy { it.displayName() }
@@ -1710,11 +1535,9 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 editButton.setOnClickListener {
-                    editProfileLauncher.launch(
-                        proxyEntity.settingIntent(
-                            it.context, proxyGroup.type == GroupType.SUBSCRIPTION
-                        )
-                    )
+                    proxyEntity.settingIntent(it.context, proxyGroup.type == GroupType.SUBSCRIPTION)?.let {
+                        editProfileLauncher.launch(it)
+                    }
                 }
 
                 deleteButton.setOnClickListener {

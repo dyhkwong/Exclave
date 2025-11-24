@@ -39,7 +39,7 @@
 
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/subscription_types"
-            app:entryValues="@array/int_array_3"
+            app:entryValues="@array/subscription_types_value"
             app:icon="@drawable/ic_baseline_nfc_24"
             app:key="subscriptionType"
             app:title="@string/subscription_type"
@@ -49,12 +49,6 @@
             app:icon="@drawable/ic_baseline_link_24"
             app:key="subscriptionLink"
             app:title="@string/group_subscription_link"
-            app:useSimpleSummaryProvider="true" />
-
-        <io.nekohasekai.sagernet.widget.OOCv1TokenPreference
-            app:icon="@drawable/ic_baseline_vpn_key_24"
-            app:key="subscriptionToken"
-            app:title="@string/ooc_subscription_token"
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference

@@ -221,42 +221,16 @@
             app:key="shadowsocks2022Implementation"
             app:title="@string/shadowsocks_2022_implementation"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            android:icon="@drawable/baseline_flight_takeoff_24"
-            app:defaultValue="1"
-            app:entries="@array/hysteria2_provider"
-            app:entryValues="@array/hysteria2_provider_value"
-            app:key="providerHysteria2"
-            app:title="@string/hysteria2_provider"
-            app:useSimpleSummaryProvider="true" />
-        <SwitchPreference
-            app:defaultValue="true"
-            app:icon="@drawable/ic_baseline_flip_camera_android_24"
-            app:key="hysteriaEnablePortHopping"
-            app:summary="@string/hysteria_enable_port_hopping_sum"
-            app:title="@string/hysteria_enable_port_hopping_experimental"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            android:icon="@drawable/baseline_flight_takeoff_24"
-            app:defaultValue="1"
-            app:entries="@array/tuic5_provider"
-            app:entryValues="@array/tuic5_provider_value"
-            app:key="providerTuic5"
-            app:title="@string/tuic_v5_provider"
-            app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            android:icon="@drawable/baseline_flight_takeoff_24"
-            app:defaultValue="1"
-            app:entries="@array/juicity_provider"
-            app:entryValues="@array/juicity_provider_value"
-            app:key="providerJuicity"
-            app:title="@string/juicity_provider"
-            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/baseline_construction_24"
             app:key="realityDisableX25519Mlkem768"
             app:summary="@string/reality_breaking_change_summary"
             app:title="@string/reality_disable_x25519mlkem768" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_format_align_left_24"
+            app:key="grpcServiceNameCompat"
+            app:summary="@string/grpc_service_name_compat_sum"
+            app:title="@string/grpc_service_name_compat" />
         <SwitchPreference
             app:icon="@drawable/ic_baseline_texture_24"
             app:key="enableFragment"

@@ -133,33 +133,17 @@
         <item>2022-blake3-aes-128-gcm</item>
         <item>2022-blake3-aes-256-gcm</item>
         <item>2022-blake3-chacha20-poly1305</item>
-        <item>rc4</item>
         <item>rc4-md5</item>
-        <item>rc4-md5-6</item>
         <item>aes-128-ctr</item>
         <item>aes-192-ctr</item>
         <item>aes-256-ctr</item>
         <item>aes-128-cfb</item>
         <item>aes-192-cfb</item>
         <item>aes-256-cfb</item>
-        <item>aes-128-cfb8</item>
-        <item>aes-192-cfb8</item>
-        <item>aes-256-cfb8</item>
-        <item>aes-128-ofb</item>
-        <item>aes-192-ofb</item>
-        <item>aes-256-ofb</item>
         <item>bf-cfb</item>
-        <item>cast5-cfb</item>
-        <item>des-cfb</item>
-        <item>rc2-cfb</item>
-        <item>seed-cfb</item>
-        <item>idea-cfb</item>
         <item>camellia-128-cfb</item>
         <item>camellia-192-cfb</item>
         <item>camellia-256-cfb</item>
-        <item>camellia-128-cfb8</item>
-        <item>camellia-192-cfb8</item>
-        <item>camellia-256-cfb8</item>
         <item>salsa20</item>
         <item>chacha20</item>
         <item>chacha20-ietf</item>
@@ -169,33 +153,17 @@
 
     <string-array name="ssr_enc_method_value">
         <item>none</item>
-        <item>rc4</item>
         <item>rc4-md5</item>
-        <item>rc4-md5-6</item>
         <item>aes-128-ctr</item>
         <item>aes-192-ctr</item>
         <item>aes-256-ctr</item>
         <item>aes-128-cfb</item>
         <item>aes-192-cfb</item>
         <item>aes-256-cfb</item>
-        <item>aes-128-cfb8</item>
-        <item>aes-192-cfb8</item>
-        <item>aes-256-cfb8</item>
-        <item>aes-128-ofb</item>
-        <item>aes-192-ofb</item>
-        <item>aes-256-ofb</item>
         <item>bf-cfb</item>
-        <item>cast5-cfb</item>
-        <item>des-cfb</item>
-        <item>rc2-cfb</item>
-        <item>seed-cfb</item>
-        <item>idea-cfb</item>
         <item>camellia-128-cfb</item>
         <item>camellia-192-cfb</item>
         <item>camellia-256-cfb</item>
-        <item>camellia-128-cfb8</item>
-        <item>camellia-192-cfb8</item>
-        <item>camellia-256-cfb8</item>
         <item>salsa20</item>
         <item>chacha20</item>
         <item>chacha20-ietf</item>
@@ -286,16 +254,6 @@
         <item>mekya</item>
     </string-array>
 
-    <string-array name="trojan_go_networks_entry">
-        <item />
-        <item>websocket</item>
-    </string-array>
-
-    <string-array name="trojan_go_networks_value">
-        <item>none</item>
-        <item>ws</item>
-    </string-array>
-
     <string-array name="tcp_headers_entry">
         <item />
         <item>http</item>
@@ -304,22 +262,6 @@
     <string-array name="tcp_headers_value">
         <item>none</item>
         <item>http</item>
-    </string-array>
-
-    <string-array name="trojan_go_security_entry">
-        <item />
-        <item>shadowsocks</item>
-    </string-array>
-
-    <string-array name="trojan_go_security_value">
-        <item>none</item>
-        <item>ss</item>
-    </string-array>
-
-    <string-array name="trojan_go_methods_value">
-        <item>aes-128-gcm</item>
-        <item>aes-256-gcm</item>
-        <item>chacha20-ietf-poly1305</item>
     </string-array>
 
     <string-array name="kcp_quic_headers_entry">
@@ -418,19 +360,6 @@
         <item>quic</item>
     </string-array>
 
-    <string-array name="brook_protocol_entry">
-        <item />
-        <item>WS</item>
-        <item>WSS</item>
-        <item>QUIC</item>
-    </string-array>
-    <string-array name="brook_protocol_value">
-        <item />
-        <item>ws</item>
-        <item>wss</item>
-        <item>quic</item>
-    </string-array>
-
     <string-array name="config_type_entry">
         <item>V2Ray</item>
         <item>V2Ray Outbound</item>
@@ -492,26 +421,6 @@
         <item>1</item>
     </string-array>
 
-    <string-array name="hysteria2_provider">
-        <item>@string/plugin</item>
-        <item>@string/core</item>
-    </string-array>
-
-    <string-array name="hysteria2_provider_value">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
-    <string-array name="tuic5_provider">
-        <item>@string/plugin</item>
-        <item>@string/core</item>
-    </string-array>
-
-    <string-array name="tuic5_provider_value">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
     <string-array name="group_types">
         <item>@string/group_basic</item>
         <item>@string/subscription</item>
@@ -519,14 +428,12 @@
 
     <string-array name="subscription_types">
         <item>@string/raw</item>
-        <item>OOCv1</item>
         <item>SIP008</item>
     </string-array>
 
-    <string-array name="hysteria_auth_type">
-        <item>@string/plugin_disabled</item>
-        <item>string</item>
-        <item>base64</item>
+    <string-array name="subscription_types_value">
+        <item>0</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="socks_versions">
@@ -679,13 +586,6 @@
         <item>helloqq_auto</item>
     </string-array>
 
-    <string-array name="trojan_go_utls_value">
-        <item />
-        <item>chrome</item>
-        <item>firefox</item>
-        <item>ios</item>
-    </string-array>
-
     <string-array name="group_orders">
         <item>@string/group_order_origin</item>
         <item>@string/group_order_by_name</item>
@@ -701,12 +601,6 @@
     <string-array name="tun_implementation">
         <item>gVisor</item>
         <item>System</item>
-    </string-array>
-
-    <string-array name="hysteria_protocol">
-        <item>UDP</item>
-        <item>FakeTCP (Root Required)</item>
-        <item>WeChat Video</item>
     </string-array>
 
     <string-array name="network_type_entry">
@@ -785,17 +679,6 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
-    </string-array>
-
-    <string-array name="brook_tls_fingerprint_value">
-        <item />
-        <item>chrome</item>
-    </string-array>
-
-    <string-array name="juicity_congestion_control_value">
-        <item>bbr</item>
-        <item>cubic</item>
-        <item>new_reno</item>
     </string-array>
 
     <string-array name="dns_query_strategy">
@@ -879,7 +762,6 @@
     </string-array>
 
     <string-array name="shadowtls_protocol_version_value">
-        <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
@@ -944,16 +826,6 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </string-array>
-
-    <string-array name="juicity_provider">
-        <item>@string/plugin</item>
-        <item>@string/core</item>
-    </string-array>
-
-    <string-array name="juicity_provider_value">
-        <item>0</item>
-        <item>1</item>
     </string-array>
 
     <string-array name="sing_mux_protocol_value">

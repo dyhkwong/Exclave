@@ -108,6 +108,14 @@ public class ShadowsocksBean extends StandardV2RayBean {
         }
     }
 
+    public String protocolName() {
+        if (method.startsWith("2022-blake3-")) {
+            return "Shadowsocks 2022";
+        } else {
+            return "Shadowsocks";
+        }
+    }
+
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof ShadowsocksBean bean)) return;

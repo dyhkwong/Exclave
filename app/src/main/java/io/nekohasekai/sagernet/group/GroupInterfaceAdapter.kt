@@ -106,16 +106,4 @@ class GroupInterfaceAdapter(val context: ThemedActivity) : GroupManager.Interfac
         }
     }
 
-    override suspend fun alert(message: String) {
-        return suspendCoroutine {
-            runOnMainDispatcher {
-                MaterialAlertDialogBuilder(context).setTitle(R.string.ooc_warning)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok) { _, _ -> it.resume(Unit) }
-                    .setOnCancelListener { _ -> it.resume(Unit) }
-                    .show()
-            }
-        }
-    }
-
 }

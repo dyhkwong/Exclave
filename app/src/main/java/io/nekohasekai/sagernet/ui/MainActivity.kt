@@ -65,7 +65,6 @@ import io.nekohasekai.sagernet.utils.PackageCache
 import io.noties.markwon.Markwon
 import libcore.Libcore
 import kotlin.io.encoding.Base64
-import kotlin.system.exitProcess
 
 class MainActivity : ThemedActivity(),
     SagerConnection.Callback,
@@ -270,7 +269,6 @@ class MainActivity : ThemedActivity(),
         }
 
         val name = group.name.takeIf { !it.isNullOrEmpty() } ?: group.subscription?.link
-        ?: group.subscription?.token
         if (name.isNullOrEmpty()) return
 
         group.name = group.name.takeIf { !it.isNullOrEmpty() }

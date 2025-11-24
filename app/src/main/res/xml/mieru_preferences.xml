@@ -18,6 +18,11 @@
             app:key="serverPort"
             app:title="@string/server_port"
             app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:icon="@drawable/ic_maps_directions_boat"
+            app:key="serverPorts"
+            app:title="@string/mieru_port_range"
+            app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/mieru_protocol"
             app:entryValues="@array/int_array_2"
@@ -36,11 +41,11 @@
             app:key="serverPassword"
             app:title="@string/password"
             app:useSimpleSummaryProvider="true" />
-        <EditTextPreference
+        <!--EditTextPreference
             app:icon="@drawable/baseline_public_24"
             app:key="serverMTU"
             app:title="@string/mtu"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="true" /-->
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/mieru_mux_level_entry"
             app:entryValues="@array/mieru_mux_level_value"

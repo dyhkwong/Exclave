@@ -24,7 +24,6 @@ import android.content.Intent
 import androidx.room.*
 import com.esotericsoftware.kryo.io.ByteBufferInput
 import com.esotericsoftware.kryo.io.ByteBufferOutput
-import io.nekohasekai.sagernet.ProtocolProvider
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.aidl.TrafficStats
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -32,28 +31,19 @@ import io.nekohasekai.sagernet.fmt.KryoConverters
 import io.nekohasekai.sagernet.fmt.Serializable
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.anytls.toUri
-import io.nekohasekai.sagernet.fmt.brook.BrookBean
-import io.nekohasekai.sagernet.fmt.brook.buildBrookConfig
-import io.nekohasekai.sagernet.fmt.brook.toUri
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.http.toUri
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
 import io.nekohasekai.sagernet.fmt.http3.toUri
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
-import io.nekohasekai.sagernet.fmt.hysteria.buildHysteriaConfig
-import io.nekohasekai.sagernet.fmt.hysteria.toUri
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
-import io.nekohasekai.sagernet.fmt.hysteria2.buildHysteria2Config
 import io.nekohasekai.sagernet.fmt.hysteria2.toUri
 import io.nekohasekai.sagernet.fmt.internal.BalancerBean
 import io.nekohasekai.sagernet.fmt.internal.ChainBean
 import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.juicity.JuicityBean
-import io.nekohasekai.sagernet.fmt.juicity.buildJuicityConfig
 import io.nekohasekai.sagernet.fmt.juicity.toUri
 import io.nekohasekai.sagernet.fmt.mieru.MieruBean
-import io.nekohasekai.sagernet.fmt.mieru.buildMieruConfig
 import io.nekohasekai.sagernet.fmt.mieru.toUri
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
@@ -70,14 +60,7 @@ import io.nekohasekai.sagernet.fmt.socks.toUri
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.fmt.trojan.toUri
-import io.nekohasekai.sagernet.fmt.trojan_go.TrojanGoBean
-import io.nekohasekai.sagernet.fmt.trojan_go.buildTrojanGoConfig
-import io.nekohasekai.sagernet.fmt.trojan_go.toUri
-import io.nekohasekai.sagernet.fmt.tuic.TuicBean
-import io.nekohasekai.sagernet.fmt.tuic.buildTuicConfig
-import io.nekohasekai.sagernet.fmt.tuic.toUri
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
-import io.nekohasekai.sagernet.fmt.tuic5.buildTuic5Config
 import io.nekohasekai.sagernet.fmt.tuic5.toUri
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
@@ -108,13 +91,9 @@ data class ProxyEntity(
     var vmessBean: VMessBean? = null,
     var vlessBean: VLESSBean? = null,
     var trojanBean: TrojanBean? = null,
-    var trojanGoBean: TrojanGoBean? = null,
     var naiveBean: NaiveBean? = null,
-    var brookBean: BrookBean? = null,
-    var hysteriaBean: HysteriaBean? = null,
     var hysteria2Bean: Hysteria2Bean? = null,
     var mieruBean: MieruBean? = null,
-    var tuicBean: TuicBean? = null,
     var tuic5Bean: Tuic5Bean? = null,
     var shadowtlsBean: ShadowTLSBean? = null,
     var sshBean: SSHBean? = null,
@@ -136,15 +115,11 @@ data class ProxyEntity(
         const val TYPE_VMESS = 4
         const val TYPE_VLESS = 5
         const val TYPE_TROJAN = 6
-        const val TYPE_TROJAN_GO = 7
         const val TYPE_NAIVE = 9
-        const val TYPE_BROOK = 12
-        const val TYPE_HYSTERIA = 15
         const val TYPE_HYSTERIA2 = 21
         const val TYPE_SSH = 17
         const val TYPE_WG = 18
         const val TYPE_MIERU = 19
-        const val TYPE_TUIC = 20
         const val TYPE_TUIC5 = 23
         const val TYPE_SHADOWTLS = 24
         const val TYPE_JUICITY = 25
@@ -233,15 +208,11 @@ data class ProxyEntity(
             TYPE_VMESS -> vmessBean = KryoConverters.vmessDeserialize(byteArray)
             TYPE_VLESS -> vlessBean = KryoConverters.vlessDeserialize(byteArray)
             TYPE_TROJAN -> trojanBean = KryoConverters.trojanDeserialize(byteArray)
-            TYPE_TROJAN_GO -> trojanGoBean = KryoConverters.trojanGoDeserialize(byteArray)
             TYPE_NAIVE -> naiveBean = KryoConverters.naiveDeserialize(byteArray)
-            TYPE_BROOK -> brookBean = KryoConverters.brookDeserialize(byteArray)
-            TYPE_HYSTERIA -> hysteriaBean = KryoConverters.hysteriaDeserialize(byteArray)
             TYPE_HYSTERIA2 -> hysteria2Bean = KryoConverters.hysteria2Deserialize(byteArray)
             TYPE_SSH -> sshBean = KryoConverters.sshDeserialize(byteArray)
             TYPE_WG -> wgBean = KryoConverters.wireguardDeserialize(byteArray)
             TYPE_MIERU -> mieruBean = KryoConverters.mieruDeserialize(byteArray)
-            TYPE_TUIC -> tuicBean = KryoConverters.tuicDeserialize(byteArray)
             TYPE_TUIC5 -> tuic5Bean = KryoConverters.tuic5Deserialize(byteArray)
             TYPE_SHADOWTLS -> shadowtlsBean = KryoConverters.shadowtlsDeserialize(byteArray)
             TYPE_JUICITY -> juicityBean = KryoConverters.juicityDeserialize(byteArray)
@@ -257,25 +228,21 @@ data class ProxyEntity(
 
     fun displayType() = when (type) {
         TYPE_SOCKS -> socksBean!!.protocolName()
-        TYPE_HTTP -> if (httpBean!!.security == "tls") "HTTPS" else "HTTP"
-        TYPE_SS -> if (ssBean!!.method.startsWith("2022-blake3-")) "Shadowsocks 2022" else "Shadowsocks"
+        TYPE_HTTP -> httpBean!!.protocolName()
+        TYPE_SS -> ssBean!!.protocolName()
         TYPE_SSR -> "ShadowsocksR"
         TYPE_VMESS -> "VMess"
         TYPE_VLESS -> "VLESS"
         TYPE_TROJAN -> "Trojan"
-        TYPE_TROJAN_GO -> "Trojan-Go"
-        TYPE_NAIVE -> "Naïve"
-        TYPE_BROOK -> "Brook"
-        TYPE_HYSTERIA -> "Hysteria"
-        TYPE_HYSTERIA2 -> "Hysteria2"
+        TYPE_NAIVE -> "NaïveProxy"
+        TYPE_HYSTERIA2 -> "Hysteria 2"
         TYPE_SSH -> "SSH"
         TYPE_WG -> "WireGuard"
-        TYPE_MIERU -> "Mieru"
-        TYPE_TUIC -> "TUIC"
-        TYPE_TUIC5 -> "TUIC v5"
+        TYPE_MIERU -> "mieru"
+        TYPE_TUIC5 -> "TUIC"
         TYPE_SHADOWTLS -> "ShadowTLS"
         TYPE_JUICITY -> "Juicity"
-        TYPE_HTTP3 -> "HTTP3"
+        TYPE_HTTP3 -> "HTTP/3"
         TYPE_ANYTLS -> "AnyTLS"
         TYPE_SHADOWQUIC -> "ShadowQUIC"
 
@@ -297,15 +264,11 @@ data class ProxyEntity(
             TYPE_VMESS -> vmessBean
             TYPE_VLESS -> vlessBean
             TYPE_TROJAN -> trojanBean
-            TYPE_TROJAN_GO -> trojanGoBean
             TYPE_NAIVE -> naiveBean
-            TYPE_BROOK -> brookBean
-            TYPE_HYSTERIA -> hysteriaBean
             TYPE_HYSTERIA2 -> hysteria2Bean
             TYPE_SSH -> sshBean
             TYPE_WG -> wgBean
             TYPE_MIERU -> mieruBean
-            TYPE_TUIC -> tuicBean
             TYPE_TUIC5 -> tuic5Bean
             TYPE_SHADOWTLS -> shadowtlsBean
             TYPE_JUICITY -> juicityBean
@@ -345,13 +308,9 @@ data class ProxyEntity(
             is VMessBean -> toUri()
             is VLESSBean -> toUri()
             is TrojanBean -> toUri()
-            is TrojanGoBean -> toUri()
             is NaiveBean -> toUri()
-            is HysteriaBean -> toUri()
             is Hysteria2Bean -> toUri()
-            is BrookBean -> toUri()
             is JuicityBean -> toUri()
-            is TuicBean -> toUri()
             is Tuic5Bean -> toUri()
             is MieruBean -> toUri()
             is Http3Bean -> toUri()
@@ -375,41 +334,9 @@ data class ProxyEntity(
                 for ((_, chain) in config.index) {
                     chain.entries.forEachIndexed { _, (port, profile) ->
                         when (val bean = profile.requireBean()) {
-                            is TrojanGoBean -> {
-                                append("\n\n")
-                                append(bean.buildTrojanGoConfig(port))
-                            }
                             is NaiveBean -> {
                                 append("\n\n")
                                 append(bean.buildNaiveConfig(port))
-                            }
-                            is HysteriaBean -> {
-                                append("\n\n")
-                                append(bean.buildHysteriaConfig(port, null))
-                            }
-                            is Hysteria2Bean -> {
-                                append("\n\n")
-                                append(bean.buildHysteria2Config(port))
-                            }
-                            is MieruBean -> {
-                                append("\n\n")
-                                append(bean.buildMieruConfig(port))
-                            }
-                            is TuicBean -> {
-                                append("\n\n")
-                                append(bean.buildTuicConfig(port, forExport = true, null))
-                            }
-                            is Tuic5Bean -> {
-                                append("\n\n")
-                                append(bean.buildTuic5Config(port, forExport = true, null))
-                            }
-                            is JuicityBean -> {
-                                append("\n\n")
-                                append(bean.buildJuicityConfig(port))
-                            }
-                            is BrookBean -> {
-                                append("\n\n")
-                                append(bean.buildBrookConfig(port))
                             }
                             is ShadowQUICBean -> {
                                 append("\n\n")
@@ -427,22 +354,8 @@ data class ProxyEntity(
         if (bean is ConfigBean) {
             return bean.type != "v2ray_outbound"
         }
-        if (bean is Hysteria2Bean) {
-            return DataStore.providerHysteria2 != ProtocolProvider.CORE && bean.canUsePluginImplementation()
-        }
-        if (bean is Tuic5Bean) {
-            return DataStore.providerTuic5 != ProtocolProvider.CORE && bean.canUsePluginImplementation()
-        }
-        if (bean is JuicityBean) {
-            return DataStore.providerJuicity != ProtocolProvider.CORE && bean.canUsePluginImplementation()
-        }
         return when (type) {
-            TYPE_TROJAN_GO -> true
             TYPE_NAIVE -> true
-            TYPE_HYSTERIA -> true
-            TYPE_BROOK -> true
-            TYPE_MIERU -> true
-            TYPE_TUIC -> true
             TYPE_SHADOWQUIC -> true
 
             else -> false
@@ -457,15 +370,11 @@ data class ProxyEntity(
         vmessBean = null
         vlessBean = null
         trojanBean = null
-        trojanGoBean = null
         naiveBean = null
-        brookBean = null
-        hysteriaBean = null
         hysteria2Bean = null
         sshBean = null
         wgBean = null
         mieruBean = null
-        tuicBean = null
         tuic5Bean = null
         shadowtlsBean = null
         juicityBean = null
@@ -506,21 +415,9 @@ data class ProxyEntity(
                 type = TYPE_TROJAN
                 trojanBean = bean
             }
-            is TrojanGoBean -> {
-                type = TYPE_TROJAN_GO
-                trojanGoBean = bean
-            }
             is NaiveBean -> {
                 type = TYPE_NAIVE
                 naiveBean = bean
-            }
-            is BrookBean -> {
-                type = TYPE_BROOK
-                brookBean = bean
-            }
-            is HysteriaBean -> {
-                type = TYPE_HYSTERIA
-                hysteriaBean = bean
             }
             is Hysteria2Bean -> {
                 type = TYPE_HYSTERIA2
@@ -537,10 +434,6 @@ data class ProxyEntity(
             is MieruBean -> {
                 type = TYPE_MIERU
                 mieruBean = bean
-            }
-            is TuicBean -> {
-                type = TYPE_TUIC
-                tuicBean = bean
             }
             is Tuic5Bean -> {
                 type = TYPE_TUIC5
@@ -593,15 +486,11 @@ data class ProxyEntity(
             TYPE_VMESS -> VMessSettingsActivity::class.java
             TYPE_VLESS -> VLESSSettingsActivity::class.java
             TYPE_TROJAN -> TrojanSettingsActivity::class.java
-            TYPE_TROJAN_GO -> TrojanGoSettingsActivity::class.java
             TYPE_NAIVE -> NaiveSettingsActivity::class.java
-            TYPE_BROOK -> BrookSettingsActivity::class.java
-            TYPE_HYSTERIA -> HysteriaSettingsActivity::class.java
             TYPE_HYSTERIA2 -> Hysteria2SettingsActivity::class.java
             TYPE_SSH -> SSHSettingsActivity::class.java
             TYPE_WG -> WireGuardSettingsActivity::class.java
             TYPE_MIERU -> MieruSettingsActivity::class.java
-            TYPE_TUIC -> TuicSettingsActivity::class.java
             TYPE_TUIC5 -> Tuic5SettingsActivity::class.java
             TYPE_SHADOWTLS -> ShadowTLSSettingsActivity::class.java
             TYPE_JUICITY -> JuicitySettingsActivity::class.java

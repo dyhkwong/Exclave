@@ -193,18 +193,14 @@
     <string name="action_vmess" translatable="false">VMess</string>
     <string name="action_vless" translatable="false">VLESS</string>
     <string name="action_trojan" translatable="false">Trojan</string>
-    <string name="action_trojan_go" translatable="false">Trojan Go</string>
-    <string name="action_naive" translatable="false">Naïve</string>
-    <string name="action_brook" translatable="false">Brook</string>
-    <string name="action_hysteria" translatable="false">Hysteria</string>
+    <string name="action_naive" translatable="false">NaïveProxy</string>
     <string name="action_hysteria2" translatable="false">Hysteria 2</string>
     <string name="action_ssh" translatable="false">SSH</string>
     <string name="action_wireguard" translatable="false">WireGuard</string>
-    <string name="action_mieru" translatable="false">Mieru</string>
-    <string name="action_tuic" translatable="false">TUIC</string>
-    <string name="action_tuic5" translatable="false">TUIC v5</string>
+    <string name="action_mieru" translatable="false">mieru</string>
+    <string name="action_tuic5" translatable="false">TUIC</string>
     <string name="action_shadowtls" translatable="false">ShadowTLS</string>
-    <string name="action_http3" translatable="false">HTTP3</string>
+    <string name="action_http3" translatable="false">HTTP/3</string>
     <string name="action_anytls" translatable="false">AnyTLS</string>
     <string name="proxy_chain">Proxy chain</string>
     <string name="custom_config">Custom config</string>
@@ -318,22 +314,10 @@
     <string name="confirm">Confirm</string>
     <string name="missing_plugin">Missing plugin</string>
     <string name="profile_requiring_plugin">Profile %s requires %s plugin, but it was not found.</string>
-    <string name="ooc_subscription_token">OOCv1 API token</string>
-    <string name="ooc_subscription_token_invalid">Invalid OOCv1 token</string>
     <string name="update_subscription_warning">Proxy is not connected, are you sure you want to continue updating?</string>
-    <string name="ooc_warning">Warning</string>
-    <string name="ooc_missing_protocol">The subscription requires support for protocol %s, but it cannot be found. Unsupported profiles will be ignored.</string>
     <string name="service_subscription">Subscription Update Service</string>
     <string name="subscription_update">Subscription update</string>
     <string name="subscription_update_message">Updating %s …</string>
-    <string name="group_filter">Filter</string>
-    <string name="group_filter_groups">Groups</string>
-    <string name="group_filter_tags">Tags</string>
-    <string name="group_filter_owners">Owners</string>
-    <string name="group_filter_ns">OOCv1 subscription is required for filtering</string>
-    <string name="group_filter_groups_nf">No group in this subscription</string>
-    <string name="group_filter_tags_nf">No tag in this subscription</string>
-    <string name="group_filter_owners_nf">No owner in this subscription</string>
     <string name="subscription_used">%s used</string>
     <string name="subscription_traffic">%s used / %s remaining</string>
     <string name="subscription_import">Import subscription</string>
@@ -349,20 +333,12 @@
     </plurals>
     <string name="hysteria_obfs">Obfuscation password</string>
     <string name="hysteria_auth_type">Authentication type</string>
-    <string name="hysteria_auth_payload">Authentication payload</string>
     <string name="hysteria_upload_mbps">Max upload speed (Mbps)</string>
     <string name="hysteria_download_mbps">Max download speed (Mbps)</string>
-    <string name="hysteria_init_stream_receive_window">QUIC init stream receive window</string>
-    <string name="hysteria_max_stream_receive_window">QUIC max stream receive window</string>
-    <string name="hysteria_init_conn_receive_window">QUIC init connection receive window</string>
-    <string name="hysteria_max_conn_receive_window">QUIC max connection receive window</string>
     <string name="experimental_settings">Experimental settings</string>
     <string name="experimental_authenticated_length">Make the length of each payload segment no longer malleable. This experiment requires the server and client use the same version of v2ray-core. More breaking updates on this experiment is expected.</string>
     <string name="experimental_no_termination_signal">Do not send connection single duplex termination signal for TCP connection when transferred over VMess. This will break some applications.</string>
     <string name="utls_fingerprint">uTLS fingerprint</string>
-    <string name="hysteria_stream_receive_window">QUIC stream receive window</string>
-    <string name="hysteria_connection_receive_window">QUIC connection receive window</string>
-    <string name="hysteria_disable_mtu_discovery">Disable path MTU discovery</string>
     <string name="group_order">Sort</string>
     <string name="group_order_origin">By original order</string>
     <string name="group_order_by_name">Alphabetically</string>
@@ -465,12 +441,9 @@
 \n\nThis option remap the first 6 bytes of IV to printable characters, it\'s possible for anyone on the privileged network path to identify the protocol when enabled.</string>
     <string name="action_switch">Switch</string>
     <string name="udp_over_tcp">UDP over TCP</string>
-    <string name="without_brook_protocol">Without Brook protocol</string>
-    <string name="tuic_token">Token</string>
     <string name="tuic_udp_relay_mode">UDP relay mode</string>
     <string name="tuic_congestion_controller">Congestion controller</string>
     <string name="tuic_disable_sni">Disable SNI</string>
-    <string name="tuic_reduce_rtt">Reduce RTT</string>
     <string name="tuic_zero_rtt_handshake">0-RTT handshake</string>
     <string name="reality_public_key">REALITY public key</string>
     <string name="reality_short_id">REALITY Short ID</string>
@@ -486,13 +459,11 @@
     <string name="action_flash_off">Turn off flash</string>
     <string name="hysteria_hop_interval">Port hopping interval (s)</string>
     <string name="connection_test_delete_unavailable">Clear unavailable</string>
-    <string name="hysteria2_provider">Hysteria 2 provider</string>
     <string name="nat_stun_server_hint">STUN server</string>
     <string name="brook_udp_over_stream">UDP over stream</string>
     <string name="naive_no_post_quantum">Disable post-quantum key agreement</string>
     <string name="hysteria2_password">Hysteria2 password</string>
     <string name="action_juicity" translatable="false">Juicity</string>
-    <string name="juicity_congestion_control">Congestion control</string>
     <string name="nat_type">NAT Type</string>
     <string name="stun_legacy_test">NAT type test</string>
     <string name="stun_legacy_test_summary">Determine client\'s NAT type defined in RFC 3489 using STUN.</string>
@@ -508,10 +479,6 @@
     <string name="mux_settings">Mux settings</string>
     <string name="update_subscription">Update subscription</string>
     <string name="group_not_a_subscription">This group is not a subscription.</string>
-    <string name="plugin_settings">Plugin settings</string>
-    <string name="plugin_settings_sum">These options only apply to plugins.</string>
-    <string name="hysteria_enable_port_hopping_experimental">Enable Hysteria port hopping (Experimental)</string>
-    <string name="hysteria_enable_port_hopping_sum">This is incompatible with chain proxy. If disabled, a random port within the port hopping range will be used.</string>
     <string name="enable_fragment">Enable TLS Client Hello fragmentation</string>
     <string name="enable_fragment_sum">May help circumvent SNI censorship. This option may get removed in the future.</string>
     <string name="fragment_length">Fragmentation length</string>
@@ -532,7 +499,6 @@
     <string name="splithttp_mode">Mode</string>
     <string name="splithttp_extra" translatable="false">Extra</string>
     <string name="backup_all_profiles">Backup all profiles</string>
-    <string name="tuic_v5_provider">TUIC v5 provider</string>
     <string name="browser_forwarder_hint">Please download v2ray-extra.zip from v2ray-core release and place index.html and index.js in Android/data/%s/files or import index.html and index.js as route assets.</string>
     <string name="mieru_multiplexing_level">Multiplexing level</string>
     <string name="route_asset_add">Add route asset</string>
@@ -545,13 +511,9 @@
     <string name="route_asset_name">Asset name</string>
     <string name="route_asset_url">Asset URL</string>
     <string name="route_asset_settings">Asset settings</string>
-    <string name="core">core</string>
     <string name="cag_httpupgrade">HTTPUpgrade settings</string>
     <string name="regular_expression_filter">Name exclusion (regular expression)</string>
     <string name="root_ca_system_and_user">System and user</string>
-    <string name="brook_token" translatable="false">Token</string>
-    <string name="brook_client_hkdf_info" translatable="false">Client HKDF info</string>
-    <string name="brook_server_hkdf_info" translatable="false">Server HKDF info</string>
     <string name="one_per_line">One per line.</string>
     <string name="one_per_line_format">One per line. Format:\n%s</string>
     <string name="edns_client_ip_sum">Please input an IP address. IPv4 uses a subnet of /24 and IPv6 uses a subnet of /96.</string>
@@ -615,9 +577,6 @@
     <string name="tls_record_fragmentation">TLS record fragmentation</string>
     <string name="tcp_segmentation">TCP segmentation</string>
     <string name="tls_record_fragmentation_and_tcp_segmentation">TLS record fragmentation and TCP segmentation</string>
-    <string name="juicity_provider">Juicity provider</string>
-    <string name="core_settings">Core settings</string>
-    <string name="core_settings_sum">These options only apply to core.</string>
     <string name="pinned_peer_certificate_public_key_sha256">Pinned certificate public key SHA-256</string>
     <string name="pinned_peer_certificate_sha256">Pinned certificate SHA-256</string>
     <string name="pinned_peer_certificate_sha256_base64_dialog_message">Use with "skip certificate verification" if the certificate itself is untrusted or invalid. One per line in Base64 encoding.</string>
@@ -627,4 +586,9 @@
     <string name="delete_multi_confirm_prompt">Are you sure you want to remove these profiles?</string>
     <string name="interrupt_reused_connections">Interrupt reused connections when network changes</string>
     <string name="create_shortcut">Create shortcut</string>
+    <string name="mieru_port_range">Server port range</string>
+    <string name="cag_grpc">gRPC settings</string>
+    <string name="grpc_service_name_compat">gRPC service name compatibility</string>
+    <string name="grpc_service_name_compat_sum">Be compatible with Xray\'s breaking change but break the compatibility with non-Xray servers.</string>
+    <string name="grpc_multi_mode">Multi mode</string>
 </resources>

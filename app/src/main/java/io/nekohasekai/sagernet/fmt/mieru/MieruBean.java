@@ -49,6 +49,7 @@ public class MieruBean extends AbstractBean {
     public Integer mtu;
     public Integer multiplexingLevel;
     public Integer handshakeMode;
+    public String portRange;
 
     @Override
     public void initializeDefaultValues() {
@@ -59,11 +60,12 @@ public class MieruBean extends AbstractBean {
         if (mtu == null) mtu = 1400;
         if (multiplexingLevel == null) multiplexingLevel = MULTIPLEXING_DEFAULT;
         if (handshakeMode == null) handshakeMode = HANDSHAKE_DEFAULT;
+        if (portRange == null) portRange = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         super.serialize(output);
         output.writeInt(protocol);
         output.writeString(username);
@@ -73,6 +75,7 @@ public class MieruBean extends AbstractBean {
         }
         output.writeInt(multiplexingLevel);
         output.writeInt(handshakeMode);
+        output.writeString(portRange);
     }
 
     @Override
@@ -90,6 +93,9 @@ public class MieruBean extends AbstractBean {
         }
         if (version >= 2) {
             handshakeMode = input.readInt();
+        }
+        if (version >= 3) {
+            portRange = input.readString();
         }
     }
 

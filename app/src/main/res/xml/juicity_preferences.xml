@@ -34,13 +34,6 @@
             app:key="serverSNI"
             app:title="@string/sni"
             app:useSimpleSummaryProvider="true" />
-        <com.takisoft.preferencex.SimpleMenuPreference
-            app:entries="@array/juicity_congestion_control_value"
-            app:entryValues="@array/juicity_congestion_control_value"
-            app:icon="@drawable/baseline_widgets_24"
-            app:key="serverJuicityCongestionControl"
-            app:title="@string/juicity_congestion_control"
-            app:useSimpleSummaryProvider="true" />
         <SwitchPreference
             app:icon="@drawable/ic_notification_enhanced_encryption"
             app:key="serverAllowInsecure"
@@ -52,17 +45,6 @@
             app:title="@string/certificates"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:dialogMessage="@string/pinned_peer_certificate_sha256_base64_dialog_message"
-            app:icon="@drawable/ic_baseline_push_pin_24"
-            app:key="serverPinnedCertificateChain"
-            app:title="@string/pinned_peer_certificate_chain_sha256"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        app:title="@string/core_settings"
-        app:summary="@string/core_settings_sum">
-        <EditTextPreference
             app:dialogMessage="@string/pinned_peer_certificate_sha256_hex_dialog_message"
             app:icon="@drawable/ic_baseline_push_pin_24"
             app:key="serverPinnedCertificate"
@@ -73,6 +55,12 @@
             app:icon="@drawable/ic_baseline_push_pin_24"
             app:key="serverPinnedCertificatePublicKey"
             app:title="@string/pinned_peer_certificate_public_key_sha256"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:dialogMessage="@string/pinned_peer_certificate_sha256_base64_dialog_message"
+            app:icon="@drawable/ic_baseline_push_pin_24"
+            app:key="serverPinnedCertificateChain"
+            app:title="@string/pinned_peer_certificate_chain_sha256"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:icon="@drawable/ic_action_lock"

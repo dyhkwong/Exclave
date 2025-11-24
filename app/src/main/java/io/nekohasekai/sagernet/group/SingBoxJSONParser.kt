@@ -25,7 +25,6 @@ import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
-import io.nekohasekai.sagernet.fmt.hysteria.HysteriaBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocksMethod
@@ -420,67 +419,6 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 }
             }
             return listOf(hysteria2Bean)
-        }
-        "hysteria" -> {
-            val hysteriaBean = HysteriaBean().apply {
-                outbound.getString("tag", ignoreCase = false)?.also {
-                    name = it
-                }
-                outbound.getString("server")?.also {
-                    serverAddress = it
-                } ?: return listOf()
-                (outbound.getInt("server_port")?.also {
-                    serverPorts = it.toString()
-                } ?: outbound.getStringArray("server_ports")?.also {
-                    serverPorts = it.joinToString(",").replace(":", "-")
-                } ?: outbound.getString("server_ports")?.also {
-                    serverPorts = it.replace(":", "-")
-                }) ?: return listOf()
-                if (!serverPorts.isValidHysteriaPort()) {
-                    return listOf()
-                }
-                outbound.getString("hop_interval")?.also { interval ->
-                    try {
-                        val duration = Duration.parse(interval)
-                        hopInterval = duration.toLong(DurationUnit.SECONDS).takeIf { it > 0 }
-                    } catch (_: Exception) {}
-                }
-                if (outbound.getString("auth")?.isNotEmpty() == true) {
-                    authPayloadType = HysteriaBean.TYPE_BASE64
-                    outbound.getString("auth")?.also {
-                        authPayload = it
-                    }
-                }
-                if (outbound.getString("auth_str")?.isNotEmpty() == true) {
-                    authPayloadType = HysteriaBean.TYPE_STRING
-                    outbound.getString("auth_str")?.also {
-                        authPayload = it
-                    }
-                }
-                outbound.getString("obfs")?.also {
-                    obfuscation = it
-                }
-                outbound.getObject("tls")?.also { tls ->
-                    if (tls.getBoolean("enabled") != true) {
-                        return listOf()
-                    }
-                    if (tls.getObject("reality")?.getBoolean("enabled") == true) {
-                        return listOf()
-                    }
-                    tls.getString("server_name")?.also {
-                        sni = it
-                    }
-                    tls.getStringArray("alpn")?.also {
-                        alpn = it[0]
-                    } ?: tls.getString("alpn")?.also {
-                        alpn = it
-                    }
-                    tls.getBoolean("insecure")?.also {
-                        allowInsecure = it
-                    }
-                } ?: return listOf()
-            }
-            return listOf(hysteriaBean)
         }
         "tuic" -> {
             val tuic5Bean = Tuic5Bean().apply {

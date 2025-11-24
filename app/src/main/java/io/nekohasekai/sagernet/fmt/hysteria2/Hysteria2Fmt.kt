@@ -19,19 +19,11 @@
 
 package io.nekohasekai.sagernet.fmt.hysteria2
 
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.TunImplementation
-import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.isValidHysteriaPort
-import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
-import org.yaml.snakeyaml.DumperOptions
-import org.yaml.snakeyaml.Yaml
-import java.io.File
 
 fun parseHysteria2(rawURL: String): Hysteria2Bean {
     var url = rawURL
@@ -159,130 +151,4 @@ fun Hysteria2Bean.toUri(): String? {
         return url.replace(":$port/", ":$serverPorts/")
     }
     return url
-}
-
-fun Hysteria2Bean.buildHysteria2Config(port: Int, isVpn: Boolean = false, cacheFile: ((type: String) -> File)? = null): String {
-    if (!serverPorts.isValidHysteriaPort()) {
-        error("invalid port: $serverPorts")
-    }
-    val usePortHopping = DataStore.hysteriaEnablePortHopping && serverPorts.isValidHysteriaMultiPort()
-
-    val hostPort = if (usePortHopping) {
-        // Hysteria 2 port hopping is incompatible with chain proxy
-        if (Libcore.isIPv6(serverAddress)) {
-            "[$serverAddress]:$serverPorts"
-        } else {
-            "$serverAddress:$serverPorts"
-        }
-    } else {
-        joinHostPort(finalAddress, finalPort)
-    }
-
-    val confObject: MutableMap<String, Any> = HashMap()
-    confObject["server"] = hostPort
-    if (auth.isNotEmpty()) {
-        confObject["auth"] = auth
-    }
-
-    val tlsObject: MutableMap<String, Any> = HashMap()
-    if (allowInsecure) {
-        tlsObject["insecure"] = true
-    }
-    var servername = sni
-    if (!usePortHopping) {
-        if (servername.isEmpty()) {
-            servername = serverAddress
-        }
-    }
-    if (servername.isNotEmpty()) {
-        tlsObject["sni"] = servername
-    }
-    if (certificates.isNotEmpty() && cacheFile != null) {
-        val file = cacheFile("ca")
-        file.writeText(certificates)
-        tlsObject["ca"] = file.absolutePath
-    }
-    if (mtlsCertificate.isNotEmpty() && cacheFile != null) {
-        val file = cacheFile("clientCertificate")
-        file.writeText(mtlsCertificate)
-        tlsObject["clientCertificate"] = file.absolutePath
-    }
-    if (mtlsCertificatePrivateKey.isNotEmpty() && cacheFile != null) {
-        val file = cacheFile("clientKey")
-        file.writeText(mtlsCertificatePrivateKey)
-        tlsObject["clientKey"] = file.absolutePath
-    }
-    if (pinnedPeerCertificateSha256.isNotEmpty()) {
-        tlsObject["pinSHA256"] = pinnedPeerCertificateSha256.listByLineOrComma()[0].replace(":", "")
-    }
-    if (tlsObject.isNotEmpty()) {
-        confObject["tls"] = tlsObject
-    }
-
-    val transportObject: MutableMap<String, Any> = HashMap()
-    transportObject["type"] = "udp"
-    if (DataStore.hysteriaEnablePortHopping && serverPorts.isValidHysteriaMultiPort() && hopInterval > 0) {
-        val udpObject: MutableMap<String, Any> = HashMap()
-        udpObject["hopInterval"] = "$hopInterval" + "s"
-        transportObject["udp"] = udpObject
-    }
-    confObject["transport"] = transportObject
-
-    if (obfs.isNotEmpty()) {
-        val obfsObject: MutableMap<String, Any> = HashMap()
-        obfsObject["type"] = "salamander"
-        val salamanderObject: MutableMap<String, Any> = HashMap()
-        salamanderObject["password"] = obfs
-        obfsObject["salamander"] = salamanderObject
-        confObject["obfs"] = obfsObject
-    }
-
-    val quicObject: MutableMap<String, Any> = HashMap()
-    if (disableMtuDiscovery) {
-        quicObject["disableMtuDiscovery"] = true
-    }
-    if (initStreamReceiveWindow > 0) {
-        quicObject["initStreamReceiveWindow"] = initStreamReceiveWindow
-    }
-    if (maxStreamReceiveWindow > 0) {
-        quicObject["maxStreamReceiveWindow"] = maxStreamReceiveWindow
-    }
-    if (initConnReceiveWindow > 0) {
-        quicObject["initConnReceiveWindow"] = initConnReceiveWindow
-    }
-    if (maxConnReceiveWindow > 0) {
-        quicObject["maxConnReceiveWindow"] = maxConnReceiveWindow
-    }
-    if (needProtect() && DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.serviceMode == Key.MODE_VPN && isVpn) {
-        val sockoptsObject: MutableMap<String, Any> = HashMap()
-        sockoptsObject["fdControlUnixSocket"] = "protect_path"
-        quicObject["sockopts"] = sockoptsObject
-    }
-    if (quicObject.isNotEmpty()) {
-        confObject["quic"] = quicObject
-    }
-
-    val bandwidthObject: MutableMap<String, Any> = HashMap()
-    if (uploadMbps > 0) {
-        bandwidthObject["up"] = "$uploadMbps mbps"
-    }
-    if (downloadMbps > 0) {
-        bandwidthObject["down"] = "$downloadMbps mbps"
-    }
-    if (bandwidthObject.isNotEmpty()) {
-        confObject["bandwidth"] = bandwidthObject
-    }
-
-    val socks5Object: MutableMap<String, Any> = HashMap()
-    socks5Object["listen"] = joinHostPort(LOCALHOST, port)
-    confObject["socks5"] = socks5Object
-
-    confObject["lazy"] = true
-    confObject["fastOpen"] = true
-
-    val options = DumperOptions()
-    options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK)
-    options.isPrettyFlow = true
-    val yaml = Yaml(options)
-    return yaml.dump(confObject)
 }

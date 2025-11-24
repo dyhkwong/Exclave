@@ -24,11 +24,6 @@ import androidx.annotation.NonNull;
 import com.esotericsoftware.kryo.io.ByteBufferInput;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import io.nekohasekai.sagernet.SubscriptionType;
 import io.nekohasekai.sagernet.fmt.Serializable;
 import io.nekohasekai.sagernet.ktx.KryosKt;
@@ -37,7 +32,6 @@ public class SubscriptionBean extends Serializable {
 
     public Integer type;
     public String link;
-    public String token;
     public Boolean deduplication;
     public Boolean updateWhenConnectedOnly;
     public String customUserAgent;
@@ -50,29 +44,14 @@ public class SubscriptionBean extends Serializable {
 
     public String nameFilter;
 
-    // Open Online Config
-    public String username;
-    public List<String> protocols;
-
-    public Set<String> selectedGroups;
-    public Set<String> selectedOwners;
-    public Set<String> selectedTags;
-
     public SubscriptionBean() {
     }
 
     @Override
     public void serializeToBuffer(ByteBufferOutput output) {
-        output.writeInt(6);
-
+        output.writeInt(7);
         output.writeInt(type);
-
-        if (type == SubscriptionType.OOCv1) {
-            output.writeString(token);
-        } else {
-            output.writeString(link);
-        }
-
+        output.writeString(link);
         output.writeBoolean(deduplication);
         output.writeBoolean(updateWhenConnectedOnly);
         output.writeString(customUserAgent);
@@ -83,28 +62,12 @@ public class SubscriptionBean extends Serializable {
         output.writeLong(bytesRemaining);
         output.writeLong(expiryDate);
         output.writeString(nameFilter);
-
-        if (type == SubscriptionType.OOCv1) {
-            output.writeString(username);
-            KryosKt.writeStringList(output, protocols);
-            KryosKt.writeStringList(output, selectedGroups);
-            KryosKt.writeStringList(output, selectedOwners);
-            KryosKt.writeStringList(output, selectedTags);
-        }
-
     }
 
     public void serializeForShare(ByteBufferOutput output) {
-        output.writeInt(5);
-
+        output.writeInt(6);
         output.writeInt(type);
-
-        if (type == SubscriptionType.OOCv1) {
-            output.writeString(token);
-        } else {
-            output.writeString(link);
-        }
-
+        output.writeString(link);
         output.writeBoolean(deduplication);
         output.writeBoolean(updateWhenConnectedOnly);
         output.writeString(customUserAgent);
@@ -112,12 +75,6 @@ public class SubscriptionBean extends Serializable {
         output.writeLong(bytesRemaining);
         output.writeLong(expiryDate);
         output.writeString(nameFilter);
-
-        if (type == SubscriptionType.OOCv1) {
-            output.writeString(username);
-            KryosKt.writeStringList(output, protocols);
-        }
-
     }
 
     @Override
@@ -125,14 +82,17 @@ public class SubscriptionBean extends Serializable {
         int version = input.readInt();
 
         type = input.readInt();
-        if (type == SubscriptionType.OOCv1) {
-            token = input.readString();
+
+        if (version < 7 && type == SubscriptionType.OOCv1) {
+            input.readString(); // token, removed
+            link = "";
         } else {
             link = input.readString();
         }
         if (version < 6) {
             input.readBoolean(); // forceResolve, removed
         }
+
         deduplication = input.readBoolean();
         if (version < 2) input.readBoolean();
         updateWhenConnectedOnly = input.readBoolean();
@@ -163,18 +123,18 @@ public class SubscriptionBean extends Serializable {
             nameFilter = input.readString();
         }
 
-        if (type == SubscriptionType.OOCv1) {
-            username = input.readString();
+        if (version < 7 && type == SubscriptionType.OOCv1) {
+            input.readString();
             if (version <= 3) {
-                expiryDate = (long) input.readInt();
+                input.readInt();
             }
-            protocols = KryosKt.readStringList(input);
+            KryosKt.readStringList(input);
             if (input.canReadVarInt()) {
-                selectedGroups = KryosKt.readStringSet(input);
+                KryosKt.readStringSet(input);
                 if (version >= 1) {
-                    selectedOwners = KryosKt.readStringSet(input);
+                    KryosKt.readStringSet(input);
                 }
-                selectedTags = KryosKt.readStringSet(input);
+                KryosKt.readStringSet(input);
             }
         }
     }
@@ -183,8 +143,10 @@ public class SubscriptionBean extends Serializable {
         int version = input.readInt();
 
         type = input.readInt();
-        if (type == SubscriptionType.OOCv1) {
-            token = input.readString();
+
+        if (version < 6 && type == SubscriptionType.OOCv1) {
+            input.readString(); // token, removed
+            link = "";
         } else {
             link = input.readString();
         }
@@ -213,12 +175,12 @@ public class SubscriptionBean extends Serializable {
             nameFilter = input.readString();
         }
 
-        if (type == SubscriptionType.OOCv1) {
-            username = input.readString();
+        if (version < 6 && type == SubscriptionType.OOCv1) {
+            input.readString();
             if (version <= 2) {
-                expiryDate = (long) input.readInt();
+                input.readInt();
             }
-            protocols = KryosKt.readStringList(input);
+            KryosKt.readStringList(input);
         }
     }
 
@@ -226,7 +188,6 @@ public class SubscriptionBean extends Serializable {
     public void initializeDefaultValues() {
         if (type == null) type = SubscriptionType.RAW;
         if (link == null) link = "";
-        if (token == null) token = "";
         if (deduplication == null) deduplication = false;
         if (updateWhenConnectedOnly == null) updateWhenConnectedOnly = false;
         if (customUserAgent == null) customUserAgent = "";
@@ -238,13 +199,7 @@ public class SubscriptionBean extends Serializable {
         if (bytesRemaining == null) bytesRemaining = 0L;
         if (nameFilter == null) nameFilter = "";
 
-        if (username == null) username = "";
         if (expiryDate == null) expiryDate = 0L;
-        if (protocols == null) protocols = new ArrayList<>();
-        if (selectedGroups == null) selectedGroups = new LinkedHashSet<>();
-        if (selectedOwners == null) selectedOwners = new LinkedHashSet<>();
-        if (selectedTags == null) selectedTags = new LinkedHashSet<>();
-
     }
 
     public static final Creator<SubscriptionBean> CREATOR = new CREATOR<SubscriptionBean>() {

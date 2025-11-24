@@ -91,15 +91,10 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
     ALIAS_NAME=your_alias_name
     ALIAS_PASS=your_alias_pass
 ```
-- Build Exclave:
-  - Build `libcore`: `./run lib core`
-  - Download assets: `./gradlew :app:downloadAssets` (or update assets: `./gradlew :app:updateAssets`)
-  - Build the app: `./gradlew :app:assembleOssRelease`
-  - APK files are located in `app/build/outputs/apk/`
-- Build a plugin:
-  - Build native binaries: `./run plugin [hysteria2|juicity|mieru|tuic5|shadowquic|naive]`
-  - Build the plugin:`./gradlew :plugin:[hysteria2|juicity|mieru|tuic5|shadowquic|naive]:assembleOssRelease`
-  - Plugin APK files are located in `plugin/[hysteria2|juicity|mieru|tuic5|shadowquic|naive]/build/outputs/apk/`
+- Build `libcore`: `./run lib core`
+- Download assets: `./gradlew :app:downloadAssets` (or update assets: `./gradlew :app:updateAssets`)
+- Build the app: `./gradlew :app:assembleOssRelease`
+- APK files are located in `app/build/outputs/apk/`
 
 ## Dependencies, submodules and assets
 

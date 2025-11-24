@@ -48,9 +48,6 @@ public abstract class AbstractBean extends Serializable {
 
     public int extraType;
     public String profileId;
-    public String group;
-    public String owner;
-    public List<String> tags;
 
     public String displayName() {
         if (!name.isEmpty()) {
@@ -90,8 +87,6 @@ public abstract class AbstractBean extends Serializable {
         finalPort = serverPort;
 
         if (profileId == null) profileId = "";
-        if (group == null) group = "";
-        if (tags == null) tags = new ArrayList<>();
     }
 
 
@@ -100,38 +95,30 @@ public abstract class AbstractBean extends Serializable {
     @Override
     public void serializeToBuffer(@NonNull ByteBufferOutput output) {
         serialize(output);
-
-        output.writeInt(1);
+        output.writeInt(2);
         if (!serializeWithoutName) {
             output.writeString(name);
         }
         output.writeInt(extraType);
         if (extraType == ExtraType.NONE) return;
         output.writeString(profileId);
-        if (extraType == ExtraType.OOCv1) {
-            output.writeString(group);
-            output.writeString(owner);
-            KryosKt.writeStringList(output, tags);
-        }
     }
 
     @Override
     public void deserializeFromBuffer(@NonNull ByteBufferInput input) {
         deserialize(input);
-
         int extraVersion = input.readInt();
-
         name = input.readString();
         extraType = input.readInt();
         if (extraType == ExtraType.NONE) return;
         profileId = input.readString();
 
-        if (extraType == ExtraType.OOCv1) {
-            group = input.readString();
+        if (extraVersion < 2 && extraType == ExtraType.OOCv1) {
+            input.readString();
             if (extraVersion >= 1) {
-                owner = input.readString();
+                input.readString();
             }
-            tags = KryosKt.readStringList(input);
+            KryosKt.readStringList(input);
         }
     }
 

@@ -47,13 +47,6 @@
                     android:textStyle="bold"
                     tools:text="@string/group_name" />
 
-                <TextView
-                    android:id="@+id/group_user"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="?android:attr/textColorSecondary"
-                    tools:text="user name" />
             </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
