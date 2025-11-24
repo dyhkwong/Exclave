@@ -613,7 +613,7 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     }
                 }
                 proxy.getString("handshake-mode")?.also {
-                    multiplexingLevel = when (it) {
+                    handshakeMode = when (it) {
                         "HANDSHAKE_STANDARD" -> MieruBean.HANDSHAKE_STANDARD
                         "HANDSHAKE_NO_WAIT" -> MieruBean.HANDSHAKE_NO_WAIT
                         else -> MieruBean.HANDSHAKE_DEFAULT
