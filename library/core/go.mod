@@ -25,7 +25,7 @@ require (
 	github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 // indirect
 	github.com/dgryski/go-rc2 v0.0.0-20150621095337-8a9021637152 // indirect
 	github.com/dyhkwong/hysteria/core/v2 v2.6.5-1 // indirect
-	github.com/dyhkwong/hysteria/extras/v2 v2.6.5-1 // indirect
+	github.com/dyhkwong/hysteria/extras/v2 v2.6.5-2 // indirect
 	github.com/dyhkwong/sing-juicity v0.1.0-beta.2 // indirect
 	github.com/geeksbaek/seed v0.0.0-20230518075847-04d3af63848d // indirect
 	github.com/gofrs/uuid/v5 v5.3.2 // indirect
@@ -71,7 +71,7 @@ require (
 	github.com/xtaci/smux v1.5.15 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
-	golang.org/x/crypto v0.44.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/exp v0.0.0-20250911091902-df9299821621 // indirect
 	golang.org/x/mod v0.29.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
@@ -81,8 +81,8 @@ require (
 	golang.org/x/tools v0.38.0 // indirect
 	golang.zx2c4.com/wintun v0.0.0-20230126152724-0fa3db229ce2 // indirect
 	golang.zx2c4.com/wireguard v0.0.0-20250521234502-f333402bd9cb // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250804133106-a7a43d27e69b // indirect
-	google.golang.org/grpc v1.76.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20251022142026-3a174f9686a8 // indirect
+	google.golang.org/grpc v1.77.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
 )
@@ -92,4 +92,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251117143648-51e266a49387
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20251125073405-f92c80e372ba
