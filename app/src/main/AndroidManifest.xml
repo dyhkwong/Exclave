@@ -140,12 +140,8 @@
                 <data android:scheme="vmess" />
                 <data android:scheme="vless" />
                 <data android:scheme="trojan" />
-                <data android:scheme="trojan-go" />
                 <data android:scheme="naive+https" />
                 <data android:scheme="naive+quic" />
-                <data android:scheme="brook" />
-                <data android:scheme="hysteria" />
-                <data android:scheme="hy" />
                 <data android:scheme="hysteria2" />
                 <data android:scheme="hy2" />
                 <data android:scheme="juicity" />
