@@ -280,6 +280,11 @@ object RawUpdater : GroupUpdater() {
         val jsonObject = jsonElement.asJsonObject
         val beans = ArrayList<AbstractBean>()
         when {
+            jsonObject.contains("protocol", ignoreCase = true) -> {
+                // V2Ray JSONv4 outbound or V2Ray JSONv5 outbound
+                return parseV2Ray5Outbound(jsonObject).takeIf { it.isNotEmpty() }
+                    ?: parseV2RayOutbound(jsonObject)
+            }
             jsonObject.contains("proxies", ignoreCase = true) -> {
                 // Clash YAML
                 return listOf()
@@ -302,30 +307,30 @@ object RawUpdater : GroupUpdater() {
                 return parseSingBoxEndpoint(jsonObject).takeIf { it.isNotEmpty() }
                     ?: parseSingBoxOutbound(jsonObject)
             }
-            jsonObject.contains("protocol", ignoreCase = true) -> {
-                // V2Ray JSONv4 outbound or V2Ray JSONv5 outbound
-                return parseV2Ray5Outbound(jsonObject).takeIf { it.isNotEmpty() }
-                    ?: parseV2RayOutbound(jsonObject)
-            }
             else -> {
-                jsonObject.getArray("outbounds", ignoreCase = true)?.forEach {
-                    when {
-                        it.contains("protocol", ignoreCase = true) -> {
-                            // V2Ray JSONv4 or V2Ray JSONv5
-                            return parseV2Ray5Outbound(it).takeIf { it.isNotEmpty() }
-                                ?: parseV2RayOutbound(it)
-                        }
-                        it.contains("type") -> {
-                            // sing-box
-                            beans.addAll(parseSingBoxOutbound(it))
-                        }
+                val outbounds = jsonObject.getArray("outbounds", ignoreCase = true)
+                val endpoints = jsonObject.getArray("endpoints", ignoreCase = true)
+                val isV2Ray = !outbounds.isNullOrEmpty() && outbounds[0].contains("protocol", ignoreCase = true)
+                if (isV2Ray) {
+                    // V2Ray JSONv4 or V2Ray JSONv5
+                    outbounds.forEach {
+                        beans.addAll(parseV2Ray5Outbound(it).takeIf { it.isNotEmpty() }
+                            ?: parseV2RayOutbound(it))
                     }
+                    return beans
                 }
-                jsonObject.getArray("endpoints", ignoreCase = true)?.forEach {
+                val isSingBox = !endpoints.isNullOrEmpty() || (!outbounds.isNullOrEmpty() && outbounds[0].contains("type"))
+                if (isSingBox) {
                     // sing-box
-                    beans.addAll(parseSingBoxEndpoint(it))
+                    outbounds?.forEach {
+                        beans.addAll(parseSingBoxOutbound(it))
+                    }
+                    endpoints?.forEach {
+                        beans.addAll(parseSingBoxEndpoint(it))
+                    }
+                    return beans
                 }
-                return beans
+                return listOf()
             }
         }
     }
