@@ -1646,11 +1646,6 @@ fun buildV2RayConfig(
                         currentOutbound.domainStrategy = currentDomainStrategy
                     }
 
-                    if (bean is JuicityBean && DataStore.enableFakeDns && currentDomainStrategy == "AsIs") {
-                        // https://github.com/juicity/juicity/issues/140
-                        currentOutbound.domainStrategy = "UseIP"
-                    }
-
                     if (!(currentOutbound.domainStrategy == null && DataStore.outboundDomainStrategyForServer == "AsIs")
                         && !(currentOutbound.domainStrategy == "AsIs" && DataStore.outboundDomainStrategyForServer == "AsIs")
                         && currentOutbound.domainStrategy != DataStore.outboundDomainStrategyForServer) {
