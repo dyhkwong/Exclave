@@ -21,7 +21,6 @@
 
 package io.nekohasekai.sagernet.bg
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
@@ -195,48 +194,19 @@ class VpnService : BaseVpnService(),
         val packageName = packageName
         val proxyApps = DataStore.proxyApps
         val tunImplementation = DataStore.tunImplementation
-        val needIncludeSelf = tunImplementation == TunImplementation.SYSTEM /*data.proxy!!.config.index.any { !it.isBalancer && it.chain.size > 1 }*/
-        val needBypassRootUID = data.proxy!!.config.outboundTagsAll.values.any {
-            it.requireBean().needBypassRootUID()
-        }
-        if (proxyApps || needBypassRootUID) {
-            var bypass = DataStore.bypass
+        val needIncludeSelf = tunImplementation == TunImplementation.SYSTEM
+        if (proxyApps) {
+            val bypass = DataStore.bypass
             val individual = mutableSetOf<String>()
-            val allApps by lazy {
-                packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS).filter {
-                    when (it.packageName) {
-                        packageName -> false
-                        "android" -> true
-                        else -> it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
-                    }
-                }.map {
-                    it.packageName
-                }
-            }
-            if (proxyApps) {
-                individual.addAll(DataStore.individual.split('\n').filter { it.isNotEmpty() })
-                if (bypass && needBypassRootUID) {
-                    val individualNew = allApps.toMutableList()
-                    individualNew.removeAll(individual)
-                    individual.clear()
-                    individual.addAll(individualNew)
-                    bypass = false
-                }
-            } else {
-                individual.addAll(allApps)
-                bypass = false
-            }
-
+            individual.addAll(DataStore.individual.split('\n').filter { it.isNotEmpty() })
             individual.apply {
                 if (bypass xor needIncludeSelf) add(packageName) else remove(packageName)
             }.forEach {
                 try {
                     if (bypass) {
                         builder.addDisallowedApplication(it)
-                        // Logs.d("Add bypass: $it")
                     } else {
                         builder.addAllowedApplication(it)
-                        // Logs.d("Add allow: $it")
                     }
                 } catch (ex: PackageManager.NameNotFoundException) {
                     Logs.w(ex)

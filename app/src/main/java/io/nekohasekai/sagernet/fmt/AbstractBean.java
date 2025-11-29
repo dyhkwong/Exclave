@@ -28,9 +28,7 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import io.nekohasekai.sagernet.ExtraType;
 import io.nekohasekai.sagernet.ktx.KryosKt;
@@ -70,10 +68,6 @@ public abstract class AbstractBean extends Serializable {
     }
 
     public boolean needProtect() {
-        return false;
-    }
-
-    public boolean needBypassRootUID() {
         return false;
     }
 
