@@ -422,7 +422,7 @@ func (t *Tun2ray) NewPacket(source v2rayNet.Destination, destination v2rayNet.De
 		Status: log.AccessAccepted,
 	})
 
-	conn, err := t.v2ray.dialUDP(ctx)
+	conn, err := t.v2ray.dialUDP(ctx, destination, time.Second*300)
 	if err != nil {
 		newError(err).AtError().WriteToLog(session.ExportIDToError(ctx))
 		return
