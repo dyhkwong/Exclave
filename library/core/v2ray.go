@@ -20,20 +20,28 @@ package libcore
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 	_ "unsafe"
 
 	core "github.com/v2fly/v2ray-core/v5"
+	"github.com/v2fly/v2ray-core/v5/common"
+	"github.com/v2fly/v2ray-core/v5/common/buf"
 	"github.com/v2fly/v2ray-core/v5/common/net"
+	"github.com/v2fly/v2ray-core/v5/common/protocol/udp"
+	"github.com/v2fly/v2ray-core/v5/common/signal"
 	"github.com/v2fly/v2ray-core/v5/features"
 	"github.com/v2fly/v2ray-core/v5/features/dns"
 	"github.com/v2fly/v2ray-core/v5/features/dns/localdns"
 	"github.com/v2fly/v2ray-core/v5/features/extension"
+	"github.com/v2fly/v2ray-core/v5/features/routing"
 	"github.com/v2fly/v2ray-core/v5/features/stats"
 	"github.com/v2fly/v2ray-core/v5/infra/conf/serial"
 	_ "github.com/v2fly/v2ray-core/v5/main/distro/all"
+	"github.com/v2fly/v2ray-core/v5/transport"
 )
 
 func GetV2RayVersion() string {
@@ -47,6 +55,7 @@ type V2RayInstanceConfig struct {
 type V2RayInstance struct {
 	started       bool
 	core          *core.Instance
+	dispatcher    routing.Dispatcher
 	statsManager  stats.Manager
 	observatory   features.TaggedFeatures
 	LocalResolver LocalResolver
@@ -67,6 +76,7 @@ func (instance *V2RayInstance) LoadConfig(content string) error {
 	if err != nil {
 		return err
 	}
+	instance.dispatcher = instance.core.GetFeature(routing.DispatcherType()).(routing.Dispatcher)
 	instance.statsManager = instance.core.GetFeature(stats.ManagerType()).(stats.Manager)
 	o := instance.core.GetFeature(extension.ObservatoryType())
 	if o != nil {
@@ -144,6 +154,7 @@ func (instance *V2RayInstance) Close() error {
 			localdns.SetRawQueryFunc(nil)
 		}
 		instance.core = nil
+		instance.dispatcher = nil
 		instance.statsManager = nil
 		instance.observatory = nil
 		instance.started = false
@@ -161,9 +172,145 @@ func (instance *V2RayInstance) dial(ctx context.Context, destination net.Destina
 	return core.Dial(ctx, instance.core, destination)
 }
 
-func (instance *V2RayInstance) dialUDP(ctx context.Context) (net.PacketConn, error) {
+/*func (instance *V2RayInstance) dialUDP(ctx context.Context) (net.PacketConn, error) {
 	if !instance.started {
 		return nil, os.ErrInvalid
 	}
 	return core.DialUDP(ctx, instance.core)
+}*/
+
+func (instance *V2RayInstance) dialUDP(ctx context.Context, destination net.Destination, timeout time.Duration) (net.PacketConn, error) {
+	if !instance.started {
+		return nil, os.ErrInvalid
+	}
+	ctx, cancel := context.WithCancel(ctx)
+	link, err := instance.dispatcher.Dispatch(ctx, destination)
+	if err != nil {
+		cancel()
+		return nil, err
+	}
+	c := &dispatcherConn{
+		dest:   destination,
+		link:   link,
+		ctx:    ctx,
+		cancel: cancel,
+		cache:  make(chan *udp.Packet, 16),
+	}
+	c.timer = signal.CancelAfterInactivity(ctx, func() {
+		c.Close()
+	}, timeout)
+	go c.handleInput()
+	return c, nil
+}
+
+type dispatcherConn struct {
+	dest  net.Destination
+	link  *transport.Link
+	timer *signal.ActivityTimer
+
+	ctx    context.Context
+	cancel context.CancelFunc
+	closed bool
+	cache  chan *udp.Packet
+}
+
+func (c *dispatcherConn) handleInput() {
+	defer c.Close()
+	for {
+		select {
+		case <-c.ctx.Done():
+			return
+		default:
+		}
+
+		mb, err := c.link.Reader.ReadMultiBuffer()
+		if err != nil {
+			buf.ReleaseMulti(mb)
+			return
+		}
+		c.timer.Update()
+		for _, buffer := range mb {
+			if buffer.IsEmpty() {
+				continue
+			}
+			packet := &udp.Packet{
+				Payload: buffer,
+				Source:  c.dest,
+			}
+			if buffer.Endpoint != nil {
+				packet.Source = *buffer.Endpoint
+			}
+			select {
+			case c.cache <- packet:
+				continue
+			case <-c.ctx.Done():
+			default:
+			}
+			buffer.Release()
+		}
+	}
+}
+
+func (c *dispatcherConn) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
+	select {
+	case <-c.ctx.Done():
+		return 0, nil, io.EOF
+	case packet := <-c.cache:
+		n := copy(p, packet.Payload.Bytes())
+		packet.Payload.Release()
+		return n, &net.UDPAddr{
+			IP:   packet.Source.Address.IP(),
+			Port: int(packet.Source.Port),
+		}, nil
+	}
+}
+
+func (c *dispatcherConn) WriteTo(p []byte, addr net.Addr) (n int, err error) {
+	buffer := buf.NewWithSize(int32(len(p)))
+	buffer.Write(p)
+	endpoint := net.DestinationFromAddr(addr)
+	buffer.Endpoint = &endpoint
+	err = c.link.Writer.WriteMultiBuffer(buf.MultiBuffer{buffer})
+	if err != nil {
+		buffer.Release()
+		c.Close()
+		return 0, err
+	} else {
+		c.timer.Update()
+		n = len(p)
+	}
+	return
+}
+
+func (c *dispatcherConn) LocalAddr() net.Addr {
+	return &net.UDPAddr{
+		IP:   []byte{0, 0, 0, 0},
+		Port: 0,
+	}
+}
+
+func (c *dispatcherConn) Close() error {
+	if c.closed {
+		return nil
+	}
+	c.closed = true
+
+	c.cancel()
+	_ = common.Interrupt(c.link.Reader)
+	_ = common.Interrupt(c.link.Writer)
+	close(c.cache)
+
+	return nil
+}
+
+func (c *dispatcherConn) SetDeadline(t time.Time) error {
+	return nil
+}
+
+func (c *dispatcherConn) SetReadDeadline(t time.Time) error {
+	return nil
+}
+
+func (c *dispatcherConn) SetWriteDeadline(t time.Time) error {
+	return nil
 }
