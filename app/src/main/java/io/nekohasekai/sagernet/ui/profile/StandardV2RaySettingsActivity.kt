@@ -52,6 +52,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.getEnabled
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
@@ -543,11 +544,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         initPlugins()
 
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
-            (bean is ShadowsocksBean || bean is SOCKSBean) &&
-                    DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }
+            (bean is ShadowsocksBean || bean is SOCKSBean) && getEnabled(DataStore.experimentalFlags, "singuot")
         findPreference<PreferenceCategory>(Key.SERVER_SING_MUX_CATEGORY)!!.isVisible =
             (bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean) &&
-                    DataStore.experimentalFlags.split("\n").any { it == "singmux=true" }
+                    getEnabled(DataStore.experimentalFlags, "singmux")
         singMux = findPreference(Key.SERVER_SING_MUX)!!
         singMuxProtocol = findPreference(Key.SERVER_SING_MUX_PROTOCOL)!!
         singMuxMaxConnections = findPreference(Key.SERVER_SING_MUX_MAX_CONNECTIONS)!!
