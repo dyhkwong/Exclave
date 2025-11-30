@@ -216,3 +216,15 @@ fun String.unescapeLineFeed(): String {
     }
     return String(chars, 0, to)
 }
+
+fun getEnabled(input: String, key: String): Boolean {
+    return input.split("\n").any {
+        it == "$key=true"
+    }
+}
+
+fun getStringValue(input: String, key: String): String? {
+    return input.split("\n").filter {
+        it.startsWith("$key=")
+    }.takeIf { it.isNotEmpty() }?.get(0)?.substringAfter("$key=")
+}

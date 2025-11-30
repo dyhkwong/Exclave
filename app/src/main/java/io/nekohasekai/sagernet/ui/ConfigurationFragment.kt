@@ -1042,7 +1042,7 @@ class ConfigurationFragment @JvmOverloads constructor(
             }
             checkOrderMenu()
 
-            if (!DataStore.enableDebug && !DataStore.experimentalFlags.split("\n").any { it == "shadowquic=true" }) {
+            if (!DataStore.enableDebug && getEnabled(DataStore.experimentalFlags, "shadowquic")) {
                 // WIP, not ready yet
                 (parentFragment as? ToolbarFragment)
                     ?.toolbar?.menu?.findItem(R.id.action_new_shadowquic)?.isVisible  = false

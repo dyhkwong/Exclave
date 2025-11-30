@@ -18,7 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package nat
 
 import (
+	"net/netip"
 	"os"
+
+	"libcore/tun"
 
 	"github.com/v2fly/v2ray-core/v5/common/buf"
 	"golang.org/x/sys/unix"
@@ -28,31 +31,29 @@ import (
 	"gvisor.dev/gvisor/pkg/tcpip/header"
 	"gvisor.dev/gvisor/pkg/tcpip/header/parse"
 	"gvisor.dev/gvisor/pkg/tcpip/stack"
-	"libcore/tun"
 )
 
 //go:generate go run ../errorgen
 
 var _ tun.Tun = (*SystemTun)(nil)
 
-var (
-	vlanClient4 = tcpip.AddrFromSlice([]uint8{172, 19, 0, 1})
-	vlanClient6 = tcpip.AddrFromSlice([]uint8{0xfd, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x1})
-)
-
 type SystemTun struct {
 	dev          int
 	mtu          int
 	handler      tun.Handler
+	addr4        netip.Addr
+	addr6        netip.Addr
 	enableIPv6   bool
 	tcpForwarder *tcpForwarder
 }
 
-func New(dev int32, mtu int32, handler tun.Handler, enableIPv6 bool) (*SystemTun, error) {
+func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, enableIPv6 bool) (*SystemTun, error) {
 	t := &SystemTun{
 		dev:        int(dev),
 		mtu:        int(mtu),
 		handler:    handler,
+		addr4:      addr4,
+		addr6:      addr6,
 		enableIPv6: enableIPv6,
 	}
 	tcpServer, err := newTcpForwarder(t)

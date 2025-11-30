@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
+import io.nekohasekai.sagernet.ktx.getEnabled
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
@@ -99,7 +100,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         }
 
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
-        DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }
+            getEnabled(DataStore.experimentalFlags, "singuot")
     }
 
 }

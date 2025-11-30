@@ -21,11 +21,12 @@ import (
 	"net"
 	"time"
 
+	"libcore/comm"
+
 	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
 	"gvisor.dev/gvisor/pkg/tcpip"
 	"gvisor.dev/gvisor/pkg/tcpip/checksum"
 	"gvisor.dev/gvisor/pkg/tcpip/header"
-	"libcore/comm"
 )
 
 type tcpForwarder struct {
@@ -42,8 +43,9 @@ func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
 		tun:      tun,
 		sessions: comm.NewLruCache(300, true),
 	}
-	address := &net.TCPAddr{}
-	address.IP = net.IP(vlanClient4.AsSlice())
+	address := &net.TCPAddr{
+		IP: tun.addr4.AsSlice(),
+	}
 	listener, err := net.ListenTCP("tcp4", address)
 	if err != nil {
 		return nil, newError("failed to create tcp forwarder at ", address.IP).Base(err)
@@ -52,8 +54,9 @@ func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
 	tcpForwarder.port4 = uint16(listener.Addr().(*net.TCPAddr).Port)
 	newError("tcp forwarder started at ", listener.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
 	if tun.enableIPv6 {
-		address := &net.TCPAddr{}
-		address.IP = net.IP(vlanClient6.AsSlice())
+		address := &net.TCPAddr{
+			IP: tun.addr6.AsSlice(),
+		}
 		listener, err := net.ListenTCP("tcp6", address)
 		if err != nil {
 			return nil, newError("failed to create tcp forwarder at ", address.IP).Base(err)
@@ -123,7 +126,6 @@ func (t *tcpForwarder) processIPv4(ipHdr header.IPv4, tcpHdr header.TCP) {
 	var session *peerValue
 
 	if sourcePort != t.port4 {
-
 		key := peerKey{destinationAddress, sourcePort}
 		iSession, ok := t.sessions.Get(key)
 		if ok {
@@ -132,13 +134,10 @@ func (t *tcpForwarder) processIPv4(ipHdr header.IPv4, tcpHdr header.TCP) {
 			session = &peerValue{sourceAddress, destinationPort}
 			t.sessions.Set(key, session)
 		}
-
 		ipHdr.SetSourceAddress(destinationAddress)
-		ipHdr.SetDestinationAddress(vlanClient4)
+		ipHdr.SetDestinationAddress(tcpip.AddrFrom4(t.tun.addr4.As4()))
 		tcpHdr.SetDestinationPort(t.port4)
-
 	} else {
-
 		iSession, ok := t.sessions.Get(peerKey{destinationAddress, destinationPort})
 		if ok {
 			session = iSession.(*peerValue)
@@ -182,7 +181,7 @@ func (t *tcpForwarder) processIPv6(ipHdr header.IPv6, tcpHdr header.TCP) {
 		}
 
 		ipHdr.SetSourceAddress(destinationAddress)
-		ipHdr.SetDestinationAddress(vlanClient6)
+		ipHdr.SetDestinationAddress(tcpip.AddrFrom16(t.tun.addr6.As16()))
 		tcpHdr.SetDestinationPort(t.port6)
 
 	} else {

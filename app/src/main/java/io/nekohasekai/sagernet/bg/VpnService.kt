@@ -36,6 +36,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.getStringValue
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
@@ -57,13 +58,32 @@ class VpnService : BaseVpnService(),
         var instance: VpnService? = null
 
         const val DEFAULT_MTU = 1500
-        const val PRIVATE_VLAN4_CLIENT = "172.19.0.1"
-        const val PRIVATE_VLAN4_GATEWAY = "172.19.0.2"
-        const val PRIVATE_VLAN6_CLIENT = "fdfe:dcba:9876::1"
-        const val PRIVATE_VLAN6_GATEWAY = "fdfe:dcba:9876::2"
-        const val FAKEDNS_VLAN4_CLIENT = "198.18.0.0"
-        const val FAKEDNS_VLAN6_CLIENT = "fc00::"
+        val PRIVATE_VLAN4_CLIENT =
+            getStringValue(DataStore.experimentalFlags, "tunIPv4Address")?.substringBefore("/") ?: "172.19.0.1"
+        val PRIVATE_VLAN4_CLIENT_PREFIX =
+            getStringValue(DataStore.experimentalFlags, "tunIPv4Address")?.substringAfter("/")?.toInt() ?: 30
 
+        val PRIVATE_VLAN4_DNS =
+            getStringValue(DataStore.experimentalFlags, "tunIPv4DNSAddress")?.substringBefore("/") ?: "172.19.0.2"
+        val PRIVATE_VLAN6_CLIENT =
+            getStringValue(DataStore.experimentalFlags, "tunIPv6Address")?.substringBefore("/") ?: "fdfe:dcba:9876::1"
+        val PRIVATE_VLAN6_CLIENT_PREFIX =
+            getStringValue(DataStore.experimentalFlags, "tunIPv6Address")?.substringAfter("/")?.toInt() ?: 126
+
+        val PRIVATE_VLAN6_DNS =
+            getStringValue(DataStore.experimentalFlags, "tunIPv6DNSAddress")?.substringBefore("/")
+        val FAKEDNS_VLAN4_CLIENT =
+            getStringValue(DataStore.experimentalFlags, "fakeDNSIPv4Pool")?.substringBefore("/") ?: "198.18.0.0"
+        val FAKEDNS_VLAN4_CLIENT_PREFIX =
+            getStringValue(DataStore.experimentalFlags, "fakeDNSIPv4Pool")?.substringAfter("/")?.toInt() ?: 15
+        val FAKEDNS_VLAN4_CLIENT_POOL_SIZE =
+            getStringValue(DataStore.experimentalFlags, "fakeDNSIPv4PoolSize")?.toInt() ?: 65535
+        val FAKEDNS_VLAN6_CLIENT =
+            getStringValue(DataStore.experimentalFlags, "fakeDNSIPv6Pool")?.substringBefore("/") ?: "fc00::"
+        val FAKEDNS_VLAN6_CLIENT_PREFIX =
+            getStringValue(DataStore.experimentalFlags, "fakeDNSIPv6Pool")?.substringAfter("/")?.toInt() ?: 18
+        val FAKEDNS_VLAN6_CLIENT_POOL_SIZE =
+            getStringValue(DataStore.experimentalFlags, "fakeDNSIPv6PoolSize")?.toInt() ?: 65535
     }
 
     lateinit var conn: ParcelFileDescriptor
@@ -157,26 +177,41 @@ class VpnService : BaseVpnService(),
             .setSession(getString(R.string.app_name))
             .setMtu(DataStore.mtu)
 
-        builder.addAddress(PRIVATE_VLAN4_CLIENT, 30)
+        builder.addAddress(PRIVATE_VLAN4_CLIENT, PRIVATE_VLAN4_CLIENT_PREFIX)
         if (DataStore.enableVPNInterfaceIPv6Address) {
-            builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
+            builder.addAddress(PRIVATE_VLAN6_CLIENT, PRIVATE_VLAN6_CLIENT_PREFIX)
         }
 
         if (DataStore.bypassLan) {
-            resources.getStringArray(R.array.bypass_private_route).forEach {
-                val subnet = Subnet.fromString(it)!!
-                builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
+            val customIPv4Route = getStringValue(DataStore.experimentalFlags, "tunIPv4RouteAddress")
+            if (customIPv4Route != null) {
+                customIPv4Route.split(",").forEach {
+                    val subnet = Subnet.fromString(it)!!
+                    builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
+                }
+            } else {
+                resources.getStringArray(R.array.bypass_private_route).forEach {
+                    val subnet = Subnet.fromString(it)!!
+                    builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
+                }
+                builder.addRoute(PRIVATE_VLAN4_DNS, 32)
+                if (DataStore.enableFakeDns) {
+                    builder.addRoute(FAKEDNS_VLAN4_CLIENT, FAKEDNS_VLAN4_CLIENT_PREFIX)
+                }
             }
-            builder.addRoute(PRIVATE_VLAN4_GATEWAY, 32)
-            // https://issuetracker.google.com/issues/149636790
             if (DataStore.enableVPNInterfaceIPv6Address) {
-                builder.addRoute("2000::", 3)
-                builder.addRoute(PRIVATE_VLAN6_GATEWAY, 128)
-            }
-            if (DataStore.enableFakeDns) {
-                builder.addRoute(FAKEDNS_VLAN4_CLIENT, 15)
-                if (DataStore.enableVPNInterfaceIPv6Address) {
-                    builder.addRoute(FAKEDNS_VLAN6_CLIENT, 18)
+                val customIPv6Route = getStringValue(DataStore.experimentalFlags, "tunIPv6RouteAddress")
+                if (customIPv6Route != null) {
+                    customIPv6Route.split(",").forEach {
+                        val subnet = Subnet.fromString(it)!!
+                        builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
+                    }
+                } else {
+                    // https://issuetracker.google.com/issues/149636790
+                    builder.addRoute("2000::", 3)
+                    if (DataStore.enableFakeDns) {
+                        builder.addRoute(FAKEDNS_VLAN6_CLIENT, FAKEDNS_VLAN6_CLIENT_PREFIX)
+                    }
                 }
             }
         } else {
@@ -216,7 +251,10 @@ class VpnService : BaseVpnService(),
             builder.addDisallowedApplication(packageName)
         }
 
-        builder.addDnsServer(PRIVATE_VLAN4_GATEWAY)
+        builder.addDnsServer(PRIVATE_VLAN4_DNS)
+        if (PRIVATE_VLAN6_DNS != null) {
+            builder.addDnsServer(PRIVATE_VLAN6_DNS)
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && DataStore.appendHttpProxy && DataStore.requireHttp) {
             if (DataStore.httpProxyException.isNotEmpty()) {
@@ -244,8 +282,10 @@ class VpnService : BaseVpnService(),
             protect = needIncludeSelf
             mtu = DataStore.mtu
             v2Ray = data.proxy!!.v2rayPoint
-            gateway4 = PRIVATE_VLAN4_GATEWAY
-            gateway6 = PRIVATE_VLAN6_GATEWAY
+            addr4 = PRIVATE_VLAN4_CLIENT
+            addr6 = PRIVATE_VLAN6_CLIENT
+            dns4 = PRIVATE_VLAN4_DNS
+            dns6 = PRIVATE_VLAN6_DNS ?: ""
             enableIPv6 = DataStore.enableVPNInterfaceIPv6Address
             implementation = tunImplementation
             sniffing = DataStore.trafficSniffing

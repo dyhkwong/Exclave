@@ -23,6 +23,7 @@ import (
 	"io"
 	"math"
 	"net"
+	"net/netip"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -53,7 +54,10 @@ var _ tun.Handler = (*Tun2ray)(nil)
 type Tun2ray struct {
 	dev                 tun.Tun
 	mtu                 int32
-	router              string
+	addr4               netip.Addr
+	addr6               netip.Addr
+	dns4                netip.Addr
+	dns6                netip.Addr
 	v2ray               *V2RayInstance
 	fakedns             bool
 	sniffing            bool
@@ -79,8 +83,10 @@ type TunConfig struct {
 	Protector           Protector
 	MTU                 int32
 	V2Ray               *V2RayInstance
-	Gateway4            string
-	Gateway6            string
+	Addr4               string
+	Addr6               string
+	Dns4                string
+	Dns6                string
 	EnableIPv6          bool
 	Implementation      int32
 	FakeDNS             bool
@@ -96,13 +102,18 @@ type TunConfig struct {
 func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 	t := &Tun2ray{
 		mtu:                 config.MTU,
-		router:              config.Gateway4,
+		addr4:               netip.MustParseAddr(config.Addr4),
+		addr6:               netip.MustParseAddr(config.Addr6),
+		dns4:                netip.MustParseAddr(config.Dns4),
 		v2ray:               config.V2Ray,
 		sniffing:            config.Sniffing,
 		overrideDestination: config.OverrideDestination,
 		fakedns:             config.FakeDNS,
 		dumpUID:             config.DumpUID,
 		trafficStats:        config.TrafficStats,
+	}
+	if len(config.Dns6) > 0 {
+		t.dns6 = netip.MustParseAddr(config.Dns6)
 	}
 
 	var err error
@@ -124,7 +135,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 
 		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, gvisor.DefaultNIC, config.PCap, pcapFile, math.MaxUint32, config.EnableIPv6)
 	case comm.TunImplementationSystem:
-		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, config.EnableIPv6)
+		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6)
 	}
 
 	if err != nil {
@@ -197,12 +208,14 @@ func (t *Tun2ray) NewConnection(source v2rayNet.Destination, destination v2rayNe
 		SSID:        inbound.GetSSID(),
 	}
 
-	isDns := destination.Address.String() == t.router
+	isDns := false
+	if addr, err := netip.ParseAddr(destination.Address.String()); err == nil {
+		isDns = addr == t.dns4 || (t.dns6.IsValid() && addr == t.dns6)
+	}
+
 	if isDns {
 		if destination.Port != 53 {
-			t.connectionsLock.Lock()
-			_ = t.connections.PushBack(conn)
-			t.connectionsLock.Unlock()
+			conn.Close()
 			return
 		}
 		ib.Tag = "dns-in"
@@ -361,7 +374,12 @@ func (t *Tun2ray) NewPacket(source v2rayNet.Destination, destination v2rayNet.De
 		NetworkType: inbound.GetNetworkType(),
 		SSID:        inbound.GetSSID(),
 	}
-	isDns := destination.Address.String() == t.router
+
+	isDns := false
+	if addr, err := netip.ParseAddr(destination.Address.String()); err == nil {
+		isDns = addr == t.dns4 || (t.dns6.IsValid() && addr == t.dns6)
+	}
+
 	if isDns {
 		if destination.Port != 53 {
 			return

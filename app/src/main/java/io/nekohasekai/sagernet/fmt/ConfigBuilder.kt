@@ -108,9 +108,11 @@ import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.getArray
 import io.nekohasekai.sagernet.ktx.getBoolean
+import io.nekohasekai.sagernet.ktx.getEnabled
 import io.nekohasekai.sagernet.ktx.getInt
 import io.nekohasekai.sagernet.ktx.getObject
 import io.nekohasekai.sagernet.ktx.getString
+import io.nekohasekai.sagernet.ktx.getStringValue
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
@@ -708,7 +710,7 @@ fun buildV2RayConfig(
                                                         }
                                                     }
                                                 }
-                                                if (bean.singUoT && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                                if (bean.singUoT && getEnabled(DataStore.experimentalFlags, "singuot")) {
                                                     uot = bean.singUoT
                                                 }
                                             }
@@ -754,7 +756,7 @@ fun buildV2RayConfig(
                                                             }
                                                         }
                                                     }
-                                                    if (bean.singUoT && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                                    if (bean.singUoT && getEnabled(DataStore.experimentalFlags, "singuot")) {
                                                         uot = bean.singUoT
                                                     }
                                                 })
@@ -781,7 +783,7 @@ fun buildV2RayConfig(
                                                 }
                                             })
                                             version = bean.protocolVersionName()
-                                            if (bean.singUoT && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                            if (bean.singUoT && getEnabled(DataStore.experimentalFlags, "singuot")) {
                                                 uot = bean.singUoT
                                             }
                                         }
@@ -1280,7 +1282,7 @@ fun buildV2RayConfig(
                                         udpRelayMode = bean.udpRelayMode
                                         if (bean.zeroRTTHandshake) zeroRTTHandshake = bean.zeroRTTHandshake
                                         if (bean.disableSNI) disableSNI = bean.disableSNI
-                                        if (bean.singUDPOverStream && DataStore.experimentalFlags.split("\n").any { it == "singuot=true" }) {
+                                        if (bean.singUDPOverStream && getEnabled(DataStore.experimentalFlags, "singuot")) {
                                             udpOverStream = bean.singUDPOverStream
                                         }
                                         tlsSettings = TLSObject().apply {
@@ -1621,7 +1623,7 @@ fun buildV2RayConfig(
                                 }
                             }
                             if ((bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean)
-                                && bean.singMux && DataStore.experimentalFlags.split("\n").any { it == "singmux=true" }) {
+                                && bean.singMux && getEnabled(DataStore.experimentalFlags, "singmux")) {
                                 smux = OutboundObject.SmuxObject().apply {
                                     enabled = bean.singMux
                                     protocol = bean.singMuxProtocol
@@ -2031,7 +2033,7 @@ fun buildV2RayConfig(
             settings = LazyOutboundConfigurationObject(this,
                 DNSOutboundConfigurationObject().apply {
                     userLevel = 1
-                    if (DataStore.experimentalFlags.split("\n").any { it == "lookupAsExchange=true" }) {
+                    if (getEnabled(DataStore.experimentalFlags, "lookupAsExchange")) {
                         lookupAsExchange = true
                     }
                 })
@@ -2083,14 +2085,24 @@ fun buildV2RayConfig(
         }
 
         if (DataStore.enableDnsRouting) {
-            for (bypassRule in extraRules.filter { it.isBypassRule() }) {
-                if (bypassRule.domains.isNotEmpty()) {
-                    bypassDomain.addAll(bypassRule.domains.listByLineOrComma())
+            val directDNSDomainList = getStringValue(DataStore.experimentalFlags, "directDNSDomainList")
+            if (directDNSDomainList != null) {
+                bypassDomain.addAll(directDNSDomainList.split(","))
+            } else {
+                for (bypassRule in extraRules.filter { it.isBypassRule() }) {
+                    if (bypassRule.domains.isNotEmpty()) {
+                        bypassDomain.addAll(bypassRule.domains.listByLineOrComma())
+                    }
                 }
             }
-            for (proxyRule in extraRules.filter { it.isProxyRule() }) {
-                if (proxyRule.domains.isNotEmpty()) {
-                    proxyDomain.addAll(proxyRule.domains.listByLineOrComma())
+            val remoteDNSDomainList = getStringValue(DataStore.experimentalFlags, "remoteDNSDomainList")
+            if (remoteDNSDomainList != null) {
+                proxyDomain.addAll(remoteDNSDomainList.split(","))
+            } else {
+                for (proxyRule in extraRules.filter { it.isProxyRule() }) {
+                    if (proxyRule.domains.isNotEmpty()) {
+                        proxyDomain.addAll(proxyRule.domains.listByLineOrComma())
+                    }
                 }
             }
         }
@@ -2141,16 +2153,16 @@ fun buildV2RayConfig(
                             if (queryStrategy != "UseIPv6") {
                                 fakedns.add(DnsObject.ServerObject.StringOrFakeDnsObject().apply {
                                     valueY = FakeDnsObject().apply {
-                                        ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
-                                        poolSize = 65535
+                                        ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/${VpnService.FAKEDNS_VLAN4_CLIENT_PREFIX}"
+                                        poolSize = VpnService.FAKEDNS_VLAN4_CLIENT_POOL_SIZE
                                     }
                                 })
                             }
                             if (queryStrategy != "UseIPv4") {
                                 fakedns.add(DnsObject.ServerObject.StringOrFakeDnsObject().apply {
                                     valueY = FakeDnsObject().apply {
-                                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
-                                        poolSize = 65535
+                                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/${VpnService.FAKEDNS_VLAN6_CLIENT_PREFIX}"
+                                        poolSize = VpnService.FAKEDNS_VLAN6_CLIENT_POOL_SIZE
                                     }
                                 })
                             }
@@ -2192,16 +2204,16 @@ fun buildV2RayConfig(
                                 if (queryStrategy != "UseIPv6") {
                                     fakedns.add(DnsObject.ServerObject.StringOrFakeDnsObject().apply {
                                         valueY = FakeDnsObject().apply {
-                                            ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
-                                            poolSize = 65535
+                                            ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/${VpnService.FAKEDNS_VLAN4_CLIENT_PREFIX}"
+                                            poolSize = VpnService.FAKEDNS_VLAN4_CLIENT_POOL_SIZE
                                         }
                                     })
                                 }
                                 if (queryStrategy != "UseIPv4") {
                                     fakedns.add(DnsObject.ServerObject.StringOrFakeDnsObject().apply {
                                         valueY = FakeDnsObject().apply {
-                                            ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
-                                            poolSize = 65535
+                                            ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/${VpnService.FAKEDNS_VLAN6_CLIENT_PREFIX}"
+                                            poolSize = VpnService.FAKEDNS_VLAN6_CLIENT_POOL_SIZE
                                         }
                                     })
                                 }
@@ -2241,16 +2253,16 @@ fun buildV2RayConfig(
                             if (queryStrategy != "UseIPv6") {
                                 fakedns.add(DnsObject.ServerObject.StringOrFakeDnsObject().apply {
                                     valueY = FakeDnsObject().apply {
-                                        ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/15"
-                                        poolSize = 65535
+                                        ipPool = "${VpnService.FAKEDNS_VLAN4_CLIENT}/${VpnService.FAKEDNS_VLAN4_CLIENT_PREFIX}"
+                                        poolSize = VpnService.FAKEDNS_VLAN4_CLIENT_POOL_SIZE
                                     }
                                 })
                             }
                             if (queryStrategy != "UseIPv4") {
                                 fakedns.add(DnsObject.ServerObject.StringOrFakeDnsObject().apply {
                                     valueY = FakeDnsObject().apply {
-                                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/18"
-                                        poolSize = 65535
+                                        ipPool = "${VpnService.FAKEDNS_VLAN6_CLIENT}/${VpnService.FAKEDNS_VLAN6_CLIENT_PREFIX}"
+                                        poolSize = VpnService.FAKEDNS_VLAN6_CLIENT_POOL_SIZE
                                     }
                                 })
                             }
