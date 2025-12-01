@@ -282,7 +282,7 @@ class AssetsActivity : ThemedActivity() {
                         }
                     }.onFailure {
                         onMainDispatcher {
-                            alert(it.readableMessage).show()
+                            snackbar(it.readableMessage).show()
                         }
                     }
 
