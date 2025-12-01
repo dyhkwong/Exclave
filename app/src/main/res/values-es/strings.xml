@@ -592,4 +592,9 @@
     <string name="delete_multi_confirm_prompt">¿Realmente quieres eliminar estos perfiles?</string>
     <string name="create_shortcut">Crear acceso directo</string>
     <string name="interrupt_reused_connections">Interrumpir conexiones reutilizadas cuando la red cambia</string>
+    <string name="mieru_port_range">Rango de puertos del servidor</string>
+    <string name="cag_grpc">Ajustes de gRPC</string>
+    <string name="grpc_service_name_compat">Compatibilidad del nombre del servicio gRPC</string>
+    <string name="grpc_service_name_compat_sum">Ser compatible con el cambio de ruptura de Xray, pero romper la compatibilidad con servidores que no sean de Xray.</string>
+    <string name="grpc_multi_mode">Modo múltiple</string>
 </resources>
