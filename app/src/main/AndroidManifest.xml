@@ -269,7 +269,6 @@
 
         <activity
             android:name="io.nekohasekai.sagernet.ui.SwitchActivity"
-            android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.SagerNet.Dialog" />
 
