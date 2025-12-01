@@ -26,7 +26,7 @@ require (
 	github.com/dyhkwong/hysteria/core/v2 v2.6.5-1 // indirect
 	github.com/dyhkwong/hysteria/extras/v2 v2.6.5-2 // indirect
 	github.com/dyhkwong/sing-juicity v0.1.0-beta.2 // indirect
-	github.com/enfein/mieru/v3 v3.25.0 // indirect
+	github.com/enfein/mieru/v3 v3.26.0 // indirect
 	github.com/gofrs/uuid/v5 v5.3.2 // indirect
 	github.com/golang-collections/go-datastructures v0.0.0-20150211160725-59788d5eb259 // indirect
 	github.com/google/btree v1.1.3 // indirect
@@ -90,4 +90,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.42.1-0.20251130155704-94046aef7c0a
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.42.1-0.20251201134539-8d474694250d
