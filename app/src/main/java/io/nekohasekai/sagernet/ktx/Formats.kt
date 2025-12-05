@@ -125,7 +125,7 @@ fun parseShareLinks(text: String): List<AbstractBean> {
             }
         } else if (startsWith("mierus://", ignoreCase = true)) {
             runCatching {
-                entities.add(parseMieru(this))
+                entities.addAll(parseMieru(this))
             }
         } else if (startsWith("quic://", ignoreCase = true)) {
             runCatching {

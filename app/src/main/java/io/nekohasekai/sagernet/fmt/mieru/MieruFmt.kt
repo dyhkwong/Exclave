@@ -22,51 +22,81 @@ import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 
-fun parseMieru(link: String): MieruBean {
+fun parseMieru(link: String): List<MieruBean> {
+    val beans = mutableListOf<MieruBean>()
     val url = Libcore.parseURL(link)
-    return MieruBean().apply {
-        serverAddress = url.host
-        username = url.username
-        password = url.password
-        url.queryParameter("profile")?.let {
-            name = it
-        }
-        url.queryParameter("port")?.let { port ->
-            // There can be multiple queries named `port`, which is not so standard,
-            // just let the URL library pick one for now.
-            port.toIntOrNull()?.let {
-                serverPort = it
-            } ?: {
-                portRange = port
-            }
-        } ?: error("no port specified")
-        url.queryParameter("protocol")?.let {
-            // There can be multiple queries named `protocol`,
-            // just let the URL library pick one for now.
-            protocol = when (it) {
-                "UDP" -> MieruBean.PROTOCOL_UDP
-                "TCP" -> MieruBean.PROTOCOL_TCP
-                else -> error("unknown protocol: $it")
-            }
-        } ?: error("no protocol specified")
-        /*url.queryParameter("mtu")?.toIntOrNull()?.let {
-            mtu = it
-        }*/
-        url.queryParameter("multiplexing")?.let {
-            when (it) {
-                "MULTIPLEXING_OFF" -> multiplexingLevel = MieruBean.MULTIPLEXING_OFF
-                "MULTIPLEXING_LOW" -> multiplexingLevel = MieruBean.MULTIPLEXING_LOW
-                "MULTIPLEXING_MIDDLE" -> multiplexingLevel = MieruBean.MULTIPLEXING_MIDDLE
-                "MULTIPLEXING_HIGH" -> multiplexingLevel = MieruBean.MULTIPLEXING_HIGH
-            }
-        }
-        url.queryParameter("handshake-mode")?.let {
-            when (it) {
-                "HANDSHAKE_STANDARD" -> handshakeMode = MieruBean.HANDSHAKE_STANDARD
-                "HANDSHAKE_NO_WAIT" -> handshakeMode = MieruBean.HANDSHAKE_NO_WAIT
-            }
+    if (url.username.isNullOrEmpty() || url.password.isNullOrEmpty()) {
+        error("empty username or password")
+    }
+    val portCount = url.countQueryParameter("port")
+    if (portCount != url.countQueryParameter("protocol")) {
+        error("port count and protocol count mismatch")
+    }
+    if (portCount == 0L) {
+        error("missing port and protocol")
+    }
+    val tcpPorts = mutableListOf<String>()
+    val udpPorts = mutableListOf<String>()
+    for (i in 0..<portCount) {
+        when (val protocol = url.getQueryParameterAt("protocol", i)) {
+            "UDP" -> udpPorts.add(url.getQueryParameterAt("port", i))
+            "TCP" -> tcpPorts.add(url.getQueryParameterAt("port", i))
+            else -> error("unknown protocol: $protocol")
         }
     }
+    val profileName = url.queryParameter("profile")
+    val multiplexing = url.queryParameter("multiplexing")?.let {
+        when (it) {
+            "MULTIPLEXING_OFF" -> MieruBean.MULTIPLEXING_OFF
+            "MULTIPLEXING_LOW" -> MieruBean.MULTIPLEXING_LOW
+            "MULTIPLEXING_MIDDLE" -> MieruBean.MULTIPLEXING_MIDDLE
+            "MULTIPLEXING_HIGH" -> MieruBean.MULTIPLEXING_HIGH
+            else -> MieruBean.MULTIPLEXING_DEFAULT
+        }
+    }
+    val handshakemode = url.queryParameter("handshake-mode")?.let {
+        when (it) {
+            "HANDSHAKE_STANDARD" -> MieruBean.HANDSHAKE_STANDARD
+            "HANDSHAKE_NO_WAIT" -> MieruBean.HANDSHAKE_NO_WAIT
+            else -> MieruBean.HANDSHAKE_DEFAULT
+        }
+    }
+    if (tcpPorts.isNotEmpty()) {
+        beans.add(MieruBean().apply {
+            serverAddress = url.host
+            serverPort = if (tcpPorts.size == 1 && tcpPorts[0].toIntOrNull() != null) {
+                tcpPorts[0].toInt()
+            } else 0
+            portRange = if (tcpPorts.size != 1 || tcpPorts[0].toIntOrNull() == null) {
+                tcpPorts.joinToString("\n")
+            } else ""
+            username = url.username
+            password = url.password
+            name = profileName
+            multiplexingLevel = multiplexing
+            handshakeMode = handshakemode
+            protocol = MieruBean.PROTOCOL_TCP
+        })
+    }
+    if (udpPorts.isNotEmpty()) {
+        beans.add(MieruBean().apply {
+            serverAddress = url.host
+            serverPort = if (udpPorts.size == 1 && udpPorts[0].toIntOrNull() != null) {
+                udpPorts[0].toInt()
+            } else 0
+            portRange = if (udpPorts.size != 1 || udpPorts[0].toIntOrNull() == null) {
+                udpPorts.joinToString("\n")
+            } else ""
+            username = url.username
+            password = url.password
+            name = profileName
+            multiplexingLevel = multiplexing
+            handshakeMode = handshakemode
+            protocol = MieruBean.PROTOCOL_UDP
+            // mtu = url.queryParameter("mtu")?.toIntOrNull() ?: 1400
+        })
+    }
+    return beans
 }
 
 fun MieruBean.toUri(): String? {
@@ -87,21 +117,25 @@ fun MieruBean.toUri(): String? {
         builder.addQueryParameter("profile", name)
     }
     if (portRange.isNotEmpty()) {
-        builder.addQueryParameter("port", portRange.listByLineOrComma()[0])
+        for (range in portRange.listByLineOrComma()) {
+            builder.addQueryParameter("port", range)
+            builder.addQueryParameter("protocol", when (protocol) {
+                MieruBean.PROTOCOL_TCP -> "TCP"
+                MieruBean.PROTOCOL_UDP -> "UDP"
+                else -> error("impossible")
+            })
+        }
     } else {
         builder.addQueryParameter("port", serverPort.toString())
+        builder.addQueryParameter("protocol", when (protocol) {
+            MieruBean.PROTOCOL_TCP -> "TCP"
+            MieruBean.PROTOCOL_UDP -> "UDP"
+            else -> error("impossible")
+        })
     }
-    when (protocol) {
-        MieruBean.PROTOCOL_TCP -> {
-            builder.addQueryParameter("protocol", "TCP")
-        }
-        MieruBean.PROTOCOL_UDP -> {
-            builder.addQueryParameter("protocol", "UDP")
-            /*if (mtu > 0) {
-                builder.addQueryParameter("mtu", mtu.toString())
-            }*/
-        }
-    }
+    /*if (protocol == PROTOCOL_UDP && mtu > 0) {
+        builder.addQueryParameter("mtu", mtu.toString())
+    }*/
     when (multiplexingLevel) {
         MieruBean.MULTIPLEXING_OFF -> {
             builder.addQueryParameter("multiplexing", "MULTIPLEXING_OFF")

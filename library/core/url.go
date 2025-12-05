@@ -44,7 +44,9 @@ type URL interface {
 	GetRawQuery() string
 	SetRawQuery(rawPath string)
 	HasQueryParameter(key string) bool
+	CountQueryParameter(key string) int
 	GetQueryParameter(key string) string
+	GetQueryParameterAt(key string, i int) string
 	AddQueryParameter(key, value string)
 	DeleteQueryParameter(key string)
 	GetFragment() string
@@ -199,6 +201,27 @@ func (u *netURL) HasQueryParameter(key string) bool {
 
 func (u *netURL) GetQueryParameter(key string) string {
 	return u.Query().Get(key)
+}
+
+func (u *netURL) CountQueryParameter(key string) int {
+	queries := u.Query()
+	v, ok := queries[key]
+	if !ok {
+		return 0
+	}
+	return len(v)
+}
+
+func (u *netURL) GetQueryParameterAt(key string, i int) string {
+	queries := u.Query()
+	v, ok := queries[key]
+	if !ok {
+		return ""
+	}
+	if i < 0 || i >= len(v) {
+		return ""
+	}
+	return v[i]
 }
 
 func (u *netURL) AddQueryParameter(key, value string) {

@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import io.nekohasekai.sagernet.ktx.NetsKt;
+import libcore.Libcore;
 
 public class MieruBean extends AbstractBean {
 
@@ -105,6 +107,18 @@ public class MieruBean extends AbstractBean {
         bean.multiplexingLevel = multiplexingLevel;
         bean.handshakeMode = handshakeMode;
         bean.mtu = mtu;
+    }
+
+    @Override
+    public String displayAddress() {
+        if (portRange.isEmpty()) {
+            return super.displayAddress();
+        }
+        if (Libcore.isIPv6(serverAddress)) {
+            return "[" + serverAddress + "]:" + String.join(",", NetsKt.listByLineOrComma(portRange));
+        } else {
+            return NetsKt.wrapIDN(serverAddress) + ":" + String.join(",", NetsKt.listByLineOrComma(portRange));
+        }
     }
 
     @Override

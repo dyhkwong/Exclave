@@ -65,6 +65,15 @@ class MieruSettingsActivity : ProfileSettingsActivity<MieruBean>() {
     ) {
         addPreferencesFromResource(R.xml.mieru_preferences)
 
+        val serverPort = findPreference<EditTextPreference>(Key.SERVER_PORT)!!
+        val serverPortRange = findPreference<EditTextPreference>(Key.SERVER_PORTS)!!
+        serverPort.isEnabled = serverPortRange.text.isEmpty()
+        serverPortRange.setOnPreferenceChangeListener { _, newValue ->
+            newValue as String
+            serverPort.isEnabled = newValue.isEmpty()
+            true
+        }
+
         /*val protocol = findPreference<SimpleMenuPreference>(Key.SERVER_PROTOCOL)!!
         val mtu = findPreference<EditTextPreference>(Key.SERVER_MTU)!!
         mtu.isVisible = protocol.value == "${MieruBean.PROTOCOL_UDP}"
