@@ -50,13 +50,13 @@ dependencies {
 
     implementation("com.google.android.material:material:1.13.0")
     implementation("com.google.code.gson:gson:2.13.2")
-    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.zxing:core:3.5.4")
 
     implementation("org.yaml:snakeyaml:2.5")
     implementation("com.github.daniel-stoneuk:material-about-library:3.2.0-rc01")
     implementation("com.jakewharton:process-phoenix:3.0.0")
     implementation("com.esotericsoftware:kryo:5.6.2")
-    implementation("com.sshtools:jini-lib:0.6.2")
+    implementation("com.sshtools:jini-lib:0.6.6")
     implementation("io.noties.markwon:core:4.6.2")
 
     implementation("com.simplecityapps:recyclerview-fastscroll:2.0.1") {
