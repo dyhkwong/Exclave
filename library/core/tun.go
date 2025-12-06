@@ -187,7 +187,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 	return t, nil
 }
 
-func (t *Tun2ray) Close() {
+func (t *Tun2ray) Close() error {
 	internet.UseAlternativeSystemDialer(nil)
 	comm.CloseIgnore(t.dev)
 	t.connectionsLock.Lock()
@@ -198,6 +198,7 @@ func (t *Tun2ray) Close() {
 	if t.protectCloser != nil {
 		_ = t.protectCloser.Close()
 	}
+	return nil
 }
 
 func (t *Tun2ray) NewConnection(source v2rayNet.Destination, destination v2rayNet.Destination, conn net.Conn) {
