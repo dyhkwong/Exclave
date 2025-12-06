@@ -153,6 +153,7 @@ func (instance *V2RayInstance) Close() error {
 			localdns.SetLookupFunc(nil)
 			localdns.SetRawQueryFunc(nil)
 		}
+		instance.LocalResolver = nil
 		instance.core = nil
 		instance.dispatcher = nil
 		instance.statsManager = nil
