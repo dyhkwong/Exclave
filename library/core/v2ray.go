@@ -256,7 +256,10 @@ func (c *dispatcherConn) ReadFrom(p []byte) (n int, addr net.Addr, err error) {
 	select {
 	case <-c.ctx.Done():
 		return 0, nil, io.EOF
-	case packet := <-c.cache:
+	case packet, ok := <-c.cache:
+		if !ok {
+			return 0, nil, io.EOF
+		}
 		n := copy(p, packet.Payload.Bytes())
 		packet.Payload.Release()
 		return n, &net.UDPAddr{
