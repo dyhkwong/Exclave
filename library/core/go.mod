@@ -9,7 +9,7 @@ require (
 	github.com/sagernet/gomobile v0.1.8
 	github.com/v2fly/v2ray-core/v5 v5.42.0
 	github.com/wzshiming/socks5 v0.6.0
-	golang.org/x/sys v0.38.0
+	golang.org/x/sys v0.39.0
 	gvisor.dev/gvisor v0.0.0-20250503011706-39ed1f5ac29c
 )
 
@@ -24,7 +24,7 @@ require (
 	github.com/dgryski/go-camellia v0.0.0-20191119043421-69a8a13fb23d // indirect
 	github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 // indirect
 	github.com/dyhkwong/hysteria/core/v2 v2.6.5-1 // indirect
-	github.com/dyhkwong/hysteria/extras/v2 v2.6.5-2 // indirect
+	github.com/dyhkwong/hysteria/extras/v2 v2.6.5-3 // indirect
 	github.com/dyhkwong/sing-juicity v0.1.0-beta.2 // indirect
 	github.com/enfein/mieru/v3 v3.26.0 // indirect
 	github.com/gofrs/uuid/v5 v5.3.2 // indirect
@@ -73,7 +73,7 @@ require (
 	golang.org/x/exp v0.0.0-20250911091902-df9299821621 // indirect
 	golang.org/x/mod v0.29.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	golang.org/x/tools v0.38.0 // indirect
@@ -90,4 +90,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.42.1-0.20251203080450-0994153ba3ff
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.42.1-0.20251208142600-c309bf419c9e
