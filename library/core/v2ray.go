@@ -24,6 +24,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 	_ "unsafe"
 
@@ -205,14 +206,13 @@ func (instance *V2RayInstance) dialUDP(ctx context.Context, destination net.Dest
 }
 
 type dispatcherConn struct {
-	dest  net.Destination
-	link  *transport.Link
-	timer *signal.ActivityTimer
-
-	ctx    context.Context
-	cancel context.CancelFunc
-	closed bool
-	cache  chan *udp.Packet
+	dest      net.Destination
+	link      *transport.Link
+	timer     *signal.ActivityTimer
+	cache     chan *udp.Packet
+	ctx       context.Context
+	cancel    context.CancelFunc
+	closeOnce sync.Once
 }
 
 func (c *dispatcherConn) handleInput() {
@@ -291,16 +291,12 @@ func (c *dispatcherConn) LocalAddr() net.Addr {
 }
 
 func (c *dispatcherConn) Close() error {
-	if c.closed {
-		return nil
-	}
-	c.closed = true
-
-	c.cancel()
-	_ = common.Interrupt(c.link.Reader)
-	_ = common.Interrupt(c.link.Writer)
-	close(c.cache)
-
+	c.closeOnce.Do(func() {
+		c.cancel()
+		_ = common.Interrupt(c.link.Reader)
+		_ = common.Interrupt(c.link.Writer)
+		close(c.cache)
+	})
 	return nil
 }
 
