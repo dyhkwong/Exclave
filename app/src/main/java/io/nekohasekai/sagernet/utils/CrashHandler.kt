@@ -43,7 +43,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
 
         val logFile = File.createTempFile("Exclave Crash Report ",
             ".log",
-            File(app.cacheDir, "log").also { it.mkdirs() }
+            File(app.externalCacheDir, "log").also { it.mkdirs() }
         )
 
         var report = buildReportHeader()
@@ -70,7 +70,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
 
         ProcessPhoenix.triggerRebirth(
             app, Intent.createChooser(
-                Intent(Intent.ACTION_SEND).setType("text/x-log")
+                Intent(Intent.ACTION_SEND).setType("text/plain")
                     .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     .putExtra(
                         Intent.EXTRA_STREAM, FileProvider.getUriForFile(

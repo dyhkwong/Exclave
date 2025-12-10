@@ -84,13 +84,11 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                         "AndroidRuntime:D",
                         "ProxyInstance:D",
                         "GuardedProcessPool:D",
-                        "VpnService:D",
                         "Go:D",
-                        "libcore:D",
                         "v2ray-core:D",
-                        "su:D",
                         "libnaive:D",
                         "libshadowquic:D",
+                        "Exclave:D",
                         "*:S",
                     ).joinToString(",")
                 )
@@ -171,7 +169,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
                 runOnDefaultDispatcher {
                     val logFile = File.createTempFile("Exclave ",
                         ".log",
-                        File(app.cacheDir, "log").also { it.mkdirs() })
+                        File(app.externalCacheDir, "log").also { it.mkdirs() })
 
                     var report = CrashHandler.buildReportHeader()
 
@@ -192,7 +190,7 @@ class LogcatFragment : ToolbarFragment(R.layout.layout_logcat),
 
                     context.startActivity(
                         Intent.createChooser(
-                            Intent(Intent.ACTION_SEND).setType("text/x-log")
+                            Intent(Intent.ACTION_SEND).setType("text/plain")
                                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                                 .putExtra(
                                     Intent.EXTRA_STREAM, FileProvider.getUriForFile(
