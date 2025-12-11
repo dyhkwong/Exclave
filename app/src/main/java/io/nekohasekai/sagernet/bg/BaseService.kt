@@ -511,7 +511,7 @@ class BaseService {
                     Executable.killAll()    // clean up old processes
                     preInit()
                     try {
-                        proxy.init(data.proxy?.service is VpnService)
+                        proxy.init()
                     } catch (e: Exception) {
                         error(e.readableMessage)
                     }

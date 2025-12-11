@@ -79,7 +79,7 @@ abstract class V2RayInstance(
         v2rayPoint.loadConfig(config.config)
     }
 
-    open fun init(isVpn: Boolean) {
+    open fun init() {
         v2rayPoint = V2RayInstance()
         buildConfig()
         for ((_, chain) in config.index) {
@@ -101,7 +101,7 @@ abstract class V2RayInstance(
                                 externalInstances[port] = ExternalInstance(
                                     profile, port
                                 ).apply {
-                                    init(isVpn)
+                                    init()
                                 }
                             }
                         }
