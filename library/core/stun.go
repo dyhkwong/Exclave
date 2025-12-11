@@ -27,13 +27,13 @@ import (
 	"github.com/wzshiming/socks5"
 )
 
-func setupStunClient(useSOCKS5 bool, serverAddress string, socksPort, dnsPort int32) (*stun.Client, error) {
+func setupStunClient(useSOCKS5, useDNS bool, serverAddress string, socksPort, dnsPort int32) (*stun.Client, error) {
 	if useSOCKS5 {
 		addr, port, err := net.SplitHostPort(serverAddress)
 		if err != nil {
 			return nil, err
 		}
-		if _, err := netip.ParseAddr(addr); err != nil {
+		if _, err := netip.ParseAddr(addr); err != nil && useDNS {
 			if dnsPort <= 0 {
 				return nil, newError("server address is a domain name, but DNS inbound is disabled")
 			}
@@ -72,9 +72,9 @@ type StunResult struct {
 }
 
 // RFC 5780
-func StunTest(serverAddress string, useSOCKS5 bool, socksPort, dnsPort int32) *StunResult {
+func StunTest(serverAddress string, useSOCKS5, useDNS bool, socksPort, dnsPort int32) *StunResult {
 	result := new(StunResult)
-	client, err := setupStunClient(useSOCKS5, serverAddress, socksPort, dnsPort)
+	client, err := setupStunClient(useSOCKS5, useDNS, serverAddress, socksPort, dnsPort)
 	if err != nil {
 		result.Error = err.Error()
 		return result
@@ -97,9 +97,9 @@ type StunLegacyResult struct {
 }
 
 // RFC 3489
-func StunLegacyTest(serverAddress string, useSOCKS5 bool, socksPort, dnsPort int32) *StunLegacyResult {
+func StunLegacyTest(serverAddress string, useSOCKS5, useDNS bool, socksPort, dnsPort int32) *StunLegacyResult {
 	result := new(StunLegacyResult)
-	client, err := setupStunClient(useSOCKS5, serverAddress, socksPort, dnsPort)
+	client, err := setupStunClient(useSOCKS5, useDNS, serverAddress, socksPort, dnsPort)
 	if err != nil {
 		result.Error = err.Error()
 		return result

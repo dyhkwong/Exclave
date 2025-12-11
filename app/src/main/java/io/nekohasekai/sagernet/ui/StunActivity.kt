@@ -28,6 +28,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutStunBinding
 import io.nekohasekai.sagernet.ktx.PUBLIC_STUN_SERVERS
@@ -115,6 +116,7 @@ class StunActivity : ThemedActivity() {
             val result = Libcore.stunTest(
                 binding.natStunServer.text.toString(),
                 SagerNet.started && DataStore.startedProfile > 0,
+                SagerNet.started && DataStore.startedProfile > 0 && DataStore.tunImplementation == TunImplementation.GVISOR,
                 DataStore.socksPort,
                 if (DataStore.requireDnsInbound) DataStore.localDNSPort else 0
             )
@@ -145,6 +147,7 @@ class StunActivity : ThemedActivity() {
             val result = Libcore.stunLegacyTest(
                 binding.natStunServer.text.toString(),
                 SagerNet.started && DataStore.startedProfile > 0,
+                SagerNet.started && DataStore.startedProfile > 0 && DataStore.tunImplementation == TunImplementation.GVISOR,
                 DataStore.socksPort,
                 if (DataStore.requireDnsInbound) DataStore.localDNSPort else 0
             )
