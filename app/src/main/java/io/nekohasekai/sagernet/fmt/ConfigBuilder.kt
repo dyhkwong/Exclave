@@ -477,33 +477,62 @@ fun buildV2RayConfig(
             for (proxyEntity in proxies) {
                 val bean = proxyEntity.requireBean()
 
-                if (bean is StandardV2RayBean && (
-                    (bean.type == "ws" && bean.wsUseBrowserForwarder) ||
-                    (bean.type == "splithttp" && bean.shUseBrowserForwarder)
-                )) {
-                    val route = RoutingObject.RuleObject().apply {
-                        type = "field"
-                        outboundTag = TAG_DIRECT
-                        when {
-                            Libcore.isIP(bean.host) -> {
-                                ip = listOf(bean.host)
+                val needBrowserForwarder = when {
+                    bean !is StandardV2RayBean -> false
+                    bean.type == "ws" && bean.wsUseBrowserForwarder -> true
+                    bean.type == "splithttp" && bean.shUseBrowserForwarder -> true
+                    else -> false
+                }
+                if (needBrowserForwarder) {
+                    bean as StandardV2RayBean
+                    // dirty hack to exclude browser forwarder traffic from VpnService
+                    // this will not work on all cases,
+                    // but this is not the main function of this software, just keep it broken
+                    if (bean.security == "none" && bean.host.isNotEmpty()) {
+                        val host = try {
+                            Libcore.parseURL("placeholder://" + bean.host).host
+                        } catch (_: Exception) {
+                            bean.host
+                        }
+                        wsRules[host] = RoutingObject.RuleObject().apply {
+                            type = "field"
+                            outboundTag = TAG_DIRECT
+                            port = bean.serverPort.toString()
+                            if (Libcore.isIP(host)) {
+                                ip = listOf(host)
                                 if (DataStore.domainStrategy != "AsIs") {
                                     skipDomain = true
                                 }
+                            } else {
+                                domains = listOf(host)
                             }
-                            bean.host.isNotEmpty() -> {
-                                domains = listOf(bean.host)
+                        }
+                    }
+                    if (bean.security != "none" && bean.sni.isNotEmpty()) {
+                        wsRules[bean.sni] = RoutingObject.RuleObject().apply {
+                            type = "field"
+                            outboundTag = TAG_DIRECT
+                            port = bean.serverPort.toString()
+                            if (!Libcore.isIP(bean.sni)) {
+                                domains = listOf(bean.sni)
                             }
-                            Libcore.isIP(bean.serverAddress) -> {
+                        }
+                    }
+                    if (bean.serverAddress.isNotEmpty()) {
+                        wsRules[bean.serverAddress] = RoutingObject.RuleObject().apply {
+                            type = "field"
+                            outboundTag = TAG_DIRECT
+                            port = bean.serverPort.toString()
+                            if (Libcore.isIP(bean.serverAddress)) {
                                 ip = listOf(bean.serverAddress)
                                 if (DataStore.domainStrategy != "AsIs") {
                                     skipDomain = true
                                 }
+                            } else {
+                                domains = listOf(bean.serverAddress)
                             }
-                            else -> domains = listOf(bean.serverAddress)
                         }
                     }
-                    wsRules[bean.host.takeIf { !it.isNullOrEmpty() } ?: bean.serverAddress] = route
                 }
 
             }
@@ -2039,7 +2068,6 @@ fun buildV2RayConfig(
                 })
         })
 
-        val bypassIP = HashSet<String>()
         val bypassDomain = HashSet<String>()
         val bypassDomainSkipFakeDns = HashSet<String>()
         val proxyDomain = HashSet<String>()
@@ -2054,10 +2082,7 @@ fun buildV2RayConfig(
                     bean.serverAddresses.listByLineOrComma().forEach {
                         when {
                             it.isEmpty() -> {}
-                            Libcore.isIP(it) -> {
-                                bypassIP.add(it)
-                            }
-                            else -> {
+                            !Libcore.isIP(it) -> {
                                 bypassDomainSkipFakeDns.add("full:$it")
                             }
                         }
@@ -2065,23 +2090,9 @@ fun buildV2RayConfig(
                 } else {
                     if (!Libcore.isIP(serverAddress)) {
                         bypassDomainSkipFakeDns.add("full:$serverAddress")
-                    } else {
-                        bypassIP.add(serverAddress)
                     }
                 }
-
             }
-        }
-
-        if (bypassIP.isNotEmpty()) {
-            routing.rules.add(0, RoutingObject.RuleObject().apply {
-                type = "field"
-                ip = bypassIP.toList()
-                if (DataStore.domainStrategy != "AsIs") {
-                    skipDomain = true
-                }
-                outboundTag = TAG_DIRECT
-            })
         }
 
         if (DataStore.enableDnsRouting) {
