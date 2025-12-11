@@ -276,6 +276,7 @@
             app:title="@string/edns_client_ip"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="@string/use_system_dns_as_direct_dns_default_value"
             app:icon="@drawable/ic_baseline_home_24"
             app:key="useLocalDnsAsDirectDns"
             app:title="@string/use_local_dns_as_direct_dns" />
@@ -294,6 +295,7 @@
             app:title="@string/direct_dns_query_strategy"
             app:useSimpleSummaryProvider="true" />
         <SwitchPreference
+            app:defaultValue="true"
             app:icon="@drawable/ic_baseline_home_24"
             app:key="useLocalDnsAsBootstrapDns"
             app:title="@string/use_local_dns_as_bootstrap_dns" />

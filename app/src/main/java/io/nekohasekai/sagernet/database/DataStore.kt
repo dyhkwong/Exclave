@@ -22,6 +22,7 @@
 package io.nekohasekai.sagernet.database
 
 import android.os.Binder
+import android.os.Build
 import androidx.preference.PreferenceDataStore
 import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.bg.VpnService
@@ -147,8 +148,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var remoteDns by configurationStore.stringNotBlack(Key.REMOTE_DNS) { "tcp://1.1.1.1" }
     var directDns by configurationStore.stringNotBlack(Key.DIRECT_DNS) { "tcp://223.5.5.5" }
     var bootstrapDns by configurationStore.stringNotBlack(Key.BOOTSTRAP_DNS)
-    var useLocalDnsAsDirectDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_DIRECT_DNS)
-    var useLocalDnsAsBootstrapDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_BOOTSTRAP_DNS)
+    var useLocalDnsAsDirectDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_DIRECT_DNS) { Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q }
+    var useLocalDnsAsBootstrapDns by configurationStore.boolean(Key.USE_LOCAL_DNS_AS_BOOTSTRAP_DNS) { true }
     var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS)
     var hijackDns by configurationStore.boolean(Key.HIJACK_DNS)
     var hosts by configurationStore.string(Key.DNS_HOSTS)

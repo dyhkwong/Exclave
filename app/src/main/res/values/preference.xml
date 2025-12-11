@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="use_system_dns_as_direct_dns_default_value" translatable="false">false</string>
+</resources>
