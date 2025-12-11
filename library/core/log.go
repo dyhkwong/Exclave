@@ -1,5 +1,3 @@
-//go:build android
-
 /*
 Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
 

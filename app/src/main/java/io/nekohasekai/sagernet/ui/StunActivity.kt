@@ -112,9 +112,11 @@ class StunActivity : ThemedActivity() {
         binding.waitLayout.isVisible = true
         binding.resultLayout.isVisible = false
         runOnDefaultDispatcher {
-            val result = Libcore.stunTest(binding.natStunServer.text.toString(),
+            val result = Libcore.stunTest(
+                binding.natStunServer.text.toString(),
                 SagerNet.started && DataStore.startedProfile > 0,
-                DataStore.socksPort
+                DataStore.socksPort,
+                if (DataStore.requireDnsInbound) DataStore.localDNSPort else 0
             )
             onMainDispatcher {
                 if (result.error.isNotEmpty()) {
@@ -140,9 +142,11 @@ class StunActivity : ThemedActivity() {
         binding.waitLayout.isVisible = true
         binding.resultLayout.isVisible = false
         runOnDefaultDispatcher {
-            val result = Libcore.stunLegacyTest(binding.natStunServer.text.toString(),
+            val result = Libcore.stunLegacyTest(
+                binding.natStunServer.text.toString(),
                 SagerNet.started && DataStore.startedProfile > 0,
-                DataStore.socksPort
+                DataStore.socksPort,
+                if (DataStore.requireDnsInbound) DataStore.localDNSPort else 0
             )
             onMainDispatcher {
                 if (result.error.isNotEmpty()) {
@@ -163,5 +167,4 @@ class StunActivity : ThemedActivity() {
             }
         }
     }
-
 }
