@@ -49,6 +49,7 @@ import kotlinx.coroutines.launch
 import libcore.*
 import android.net.VpnService as BaseVpnService
 
+@SuppressLint("VpnServicePolicy")
 class VpnService : BaseVpnService(),
     BaseService.Interface,
     TrafficListener,
@@ -65,14 +66,14 @@ class VpnService : BaseVpnService(),
             getStringValue(DataStore.experimentalFlags, "tunIPv4Address")?.substringAfter("/")?.toInt() ?: 30
 
         val PRIVATE_VLAN4_DNS =
-            getStringValue(DataStore.experimentalFlags, "tunIPv4DNSAddress")?.substringBefore("/") ?: "172.19.0.2"
+            getStringValue(DataStore.experimentalFlags, "tunIPv4DNSAddress") ?: "172.19.0.2"
         val PRIVATE_VLAN6_CLIENT =
             getStringValue(DataStore.experimentalFlags, "tunIPv6Address")?.substringBefore("/") ?: "fdfe:dcba:9876::1"
         val PRIVATE_VLAN6_CLIENT_PREFIX =
             getStringValue(DataStore.experimentalFlags, "tunIPv6Address")?.substringAfter("/")?.toInt() ?: 126
 
         val PRIVATE_VLAN6_DNS =
-            getStringValue(DataStore.experimentalFlags, "tunIPv6DNSAddress")?.substringBefore("/")
+            getStringValue(DataStore.experimentalFlags, "tunIPv6DNSAddress")
         val FAKEDNS_VLAN4_CLIENT =
             getStringValue(DataStore.experimentalFlags, "fakeDNSIPv4Pool")?.substringBefore("/") ?: "198.18.0.0"
         val FAKEDNS_VLAN4_CLIENT_PREFIX =
@@ -195,7 +196,9 @@ class VpnService : BaseVpnService(),
                     val subnet = Subnet.fromString(it)!!
                     builder.addRoute(subnet.address.hostAddress!!, subnet.prefixSize)
                 }
-                builder.addRoute(PRIVATE_VLAN4_DNS, 32)
+                if (PRIVATE_VLAN4_DNS.isNotEmpty()) {
+                    builder.addRoute(PRIVATE_VLAN4_DNS, 32)
+                }
                 if (DataStore.enableFakeDns) {
                     builder.addRoute(FAKEDNS_VLAN4_CLIENT, FAKEDNS_VLAN4_CLIENT_PREFIX)
                 }
@@ -281,8 +284,10 @@ class VpnService : BaseVpnService(),
             builder.addDisallowedApplication(packageName)
         }
 
-        builder.addDnsServer(PRIVATE_VLAN4_DNS)
-        if (PRIVATE_VLAN6_DNS != null) {
+        if (PRIVATE_VLAN4_DNS.isNotEmpty()) {
+            builder.addDnsServer(PRIVATE_VLAN4_DNS)
+        }
+        if (!PRIVATE_VLAN6_DNS.isNullOrEmpty()) {
             builder.addDnsServer(PRIVATE_VLAN6_DNS)
         }
 
