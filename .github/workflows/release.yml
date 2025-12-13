@@ -1,4 +1,5 @@
-name: Release Build
+name: Release Build - AAR Only
+
 on:
   push:
     branches:
@@ -8,99 +9,53 @@ on:
       - "buildSrc/**"
       - "library/**"
       - ".github/workflows/release.yml"
-  workflow_dispatch:
-    inputs:
-      release:
-        description: 'Release (y/n)'
-        required: false
-      prerelease:
-        description: 'Mark as pre-release (y/n)'
-        required: false
-      tag:
-        description: 'Release Tag'
-        required: false
+  workflow_dispatch:  
+
 jobs:
-  build:
-    name: Build
+  build-aar:
+    name: Build LibCore AAR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: 1.25.5
           cache-dependency-path: "library/core/go.sum"
+
       - name: Setup Go Mobile
-        # https://github.com/golang/mobile/blob/c31d5b91ecc32c0d598b8fe8457d244ca0b4e815/cmd/gomobile/init.go#L83
         run: |
           go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.8
           go install github.com/sagernet/gomobile/cmd/gobind@v0.1.8
+
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: 21
           cache: 'gradle'
+
       - name: Setup Android NDK
-        # Pin NDK version for `gomobile`.
         id: setup-ndk
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r29
-      - name: Native Build
+
+      - name: Native Build (Generate libcore.aar)
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           ./run lib core
-      - name: Upload Artifacts
+
+      - name: Upload libcore.aar as Artifact
         uses: actions/upload-artifact@v5
         with:
+          name: libcore-aar
           path: app/libs/libcore.aar
-          name: "LibCore"
-      - name: Gradle Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.gradle
-          key: gradle-${{ hashFiles('**/*.gradle.kts') }}
-      - name: Gradle Build
+          retention-days: 90
+
+      - name: Notify Success (Optional)
         run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-          ./gradlew :app:downloadAssets
-          ./gradlew :app:assembleOssRelease
-          APK=$(find app/build/outputs/apk -name '*arm64-v8a*.apk')
-          APK=$(dirname "$APK")
-          echo "APK=$APK" >> $GITHUB_ENV
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: APKs
-          path: ${{ env.APK }}
-  publish:
-    name: Publish Release
-    if: github.event.inputs.release == 'y' && github.event.inputs.tag != ''
-    runs-on: ubuntu-latest
-    needs: build
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Download Artifacts
-        uses: actions/download-artifact@v6
-        with:
-          name: APKs
-          path: artifacts
-      - name: Publish Pre-release
-        if: github.event.inputs.prerelease == 'y'
-        run: |
-          mkdir apks
-          find artifacts -name "*.apk" -exec cp {} apks \;
-          gh release create ${{ github.event.inputs.tag }} --notes="" --title=${{ github.event.inputs.tag }} --prerelease ./apks/*
-      - name: Publish Release
-        if: github.event.inputs.prerelease != 'y'
-        run: |
-          mkdir apks
-          find artifacts -name "*.apk" -exec cp {} apks \;
-          gh release create ${{ github.event.inputs.tag }} --notes="" --title=${{ github.event.inputs.tag }} ./apks/*
+          echo "✅ libcore.aar 已成功构建并上传为 Artifact，可在 Actions 页面下载。"
