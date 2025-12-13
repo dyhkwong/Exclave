@@ -423,7 +423,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var taskerProfile by profileCacheStore.stringToInt(Key.TASKER_PROFILE)
     var taskerProfileId by profileCacheStore.long(Key.TASKER_PROFILE_ID) { -1L }
 
-    var rulesFirstCreate by profileCacheStore.boolean("rulesFirstCreate")
+    var rulesFirstCreate by configurationStore.boolean(Key.RULES_FIRST_CREATE)
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
