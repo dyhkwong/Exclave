@@ -113,6 +113,7 @@ import io.nekohasekai.sagernet.ktx.getInt
 import io.nekohasekai.sagernet.ktx.getObject
 import io.nekohasekai.sagernet.ktx.getString
 import io.nekohasekai.sagernet.ktx.getStringValue
+import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
@@ -1251,7 +1252,7 @@ fun buildV2RayConfig(
                                                 password = bean.obfs
                                             }
                                         }
-                                        if (bean.serverPorts.isNotEmpty()) {
+                                        if (bean.serverPorts.isNotEmpty() && bean.serverPorts.isValidHysteriaMultiPort()) {
                                             hopPorts = bean.serverPorts
                                             if (bean.hopInterval > 0) {
                                                 hopInterval = bean.hopInterval
