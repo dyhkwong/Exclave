@@ -21,6 +21,7 @@
 package io.nekohasekai.sagernet.group
 
 import com.github.shadowsocks.plugin.PluginOptions
+import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -1380,218 +1381,177 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
 }
 
 private fun JsonObject.contains(key: String, ignoreCase: Boolean = true): Boolean {
-    if (has(key)) {
-        return true
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return false
+        value.isJsonNull -> if (!ignoreCase) return false
+        else -> return true
     }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return true
-            }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && !v.isJsonNull) {
+            return true
         }
     }
     return false
 }
 
 private fun JsonObject.getString(key: String, ignoreCase: Boolean = true): String? {
-    if (has(key)) {
-        return try {
-            get(key).asString
-        } catch (_: Exception) {
-            null
-        }
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return null
+        value.isJsonNull -> if (!ignoreCase) return null
+        value.isJsonPrimitive -> return if (value.asJsonPrimitive.isString) value.asString else null
+        else -> return null
     }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return try {
-                    get(it).asString
-                } catch (_: Exception) {
-                    null
-                }
-            }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isString) {
+            return value.asString
         }
     }
     return null
 }
 
 private fun JsonObject.getInt(key: String, ignoreCase: Boolean = true): Int? {
-    if (has(key)) {
-        return try {
-            get(key).asInt
-        } catch (_: Exception) {
-            null
-        }
-    }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return try {
-                    get(it).asInt
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return null
+        value.isJsonNull -> if (!ignoreCase) return null
+        value.isJsonPrimitive -> {
+            return if (value.asJsonPrimitive.isNumber) {
+                try {
+                    value.asInt
                 } catch (_: Exception) {
                     null
                 }
+            } else {
+                null
             }
+        }
+    }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isNumber) {
+            try {
+                return value.asInt
+            } catch (_: Exception) {}
         }
     }
     return null
 }
 
 private fun JsonObject.getBoolean(key: String, ignoreCase: Boolean = true): Boolean? {
-    if (has(key)) {
-        return try {
-            get(key).asBoolean
-        } catch (_: Exception) {
-            null
-        }
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return null
+        value.isJsonNull -> if (!ignoreCase) return null
+        value.isJsonPrimitive -> return if (value.asJsonPrimitive.isBoolean) value.asBoolean else null
+        else -> return null
     }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return try {
-                    get(it).asBoolean
-                } catch (_: Exception) {
-                    null
-                }
-            }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isBoolean) {
+            return value.asBoolean
         }
     }
     return null
 }
 
 private fun JsonObject.getLong(key: String, ignoreCase: Boolean = true): Long? {
-    if (has(key)) {
-        return try {
-            get(key).asLong
-        } catch (_: Exception) {
-            null
-        }
-    }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return try {
-                    get(it).asLong
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return null
+        value.isJsonNull -> if (!ignoreCase) return null
+        value.isJsonPrimitive -> {
+            return if (value.asJsonPrimitive.isNumber) {
+                try {
+                    value.asLong
                 } catch (_: Exception) {
                     null
                 }
+            } else {
+                null
             }
+        }
+    }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isNumber) {
+            try {
+                return value.asLong
+            } catch (_: Exception) {}
         }
     }
     return null
 }
 
 private fun JsonObject.getObject(key: String, ignoreCase: Boolean = true): JsonObject? {
-    if (has(key)) {
-        return try {
-            get(key).asJsonObject
-        } catch (_: Exception) {
-            null
-        }
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return null
+        value.isJsonNull -> if (!ignoreCase) return null
+        value.isJsonObject -> return value.asJsonObject
+        else -> return null
     }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return try {
-                    get(it).asJsonObject
-                } catch (_: Exception) {
-                    null
-                }
-            }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonObject) {
+            return value.asJsonObject
         }
     }
     return null
 }
 
 private fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = true): JsonArray? {
-    if (has(key)) {
-        return try {
-            get(key).asJsonArray
-        } catch (_: Exception) {
-            null
-        }
+    val value = get(key)
+    when {
+        value == null -> if (!ignoreCase) return null
+        value.isJsonNull -> if (!ignoreCase) return null
+        value.isJsonArray -> return value.asJsonArray
+        else -> return null
     }
-    if (ignoreCase) {
-        for (it in keySet()) {
-            if (it.equals(key, ignoreCase = true)) {
-                return try {
-                    get(it).asJsonArray
-                } catch (_: Exception) {
-                    null
-                }
-            }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonArray) {
+            return value.asJsonArray
         }
     }
     return null
 }
 
 private fun JsonObject.getArray(key: String, ignoreCase: Boolean = true): List<JsonObject>? {
-    val array = getJsonArray(key, ignoreCase)?.asList() ?: return null
-    val list = mutableListOf<JsonObject>()
-    try {
-        for (obj in array) {
-            list.add(obj.asJsonObject)
-        }
-    } catch (_: Exception) {
-        return null
-    }
-    return list
+    val jsonArray = getJsonArray(key, ignoreCase) ?: return null
+    return Gson().fromJson(jsonArray, Array<JsonObject>::class.java)?.asList()
 }
 
 private fun JsonObject.getStringArray(key: String, ignoreCase: Boolean = true): List<String>? {
-    val array = getJsonArray(key, ignoreCase)?.asList() ?: return null
-    val list = mutableListOf<String>()
-    try {
-        for (obj in array) {
-            list.add(obj.asString)
-        }
-    } catch (_: Exception) {
-        return null
-    }
-    return list
+    val jsonArray = getJsonArray(key, ignoreCase) ?: return null
+    return Gson().fromJson(jsonArray, Array<String>::class.java)?.asList()
 }
 
 private fun JsonObject.getIntArray(key: String, ignoreCase: Boolean = true): List<Int>? {
-    val array = getJsonArray(key, ignoreCase)?.asList() ?: return null
-    val list = mutableListOf<Int>()
-    try {
-        for (obj in array) {
-            list.add(obj.asInt)
-        }
-    } catch (_: Exception) {
-        return null
-    }
-    return list
+    val jsonArray = getJsonArray(key, ignoreCase) ?: return null
+    return Gson().fromJson(jsonArray, Array<Int>::class.java)?.asList()
 }
 
 private fun JsonObject.getPort(key: String): Int? {
-    if (has(key)) {
-        val value = get(key)
-        try {
-            when {
-                value.isJsonPrimitive && value.asJsonPrimitive.isNumber -> {
-                    return value.asInt
-                }
-                value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
-                    return value.asString.toIntOrNull()
-                }
-            }
-        } catch (_: Exception) {
-        }
-    }
-    for (it in keySet()) {
-        if (it.equals(key, ignoreCase = true)) {
-            val value = get(it)
-            try {
-                when {
-                    value.isJsonPrimitive && value.asJsonPrimitive.isNumber -> {
-                        return value.asInt
-                    }
-                    value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
-                        return value.asString.toIntOrNull()
-                    }
-                }
+    val value = get(key)
+    when {
+        value == null -> {}
+        value.isJsonNull -> {}
+        value.isJsonPrimitive && value.asJsonPrimitive.isNumber -> {
+            return try {
+                value.asInt
             } catch (_: Exception) {
+                null
+            }
+        }
+        value.isJsonPrimitive && value.asJsonPrimitive.isString -> return value.asString.toIntOrNull()
+        else -> return null
+    }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive) {
+            when {
+                v.asJsonPrimitive.isNumber -> {
+                    try {
+                        return value.asInt
+                    } catch (_: Exception) {}
+                }
+                v.asJsonPrimitive.isString -> return value.asString.toIntOrNull()
             }
         }
     }

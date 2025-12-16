@@ -118,7 +118,6 @@ import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.mkPort
-import io.nekohasekai.sagernet.ktx.parseJsonLeniently
 import io.nekohasekai.sagernet.ktx.parseJson
 import io.nekohasekai.sagernet.ktx.toHysteriaPort
 import io.nekohasekai.sagernet.ktx.unescapeLineFeed
@@ -2349,7 +2348,7 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
     val trafficSniffing = DataStore.trafficSniffing
 
     val bean = proxy.configBean!!
-    val config = parseJsonLeniently(bean.content).asJsonObject
+    val config = parseJson(bean.content, lenient = true).asJsonObject
     val inbounds = config.getArray("inbounds")
         ?.map { gson.fromJson(it.toString(), InboundObject::class.java) }
         ?.toMutableList() ?: ArrayList()
@@ -2436,14 +2435,14 @@ fun buildCustomConfig(proxy: ProxyEntity, port: Int): V2rayBuildResult {
     inbounds.forEach { it.init() }
     val inboundArray = JsonArray(inbounds.size)
     for (inbound in inbounds) {
-        inboundArray.add(parseJsonLeniently(gson.toJson(inbound)))
+        inboundArray.add(parseJson(gson.toJson(inbound), lenient = true))
     }
     config.add("inbounds", inboundArray)
     if (flushOutbounds) {
         outbounds!!.forEach { it.init() }
         val outboundArray = JsonArray(inbounds.size)
         for (outbound in outbounds) {
-            outboundArray.add(parseJsonLeniently(gson.toJson(outbound)))
+            outboundArray.add(parseJson(gson.toJson(outbound), lenient = true))
         }
     }
 
