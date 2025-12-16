@@ -410,19 +410,16 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
 }
 
 private fun JsonObject.getInt(key: String): Int? {
-    if (has(key)) {
-        val value = get(key)
-        try {
-            when {
-                value.isJsonPrimitive && value.asJsonPrimitive.isNumber -> {
-                    return value.asInt
-                }
-                value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
-                    return value.asString.toIntOrNull()
-                }
+    val value = get(key) ?: return null
+    return when {
+        value.isJsonPrimitive && value.asJsonPrimitive.isNumber -> {
+            try {
+                value.asInt
+            } catch (_: Exception) {
+                null
             }
-        } catch (_: Exception) {
         }
+        value.isJsonPrimitive && value.asJsonPrimitive.isString -> value.asString.toIntOrNull()
+        else -> null
     }
-    return null
 }

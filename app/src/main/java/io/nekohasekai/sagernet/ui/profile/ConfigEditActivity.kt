@@ -43,7 +43,7 @@ import io.nekohasekai.sagernet.utils.Theme
 import androidx.core.graphics.toColorInt
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.ktx.parseJsonLeniently
+import io.nekohasekai.sagernet.ktx.parseJson
 import io.nekohasekai.sagernet.ktx.readableMessage
 
 class ConfigEditActivity : ThemedActivity() {
@@ -154,7 +154,7 @@ class ConfigEditActivity : ThemedActivity() {
     @SuppressLint("CheckResult")
     fun saveAndExit() {
         try {
-            parseJsonLeniently(config).asJsonObject
+            parseJson(config, lenient = true).asJsonObject
         } catch (e: Exception) {
             MaterialAlertDialogBuilder(this).setTitle(R.string.error_title)
                 .setMessage(e.readableMessage).show()
