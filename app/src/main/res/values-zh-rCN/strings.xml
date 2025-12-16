@@ -560,4 +560,6 @@
     <string name="grpc_service_name_compat">gRPC service name 兼容性</string>
     <string name="grpc_service_name_compat_sum">兼容 Xray 的破坏性变更，但破坏与非 Xray 服务端的兼容性。</string>
     <string name="grpc_multi_mode">Multi 模式</string>
+    <string name="import_routing_rules_warning">所有现有规则将被删除。</string>
+    <string name="export_routing_rules_warning">仅用于兼容性目的，不包含完整信息。</string>
 </resources>

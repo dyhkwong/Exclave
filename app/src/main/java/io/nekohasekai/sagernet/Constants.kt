@@ -292,6 +292,7 @@ object Key {
     const val TASKER_PROFILE_ID = "taskerProfileId"
 
     const val RULES_FIRST_CREATE = "rulesFirstCreate"
+    const val DO_NOT_SHOW_RULE_EXPORT_WARNING = "doNotShowRuleExportWarning"
 
 }
 

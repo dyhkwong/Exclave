@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -32,7 +33,11 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProfileManager
 import io.nekohasekai.sagernet.database.RuleEntity
@@ -132,6 +137,7 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
         super.onDestroy()
     }
 
+    @SuppressLint("CheckResult")
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_new_route -> {
@@ -152,6 +158,151 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                     ruleAdapter.reload()
                     onMainDispatcher {
                         needReload()
+                    }
+                }
+            }
+            R.id.action_import -> {
+                val text = SagerNet.getClipboardText()
+                if (text.isEmpty()) {
+                    snackbar(getString(R.string.clipboard_empty)).show()
+                } else {
+                    runOnDefaultDispatcher {
+                        try {
+                            val rawRules = parseJson(text).asJsonArray
+                            val rules = mutableListOf<RuleEntity>()
+                            for ((i, rawRule) in rawRules.withIndex()) {
+                                rawRule as JsonObject
+                                rules.add(RuleEntity().apply {
+                                    userOrder = (i + 1).toLong()
+                                    rawRule.get("locked")?.takeIf { !it.isJsonNull }?.asString
+                                    name = rawRule.get("remarks")?.takeIf { !it.isJsonNull }?.asString ?: ""
+                                    enabled = rawRule.get("enabled")?.takeIf { !it.isJsonNull }?.asBoolean ?: false
+                                    outbound = when (rawRule.get("outboundTag")?.takeIf { !it.isJsonNull }?.asString) {
+                                        "proxy" -> 0L
+                                        "direct" -> -1L
+                                        "block" -> -2L
+                                        else -> 0L
+                                    }
+                                    rawRule.get("domain")?.takeIf { !it.isJsonNull }?.let {
+                                        domains = Gson().fromJson(it, Array<String>::class.java).joinToString("\n")
+                                    }
+                                    rawRule.get("ip")?.takeIf { !it.isJsonNull }?.let {
+                                        ip = Gson().fromJson(it, Array<String>::class.java).joinToString("\n")
+                                    }
+                                    port = rawRule.get("port")?.takeIf { !it.isJsonNull }?.asString ?: ""
+                                    network = when (rawRule.get("network")?.takeIf { !it.isJsonNull }?.asString?.lowercase()) {
+                                        "tcp" -> "tcp"
+                                        "udp" -> "udp"
+                                        "tcp,udp", "udp,tcp", "" -> ""
+                                        else -> ""
+                                    }
+                                    rawRule.get("protocol")?.takeIf { !it.isJsonNull }?.let {
+                                        protocol = Gson().fromJson(it, Array<String>::class.java).joinToString("\n")
+                                    }
+                                })
+                            }
+                            if (rules.isNotEmpty()) {
+                                onMainDispatcher {
+                                    MaterialAlertDialogBuilder(requireContext())
+                                        .setTitle(R.string.confirm)
+                                        .setMessage(R.string.import_routing_rules_warning)
+                                        .setPositiveButton(android.R.string.ok) { _, _ ->
+                                            runOnDefaultDispatcher {
+                                                SagerDatabase.rulesDao.reset()
+                                                SagerDatabase.rulesDao.insert(rules)
+                                                ruleAdapter.reload()
+                                                needReload()
+                                            }
+                                        }
+                                        .setNegativeButton(android.R.string.cancel, null)
+                                        .show()
+                                }
+                            } else {
+                                error(R.string.action_import_err)
+                            }
+                        } catch (e: Exception) {
+                            Logs.w(e)
+                            snackbar(e.readableMessage).show()
+                        }
+                    }
+                }
+            }
+            R.id.action_export -> {
+                runOnDefaultDispatcher {
+                    try {
+                        val rules = SagerDatabase.rulesDao.allRules()
+                        if (rules.isNotEmpty()) {
+                            val jsonArray = JsonArray()
+                            for (rule in rules) {
+                                val protocols = JsonArray()
+                                if (rule.protocol.isNotEmpty()) {
+                                    rule.protocol.listByLineOrComma().forEach {
+                                        when (it) {
+                                            "http", "tls", "quic", "bittorrent" -> protocols.add(it)
+                                        }
+                                    }
+                                }
+                                if (rule.domains.isEmpty() && rule.ip.isEmpty() && rule.port.isEmpty() && protocols.isEmpty) {
+                                    continue
+                                }
+                                jsonArray.add(JsonObject().apply {
+                                    addProperty("locked", false)
+                                    addProperty("remarks", rule.displayName())
+                                    addProperty("enabled", rule.enabled)
+                                    addProperty("outboundTag", when (rule.outbound) {
+                                        0L -> "proxy"
+                                        -1L -> "direct"
+                                        -2L -> "block"
+                                        else -> "proxy"
+                                    })
+                                    if (rule.domains.isNotEmpty()) {
+                                        add("domain", JsonArray().apply {
+                                            rule.domains.listByLineOrComma().forEach {
+                                                add(it)
+                                            }
+                                        })
+                                    }
+                                    if (rule.ip.isNotEmpty()) {
+                                        add("ip", JsonArray().apply {
+                                            rule.ip.listByLineOrComma().forEach {
+                                                add(it)
+                                            }
+                                        })
+                                    }
+                                    if (rule.port.isNotEmpty()) {
+                                        addProperty("port", rule.port)
+                                    }
+                                    when (rule.network) {
+                                        "tcp" -> addProperty("network", "tcp")
+                                        "udp" -> addProperty("network", "udp")
+                                    }
+                                    if (!protocols.isEmpty) {
+                                        add("protocol", protocols)
+                                    }
+                                })
+                            }
+                            if (!jsonArray.isEmpty) {
+                                onMainDispatcher {
+                                    if (SagerNet.trySetPrimaryClip(jsonArray.toString())) {
+                                        if (DataStore.doNotShowRuleExportWarning) {
+                                            snackbar(R.string.action_export_msg).show()
+                                        } else {
+                                            MaterialAlertDialogBuilder(requireContext())
+                                                .setTitle(R.string.action_export_msg)
+                                                .setMessage(R.string.export_routing_rules_warning)
+                                                .setPositiveButton(android.R.string.ok, null)
+                                                .setNeutralButton(R.string.do_not_show_again) { _, _ ->
+                                                    DataStore.doNotShowRuleExportWarning = true
+                                                }
+                                                .show()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Logs.w(e)
+                        snackbar(e.readableMessage).show()
                     }
                 }
             }
