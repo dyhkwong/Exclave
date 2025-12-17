@@ -83,20 +83,33 @@ class AssetEditActivity(
     }
 
     fun validate() {
-        if (DataStore.assetName.length > 255 || DataStore.assetName.contains('/')) {
-            error(getString(R.string.route_asset_invalid_filename, DataStore.assetName))
+        val filename = DataStore.assetName
+        if (filename.length > 255) {
+            error(getString(R.string.route_asset_invalid_filename, filename))
         }
-        if (File(app.externalAssets, DataStore.assetName).canonicalPath.substringAfterLast('/') != DataStore.assetName) {
-            error(getString(R.string.route_asset_invalid_filename, DataStore.assetName))
+        // https://cs.android.com/android/platform/superproject/+/master:frameworks/base/core/java/android/os/FileUtils.java;drc=71e11ae9ba8e1f5716b7d1a5c77c1fea9a9442b7;l=997
+        // These characters will cause issues on older Android
+        if (filename.contains('"') || filename.contains('*')
+            || filename.contains('/') || filename.contains(':')
+            || filename.contains('<') || filename.contains('>')
+            || filename.contains('?') || filename.contains('\\')
+            || filename.contains('|') || filename.contains('\u007f')) {
+            error(getString(R.string.route_asset_invalid_filename, filename))
         }
-        if (!DataStore.assetName.endsWith(".dat")) {
-            error(getString(R.string.route_not_asset, DataStore.assetName))
+        if (filename.any { it in '\u0000'..'\u001f' }) {
+            error(getString(R.string.route_asset_invalid_filename, filename))
         }
-        if (DataStore.assetName == "geosite.dat" || DataStore.assetName == "geoip.dat") {
-            error(getString(R.string.route_asset_reserved_filename,  DataStore.assetName))
+        if (File(app.externalAssets, filename).canonicalPath.substringAfterLast('/') != DataStore.assetName) {
+            error(getString(R.string.route_asset_invalid_filename, filename))
         }
-        if (DataStore.assetName != DataStore.editingAssetName && SagerDatabase.assetDao.get(DataStore.assetName) != null) {
-            error(getString(R.string.route_asset_duplicate_filename,  DataStore.assetName))
+        if (!filename.endsWith(".dat")) {
+            error(getString(R.string.route_not_asset, filename))
+        }
+        if (filename == "geosite.dat" || filename == "geoip.dat") {
+            error(getString(R.string.route_asset_reserved_filename,  filename))
+        }
+        if (filename != DataStore.editingAssetName && SagerDatabase.assetDao.get(filename) != null) {
+            error(getString(R.string.route_asset_duplicate_filename,  filename))
         }
         if (DataStore.assetUrl.listByLine().size > 1 || !isHTTPorHTTPSURL(DataStore.assetUrl)) {
             error(getString(R.string.route_asset_invalid_url,  DataStore.assetUrl))
