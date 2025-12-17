@@ -563,4 +563,6 @@
     <string name="grpc_service_name_compat">Compatibilidad del nombre del servicio gRPC</string>
     <string name="grpc_service_name_compat_sum">Ser compatible con el cambio de ruptura de Xray, pero romper la compatibilidad con servidores que no sean de Xray.</string>
     <string name="grpc_multi_mode">Modo múltiple</string>
+    <string name="import_routing_rules_warning">Se eliminarán todas las reglas existentes.</string>
+    <string name="export_routing_rules_warning">Es solo para fines de compatibilidad y no contiene información completa.</string>
 </resources>
