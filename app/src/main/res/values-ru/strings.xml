@@ -566,7 +566,7 @@
     <string name="cag_grpc">Настройки gRPC</string>
     <string name="grpc_service_name_compat">Совместимость имён служб gRPC</string>
     <string name="grpc_service_name_compat_sum">Обеспечить совместимость с критическими изменениями Xray, но потерять совместимость с серверами, не основанными на Xray.</string>
-    <string name="grpc_multi_mode">Multi mode (многорежимный)</string>
+    <string name="grpc_multi_mode">Multi mode (множественный режим)</string>
     <string name="import_routing_rules_warning">Все существующие правила будут удалены.</string>
-    <string name="export_routing_rules_warning">Исключительно для обеспечения совместимости и и не содержит полной информации.</string>
+    <string name="export_routing_rules_warning">Исключительно для обеспечения совместимости и содержит неполные данные.</string>
 </resources>
