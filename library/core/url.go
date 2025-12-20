@@ -128,7 +128,7 @@ func (u *netURL) GetPassword() string {
 
 func (u *netURL) SetPassword(password string) error {
 	if u.User == nil {
-		return newError("set username first")
+		u.User = url.UserPassword("", password)
 	}
 	u.User = url.UserPassword(u.User.Username(), password)
 	return nil

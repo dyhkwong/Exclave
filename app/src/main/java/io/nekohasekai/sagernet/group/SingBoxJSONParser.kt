@@ -238,8 +238,10 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                     outbound.getString("username")?.also {
                         v2rayBean.username = it
                     }
-                    outbound.getString("password")?.also {
-                        v2rayBean.password = it
+                    if (v2rayBean.protocol == SOCKSBean.PROTOCOL_SOCKS5) {
+                        outbound.getString("password")?.also {
+                            v2rayBean.password = it
+                        }
                     }
                 }
                 "http" -> {
@@ -590,11 +592,17 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 outbound.getString("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                outbound.getInt("server_port")?.also {
+                outbound.getInt("server_port")?.takeIf { it > 0 }?.also {
                     serverPort = it
-                } ?: return listOf()
-                outbound.getString("user")?.also {
+                } ?: {
+                    // https://github.com/SagerNet/sing-box/blob/5f739c4e66163ce88dbf75456e698c191d7069a6/protocol/ssh/outbound.go#L68
+                    serverPort = 22
+                }
+                outbound.getString("user")?.takeIf { it.isNotEmpty() }?.also {
                     username = it
+                } ?: {
+                    // https://github.com/SagerNet/sing-box/blob/5f739c4e66163ce88dbf75456e698c191d7069a6/protocol/ssh/outbound.go#L71
+                    username = "root"
                 }
                 if (outbound.getString("password")?.isNotEmpty() == true) {
                     authType = SSHBean.AUTH_TYPE_PASSWORD
@@ -603,8 +611,10 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                     }
                 }
                 if (outbound.getString("private_key")?.isNotEmpty() == true) {
-                    authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
-                    outbound.getString("private_key")?.also {
+                    authType = SSHBean.AUTH_TYPE_PUBLIC_KEY
+                    outbound.getStringArray("private_key")?.also {
+                        privateKey = it.joinToString("\n")
+                    } ?: outbound.getString("private_key")?.also {
                         privateKey = it
                     }
                     outbound.getString("private_key_passphrase")?.also {
@@ -613,6 +623,8 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 }
                 outbound.getStringArray("host_key")?.also {
                     publicKey = it.joinToString("\n")
+                } ?: outbound.getString("host_key")?.also {
+                    publicKey = it
                 }
             }
             return listOf(sshBean)

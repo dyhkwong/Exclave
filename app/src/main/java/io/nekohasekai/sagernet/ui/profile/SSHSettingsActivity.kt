@@ -58,7 +58,7 @@ class SSHSettingsActivity : ProfileSettingsActivity<SSHBean>() {
             SSHBean.AUTH_TYPE_PASSWORD -> {
                 password = DataStore.serverPassword
             }
-            SSHBean.AUTH_TYPE_PRIVATE_KEY -> {
+            SSHBean.AUTH_TYPE_PUBLIC_KEY -> {
                 privateKey = DataStore.serverPrivateKey
                 privateKeyPassphrase = DataStore.serverPassword1
             }
@@ -86,8 +86,8 @@ class SSHSettingsActivity : ProfileSettingsActivity<SSHBean>() {
         val authType = findPreference<SimpleMenuPreference>(Key.SERVER_AUTH_TYPE)!!
         fun updateAuthType(type: Int = DataStore.serverAuthType) {
             password.isVisible = type == SSHBean.AUTH_TYPE_PASSWORD
-            privateKey.isVisible = type == SSHBean.AUTH_TYPE_PRIVATE_KEY
-            privateKeyPassphrase.isVisible = type == SSHBean.AUTH_TYPE_PRIVATE_KEY
+            privateKey.isVisible = type == SSHBean.AUTH_TYPE_PUBLIC_KEY
+            privateKeyPassphrase.isVisible = type == SSHBean.AUTH_TYPE_PUBLIC_KEY
         }
         updateAuthType()
         authType.setOnPreferenceChangeListener { _, newValue ->
