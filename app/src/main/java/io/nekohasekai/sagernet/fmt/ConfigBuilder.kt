@@ -799,15 +799,15 @@ fun buildV2RayConfig(
                                             servers = listOf(SocksOutboundConfigurationObject.ServerObject().apply {
                                                 address = bean.serverAddress
                                                 port = bean.serverPort
-                                                if (!bean.username.isNullOrEmpty() || !bean.password.isNullOrEmpty()) {
+                                                if (bean.username.isNotEmpty() || bean.password.isNotEmpty() && bean.protocol == SOCKSBean.PROTOCOL_SOCKS5) {
                                                     users = listOf(SocksOutboundConfigurationObject.ServerObject.UserObject().apply {
-                                                        if (!bean.username.isNullOrEmpty()) {
-                                                            user = bean.username
-                                                        }
                                                         user = bean.username
-                                                        if (!bean.password.isNullOrEmpty() && bean.protocolName() == "SOCKS5") {
-                                                            pass = bean.password
-                                                        }
+                                                        pass = bean.password
+                                                    })
+                                                }
+                                                if (bean.protocol == SOCKSBean.PROTOCOL_SOCKS4 || bean.protocol == SOCKSBean.PROTOCOL_SOCKS4A && bean.username.isNotEmpty()) {
+                                                    users = listOf(SocksOutboundConfigurationObject.ServerObject.UserObject().apply {
+                                                        user = bean.username
                                                     })
                                                 }
                                             })
@@ -824,14 +824,10 @@ fun buildV2RayConfig(
                                             servers = listOf(HTTPOutboundConfigurationObject.ServerObject().apply {
                                                 address = bean.serverAddress
                                                 port = bean.serverPort
-                                                if (!bean.username.isNullOrEmpty() || !bean.password.isNullOrEmpty()) {
+                                                if (bean.username.isNotEmpty() || bean.password.isNotEmpty()) {
                                                     users = listOf(HTTPInboundConfigurationObject.AccountObject().apply {
-                                                        if (!bean.username.isNullOrEmpty()) {
-                                                            user = bean.username
-                                                        }
-                                                        if (!bean.password.isNullOrEmpty()) {
-                                                            pass = bean.password
-                                                        }
+                                                        user = bean.username
+                                                        pass = bean.password
                                                     })
                                                 }
                                             })
@@ -1213,15 +1209,19 @@ fun buildV2RayConfig(
                                         port = bean.finalPort
                                         user = bean.username
                                         when (bean.authType) {
-                                            SSHBean.AUTH_TYPE_PRIVATE_KEY -> {
+                                            SSHBean.AUTH_TYPE_PUBLIC_KEY -> {
                                                 privateKey = bean.privateKey
-                                                password = bean.privateKeyPassphrase
+                                                if (bean.privateKeyPassphrase.isNotEmpty()) {
+                                                    privateKeyPassphrase = bean.privateKeyPassphrase
+                                                }
                                             }
                                             SSHBean.AUTH_TYPE_PASSWORD -> {
                                                 password = bean.password
                                             }
                                         }
-                                        publicKey = bean.publicKey
+                                        if (bean.publicKey.isNotEmpty()) {
+                                            publicKey = bean.publicKey
+                                        }
                                     })
                             } else if (bean is Hysteria2Bean) {
                                 protocol = "hysteria2"

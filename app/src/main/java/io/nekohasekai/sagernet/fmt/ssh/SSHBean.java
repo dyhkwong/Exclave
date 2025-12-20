@@ -32,7 +32,7 @@ public class SSHBean extends AbstractBean {
 
     public static final int AUTH_TYPE_NONE = 0;
     public static final int AUTH_TYPE_PASSWORD = 1;
-    public static final int AUTH_TYPE_PRIVATE_KEY = 2;
+    public static final int AUTH_TYPE_PUBLIC_KEY = 2;
 
     public String username;
     public Integer authType;
@@ -67,7 +67,7 @@ public class SSHBean extends AbstractBean {
             case AUTH_TYPE_PASSWORD:
                 output.writeString(password);
                 break;
-            case AUTH_TYPE_PRIVATE_KEY:
+            case AUTH_TYPE_PUBLIC_KEY:
                 output.writeString(privateKey);
                 output.writeString(privateKeyPassphrase);
                 break;
@@ -87,7 +87,7 @@ public class SSHBean extends AbstractBean {
             case AUTH_TYPE_PASSWORD:
                 password = input.readString();
                 break;
-            case AUTH_TYPE_PRIVATE_KEY:
+            case AUTH_TYPE_PUBLIC_KEY:
                 privateKey = input.readString();
                 privateKeyPassphrase = input.readString();
                 break;

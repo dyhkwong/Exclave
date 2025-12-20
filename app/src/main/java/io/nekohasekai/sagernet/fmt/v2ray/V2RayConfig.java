@@ -973,6 +973,7 @@ public class V2RayConfig {
         public String user;
         public String password;
         public String privateKey;
+        public String privateKeyPassphrase;
         public String publicKey;
         public Integer userLevel;
         public String clientVersion;

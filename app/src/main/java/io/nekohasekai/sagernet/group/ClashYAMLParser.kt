@@ -414,11 +414,11 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     password = it
                     authType = SSHBean.AUTH_TYPE_PASSWORD
                 }
-                proxy.getString("private-key")?.also {
+                proxy.getString("private-key")?.takeIf { it.contains("PRIVATE KEY") }?.also {
                     privateKey = it
-                    authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
+                    privateKeyPassphrase = proxy.getString("private-key-passphrase")
+                    authType = SSHBean.AUTH_TYPE_PUBLIC_KEY
                 }
-                privateKeyPassphrase = proxy.getString("private-key-passphrase")
                 publicKey = proxy.getStringArray("host-key")?.joinToString("\n")
                 name = proxy.getString("name")
             })

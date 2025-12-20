@@ -83,7 +83,21 @@ fun parseSOCKS(link: String): SOCKSBean {
 fun SOCKSBean.toUri(): String? {
     if (security != "tls" && security != "none") error("unsupported socks with tls")
     if (type != "tcp" || headerType != "none") error("unsupported socks with v2ray transport")
-
+    if (protocol == SOCKSBean.PROTOCOL_SOCKS5 && username.isEmpty() && password.isNotEmpty()) {
+        error("SOCKS5 Username/Password Authentication with empty username violates RFC 1929")
+    }
+    if (protocol == SOCKSBean.PROTOCOL_SOCKS5 && username.isNotEmpty() && password.isEmpty()) {
+        error("SOCKS5 Username/Password Authentication with empty password violates RFC 1929")
+    }
+    if (protocol == SOCKSBean.PROTOCOL_SOCKS5 && username.length > 255) {
+        error("username too long")
+    }
+    if (protocol == SOCKSBean.PROTOCOL_SOCKS5 && password.length > 255) {
+        error("password too long")
+    }
+    if (protocol == SOCKSBean.PROTOCOL_SOCKS4 || protocol == SOCKSBean.PROTOCOL_SOCKS4A && password.isNotEmpty()) {
+        error("SOCKS4 and SOCKS4A do not have password field")
+    }
     val builder = Libcore.newURL("socks${protocolVersion()}").apply {
         host = serverAddress.ifEmpty { error("empty server address") }
         port = serverPort

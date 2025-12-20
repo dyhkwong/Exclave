@@ -709,6 +709,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             else -> return listOf()
                         }
                         settings.getString("address")?.also { address ->
+                            // Xray hack
                             v2rayBean.serverAddress = address
                             settings.getPort("port")?.also {
                                 v2rayBean.serverPort = it
@@ -716,8 +717,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             settings.getString("user")?.also {
                                 v2rayBean.username = it
                             }
-                            settings.getString("pass")?.also {
-                                v2rayBean.password = it
+                            if (v2rayBean.protocol == SOCKSBean.PROTOCOL_SOCKS5) {
+                                settings.getString("pass")?.also {
+                                    v2rayBean.password = it
+                                }
                             }
                         } ?: settings.getArray("servers")?.get(0)?.also { server ->
                             server.getString("address")?.also {
@@ -730,8 +733,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 user.getString("user")?.also {
                                     v2rayBean.username = it
                                 }
-                                user.getString("pass")?.also {
-                                    v2rayBean.password = it
+                                if (v2rayBean.protocol == SOCKSBean.PROTOCOL_SOCKS5) {
+                                    settings.getString("pass")?.also {
+                                        v2rayBean.password = it
+                                    }
                                 }
                             }
                         }
@@ -744,6 +749,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                     }
                     outbound.getObject("settings")?.also { settings ->
                         settings.getString("address")?.also { address ->
+                            // Xray hack
                             v2rayBean.serverAddress = address
                             settings.getPort("port")?.also {
                                 v2rayBean.serverPort = it
@@ -913,15 +919,16 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                 settings.getString("publicKey")?.also {
                     sshBean.publicKey = it
                 }
-                settings.getString("privateKey")?.also {
-                    sshBean.authType = SSHBean.AUTH_TYPE_PRIVATE_KEY
-                    sshBean.privateKey = it
-                    settings.getString("password")?.also { pass ->
-                        sshBean.privateKeyPassphrase = pass
-                    }
-                } ?: settings.getString("password")?.also {
+                settings.getString("password")?.also {
                     sshBean.authType = SSHBean.AUTH_TYPE_PASSWORD
                     sshBean.password = it
+                }
+                settings.getString("privateKey")?.also {
+                    sshBean.authType = SSHBean.AUTH_TYPE_PUBLIC_KEY
+                    sshBean.privateKey = it
+                    settings.getString("privateKeyPassphrase")?.also { privateKeyPassphrase ->
+                        sshBean.privateKeyPassphrase = privateKeyPassphrase
+                    }
                 }
             }
             return listOf(sshBean)
