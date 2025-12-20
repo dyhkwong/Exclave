@@ -674,14 +674,17 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         ).joinToString(",")
                     }
                 } ?: proxy.getString("reserved")?.also {
-                    val arr = Base64.decode(it)
-                    if (arr.size == 3) {
-                        reserved = listOf(
-                            arr[0].toUByte().toInt().toString(),
-                            arr[1].toUByte().toInt().toString(),
-                            arr[2].toUByte().toInt().toString()
-                        ).joinToString(",")
-                    }
+                    try {
+                        val arr = Base64.decode(it)
+                        if (arr.size == 3) {
+                            reserved = listOf(
+                                arr[0].toUByte().toInt().toString(),
+                                arr[1].toUByte().toInt().toString(),
+                                arr[2].toUByte().toInt().toString()
+                            ).joinToString(",")
+                        }
+                    } catch (_: Exception) {}
+
                 }
             }
             if (proxy.contains("server") && proxy.contains("port")) {
@@ -703,14 +706,16 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                                 ).joinToString(",")
                             }
                         } ?: peer.getString("reserved")?.also {
-                            val arr = Base64.decode(it)
-                            if (arr.size == 3) {
-                                reserved = listOf(
-                                    arr[0].toUByte().toInt().toString(),
-                                    arr[1].toUByte().toInt().toString(),
-                                    arr[2].toUByte().toInt().toString()
-                                ).joinToString(",")
-                            }
+                            try {
+                                val arr = Base64.decode(it)
+                                if (arr.size == 3) {
+                                    reserved = listOf(
+                                        arr[0].toUByte().toInt().toString(),
+                                        arr[1].toUByte().toInt().toString(),
+                                        arr[2].toUByte().toInt().toString()
+                                    ).joinToString(",")
+                                }
+                            } catch (_: Exception) {}
                         }
                     })
                 }
