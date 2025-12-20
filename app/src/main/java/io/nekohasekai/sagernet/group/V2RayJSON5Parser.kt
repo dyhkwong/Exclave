@@ -88,25 +88,29 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
                                         null, "ENCIPHERMENT" -> {
                                             if (!certificate.has("certificateFile") && !certificate.has("certificate_file")
                                                 && !certificate.has("keyFile") && !certificate.has("key_file")) {
-                                                val cert = certificate.getString("Certificate")?.takeIf {
-                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
-                                                }
-                                                val key = certificate.getString("Key")?.takeIf {
-                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
-                                                }
+                                                val cert = certificate.getString("Certificate")
+                                                val key = certificate.getString("Key")
                                                 if (cert != null && key != null) {
-                                                    v2rayBean.mtlsCertificate = String(Base64.decode(cert))
-                                                    v2rayBean.mtlsCertificatePrivateKey = String(Base64.decode(key))
+                                                    try {
+                                                        v2rayBean.mtlsCertificate = String(Base64.decode(cert)).takeIf {
+                                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                        }
+                                                        v2rayBean.mtlsCertificatePrivateKey = String(Base64.decode(key)).takeIf {
+                                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                                        }
+                                                    } catch (_: Exception) {}
                                                 }
                                             }
                                         }
                                         "AUTHORITY_VERIFY" -> {
                                             if (!certificate.has("certificateFile") && !certificate.has("certificate_file")) {
-                                                val cert = certificate.getString("Certificate")?.takeIf {
-                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
-                                                }
+                                                val cert = certificate.getString("Certificate")
                                                 if (cert != null) {
-                                                    v2rayBean.certificates = cert
+                                                    try {
+                                                        v2rayBean.certificates = String(Base64.decode(cert)).takeIf {
+                                                            it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                        }
+                                                    } catch (_: Exception) {}
                                                 }
                                             }
                                         }

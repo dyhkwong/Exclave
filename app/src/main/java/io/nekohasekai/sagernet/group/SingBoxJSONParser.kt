@@ -734,10 +734,13 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                         reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                     }
                 } ?: outbound.getString("reserved")?.also {
-                    val arr = Base64.decode(it)
-                    if (arr.size == 3) {
-                        reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
-                    }
+                    try {
+                        val arr = Base64.decode(it)
+                        if (arr.size == 3) {
+                            reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
+                        }
+                    } catch (_: Exception) {}
+
                 }
             }
             if (outbound.contains("server")) {
@@ -771,10 +774,12 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
                     } ?: peer.getString("reserved")?.also {
-                        val arr = Base64.decode(it)
-                        if (arr.size == 3) {
-                            reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
-                        }
+                        try {
+                            val arr = Base64.decode(it)
+                            if (arr.size == 3) {
+                                reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
+                            }
+                        } catch (_: Exception) {}
                     }
                 })
             }
@@ -831,10 +836,12 @@ fun parseSingBoxEndpoint(endpoint: JsonObject): List<AbstractBean> {
                             reserved = listOf(it[0].toString(), it[1].toString(), it[2].toString()).joinToString(",")
                         }
                     } ?: peer.getString("reserved")?.also {
-                        val arr = Base64.decode(it)
-                        if (arr.size == 3) {
-                            reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
-                        }
+                        try {
+                            val arr = Base64.decode(it)
+                            if (arr.size == 3) {
+                                reserved = listOf(arr[0].toUByte().toInt().toString(), arr[1].toUByte().toInt().toString(), arr[2].toUByte().toInt().toString()).joinToString(",")
+                            }
+                        } catch (_: Exception) {}
                     }
                 })
             }
