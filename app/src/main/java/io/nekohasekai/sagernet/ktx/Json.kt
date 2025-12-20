@@ -152,7 +152,7 @@ fun JsonObject.getObject(key: String, ignoreCase: Boolean = false): JsonObject? 
     return null
 }
 
-private fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = false): JsonArray? {
+fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = false): JsonArray? {
     val value = get(key)
     when {
         value == null -> if (!ignoreCase) return null

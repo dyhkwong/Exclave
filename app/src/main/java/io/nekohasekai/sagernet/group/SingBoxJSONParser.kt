@@ -199,11 +199,11 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                         v2rayBean.mtlsCertificatePrivateKey = key
                                     }
                                 }
-                                tls.getStringArray("certificate_public_key_sha256")?.also {
-                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                                tls.getByteArrayArray("certificate_public_key_sha256")?.also {
+                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n") { Base64.encode(it) }
                                     v2rayBean.allowInsecure = true
-                                } ?: tls.getString("certificate_public_key_sha256")?.also {
-                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = it
+                                } ?: tls.getByteArray("certificate_public_key_sha256")?.also {
+                                    v2rayBean.pinnedPeerCertificatePublicKeySha256 = Base64.encode(it)
                                     v2rayBean.allowInsecure = true
                                 }
                                 tls.getObject("reality")?.also { reality ->
@@ -405,11 +405,11 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                             mtlsCertificatePrivateKey = key
                         }
                     }
-                    tls.getStringArray("certificate_public_key_sha256")?.also {
-                        pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                    tls.getByteArrayArray("certificate_public_key_sha256")?.also {
+                        pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n") { Base64.encode(it) }
                         allowInsecure = true
-                    } ?: tls.getString("certificate_public_key_sha256")?.also {
-                        pinnedPeerCertificatePublicKeySha256 = it
+                    } ?: tls.getByteArray("certificate_public_key_sha256")?.also {
+                        pinnedPeerCertificatePublicKeySha256 = Base64.encode(it)
                         allowInsecure = true
                     }
                 } ?: return listOf()
@@ -573,11 +573,11 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                             mtlsCertificatePrivateKey = key
                         }
                     }
-                    tls.getStringArray("certificate_public_key_sha256")?.also {
-                        pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                    tls.getByteArrayArray("certificate_public_key_sha256")?.also {
+                        pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n") { Base64.encode(it) }
                         allowInsecure = true
-                    } ?: tls.getString("certificate_public_key_sha256")?.also {
-                        pinnedPeerCertificatePublicKeySha256 = it
+                    } ?: tls.getByteArray("certificate_public_key_sha256")?.also {
+                        pinnedPeerCertificatePublicKeySha256 = Base64.encode(it)
                         allowInsecure = true
                     }
                 } ?: return listOf()
@@ -735,11 +735,11 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                     mtlsCertificatePrivateKey = key
                                 }
                             }
-                            tls.getStringArray("certificate_public_key_sha256")?.also {
-                                pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n")
+                            tls.getByteArrayArray("certificate_public_key_sha256")?.also {
+                                pinnedPeerCertificatePublicKeySha256 = it.joinToString("\n") { Base64.encode(it) }
                                 allowInsecure = true
-                            } ?: tls.getString("certificate_public_key_sha256")?.also {
-                                pinnedPeerCertificatePublicKeySha256 = it
+                            } ?: tls.getByteArray("certificate_public_key_sha256")?.also {
+                                pinnedPeerCertificatePublicKeySha256 = Base64.encode(it)
                                 allowInsecure = true
                             }
                             tls.getObject("reality")?.also { reality ->
@@ -1021,15 +1021,95 @@ private fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = true): Js
 
 private fun JsonObject.getArray(key: String, ignoreCase: Boolean = true): List<JsonObject>? {
     val jsonArray = getJsonArray(key, ignoreCase) ?: return null
-    return Gson().fromJson(jsonArray, Array<JsonObject>::class.java)?.asList()
+    return try {
+        Gson().fromJson(jsonArray, Array<JsonObject>::class.java)?.asList()
+    } catch (_: Exception) {
+        null
+    }
 }
 
 private fun JsonObject.getStringArray(key: String, ignoreCase: Boolean = true): List<String>? {
     val jsonArray = getJsonArray(key, ignoreCase) ?: return null
-    return Gson().fromJson(jsonArray, Array<String>::class.java)?.asList()
+    return try {
+        Gson().fromJson(jsonArray, Array<String>::class.java)?.asList()
+    } catch (_: Exception) {
+        null
+    }
 }
 
 private fun JsonObject.getIntArray(key: String, ignoreCase: Boolean = true): List<Int>? {
     val jsonArray = getJsonArray(key, ignoreCase) ?: return null
-    return Gson().fromJson(jsonArray, Array<Int>::class.java)?.asList()
+    return try {
+        Gson().fromJson(jsonArray, Array<Int>::class.java)?.asList()
+    } catch (_: Exception) {
+        null
+    }
+}
+
+private fun JsonObject.getByteArray(key: String): ByteArray? {
+    val value = get(key)
+    when {
+        value == null -> {}
+        value.isJsonNull -> {}
+        value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
+            return try {
+                Base64.decode(value.asString.toByteArray())
+            } catch (_: Exception) {
+                null
+            }
+        }
+        value.isJsonArray -> return try {
+            Gson().fromJson(value, ByteArray::class.java)
+        } catch (_: Exception) {
+            null
+        }
+        else -> return null
+    }
+    for ((k, v) in entrySet()) {
+        if (k.equals(key, ignoreCase = true)) {
+            when {
+                v.isJsonPrimitive && v.asJsonPrimitive.isString -> {
+                    try {
+                         return Base64.decode(v.asString.toByteArray())
+                    } catch (_: Exception) {}
+                }
+                value.isJsonArray -> {
+                    try {
+                        return Gson().fromJson(value, ByteArray::class.java)
+                    } catch (_: Exception) {}
+                }
+            }
+        }
+    }
+    return null
+}
+
+private fun JsonObject.getByteArrayArray(key: String): Array<ByteArray>? {
+    val jsonArray = getJsonArray(key, ignoreCase = true) ?: return null
+    val ret = mutableListOf<ByteArray>()
+    for (value in jsonArray) {
+        when {
+            value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
+                ret.add(
+                    try {
+                        Base64.decode(value.asString.toByteArray())
+                    } catch (_: Exception) {
+                        return null
+                    }
+                )
+            }
+            value.isJsonArray -> {
+                ret.add(
+                    try {
+                        Gson().fromJson(value, ByteArray::class.java)
+                    } catch (_: Exception) {
+                        return null
+                    }
+                )
+            }
+            value.isJsonNull -> continue
+            else -> return null
+        }
+    }
+    return ret.toTypedArray()
 }

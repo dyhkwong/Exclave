@@ -1472,17 +1472,29 @@ private fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = true): Js
 
 private fun JsonObject.getArray(key: String, ignoreCase: Boolean = true): List<JsonObject>? {
     val jsonArray = getJsonArray(key, ignoreCase) ?: return null
-    return Gson().fromJson(jsonArray, Array<JsonObject>::class.java)?.asList()
+    return try {
+        Gson().fromJson(jsonArray, Array<JsonObject>::class.java)?.asList()
+    } catch (_: Exception) {
+        null
+    }
 }
 
 private fun JsonObject.getStringArray(key: String, ignoreCase: Boolean = true): List<String>? {
     val jsonArray = getJsonArray(key, ignoreCase) ?: return null
-    return Gson().fromJson(jsonArray, Array<String>::class.java)?.asList()
+    return try {
+        Gson().fromJson(jsonArray, Array<String>::class.java)?.asList()
+    } catch (_: Exception) {
+        null
+    }
 }
 
 private fun JsonObject.getIntArray(key: String, ignoreCase: Boolean = true): List<Int>? {
     val jsonArray = getJsonArray(key, ignoreCase) ?: return null
-    return Gson().fromJson(jsonArray, Array<Int>::class.java)?.asList()
+    return try {
+        Gson().fromJson(jsonArray, Array<Int>::class.java)?.asList()
+    } catch (_: Exception) {
+        null
+    }
 }
 
 private fun JsonObject.getPort(key: String): Int? {
