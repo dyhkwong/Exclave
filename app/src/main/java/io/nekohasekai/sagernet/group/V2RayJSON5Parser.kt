@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.group
 
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
@@ -32,6 +33,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.fmt.v2ray.supportedQuicSecurity
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.getJsonArray
 import kotlin.io.encoding.Base64
 
 fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
@@ -88,14 +90,14 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
                                         null, "ENCIPHERMENT" -> {
                                             if (!certificate.has("certificateFile") && !certificate.has("certificate_file")
                                                 && !certificate.has("keyFile") && !certificate.has("key_file")) {
-                                                val cert = certificate.getString("Certificate")
-                                                val key = certificate.getString("Key")
+                                                val cert = certificate.getByteArray("Certificate")
+                                                val key = certificate.getByteArray("Key")
                                                 if (cert != null && key != null) {
                                                     try {
-                                                        v2rayBean.mtlsCertificate = String(Base64.decode(cert)).takeIf {
+                                                        v2rayBean.mtlsCertificate = String(cert).takeIf {
                                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                                         }
-                                                        v2rayBean.mtlsCertificatePrivateKey = String(Base64.decode(key)).takeIf {
+                                                        v2rayBean.mtlsCertificatePrivateKey = String(key).takeIf {
                                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
                                                         }
                                                     } catch (_: Exception) {}
@@ -104,10 +106,10 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
                                         }
                                         "AUTHORITY_VERIFY" -> {
                                             if (!certificate.has("certificateFile") && !certificate.has("certificate_file")) {
-                                                val cert = certificate.getString("Certificate")
+                                                val cert = certificate.getByteArray("Certificate")
                                                 if (cert != null) {
                                                     try {
-                                                        v2rayBean.certificates = String(Base64.decode(cert)).takeIf {
+                                                        v2rayBean.certificates = String(cert).takeIf {
                                                             it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
                                                         }
                                                     } catch (_: Exception) {}
@@ -116,9 +118,9 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
                                         }
                                     }
                                 }
-                                (tlsConfig.getStringArray("pinnedPeerCertificateChainSha256")
-                                    ?: tlsConfig.getStringArray("pinned_peer_certificate_chain_sha256"))?.also {
-                                    v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n")
+                                (tlsConfig.getByteArrayArray("pinnedPeerCertificateChainSha256")
+                                    ?: tlsConfig.getByteArrayArray("pinned_peer_certificate_chain_sha256"))?.also {
+                                    v2rayBean.pinnedPeerCertificateChainSha256 = it.joinToString("\n") { Base64.encode(it) }
                                     (tlsConfig.getBoolean("allowInsecureIfPinnedPeerCertificate")
                                         ?: tlsConfig.getBoolean("allow_insecure_if_pinned_peer_certificate"))?.also { allowInsecure ->
                                         v2rayBean.allowInsecure = allowInsecure
@@ -361,10 +363,10 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
                                 return listOf()
                             v2rayBean.method = it
                         }
-                        settings.getString("psk")?.also { psk ->
-                            v2rayBean.password = psk
-                            settings.getStringArray("ipsk")?.also { ipsk ->
-                                v2rayBean.password = ipsk.joinToString(":") + ":" + psk
+                        settings.getByteArray("psk")?.also { psk ->
+                            v2rayBean.password = Base64.encode(psk)
+                            settings.getByteArrayArray("ipsk")?.also { ipsk ->
+                                v2rayBean.password = ipsk.joinToString(":") { Base64.encode(it) } + ":" + Base64.encode(psk)
                             }
                         }
                     }
@@ -426,4 +428,55 @@ private fun JsonObject.getInt(key: String): Int? {
         value.isJsonPrimitive && value.asJsonPrimitive.isString -> value.asString.toIntOrNull()
         else -> null
     }
+}
+
+private fun JsonObject.getByteArray(key: String): ByteArray? {
+    val value = get(key) ?: return null
+    return when {
+        value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
+            try {
+                Base64.decode(value.asString.toByteArray())
+            } catch (_: Exception) {
+                null
+            }
+        }
+        value.isJsonArray -> {
+            try {
+                Gson().fromJson(value, ByteArray::class.java)
+            } catch (_: Exception) {
+                null
+            }
+        }
+        else -> null
+    }
+}
+
+private fun JsonObject.getByteArrayArray(key: String): Array<ByteArray>? {
+    val jsonArray = getJsonArray(key) ?: return null
+    val ret = mutableListOf<ByteArray>()
+    for (value in jsonArray) {
+        when {
+            value.isJsonPrimitive && value.asJsonPrimitive.isString -> {
+                ret.add(
+                    try {
+                        Base64.decode(value.asString.toByteArray())
+                    } catch (_: Exception) {
+                        return null
+                    }
+                )
+            }
+            value.isJsonArray -> {
+                ret.add(
+                    try {
+                        Gson().fromJson(value, ByteArray::class.java)
+                    } catch (_: Exception) {
+                        return null
+                    }
+                )
+            }
+            value.isJsonNull -> continue
+            else -> return null
+        }
+    }
+    return ret.toTypedArray()
 }
