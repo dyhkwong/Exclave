@@ -274,6 +274,28 @@ object RawUpdater : GroupUpdater() {
     @Suppress("UNCHECKED_CAST")
     private fun parseJSONConfig(text: String): List<AbstractBean> {
         val jsonElement = parseJson(stripJson(text, stripTrailingCommas = true))
+        if (jsonElement.isJsonArray) {
+            // https://github.com/XTLS/Xray-core/discussions/3765 WTF
+            val beans = ArrayList<AbstractBean>()
+            jsonElement.asJsonArray.forEach {
+                if (!it.isJsonObject) {
+                    return listOf()
+                }
+                val prefix = it.asJsonObject.getString("remarks", ignoreCase = true)
+                val outbounds = it.asJsonObject.getArray("outbounds", ignoreCase = true)
+                outbounds?.forEach { outbound ->
+                    val parsed = parseV2RayOutbound(outbound)
+                    if (!prefix.isNullOrEmpty()) {
+                        parsed.forEach { bean ->
+                            bean.initializeDefaultValues()
+                            bean.name = "$prefix ${bean.displayName()}"
+                        }
+                    }
+                    beans.addAll(parsed)
+                }
+            }
+            return beans
+        }
         if (!jsonElement.isJsonObject) {
             return listOf()
         }
