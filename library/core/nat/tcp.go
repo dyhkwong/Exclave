@@ -36,6 +36,7 @@ type tcpForwarder struct {
 	listener4 *net.TCPListener
 	listener6 *net.TCPListener
 	sessions  *comm.LruCache
+	closed    bool
 }
 
 func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
@@ -68,10 +69,10 @@ func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
 	return tcpForwarder, nil
 }
 
-func (t *tcpForwarder) dispatch(listener *net.TCPListener) (bool, error) {
+func (t *tcpForwarder) dispatch(listener *net.TCPListener) error {
 	conn, err := listener.AcceptTCP()
 	if err != nil {
-		return true, err
+		return err
 	}
 	addr := conn.RemoteAddr().(*net.TCPAddr)
 	key := peerKey{tcpip.AddrFromSlice(addr.IP), uint16(addr.Port)}
@@ -81,7 +82,7 @@ func (t *tcpForwarder) dispatch(listener *net.TCPListener) (bool, error) {
 		session = iSession.(*peerValue)
 	} else {
 		conn.Close()
-		return false, newError("dropped unknown tcp session with source port ", key.sourcePort, " to destination address ", key.destinationAddress)
+		return newError("dropped unknown tcp session with source port ", key.sourcePort, " to destination address ", key.destinationAddress)
 	}
 
 	source := v2rayNet.Destination{
@@ -101,18 +102,13 @@ func (t *tcpForwarder) dispatch(listener *net.TCPListener) (bool, error) {
 		t.sessions.Delete(key)
 	}()
 
-	return false, nil
+	return nil
 }
 
 func (t *tcpForwarder) dispatchLoop(listener *net.TCPListener) {
-	for {
-		stop, err := t.dispatch(listener)
-		if err != nil {
-			e := newError("dispatch tcp conn failed").Base(err)
-			e.WriteToLog()
-			if stop {
-				return
-			}
+	for !t.closed {
+		if err := t.dispatch(listener); err != nil {
+			newError("dispatch tcp conn failed").Base(err).WriteToLog()
 		}
 	}
 }
@@ -209,6 +205,7 @@ func (t *tcpForwarder) processIPv6(ipHdr header.IPv6, tcpHdr header.TCP) {
 }
 
 func (t *tcpForwarder) Close() error {
+	t.closed = true
 	_ = t.listener4.Close()
 	if t.listener6 != nil {
 		_ = t.listener6.Close()
