@@ -21,7 +21,6 @@ import (
 	"container/list"
 	"context"
 	"io"
-	"math"
 	"net"
 	"net/netip"
 	"os"
@@ -133,7 +132,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 			}
 		}
 
-		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, gvisor.DefaultNIC, config.PCap, pcapFile, math.MaxUint32, config.EnableIPv6)
+		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, gvisor.DefaultNIC, config.PCap, pcapFile, config.EnableIPv6)
 	case comm.TunImplementationSystem:
 		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6)
 	}

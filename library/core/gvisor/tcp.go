@@ -38,7 +38,7 @@ func gTcpHandler(s *stack.Stack, handler tun.Handler) {
 		waitQueue := new(waiter.Queue)
 		endpoint, errT := request.CreateEndpoint(waitQueue)
 		if errT != nil {
-			newError("failed to create TCP connection").Base(tcpipErr(errT)).WriteToLog()
+			newError("failed to create TCP connection").Base(newError(errT)).WriteToLog()
 			// prevent potential half-open TCP connection leak.
 			request.Complete(true)
 			return
