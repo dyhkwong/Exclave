@@ -45,6 +45,7 @@ type SystemTun struct {
 	addr6        netip.Addr
 	enableIPv6   bool
 	tcpForwarder *tcpForwarder
+	closed       bool
 }
 
 func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, enableIPv6 bool) (*SystemTun, error) {
@@ -79,10 +80,11 @@ func (t *SystemTun) dispatchLoop() {
 
 	device := os.NewFile(uintptr(t.dev), "tun")
 
-	for {
+	for !t.closed {
 		n, err := device.Read(data)
 		if err != nil {
-			break
+			cache.Clear()
+			continue
 		}
 		cache.Clear()
 		cache.Resize(0, int32(n))
@@ -150,5 +152,6 @@ func (t *SystemTun) deliverPacket(cache *buf.Buffer, packet []byte) bool {
 }
 
 func (t *SystemTun) Close() error {
+	t.closed = true
 	return t.tcpForwarder.Close()
 }
