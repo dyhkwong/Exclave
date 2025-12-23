@@ -441,7 +441,11 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                     password = it
                 }
                 outbound.getString("congestion_control")?.also {
-                    congestionControl = if (it in supportedTuic5CongestionControl) it else "cubic"
+                   congestionControl = when (it) {
+                        in supportedTuic5CongestionControl -> it
+                        "bbr_meta_v1", "bbr_quiche", "bbr2", "bbr2_aggressive" -> "bbr"
+                        else -> "cubic"
+                    }
                 }
                 outbound.getString("udp_relay_mode")?.also {
                     udpRelayMode = if (it in supportedTuic5RelayMode) it else "native"
