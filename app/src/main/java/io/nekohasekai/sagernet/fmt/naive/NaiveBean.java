@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
-import io.nekohasekai.sagernet.ktx.NetsKt;
 
 public class NaiveBean extends AbstractBean {
 
@@ -43,6 +42,7 @@ public class NaiveBean extends AbstractBean {
     public Boolean noPostQuantum;
     public String sni;
     public String certificate;
+    public Boolean singUoT; // Invented by sing-box, not part of NaïveProxy. This may get removed at any time.
 
     @Override
     public void initializeDefaultValues() {
@@ -56,11 +56,12 @@ public class NaiveBean extends AbstractBean {
         if (noPostQuantum == null) noPostQuantum = false;
         if (sni == null) sni = "";
         if (certificate == null) certificate = "";
+        if (singUoT == null) singUoT = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(6);
+        output.writeInt(7);
         super.serialize(output);
         output.writeString(proto);
         output.writeString(username);
@@ -70,6 +71,7 @@ public class NaiveBean extends AbstractBean {
         output.writeBoolean(noPostQuantum);
         output.writeString(sni);
         output.writeString(certificate);
+        output.writeBoolean(singUoT);
     }
 
     @Override
@@ -95,6 +97,9 @@ public class NaiveBean extends AbstractBean {
         if (version >= 6) {
             certificate = input.readString();
         }
+        if (version >= 7) {
+            singUoT = input.readBoolean();
+        }
     }
 
     @Override
@@ -110,6 +115,8 @@ public class NaiveBean extends AbstractBean {
         if (!(other instanceof NaiveBean bean)) return;
         bean.noPostQuantum = noPostQuantum;
         bean.certificate = certificate;
+        bean.insecureConcurrency = insecureConcurrency;
+        bean.singUoT = singUoT;
     }
 
     @NotNull

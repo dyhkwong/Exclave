@@ -21,12 +21,14 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceCategory
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
+import io.nekohasekai.sagernet.ktx.getEnabled
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
@@ -45,6 +47,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         DataStore.serverNaiveNoPostQuantum = noPostQuantum
         DataStore.serverSNI = sni
         DataStore.serverCertificates = certificate
+        DataStore.serverSingUot = singUoT
     }
 
     override fun NaiveBean.serialize() {
@@ -59,6 +62,7 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         noPostQuantum = DataStore.serverNaiveNoPostQuantum
         sni = DataStore.serverSNI
         certificate = DataStore.serverCertificates
+        singUoT = DataStore.serverSingUot
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -75,6 +79,8 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         findPreference<EditTextPreference>(Key.SERVER_INSECURE_CONCURRENCY)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
+        findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
+            getEnabled(DataStore.experimentalFlags, "singuot")
     }
 
 }

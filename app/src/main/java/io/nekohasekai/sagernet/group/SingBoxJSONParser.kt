@@ -27,6 +27,7 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.fmt.anytls.AnyTLSBean
 import io.nekohasekai.sagernet.fmt.http.HttpBean
 import io.nekohasekai.sagernet.fmt.hysteria2.Hysteria2Bean
+import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.supportedShadowsocksMethod
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -707,6 +708,49 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 }
             }
             return listOf(anytlsBean)
+        }
+        "naive" -> {
+            val naiveBean = NaiveBean().apply {
+                outbound.getString("tag", ignoreCase = false)?.also {
+                    name = it
+                }
+                outbound.getString("server")?.also {
+                    serverAddress = it
+                } ?: return listOf()
+                outbound.getInt("server_port")?.also {
+                    serverPort = it
+                } ?: return listOf()
+                outbound.getString("username")?.also {
+                    username = it
+                }
+                outbound.getString("password")?.also {
+                    password = it
+                }
+                outbound.getBoolean("quic")?.takeIf { it }?.also {
+                    proto = "quic"
+                }
+                outbound.getObject("tls")?.also { tls ->
+                    tls.getString("server_name")?.also {
+                        sni = it
+                    }
+                    if (!tls.contains("certificate_path")) {
+                        var cert: String? = null
+                        tls.getStringArray("certificate")?.also { certificate ->
+                            cert = certificate.joinToString("\n").takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        } ?: tls.getString("certificate")?.also { certificate ->
+                            cert = certificate.takeIf {
+                                it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                            }
+                        }
+                        if (cert != null) {
+                            certificate = cert
+                        }
+                    }
+                }
+            }
+            return listOf(naiveBean)
         }
         "wireguard" -> {
             if (outbound.contains("address")) {

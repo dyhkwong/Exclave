@@ -611,6 +611,11 @@ fun buildV2RayConfig(
                                             address = LOCALHOST
                                             port = localPort
                                         })
+                                    if (getEnabled(DataStore.experimentalFlags, "singuot")) {
+                                        proxyEntity.naiveBean?.singUoT?.takeIf { it }?.let {
+                                            uot = true
+                                        }
+                                    }
                                 })
                         }
                     } else {
