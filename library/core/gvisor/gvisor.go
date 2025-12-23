@@ -58,7 +58,7 @@ func (t *GVisor) Close() error {
 
 const DefaultNIC tcpip.NICID = 0x01
 
-func New(dev int32, mtu int32, handler tun.Handler, nicId tcpip.NICID, pcap bool, pcapFile *os.File, enableIPv6 bool) (*GVisor, error) {
+func New(dev int32, mtu int32, handler tun.Handler, pcapFile *os.File, enableIPv6 bool) (*GVisor, error) {
 	var endpoint stack.LinkEndpoint
 	var err error
 	endpoint, err = fdbased.New(&fdbased.Options{
@@ -69,7 +69,7 @@ func New(dev int32, mtu int32, handler tun.Handler, nicId tcpip.NICID, pcap bool
 	if err != nil {
 		return nil, err
 	}
-	if pcap {
+	if pcapFile != nil {
 		endpoint, err = sniffer.NewWithWriter(endpoint, &pcapFileWrapper{pcapFile}, math.MaxUint32)
 		if err != nil {
 			return nil, err
@@ -105,11 +105,11 @@ func New(dev int32, mtu int32, handler tun.Handler, nicId tcpip.NICID, pcap bool
 	s.SetRouteTable([]tcpip.Route{
 		{
 			Destination: header.IPv4EmptySubnet,
-			NIC:         nicId,
+			NIC:         DefaultNIC,
 		},
 		{
 			Destination: header.IPv6EmptySubnet,
-			NIC:         nicId,
+			NIC:         DefaultNIC,
 		},
 	})
 
@@ -158,13 +158,13 @@ func New(dev int32, mtu int32, handler tun.Handler, nicId tcpip.NICID, pcap bool
 		}
 		return true
 	})*/
-	if tcpipErr := s.CreateNIC(nicId, endpoint); tcpipErr != nil {
+	if tcpipErr := s.CreateNIC(DefaultNIC, endpoint); tcpipErr != nil {
 		return nil, newError(tcpipErr)
 	}
-	if tcpipErr := s.SetSpoofing(nicId, true); tcpipErr != nil {
+	if tcpipErr := s.SetSpoofing(DefaultNIC, true); tcpipErr != nil {
 		return nil, newError(tcpipErr)
 	}
-	if tcpipErr := s.SetPromiscuousMode(nicId, true); tcpipErr != nil {
+	if tcpipErr := s.SetPromiscuousMode(DefaultNIC, true); tcpipErr != nil {
 		return nil, newError(tcpipErr)
 	}
 	return &GVisor{
