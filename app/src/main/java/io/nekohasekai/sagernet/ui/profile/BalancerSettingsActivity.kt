@@ -74,6 +74,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         DataStore.serverProtocol = proxies.joinToString(",")
         DataStore.balancerProbeUrl = probeUrl
         DataStore.balancerProbeInterval = probeInterval
+        DataStore.balancerNameFilter = nameFilter
     }
 
     override fun BalancerBean.serialize() {
@@ -84,10 +85,12 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         proxies = proxyList.map { it.id }
         probeUrl = DataStore.balancerProbeUrl
         probeInterval = DataStore.balancerProbeInterval
+        nameFilter = DataStore.balancerNameFilter
     }
 
     lateinit var balancerType: SimpleMenuPreference
     lateinit var balancerGroup: GroupPreference
+    lateinit var balancerNameFilter: EditTextPreference
     lateinit var probeInterval: EditTextPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -98,6 +101,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
 
         balancerType = findPreference(Key.BALANCER_TYPE)!!
         balancerGroup = findPreference(Key.BALANCER_GROUP)!!
+        balancerNameFilter = findPreference(Key.BALANCER_NAME_FILTER)!!
         probeInterval = findPreference(Key.PROBE_INTERVAL)!!
         probeInterval.onBindEditTextListener = EditTextPreferenceModifiers.Number
 
@@ -113,11 +117,13 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         when (type) {
             BalancerBean.TYPE_LIST -> {
                 balancerGroup.isVisible = false
+                balancerNameFilter.isVisible = false
                 configurationList.isVisible = true
                 itemView.isVisible = true
             }
             BalancerBean.TYPE_GROUP -> {
                 balancerGroup.isVisible = true
+                balancerNameFilter.isVisible = true
                 configurationList.isVisible = false
                 itemView.isVisible = false
             }

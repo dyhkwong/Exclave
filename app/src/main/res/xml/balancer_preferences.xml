@@ -29,6 +29,12 @@
         app:title="@string/menu_group"
         app:useSimpleSummaryProvider="true" />
 
+    <EditTextPreference
+        app:icon="@drawable/ic_action_delete"
+        app:key="balancerNameFilter"
+        app:title="@string/regular_expression_filter"
+        app:useSimpleSummaryProvider="true" />
+
     <io.nekohasekai.sagernet.widget.LinkPreference
         app:icon="@drawable/ic_baseline_cast_connected_24"
         app:key="probeUrl"

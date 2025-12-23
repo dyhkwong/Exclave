@@ -245,6 +245,7 @@ object Key {
     const val BALANCER_TYPE = "balancerType"
     const val BALANCER_GROUP = "balancerGroup"
     const val BALANCER_STRATEGY = "balancerStrategy"
+    const val BALANCER_NAME_FILTER = "balancerNameFilter"
 
     const val ROUTE_NAME = "routeName"
     const val ROUTE_DOMAIN = "routeDomain"

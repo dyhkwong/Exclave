@@ -202,7 +202,13 @@ fun buildV2RayConfig(
             val beans = if (bean.type == BalancerBean.TYPE_LIST) {
                 SagerDatabase.proxyDao.getEntities(bean.proxies)
             } else {
-                SagerDatabase.proxyDao.getByGroup(bean.groupId)
+                SagerDatabase.proxyDao.getByGroup(bean.groupId).filter {
+                    if (bean.nameFilter.isEmpty()) {
+                        true
+                    } else {
+                        !Regex(bean.nameFilter).containsMatchIn(it.requireBean().name)
+                    }
+                }
             }
             val beansMap = beans.associateBy { it.id }
             val beanList = ArrayList<ProxyEntity>()
