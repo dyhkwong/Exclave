@@ -679,6 +679,9 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 outbound.getInt("server_port")?.also {
                     serverPort = it
                 } ?: return listOf()
+                outbound.getString("password")?.also {
+                    password = it
+                }
                 outbound.getObject("tls")?.also { tls ->
                     (tls.getBoolean("enabled"))?.also { enabled ->
                         if (enabled) {
