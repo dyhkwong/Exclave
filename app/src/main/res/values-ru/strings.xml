@@ -259,7 +259,7 @@
     <string name="route_rules_official">Официальный</string>
     <string name="route_rules_provider">Поставщик ресурсов правил</string>
     <string name="route_assets">Ресурсы</string>
-    <string name="route_manage_assets">Управление георесурсами</string>
+    <string name="route_manage_assets">Управление ресурсами</string>
     <string name="route_reverse_redirect">Обратное перенаправление</string>
     <string name="route_reverse">Обратный прокси</string>
     <string name="route_reset">Сброс</string>
@@ -478,11 +478,11 @@
     <string name="route_asset_reserved_filename">Имя файла не может быть %s</string>
     <string name="route_asset_duplicate_filename">Ресурс с именем файла %s уже существует</string>
     <string name="route_asset_invalid_url">Неверный URL: %s</string>
-    <string name="route_asset_add">Добавить георесурсы</string>
-    <string name="route_asset_delete_prompt">Удалить этот георесурс?</string>
-    <string name="route_asset_name">Название георесурса</string>
-    <string name="route_asset_url">URL-адрес георесурса</string>
-    <string name="route_asset_settings">Данные георесурса</string>
+    <string name="route_asset_add">Добавить ресурсы маршрутов</string>
+    <string name="route_asset_delete_prompt">Удалить этот ресурс маршрутов?</string>
+    <string name="route_asset_name">Название ресурса маршрутов</string>
+    <string name="route_asset_url">URL-адрес ресурса маршрутов</string>
+    <string name="route_asset_settings">Данные ресурса маршрутов</string>
     <string name="browser_forwarder_hint">Загрузите v2ray-extra.zip из релиза v2ray-core и поместите index.html и index.js в Android/data/%s/files или импортируйте index.html и index.js в качестве ресурсов маршрута.</string>
     <string name="hijack_dns_message">Перехват DNS-запросов, не отправленных на DNS-адрес TUN с помощью DNS-сниффера</string>
     <string name="cag_httpupgrade">Настройки HTTPUpgrade</string>
@@ -569,4 +569,5 @@
     <string name="grpc_multi_mode">Multi mode (множественный режим)</string>
     <string name="import_routing_rules_warning">Все существующие правила будут удалены.</string>
     <string name="export_routing_rules_warning">Исключительно для обеспечения совместимости и содержит неполные данные.</string>
+    <string name="custom_root_ca_hint">Поместите файл root_store.certs в Android/data/%s/files или импортируйте root_store.certs в качестве ресурса маршрутов.</string>
 </resources>
