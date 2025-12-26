@@ -635,6 +635,7 @@
         <item>@string/root_ca_mozilla</item>
         <item>@string/root_ca_system</item>
         <item>@string/root_ca_system_and_user</item>
+        <item>@string/route_rules_custom</item>
     </string-array>
 
     <string-array name="packet_encoding_entry">

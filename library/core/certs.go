@@ -25,10 +25,16 @@ import (
 	_ "unsafe"
 )
 
+func init() {
+	// crypto/x509 once.Do(initSystemRoots)
+	x509.SystemCertPool()
+}
+
 const (
 	caProviderMozilla = iota
 	caProviderSystem
 	caProviderSystemAndUser // for https://github.com/golang/go/issues/71258
+	caProviderCustom
 )
 
 //go:linkname systemRoots crypto/x509.systemRoots
@@ -38,17 +44,10 @@ func setupMozillaCAProvider() error {
 	if err := extractMozillaCAPem(); err != nil {
 		return err
 	}
-	pemPath := externalAssetsPath + mozillaIncludedPem
-	pemFile, err := os.ReadFile(pemPath)
-	if err != nil {
-		pemPath = internalAssetsPath + mozillaIncludedPem
-		pemFile, err = os.ReadFile(pemPath)
-	}
+	pemFile, err := os.ReadFile(internalAssetsPath + mozillaIncludedPem)
 	if err != nil {
 		return err
 	}
-	newError("load ", mozillaIncludedPem, " from ", pemPath).AtInfo().WriteToLog()
-	x509.SystemCertPool()
 	roots := x509.NewCertPool()
 	if !roots.AppendCertsFromPEM(pemFile) {
 		return newError("failed to append certificates from pem")
@@ -57,26 +56,50 @@ func setupMozillaCAProvider() error {
 	return nil
 }
 
-func UpdateSystemRoots(caProvider int32) {
+func setupCustomCAProvider() error {
+	pemFile, err := os.ReadFile(externalAssetsPath + customPem)
+	if err != nil {
+		return err
+	}
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(pemFile) {
+		return newError("failed to append certificates from pem")
+	}
+	systemRoots = roots
+	return nil
+}
+
+func updateSystemRoots(caProvider int32) error {
 	assetsAccess.Lock()
 	defer assetsAccess.Unlock()
 	switch caProvider {
 	case caProviderSystem:
-		systemRoots, _ = x509.SystemCertPool()
-		newError("using system CA provider").AtInfo().WriteToLog()
+		var err error
+		systemRoots, err = x509.SystemCertPool()
+		if err != nil {
+			systemRoots = x509.NewCertPool()
+			return newError("setup system root store").Base(err)
+		}
 	case caProviderMozilla:
 		if err := setupMozillaCAProvider(); err != nil {
-			newError(err).AtError().WriteToLog()
-			return
+			systemRoots = x509.NewCertPool()
+			return newError("setup mozilla root store").Base(err)
 		}
-		newError("using Mozilla CA provider").AtInfo().WriteToLog()
+	case caProviderCustom:
+		if err := setupCustomCAProvider(); err != nil {
+			systemRoots = x509.NewCertPool()
+			return newError("setup custom root store").Base(err)
+		}
 	case caProviderSystemAndUser:
 		if err := setupSystemAndUserCAProvider(); err != nil {
-			newError(err).AtError().WriteToLog()
-			return
+			systemRoots = x509.NewCertPool()
+			return newError("setup system and user store").Base(err)
 		}
-		newError("using system and user CA provider").AtInfo().WriteToLog()
+	default:
+		systemRoots = x509.NewCertPool()
+		return newError("unknown root store provider")
 	}
+	return nil
 }
 
 func setupSystemAndUserCAProvider() error {
@@ -115,17 +138,15 @@ func setupSystemAndUserCAProvider() error {
 	}
 	defer pemFile.Close()
 
-	x509.SystemCertPool()
 	roots := x509.NewCertPool()
 
 	for _, path := range paths {
 		bytes, err := os.ReadFile(path)
 		if err != nil {
-			newError("failed to read certificate ", path).Base(err).AtError().WriteToLog()
-			continue
+			return err
 		}
-		certs, parseErr := x509.ParseCertificates(bytes)
-		if parseErr != nil {
+		certs, err := x509.ParseCertificates(bytes)
+		if err != nil {
 			var cert *x509.Certificate
 			for len(bytes) > 0 {
 				var block *pem.Block
@@ -136,14 +157,14 @@ func setupSystemAndUserCAProvider() error {
 				if block.Type != "CERTIFICATE" || len(block.Headers) != 0 {
 					continue
 				}
-				if cert, parseErr = x509.ParseCertificate(block.Bytes); parseErr == nil {
+				cert, err = x509.ParseCertificate(block.Bytes)
+				if err == nil {
 					certs = append(certs, cert)
 				}
 			}
 		}
-		if parseErr != nil {
-			newError("failed to parse certificate ", path).AtError().WriteToLog()
-			continue
+		if err != nil {
+			return newError("failed to parse certificate ", path).Base(err)
 		}
 		for _, cert := range certs {
 			block := &pem.Block{
@@ -151,12 +172,12 @@ func setupSystemAndUserCAProvider() error {
 				Bytes: cert.Raw,
 			}
 			if err := pem.Encode(pemFile, block); err != nil {
-				newError("failed to encode certificate ", path).AtError().WriteToLog()
-				continue
+				return err
 			}
 			roots.AddCert(cert)
 		}
 	}
+
 	systemRoots = roots
 	return nil
 }

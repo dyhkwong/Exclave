@@ -562,4 +562,5 @@
     <string name="grpc_multi_mode">Multi 模式</string>
     <string name="import_routing_rules_warning">所有现有规则将被删除。</string>
     <string name="export_routing_rules_warning">仅用于兼容性目的，不包含完整信息。</string>
+    <string name="custom_root_ca_hint">请将 root_store.certs 放置在 Android/data/%s/files，或将 root_store.certs 导入为路由资源。</string>
 </resources>

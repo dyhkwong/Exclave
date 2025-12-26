@@ -30,6 +30,7 @@ import (
 const (
 	mozillaIncludedPem = "mozilla_included.pem"
 	androidIncludedPem = "android_included.pem"
+	customPem          = "root_store.certs"
 )
 
 var (
@@ -64,9 +65,9 @@ func InitializeV2Ray(internalAssets string, externalAssets string, prefix string
 		return fileSeeker(path)
 	}
 
-	UpdateSystemRoots(caProvider)
+	err := updateSystemRoots(caProvider)
 
-	return nil
+	return err
 }
 
 func extractMozillaCAPem() error {

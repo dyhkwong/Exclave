@@ -311,6 +311,7 @@ object RootCAProvider {
     const val MOZILLA = 0
     const val SYSTEM = 1
     const val SYSTEM_AND_USER = 2 // for https://github.com/golang/go/issues/71258
+    const val CUSTOM = 3
 }
 
 object GroupType {

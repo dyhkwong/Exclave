@@ -124,11 +124,13 @@ abstract class V2RayInstance(
                 if (DataStore.providerRootCA != RootCAProvider.SYSTEM) {
                     env["SSL_CERT_FILE"] = when (DataStore.providerRootCA) {
                         RootCAProvider.MOZILLA -> {
-                            (File(app.externalAssets, "mozilla_included.pem").takeIf { it.isFile }
-                                ?: File(app.filesDir, "mozilla_included.pem")).canonicalPath
+                            File(app.filesDir, "mozilla_included.pem").canonicalPath
                         }
                         RootCAProvider.SYSTEM_AND_USER -> {
                             File(app.filesDir, "android_included.pem").canonicalPath
+                        }
+                        RootCAProvider.CUSTOM -> {
+                            File(app.externalAssets, "root_store.certs").canonicalPath
                         }
                         else -> error("impossible")
                     }

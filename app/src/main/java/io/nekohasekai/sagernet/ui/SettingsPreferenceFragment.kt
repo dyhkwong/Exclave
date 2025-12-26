@@ -255,8 +255,15 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<SimpleMenuPreference>(Key.PROVIDER_ROOT_CA)!!.setOnPreferenceChangeListener { _, newValue ->
-            Libcore.updateSystemRoots((newValue as String).toInt())
-            needReload()
+           if ((newValue as String).toInt() == RootCAProvider.CUSTOM) {
+                runOnMainDispatcher {
+                    val context = requireContext()
+                    MaterialAlertDialogBuilder(context)
+                        .setMessage(getString(R.string.custom_root_ca_hint, context.packageName))
+                        .setPositiveButton(android.R.string.ok, null)
+                        .show()
+                }
+            }
             true
         }
 
