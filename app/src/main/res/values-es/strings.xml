@@ -564,4 +564,5 @@
     <string name="grpc_multi_mode">Modo múltiple</string>
     <string name="import_routing_rules_warning">Se eliminarán todas las reglas existentes.</string>
     <string name="export_routing_rules_warning">Es solo para fines de compatibilidad y no contiene información completa.</string>
+    <string name="custom_root_ca_hint">Coloque el archivo root_store.certs en Android/data/%s/files o importe root_store.certs como un activo de ruta.</string>
 </resources>
