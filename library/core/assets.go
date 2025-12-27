@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package libcore
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"path/filepath"
@@ -40,7 +41,7 @@ var (
 	externalAssetsPath string
 )
 
-func InitializeV2Ray(internalAssets string, externalAssets string, prefix string, caProvider int32) error {
+func InitializeV2Ray(internalAssets string, externalAssets string, prefix string) {
 	assetsPrefix = prefix
 	internalAssetsPath = internalAssets
 	externalAssetsPath = externalAssets
@@ -64,10 +65,6 @@ func InitializeV2Ray(internalAssets string, externalAssets string, prefix string
 	filesystem.NewFileReader = func(path string) (io.ReadCloser, error) {
 		return fileSeeker(path)
 	}
-
-	err := updateSystemRoots(caProvider)
-
-	return err
 }
 
 func extractMozillaCAPem() error {
@@ -82,14 +79,11 @@ func extractMozillaCAPem() error {
 	if err != nil {
 		return newError("read internal version").Base(err)
 	}
-	_, pemSha256sumNotExists := os.Stat(sumPath)
-	if pemSha256sumNotExists == nil {
-		sumExternal, err := os.ReadFile(sumPath)
-		if err == nil {
-			if string(sumBytes) == string(sumExternal) {
-				return nil
-			}
-		}
+	if b, err := os.ReadFile(sumPath); err == nil && bytes.Equal(b, sumBytes) {
+		return nil
+	}
+	if err := os.MkdirAll(internalAssetsPath, 0666); err != nil {
+		return newError("make dir").Base(err)
 	}
 	pemFile, err := os.Create(path)
 	if err != nil {

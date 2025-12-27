@@ -69,7 +69,7 @@ func setupCustomCAProvider() error {
 	return nil
 }
 
-func updateSystemRoots(caProvider int32) error {
+func UpdateSystemRoots(caProvider int32) error {
 	assetsAccess.Lock()
 	defer assetsAccess.Unlock()
 	switch caProvider {
@@ -132,6 +132,9 @@ func setupSystemAndUserCAProvider() error {
 		}
 	}
 
+	if err := os.MkdirAll(internalAssetsPath, 0666); err != nil {
+		return newError("make dir").Base(err)
+	}
 	pemFile, err := os.Create(internalAssetsPath + androidIncludedPem) // for plugins
 	if err != nil {
 		return err

@@ -40,6 +40,7 @@ import android.os.PowerManager
 import android.os.StrictMode
 import android.os.UserManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
@@ -51,6 +52,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
+import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.CrashHandler
@@ -117,8 +119,13 @@ class SagerNet : Application(),
             filesDir.absolutePath + "/",
             externalAssets.absolutePath + "/",
             "v2ray/",
-            DataStore.providerRootCA,
         )
+
+        try {
+            Libcore.updateSystemRoots(DataStore.providerRootCA)
+        } catch (e: Exception) {
+            Toast.makeText(this, e.readableMessage, Toast.LENGTH_LONG).show()
+        }
 
         Theme.apply(this)
         Theme.applyNightTheme()
