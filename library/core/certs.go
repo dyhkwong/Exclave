@@ -25,11 +25,6 @@ import (
 	_ "unsafe"
 )
 
-func init() {
-	// crypto/x509 once.Do(initSystemRoots)
-	x509.SystemCertPool()
-}
-
 const (
 	caProviderMozilla = iota
 	caProviderSystem
@@ -41,6 +36,8 @@ const (
 var systemRoots *x509.CertPool
 
 func setupMozillaCAProvider() error {
+	assetsAccess.Lock()
+	defer assetsAccess.Unlock()
 	if err := extractMozillaCAPem(); err != nil {
 		return err
 	}
@@ -52,11 +49,14 @@ func setupMozillaCAProvider() error {
 	if !roots.AppendCertsFromPEM(pemFile) {
 		return newError("failed to append certificates from pem")
 	}
+	x509.SystemCertPool()
 	systemRoots = roots
 	return nil
 }
 
 func setupCustomCAProvider() error {
+	assetsAccess.Lock()
+	defer assetsAccess.Unlock()
 	pemFile, err := os.ReadFile(externalAssetsPath + customPem)
 	if err != nil {
 		return err
@@ -65,44 +65,34 @@ func setupCustomCAProvider() error {
 	if !roots.AppendCertsFromPEM(pemFile) {
 		return newError("failed to append certificates from pem")
 	}
+	x509.SystemCertPool()
 	systemRoots = roots
 	return nil
 }
 
-func UpdateSystemRoots(caProvider int32) error {
-	assetsAccess.Lock()
-	defer assetsAccess.Unlock()
+func UpdateSystemRoots(caProvider int32) (err error) {
 	switch caProvider {
 	case caProviderSystem:
-		var err error
-		systemRoots, err = x509.SystemCertPool()
-		if err != nil {
-			systemRoots = x509.NewCertPool()
-			return newError("setup system root store").Base(err)
-		}
 	case caProviderMozilla:
-		if err := setupMozillaCAProvider(); err != nil {
-			systemRoots = x509.NewCertPool()
-			return newError("setup mozilla root store").Base(err)
-		}
+		err = setupMozillaCAProvider()
 	case caProviderCustom:
-		if err := setupCustomCAProvider(); err != nil {
-			systemRoots = x509.NewCertPool()
-			return newError("setup custom root store").Base(err)
-		}
+		err = setupCustomCAProvider()
 	case caProviderSystemAndUser:
-		if err := setupSystemAndUserCAProvider(); err != nil {
-			systemRoots = x509.NewCertPool()
-			return newError("setup system and user store").Base(err)
-		}
+		err = setupSystemAndUserCAProvider()
 	default:
+		err = newError("unknown root store provider")
+	}
+	if err != nil {
+		x509.SystemCertPool() // crypto/x509 once.Do(initSystemRoots)
 		systemRoots = x509.NewCertPool()
-		return newError("unknown root store provider")
+		return err
 	}
 	return nil
 }
 
 func setupSystemAndUserCAProvider() error {
+	assetsAccess.Lock()
+	defer assetsAccess.Unlock()
 	// inspired by https://github.com/chenxiaolong/RSAF
 	paths := make(map[string]string)
 
@@ -181,6 +171,7 @@ func setupSystemAndUserCAProvider() error {
 		}
 	}
 
+	x509.SystemCertPool()
 	systemRoots = roots
 	return nil
 }
