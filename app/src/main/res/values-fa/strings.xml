@@ -153,7 +153,6 @@
     <string name="unsaved_changes_prompt">تغییرات ذخیره نشد. آیا می خواهید ذخیره کنید؟</string>
     <string name="ss_cat">تنظیمات شادوساکس</string>
     <string name="proxy_cat">تنظیمات سرور</string>
-    <string name="plugin_auto_connect_unlock_only">این افزونه ممکن است با اتصال خودکار کار نکند</string>
     <string name="plugin_unknown">افزونه ناشناخته %s</string>
     <string name="plugin_disabled">غیرفعال شده</string>
     <string name="plugin_configure">پیکربندی…</string>

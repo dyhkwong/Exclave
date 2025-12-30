@@ -46,7 +46,6 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.utils.DirectBoot
 
 @Suppress("UNCHECKED_CAST")
 class GroupSettingsActivity(
@@ -275,7 +274,6 @@ class GroupSettingsActivity(
             GroupManager.updateGroup(entity.apply { serialize() })
         }
 
-        if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
         finish()
 
     }

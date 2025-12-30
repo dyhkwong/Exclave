@@ -85,7 +85,6 @@
     <string name="cleartext_http_warning">Il traffico Cleartext HTTP non è sicuro</string>
     <string name="no_proxies_found">Nessun proxy trovato nel link</string>
     <string name="ss_cat">Impostazioni Shadowsocks</string>
-    <string name="plugin_auto_connect_unlock_only">Questo plugin potrebbe non funzionare con Auto Connect</string>
     <string name="route_warn">Assicuratevi di aver letto la documentazione prima di aggiungere regole personalizzate, altrimenti potreste non essere in grado di connettervi a Internet.</string>
     <plurals name="lines">
         <item quantity="one">%d Linee</item>

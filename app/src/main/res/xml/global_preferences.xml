@@ -7,11 +7,6 @@
             app:key="isAutoConnect"
             app:summary="@string/auto_connect_summary"
             app:title="@string/auto_connect" />
-        <!--<SwitchPreference
-            app:icon="@drawable/ic_action_lock"
-            app:key="directBootAware"
-            app:summary="@string/direct_boot_aware_summary"
-            app:title="@string/direct_boot_aware" />-->
         <io.nekohasekai.sagernet.widget.ColorPickerPreference
             android:title="@string/theme"
             app:icon="@drawable/ic_baseline_color_lens_24"

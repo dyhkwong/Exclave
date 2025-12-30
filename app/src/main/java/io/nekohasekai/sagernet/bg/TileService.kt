@@ -62,7 +62,7 @@ class TileService : BaseTileService(), SagerConnection.Callback {
     }
 
     override fun onClick() {
-        if (isLocked && !DataStore.canToggleLocked) unlockAndRun(this::toggle) else toggle()
+        if (isLocked) unlockAndRun(this::toggle) else toggle()
     }
 
     private fun updateTile(serviceState: BaseService.State, profileName: () -> String?) {

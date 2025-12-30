@@ -28,7 +28,6 @@ import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
-import io.nekohasekai.sagernet.utils.DirectBoot
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import libcore.ObservatoryStatusUpdateListener
@@ -308,16 +307,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
                     }
                 }
             } catch (e: IOException) {
-                // See https://github.com/dyhkwong/Exclave/commit/41990f3f04a3d40426bc5cf274d3e4b81fc863ed
-                // for a traffic stats bug.
-                // DirectBoot is not used for now.
-                if (!DataStore.directBootAware) throw e // we should only reach here because we're in direct boot
-                val profile = DirectBoot.getDeviceProfile()!!
-                profile.tx += outboundStats.uplinkTotal
-                profile.rx += outboundStats.downlinkTotal
-                profile.dirty = true
-                DirectBoot.update(profile)
-                DirectBoot.listenForUnlock()
+                throw e
             }
         }
     }

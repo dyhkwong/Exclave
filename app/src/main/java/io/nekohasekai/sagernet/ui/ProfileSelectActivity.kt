@@ -36,7 +36,7 @@ class ProfileSelectActivity : ThemedActivity(R.layout.layout_empty),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val selected = IntentCompat.getParcelableExtra(intent, EXTRA_SELECTED, ProxyEntity::class.java,)
+        val selected = IntentCompat.getParcelableExtra(intent, EXTRA_SELECTED, ProxyEntity::class.java)
 
         supportFragmentManager.beginTransaction()
             .replace(

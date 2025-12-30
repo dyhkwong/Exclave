@@ -12,7 +12,6 @@
     <string name="restart">Reinicie el servicio proxy para aplicar los cambios</string>
     <string name="ss_cat">Ajustes de Shadowsocks</string>
     <string name="proxy_cat">Ajustes del servidor</string>
-    <string name="plugin_auto_connect_unlock_only">Este plugin podría no funcionar con la conexión automática</string>
     <string name="plugin_disabled">Desactivado</string>
     <string name="no_proxies_found_in_clipboard">No se encontró ningún proxy en el portapapeles</string>
     <string name="no_proxies_found_in_file">No se encontró ningún proxy en el archivo</string>

@@ -173,7 +173,6 @@
     <string name="unsaved_changes_prompt">Есть несохранённые изменения. Сохранить\?</string>
     <string name="ss_cat">Настройки Shadowsocks</string>
     <string name="proxy_cat">Настройки сервера</string>
-    <string name="plugin_auto_connect_unlock_only">Этот плагин может не работать с автоподключением</string>
     <string name="plugin_unknown">Неизвестный плагин %s</string>
     <string name="plugin_disabled">Отключено</string>
     <string name="plugin_configure">Настроить…</string>

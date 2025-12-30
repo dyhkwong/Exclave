@@ -53,7 +53,6 @@ import io.nekohasekai.sagernet.ktx.byteBuffer
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.ThemedActivity
-import io.nekohasekai.sagernet.utils.DirectBoot
 import java.io.ByteArrayOutputStream
 import kotlin.properties.Delegates
 
@@ -170,7 +169,6 @@ abstract class ProfileSettingsActivity<T : AbstractBean>(
             }
             ProfileManager.updateProfile(entity.apply { (requireBean() as T).serialize() })
         }
-        if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
         setResult(RESULT_OK)
         finish()
 

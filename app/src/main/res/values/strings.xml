@@ -261,7 +261,6 @@
     <string name="plugin_configure">Configure…</string>
     <string name="plugin_disabled">Disabled</string>
     <string name="plugin_unknown">Unknown plugin: %s</string>
-    <string name="plugin_auto_connect_unlock_only">This plugin might not work with auto-connect</string>
     <string name="proxy_cat">Server settings</string>
     <string name="ss_cat">Shadowsocks settings</string>
     <string name="unsaved_changes_prompt">Changes are not saved. Do you want to save?</string>

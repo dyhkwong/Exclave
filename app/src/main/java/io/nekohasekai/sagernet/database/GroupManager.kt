@@ -22,7 +22,6 @@ package io.nekohasekai.sagernet.database
 import io.nekohasekai.sagernet.GroupType
 import io.nekohasekai.sagernet.bg.SubscriptionUpdater
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.utils.DirectBoot
 
 object GroupManager {
 
@@ -75,7 +74,6 @@ object GroupManager {
     suspend fun clearGroup(groupId: Long) {
         DataStore.selectedProxy = 0L
         SagerDatabase.proxyDao.deleteAll(groupId)
-        if (DataStore.directBootAware) DirectBoot.clean()
         iterator { groupUpdated(groupId) }
     }
 

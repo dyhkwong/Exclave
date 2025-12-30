@@ -291,7 +291,6 @@
     <string name="unsaved_changes_prompt">لم يتم حفظ التغييرات. هل تريد حفظ؟</string>
     <string name="ss_cat">إعدادات Shadowsocks</string>
     <string name="proxy_cat">اعدادات الخادم</string>
-    <string name="plugin_auto_connect_unlock_only">قد لا يعمل هذا المكون الإضافي مع الاتصال التلقائي</string>
     <string name="plugin_unknown">مكون إضافي غير معروف %s</string>
     <string name="plugin_disabled">غير مفعّل</string>
     <string name="plugin_configure">تهيئة…</string>

@@ -145,7 +145,6 @@
     <string name="plugin_configure">设置……</string>
     <string name="plugin_disabled">已停用</string>
     <string name="plugin_unknown">未知插件：%s</string>
-    <string name="plugin_auto_connect_unlock_only">此插件可能不支持自动连接</string>
     <string name="proxy_cat">服务器设置</string>
     <string name="unsaved_changes_prompt">是否要保存修改？</string>
     <string name="apply">应用</string>

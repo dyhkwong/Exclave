@@ -23,7 +23,6 @@ package io.nekohasekai.sagernet
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.app.admin.DevicePolicyManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -38,7 +37,6 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.PowerManager
 import android.os.StrictMode
-import android.os.UserManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -51,7 +49,6 @@ import io.nekohasekai.sagernet.bg.test.DebugInstance
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.ktx.Logs
-import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ui.MainActivity
@@ -213,19 +210,10 @@ class SagerNet : Application(),
 
         val ime by lazy { application.getSystemService<InputMethodManager>()!! }
         val notification by lazy { application.getSystemService<NotificationManager>()!! }
-        val user by lazy { application.getSystemService<UserManager>()!! }
         val uiMode by lazy { application.getSystemService<UiModeManager>()!! }
         val power by lazy { application.getSystemService<PowerManager>()!! }
         val wifi by lazy { application.getSystemService<WifiManager>()!! }
         val location by lazy { application.getSystemService<LocationManager>()!! }
-
-        val directBootSupported by lazy {
-            Build.VERSION.SDK_INT >= 24 && try {
-                app.getSystemService<DevicePolicyManager>()?.storageEncryptionStatus == DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER
-            } catch (_: RuntimeException) {
-                false
-            }
-        }
 
         val currentProfile get() = SagerDatabase.proxyDao.getById(DataStore.selectedProxy)
 

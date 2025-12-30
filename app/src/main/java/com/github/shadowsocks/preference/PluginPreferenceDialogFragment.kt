@@ -55,9 +55,7 @@ class PluginPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
         private val text1 = binding.text1
         private val text2 = binding.text2
         private val icon = binding.icon
-        private val unlock = binding.unlock.apply {
-            TooltipCompat.setTooltipText(this, getText(R.string.plugin_auto_connect_unlock_only))
-        }
+        private val unlock = binding.unlock
 
         init {
             binding.root.setOnClickListener(this)
@@ -74,7 +72,7 @@ class PluginPreferenceDialogFragment : PreferenceDialogFragmentCompat() {
             text2.setTypeface(null, typeface)
             text2.isVisible = plugin.id.isNotEmpty() && label != plugin.id
             icon.setImageDrawable(plugin.icon)
-            unlock.isGone = plugin.directBootAware || !DataStore.persistAcrossReboot
+            unlock.isGone = true
         }
 
         override fun onClick(v: View?) {

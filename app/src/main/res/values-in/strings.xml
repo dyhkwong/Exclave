@@ -256,7 +256,6 @@
     <string name="cleartext_http_warning">Lalu lintas HTTP Cleartext tidak aman</string>
     <string name="no_proxies_found">Tidak ditemukan proksi di tautan</string>
     <string name="no_proxies_found_in_subscription">Tidak ditemukan proksi di langganan</string>
-    <string name="plugin_auto_connect_unlock_only">Plugin ini mungkin tidak bekerja dengan Auto Connect</string>
     <string name="proxy_cat">Pengaturan server</string>
     <string name="ss_cat">Pengaturan Shadowsocks</string>
     <string name="unsaved_changes_prompt">Perubahan tidak tersimpan. Apakah anda ingin menyimpan\?</string>

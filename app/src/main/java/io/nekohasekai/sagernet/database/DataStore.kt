@@ -31,7 +31,6 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
 import io.nekohasekai.sagernet.ktx.*
-import io.nekohasekai.sagernet.utils.DirectBoot
 
 object DataStore : OnPreferenceDataStoreChangeListener {
 
@@ -39,12 +38,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     val profileCacheStore = RoomPreferenceDataStore(InMemoryDatabase.kvPairDao)
 
     fun init() {
-        /*if (Build.VERSION.SDK_INT >= 24) {
-            SagerNet.deviceStorage.moveDatabaseFrom(SagerNet.application, Key.DB_PUBLIC)
-        }
-        if (Build.VERSION.SDK_INT >= 24 && directBootAware && SagerNet.user.isUserUnlocked) {
-            DirectBoot.flushTrafficStats()
-        }*/
 
         // migrate from 0.14.10
         val ipv6Mode0 = configurationStore.getString("ipv6Mode0")?.toIntOrNull()
@@ -241,8 +234,6 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var showDirectSpeed by configurationStore.boolean(Key.SHOW_DIRECT_SPEED)
 
     val persistAcrossReboot by configurationStore.boolean(Key.PERSIST_ACROSS_REBOOT)
-    val canToggleLocked: Boolean get() = false//configurationStore.getBoolean(Key.DIRECT_BOOT_AWARE) == true
-    val directBootAware: Boolean get() = SagerNet.directBootSupported && canToggleLocked
 
     var requireHttp by configurationStore.boolean(Key.REQUIRE_HTTP) { false }
     var appendHttpProxy by configurationStore.boolean(Key.APPEND_HTTP_PROXY) { true }
@@ -429,7 +420,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
-            Key.PROFILE_ID -> if (directBootAware) DirectBoot.update()
+            Key.PROFILE_ID -> {}
         }
     }
 }

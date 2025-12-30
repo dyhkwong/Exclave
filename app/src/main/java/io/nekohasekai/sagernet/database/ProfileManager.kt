@@ -26,7 +26,6 @@ import io.nekohasekai.sagernet.fmt.AbstractBean
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.applyDefaultValues
-import io.nekohasekai.sagernet.utils.DirectBoot
 import java.io.IOException
 import java.sql.SQLException
 import java.util.*
@@ -120,7 +119,6 @@ object ProfileManager {
     suspend fun deleteProfile(groupId: Long, profileId: Long) {
         if (SagerDatabase.proxyDao.deleteById(profileId) == 0) return
         if (DataStore.selectedProxy == profileId) {
-            if (DataStore.directBootAware) DirectBoot.clean()
             DataStore.selectedProxy = 0L
         }
         iterator { onRemoved(groupId, profileId) }

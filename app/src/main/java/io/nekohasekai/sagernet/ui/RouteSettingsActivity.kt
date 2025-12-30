@@ -53,7 +53,6 @@ import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
-import io.nekohasekai.sagernet.utils.DirectBoot
 import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.widget.AppListPreference
 
@@ -378,7 +377,7 @@ class RouteSettingsActivity(
             }
             ProfileManager.updateRule(entity.apply { serialize() })
         }
-        if (editingId == DataStore.selectedProxy && DataStore.directBootAware) DirectBoot.update()
+
         finish()
 
     }
