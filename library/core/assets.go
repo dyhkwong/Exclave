@@ -18,24 +18,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package libcore
 
 import (
-	"bytes"
 	"io"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/sagernet/gomobile/asset"
 	"github.com/v2fly/v2ray-core/v5/common/platform/filesystem"
 )
 
-const (
-	mozillaIncludedPem = "mozilla_included.pem"
-	androidIncludedPem = "android_included.pem"
-	customPem          = "root_store.certs"
-)
-
 var (
-	assetsAccess       sync.Mutex
 	assetsPrefix       string
 	internalAssetsPath string
 	externalAssetsPath string
@@ -65,39 +56,4 @@ func InitializeV2Ray(internalAssets string, externalAssets string, prefix string
 	filesystem.NewFileReader = func(path string) (io.ReadCloser, error) {
 		return fileSeeker(path)
 	}
-}
-
-func extractMozillaCAPem() error {
-	path := internalAssetsPath + mozillaIncludedPem
-	sumPath := path + ".sha256sum"
-	sumInternal, err := asset.Open(mozillaIncludedPem + ".sha256sum")
-	if err != nil {
-		return newError("open pem version in assets").Base(err)
-	}
-	defer sumInternal.Close()
-	sumBytes, err := io.ReadAll(sumInternal)
-	if err != nil {
-		return newError("read internal version").Base(err)
-	}
-	if b, err := os.ReadFile(sumPath); err == nil && bytes.Equal(b, sumBytes) {
-		return nil
-	}
-	if err := os.MkdirAll(internalAssetsPath, 0666); err != nil {
-		return newError("make dir").Base(err)
-	}
-	pemFile, err := os.Create(path)
-	if err != nil {
-		return newError("create pem file").Base(err)
-	}
-	defer pemFile.Close()
-	pem, err := asset.Open(mozillaIncludedPem)
-	if err != nil {
-		return newError("open pem in assets").Base(err)
-	}
-	defer pem.Close()
-	_, err = io.Copy(pemFile, pem)
-	if err != nil {
-		return newError("write pem file")
-	}
-	return os.WriteFile(sumPath, sumBytes, 0o644)
 }

@@ -21,17 +21,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.gradle.api.Project
 import java.io.File
-import java.security.MessageDigest
 
 fun Project.downloadRootCAList() {
     val assets = File(projectDir, "src/main/assets")
     val pem = File(assets, "mozilla_included.pem")
-    val pemSha256 = File(assets, "mozilla_included.pem.sha256sum")
     val downloader = OkHttpClient.Builder().followRedirects(true).followSslRedirects(true).build()
     val data = downloader.newCall(
         Request.Builder().url("https://ccadb.my.salesforce-sites.com/mozilla/IncludedRootsPEMTxt?TrustBitsInclude=Websites").build()
     ).execute().body.bytes()
-    val dataSha256 = MessageDigest.getInstance("SHA-256").digest(data)
     pem.writeText(String(data))
-    pemSha256.writeText(dataSha256.joinToString("") { "%02x".format(it) })
 }

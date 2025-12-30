@@ -18,11 +18,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package libcore
 
 import (
+	"bytes"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"io"
 	"os"
+	"syscall"
 	_ "unsafe"
+
+	"github.com/sagernet/gomobile/asset"
 )
 
 const (
@@ -32,43 +37,14 @@ const (
 	caProviderCustom
 )
 
+const (
+	mozillaIncludedPem    = "mozilla_included.pem"
+	androidIncludedPem    = "android_included.pem"
+	customPem             = "root_store.certs"
+)
+
 //go:linkname systemRoots crypto/x509.systemRoots
 var systemRoots *x509.CertPool
-
-func setupMozillaCAProvider() error {
-	assetsAccess.Lock()
-	defer assetsAccess.Unlock()
-	if err := extractMozillaCAPem(); err != nil {
-		return err
-	}
-	pemFile, err := os.ReadFile(internalAssetsPath + mozillaIncludedPem)
-	if err != nil {
-		return err
-	}
-	roots := x509.NewCertPool()
-	if !roots.AppendCertsFromPEM(pemFile) {
-		return newError("failed to append certificates from pem")
-	}
-	x509.SystemCertPool()
-	systemRoots = roots
-	return nil
-}
-
-func setupCustomCAProvider() error {
-	assetsAccess.Lock()
-	defer assetsAccess.Unlock()
-	pemFile, err := os.ReadFile(externalAssetsPath + customPem)
-	if err != nil {
-		return err
-	}
-	roots := x509.NewCertPool()
-	if !roots.AppendCertsFromPEM(pemFile) {
-		return newError("failed to append certificates from pem")
-	}
-	x509.SystemCertPool()
-	systemRoots = roots
-	return nil
-}
 
 func UpdateSystemRoots(caProvider int32) (err error) {
 	switch caProvider {
@@ -80,7 +56,7 @@ func UpdateSystemRoots(caProvider int32) (err error) {
 	case caProviderSystemAndUser:
 		err = setupSystemAndUserCAProvider()
 	default:
-		err = newError("unknown root store provider")
+		panic("unknown root store provider")
 	}
 	if err != nil {
 		x509.SystemCertPool() // crypto/x509 once.Do(initSystemRoots)
@@ -90,9 +66,71 @@ func UpdateSystemRoots(caProvider int32) (err error) {
 	return nil
 }
 
+func extractOrReadMozillaCAPem() ([]byte, error) {
+	pemInternal, err := asset.Open(mozillaIncludedPem)
+	if err != nil {
+		pemInternal.Close()
+		return nil, err
+	}
+	pemBytes, err := io.ReadAll(pemInternal)
+	if err != nil {
+		pemInternal.Close()
+		return nil, err
+	}
+	pemInternal.Close()
+	pemFile, err := os.OpenFile(internalAssetsPath + mozillaIncludedPem, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return nil, err
+	}
+	defer pemFile.Close()
+	if err := syscall.Flock(int(pemFile.Fd()), syscall.LOCK_EX); err != nil {
+		return nil, err
+	}
+	defer syscall.Flock(int(pemFile.Fd()), syscall.LOCK_UN)
+	if b, err := io.ReadAll(pemFile); err == nil && bytes.Equal(b, pemBytes) {
+		return pemBytes, nil
+	}
+	if err := pemFile.Truncate(0); err != nil {
+		return nil, err
+	}
+	if _, err := pemFile.Seek(0, io.SeekStart); err != nil {
+		return nil, err
+	}
+	if _, err := pemFile.Write(pemBytes); err != nil {
+		return nil, err
+	}
+	return pemBytes, nil
+}
+
+func setupMozillaCAProvider() error {
+	pemBytes, err := extractOrReadMozillaCAPem()
+	if err != nil {
+		return err
+	}
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(pemBytes) {
+		return newError("failed to append certificates from pem")
+	}
+	x509.SystemCertPool()
+	systemRoots = roots
+	return nil
+}
+
+func setupCustomCAProvider() error {
+	pemBytes, err := os.ReadFile(externalAssetsPath + customPem)
+	if err != nil {
+		return err
+	}
+	roots := x509.NewCertPool()
+	if !roots.AppendCertsFromPEM(pemBytes) {
+		return newError("failed to append certificates from pem")
+	}
+	x509.SystemCertPool()
+	systemRoots = roots
+	return nil
+}
+
 func setupSystemAndUserCAProvider() error {
-	assetsAccess.Lock()
-	defer assetsAccess.Unlock()
 	// inspired by https://github.com/chenxiaolong/RSAF
 	paths := make(map[string]string)
 
@@ -122,14 +160,15 @@ func setupSystemAndUserCAProvider() error {
 		}
 	}
 
-	if err := os.MkdirAll(internalAssetsPath, 0666); err != nil {
-		return newError("make dir").Base(err)
-	}
 	pemFile, err := os.Create(internalAssetsPath + androidIncludedPem) // for plugins
 	if err != nil {
 		return err
 	}
 	defer pemFile.Close()
+	if err := syscall.Flock(int(pemFile.Fd()), syscall.LOCK_EX); err != nil {
+		return err
+	}
+	defer syscall.Flock(int(pemFile.Fd()), syscall.LOCK_UN)
 
 	roots := x509.NewCertPool()
 
