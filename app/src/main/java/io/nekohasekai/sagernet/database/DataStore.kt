@@ -165,6 +165,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var stunServers by configurationStore.string(Key.STUN_SERVERS)
     var fabStyle by configurationStore.stringToInt(Key.FAB_STYLE) { 1 }
     var useIECUnit by configurationStore.boolean(Key.USE_IEC_UNIT)
+    var queryAllPackagesAlternativeMethod by configurationStore.boolean(Key.QUERY_ALL_PACKAGES_ALTERNATIVE_METHOD)
 
     var enableFragment by configurationStore.boolean(Key.ENABLE_FRAGMENT)
     var enableFragmentForDirect by configurationStore.boolean(Key.ENABLE_FRAGMENT_FOR_DIRECT)

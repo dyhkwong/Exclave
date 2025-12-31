@@ -403,6 +403,10 @@
             app:key="useIECUnit"
             app:summary="@string/use_iec_unit_sum"
             app:title="@string/use_iec_unit" />
+        <SwitchPreference
+            app:icon="@drawable/ic_navigation_apps"
+            app:key="queryAllPackagesAlternativeMethod"
+            app:title="@string/query_all_packages_alternative_method" />
         <EditTextPreference
             app:defaultValue="127.0.0.1:6060"
             app:key="pprofServer"

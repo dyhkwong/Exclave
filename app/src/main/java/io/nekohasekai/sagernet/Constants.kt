@@ -109,6 +109,7 @@ object Key {
     const val STUN_SERVERS = "stunServers"
     const val FAB_STYLE = "fabStyle"
     const val USE_IEC_UNIT = "useIECUnit"
+    const val QUERY_ALL_PACKAGES_ALTERNATIVE_METHOD = "queryAllPackagesAlternativeMethod"
 
     const val ENABLE_FRAGMENT = "enableFragment"
     const val ENABLE_FRAGMENT_FOR_DIRECT = "enableFragmentForDirect"

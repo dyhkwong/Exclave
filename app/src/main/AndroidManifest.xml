@@ -60,6 +60,10 @@
         <intent>
             <action android:name="io.nekohasekai.sagernet.plugin.ACTION_NATIVE_PLUGIN" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
     </queries>
 
     <application
