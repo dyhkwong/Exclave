@@ -81,7 +81,11 @@ object PackageCache {
             }
         }.associateBy { it.packageName }
 
-        val installed = app.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        val installed = if (DataStore.queryAllPackagesAlternativeMethod) {
+            installedPackages.map { it.value.applicationInfo }
+        } else {
+            app.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        }
         installedApps = installed.associateBy { it.packageName }
         packageMap = installed.associate { it.packageName to it.uid }
         uidMap.clear()
