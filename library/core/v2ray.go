@@ -22,11 +22,13 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
-	_ "unsafe"
+	"unsafe"
 
 	core "github.com/v2fly/v2ray-core/v5"
 	"github.com/v2fly/v2ray-core/v5/common"
@@ -43,6 +45,13 @@ import (
 	"github.com/v2fly/v2ray-core/v5/infra/conf/serial"
 	_ "github.com/v2fly/v2ray-core/v5/main/distro/all"
 	"github.com/v2fly/v2ray-core/v5/transport"
+	"github.com/v2fly/v2ray-core/v5/transport/internet"
+)
+
+var (
+	systemDialerMutex       sync.Mutex
+	systemDialer            internet.SystemDialer
+	systemDialerWithProtect internet.SystemDialer
 )
 
 func GetV2RayVersion() string {
@@ -66,6 +75,47 @@ func NewV2rayInstance(config *V2RayInstanceConfig) *V2RayInstance {
 	return &V2RayInstance{
 		LocalResolver: config.LocalResolver,
 	}
+}
+
+func (instance *V2RayInstance) WithProtectPath(path string) {
+	systemDialerMutex.Lock()
+	defer systemDialerMutex.Unlock()
+	if len(path) == 0 {
+		if systemDialer == nil {
+			systemDialer = &internet.DefaultSystemDialer{}
+		}
+		internet.UseAlternativeSystemDialer(systemDialer)
+		return
+	}
+	if systemDialerWithProtect == nil {
+		systemDialerWithProtect = &internet.DefaultSystemDialer{}
+		controller := func(_, _ string, fd uintptr) error {
+			socketFd, err := syscall.Socket(syscall.AF_UNIX, syscall.SOCK_STREAM, 0)
+			if err != nil {
+				return err
+			}
+			defer syscall.Close(socketFd)
+			if err := syscall.Connect(socketFd, &syscall.SockaddrUnix{Name: path}); err != nil {
+				return err
+			}
+			msg := []byte{ProtectSuccess}
+			if err := syscall.Sendmsg(socketFd, msg, syscall.UnixRights(int(fd)), nil, 0); err != nil {
+				return err
+			}
+			n, err := syscall.Read(socketFd, msg)
+			if err != nil {
+				return err
+			}
+			if n != 1 {
+				return newError("failed to protect fd")
+			}
+			return nil
+		}
+		// TODO: export internet.DefaultSystemDialer.controllers to aviod using reflect
+		ptr := (*[]func(string, string, uintptr) error)(unsafe.Pointer(reflect.ValueOf(systemDialerWithProtect).Elem().FieldByName("controllers").UnsafeAddr()))
+		*ptr = []func(string, string, uintptr) error{controller}
+	}
+	internet.UseAlternativeSystemDialer(systemDialerWithProtect)
 }
 
 func (instance *V2RayInstance) LoadConfig(content string) error {

@@ -19,8 +19,12 @@
 
 package io.nekohasekai.sagernet.bg.test
 
+import io.nekohasekai.sagernet.Key
+import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.GuardedProcessPool
 import io.nekohasekai.sagernet.bg.proto.V2RayInstance
+import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
@@ -32,9 +36,13 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
 class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int) : V2RayInstance(
-    profile
+    profile,
+    protectPath = if (DataStore.tunImplementation == TunImplementation.SYSTEM
+        && DataStore.serviceMode == Key.MODE_VPN
+        && DataStore.currentProfile > 0) {
+        SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
+    } else "",
 ) {
-
     lateinit var continuation: Continuation<Int>
     suspend fun doTest(): Int {
         return suspendCoroutine { c ->
@@ -53,6 +61,11 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
                 }
             }
         }
+    }
+
+    override fun init() {
+        super.init()
+        v2rayPoint.withProtectPath(protectPath)
     }
 
     override fun buildConfig() {

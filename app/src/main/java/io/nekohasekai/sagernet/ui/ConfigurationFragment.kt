@@ -781,7 +781,7 @@ class ConfigurationFragment @JvmOverloads constructor(
 
             val profileCount = profilesUnfiltered.size
             var finishedProfileCount = 0
-            stopService()
+            //stopService()
 
             val link = DataStore.connectionTestURL
             val timeout = 5000

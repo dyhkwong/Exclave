@@ -302,9 +302,7 @@ class VpnService : BaseVpnService(),
             protector = this@VpnService
         }
 
-        if (tunImplementation == TunImplementation.SYSTEM &&
-            data.proxy!!.config.outboundTagsAll.values.any { it.requireBean().needProtect() }
-            ) {
+        if (tunImplementation == TunImplementation.SYSTEM) {
             config.protectPath = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
         }
 
