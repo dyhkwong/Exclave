@@ -21,7 +21,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 
-	"libcore/comm"
+	"libcore/common"
 )
 
 type DebugInstance struct {
@@ -39,5 +39,5 @@ func NewDebugInstance(addr string) *DebugInstance {
 }
 
 func (d *DebugInstance) Close() {
-	comm.CloseIgnore(d.server)
+	common.CloseIgnore(d.server)
 }

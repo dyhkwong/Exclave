@@ -7,7 +7,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 */
 
 // modified from https://github.com/die-net/lrucache
-package comm
+package common
 
 import (
 	"container/list"

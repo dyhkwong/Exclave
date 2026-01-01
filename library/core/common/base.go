@@ -15,9 +15,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package comm
+package common
 
-const (
-	TunImplementationGVisor = iota
-	TunImplementationSystem
+import (
+	"github.com/v2fly/v2ray-core/v5/common"
 )
+
+func CloseIgnore(closer ...interface{}) {
+	for _, c := range closer {
+		if c == nil {
+			continue
+		}
+		if ia, ok := c.(common.Interruptible); ok {
+			ia.Interrupt()
+		} else if ca, ok := c.(common.Closable); ok {
+			_ = ca.Close()
+		}
+	}
+}

@@ -15,36 +15,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package comm
+package common
 
-import (
-	"io"
-
-	"github.com/v2fly/v2ray-core/v5/common"
+const (
+	TunImplementationGVisor = iota
+	TunImplementationSystem
 )
-
-type closerWrapper struct {
-	closer func()
-}
-
-func (c closerWrapper) Close() error {
-	c.closer()
-	return nil
-}
-
-func Closer(closer func()) io.Closer {
-	return closerWrapper{closer}
-}
-
-func CloseIgnore(closer ...interface{}) {
-	for _, c := range closer {
-		if c == nil {
-			continue
-		}
-		if ia, ok := c.(common.Interruptible); ok {
-			ia.Interrupt()
-		} else if ca, ok := c.(common.Closable); ok {
-			_ = ca.Close()
-		}
-	}
-}

@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>
+Copyright (c) 2024 HystericalDragon <HystericalDragons@proton.me>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,161 +18,98 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package libcore
 
 import (
-	"context"
+	"io"
 	"net"
 	"os"
+	"syscall"
 
-	"github.com/v2fly/v2ray-core/v5/common/errors"
-	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
-	"github.com/v2fly/v2ray-core/v5/features/dns"
-	"github.com/v2fly/v2ray-core/v5/transport/internet"
 	"golang.org/x/sys/unix"
 )
 
-var (
-	_ internet.SystemDialer = (*protectedDialer)(nil)
+const (
+	ProtectFailed byte = iota
+	ProtectSuccess
 )
 
-type Protector interface {
-	Protect(fd int32) bool
-}
-
-type noopProtector struct{}
-
-func (n *noopProtector) Protect(int32) bool {
-	return true
-}
-
-type protectedDialer struct {
-	protector Protector
-	resolver  func(domain string) ([]net.IP, error)
-}
-
-func (dialer protectedDialer) Dial(ctx context.Context, src v2rayNet.Address, dest v2rayNet.Destination, sockopt *internet.SocketConfig) (net.Conn, error) {
-	if dest.Network == v2rayNet.Network_Unknown || dest.Network == v2rayNet.Network_UNIX || dest.Address == nil {
-		return nil, newError("invalid destination")
-	}
-	var ips []net.IP
-	if dest.Address.Family().IsDomain() {
-		var err error
-		ips, err = dialer.resolver(dest.Address.Domain())
-		if err == nil && len(ips) == 0 {
-			err = dns.ErrEmptyResponse
-		}
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		ips = append(ips, dest.Address.IP())
-	}
-	errs := []error{}
-	for _, ip := range ips {
-		dest.Address = v2rayNet.IPAddress(ip)
-		if conn, err := dialer.dial(ctx, src, dest, sockopt); err == nil {
-			return conn, nil
-		} else {
-			errs = append(errs, err)
-		}
-	}
-	return nil, newError(errors.Combine(errs...))
-}
-
-func (dialer protectedDialer) dial(ctx context.Context, src v2rayNet.Address, dest v2rayNet.Destination, sockopt *internet.SocketConfig) (net.Conn, error) {
-	var fd int
-	var err error
-	switch {
-	case dest.Network == v2rayNet.Network_UDP:
-		fd, err = unix.Socket(unix.AF_INET6, unix.SOCK_DGRAM, unix.IPPROTO_UDP)
-	case dest.Address.Family().IsIPv4():
-		fd, err = unix.Socket(unix.AF_INET, unix.SOCK_STREAM, unix.IPPROTO_TCP)
-	default:
-		fd, err = unix.Socket(unix.AF_INET6, unix.SOCK_STREAM, unix.IPPROTO_TCP)
-	}
+func getOneFd(socketFd int) (int, error) {
+	buf := make([]byte, unix.CmsgSpace(4))
+	_, _, _, _, err := unix.Recvmsg(socketFd, nil, buf, 0)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	if !dialer.protector.Protect(int32(fd)) {
-		unix.Close(fd)
-		return nil, newError("protect failed")
+	msgs, _ := unix.ParseSocketControlMessage(buf)
+
+	if len(msgs) != 1 {
+		return 0, newError("invalid msgs count: ", len(msgs))
 	}
-	if sockopt != nil {
-		var network string
-		switch dest.Network {
-		case v2rayNet.Network_TCP:
-			switch dest.Address.Family() {
-			case v2rayNet.AddressFamilyIPv4:
-				network = "tcp4"
-			case v2rayNet.AddressFamilyIPv6:
-				network = "tcp6"
-			}
-			internet.ApplySockopt(network, dest.NetAddr(), uintptr(fd), sockopt)
-		case v2rayNet.Network_UDP:
-			if src == nil || src == v2rayNet.AnyIP || src == v2rayNet.AnyIPv6 {
-				src = v2rayNet.AnyIPv6
-			}
-			switch src.Family() {
-			case v2rayNet.AddressFamilyIPv4:
-				network = "udp4"
-			case v2rayNet.AddressFamilyIPv6:
-				network = "udp6"
-			}
-			internet.ApplySockopt(network, net.JoinHostPort(src.IP().String(), "0"), uintptr(fd), sockopt)
-		}
+	fds, _ := unix.ParseUnixRights(&msgs[0])
+	if len(fds) != 1 {
+		return 0, newError("invalid fds count: ", len(fds))
 	}
-	switch dest.Network {
-	case v2rayNet.Network_TCP:
-		var sockaddr unix.Sockaddr
-		if dest.Address.Family().IsIPv4() {
-			sockaddrInet4 := &unix.SockaddrInet4{
-				Port: int(dest.Port),
-			}
-			copy(sockaddrInet4.Addr[:], dest.Address.IP())
-			sockaddr = sockaddrInet4
-		} else {
-			sockaddrInet6 := &unix.SockaddrInet6{
-				Port: int(dest.Port),
-			}
-			copy(sockaddrInet6.Addr[:], dest.Address.IP())
-			sockaddr = sockaddrInet6
-		}
-		err = unix.Connect(fd, sockaddr)
-	case v2rayNet.Network_UDP:
-		err = unix.Bind(fd, &unix.SockaddrInet6{})
-	}
+	return fds[0], nil
+}
+
+func protectServer(path string, protector Protector) io.Closer {
+	_ = os.Remove(path)
+	l, err := net.ListenUnix("unix", &net.UnixAddr{Name: path, Net: "unix"})
 	if err != nil {
-		unix.Close(fd)
-		return nil, err
+		return nil
 	}
+	_ = os.Chmod(path, 0o777)
+	go func() {
+		for {
+			conn, err := l.Accept()
+			if err != nil {
+				return
+			}
+			go func(conn *net.UnixConn) {
+				defer conn.Close()
+				rawConn, err := conn.SyscallConn()
+				if err != nil {
+					return
+				}
+				var (
+					connFd int
+					recvFd int
+				)
+				err = rawConn.Control(func(fd uintptr) {
+					connFd = int(fd)
+					recvFd, err = getOneFd(connFd)
+				})
+				if err != nil {
+					return
+				}
+				defer unix.Close(connFd)
+				if !protector.Protect(int32(recvFd)) {
+					_, _ = conn.Write([]byte{ProtectFailed})
+					return
+				}
+				_, _ = conn.Write([]byte{ProtectSuccess})
+			}(conn.(*net.UnixConn))
+		}
+	}()
+	return l
+}
 
-	file := os.NewFile(uintptr(fd), "socket")
-	if file == nil {
-		unix.Close(fd)
-		return nil, newError("failed to connect to fd")
+func protect(path string, fd uintptr) error {
+	socketFd, err := syscall.Socket(syscall.AF_UNIX, syscall.SOCK_STREAM, 0)
+	if err != nil {
+		return err
 	}
-	defer file.Close()
-
-	switch dest.Network {
-	case v2rayNet.Network_UDP:
-		packetConn, err := net.FilePacketConn(file)
-		if err != nil {
-			unix.Close(fd)
-			return nil, err
-		}
-		destAddr, err := net.ResolveUDPAddr("udp", dest.NetAddr())
-		if err != nil {
-			unix.Close(fd)
-			return nil, err
-		}
-		return &internet.PacketConnWrapper{
-			Conn: packetConn,
-			Dest: destAddr,
-		}, nil
-	default:
-		conn, err := net.FileConn(file)
-		if err != nil {
-			unix.Close(fd)
-			return nil, err
-		}
-		return conn, nil
+	defer syscall.Close(socketFd)
+	if err := syscall.Connect(socketFd, &syscall.SockaddrUnix{Name: path}); err != nil {
+		return err
 	}
+	msg := []byte{ProtectSuccess}
+	if err := syscall.Sendmsg(socketFd, msg, syscall.UnixRights(int(fd)), nil, 0); err != nil {
+		return err
+	}
+	n, err := syscall.Read(socketFd, msg)
+	if err != nil {
+		return err
+	}
+	if n != 1 {
+		return newError("failed to protect fd")
+	}
+	return nil
 }

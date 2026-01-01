@@ -122,6 +122,7 @@ class VpnService : BaseVpnService(),
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
+        data.proxy!!.v2rayPoint.withLocalResolver(null)
         tun?.apply {
             close()
         }
@@ -280,7 +281,7 @@ class VpnService : BaseVpnService(),
         conn = builder.establish() ?: throw NullConnectionException()
         active = true   // possible race condition here?
 
-        data.proxy!!.v2rayPoint.localResolver = this@VpnService
+        data.proxy!!.v2rayPoint.withLocalResolver(this)
 
         val config = TunConfig().apply {
             fileDescriptor = conn.fd

@@ -33,7 +33,6 @@ import (
 	"time"
 
 	"github.com/v2fly/v2ray-core/v5/app/proxyman/inbound"
-	"github.com/v2fly/v2ray-core/v5/common"
 	"github.com/v2fly/v2ray-core/v5/common/buf"
 	"github.com/v2fly/v2ray-core/v5/common/bytespool"
 	"github.com/v2fly/v2ray-core/v5/common/log"
@@ -42,7 +41,7 @@ import (
 	"github.com/v2fly/v2ray-core/v5/common/task"
 	"github.com/v2fly/v2ray-core/v5/features/dns"
 	"github.com/v2fly/v2ray-core/v5/transport/internet"
-	"libcore/comm"
+	"libcore/common"
 	"libcore/gvisor"
 	"libcore/nat"
 	"libcore/tun"
@@ -73,7 +72,7 @@ type Tun2ray struct {
 	connectionsLock sync.Mutex
 	connections     list.List
 
-	protectCloser io.Closer
+	protectServer io.Closer
 }
 
 type TunConfig struct {
@@ -99,6 +98,10 @@ type TunConfig struct {
 }
 
 func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
+	if config.V2Ray.localResolver == nil {
+		panic("localResolver not set")
+	}
+
 	t := &Tun2ray{
 		mtu:                 config.MTU,
 		addr4:               netip.MustParseAddr(config.Addr4),
@@ -117,7 +120,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 
 	var err error
 	switch config.Implementation {
-	case comm.TunImplementationGVisor:
+	case common.TunImplementationGVisor:
 		var pcapFile *os.File
 		if config.PCap {
 			timestamp := time.Now().Unix()
@@ -133,7 +136,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 		}
 
 		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6)
-	case comm.TunImplementationSystem:
+	case common.TunImplementationSystem:
 		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6)
 	}
 
@@ -146,11 +149,11 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 	}
 
 	if len(config.ProtectPath) > 0 {
-		t.protectCloser = ServerProtect(config.ProtectPath, config.Protector)
+		t.protectServer = protectServer(config.ProtectPath, config.Protector)
 	}
 
 	lookupFunc := func(network, host string) ([]net.IP, error) {
-		response, err := config.V2Ray.LocalResolver.LookupIP(network, host)
+		response, err := config.V2Ray.localResolver.LookupIP(network, host)
 		if err != nil {
 			errStr := err.Error()
 			if strings.HasPrefix(errStr, "rcode") {
@@ -188,14 +191,14 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 
 func (t *Tun2ray) Close() error {
 	internet.UseAlternativeSystemDialer(nil)
-	comm.CloseIgnore(t.dev)
+	common.CloseIgnore(t.dev)
 	t.connectionsLock.Lock()
 	for item := t.connections.Front(); item != nil; item = item.Next() {
-		common.Close(item.Value)
+		common.CloseIgnore(item.Value)
 	}
 	t.connectionsLock.Unlock()
-	if t.protectCloser != nil {
-		_ = t.protectCloser.Close()
+	if t.protectServer != nil {
+		_ = t.protectServer.Close()
 	}
 	return nil
 }
@@ -316,7 +319,7 @@ func (t *Tun2ray) NewConnection(source v2rayNet.Destination, destination v2rayNe
 		newError(err).AtError().WriteToLog(session.ExportIDToError(ctx))
 		return
 	}
-	defer comm.CloseIgnore(proxyConn)
+	defer common.CloseIgnore(proxyConn)
 	_ = task.Run(ctx, func() error {
 		_ = buf.Copy(buf.NewReader(conn), buf.NewWriter(proxyConn))
 		return io.EOF
@@ -325,7 +328,7 @@ func (t *Tun2ray) NewConnection(source v2rayNet.Destination, destination v2rayNe
 		return io.EOF
 	})
 
-	comm.CloseIgnore(conn)
+	common.CloseIgnore(conn)
 
 	t.connectionsLock.Lock()
 	t.connections.Remove(element)
@@ -510,7 +513,7 @@ func (t *Tun2ray) NewPacket(source v2rayNet.Destination, destination v2rayNet.De
 		}
 	}
 	bytespool.Free(buffer)
-	comm.CloseIgnore(conn)
+	common.CloseIgnore(conn)
 	t.udpTable.Delete(natKey)
 
 	t.connectionsLock.Lock()

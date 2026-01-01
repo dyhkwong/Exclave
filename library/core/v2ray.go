@@ -26,7 +26,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 	"unsafe"
 
@@ -58,26 +57,58 @@ func GetV2RayVersion() string {
 	return core.Version()
 }
 
-type V2RayInstanceConfig struct {
-	LocalResolver LocalResolver
-}
-
 type V2RayInstance struct {
 	started       bool
 	core          *core.Instance
 	dispatcher    routing.Dispatcher
 	statsManager  stats.Manager
 	observatory   features.TaggedFeatures
-	LocalResolver LocalResolver
+	localResolver LocalResolver
 }
 
-func NewV2rayInstance(config *V2RayInstanceConfig) *V2RayInstance {
-	return &V2RayInstance{
-		LocalResolver: config.LocalResolver,
+func (instance *V2RayInstance) WithLocalResolver(localResolver LocalResolver) {
+	if localResolver == nil {
+		instance.localResolver = nil
+		localdns.SetLookupFunc(nil)
+		localdns.SetRawQueryFunc(nil)
+		return
+	}
+	instance.localResolver = localResolver
+	localdns.SetLookupFunc(func(network, host string) ([]net.IP, error) {
+		response, err := localResolver.LookupIP(network, host)
+		if err != nil {
+			errStr := err.Error()
+			if strings.HasPrefix(errStr, "rcode") {
+				r, _ := strconv.Atoi(strings.Split(errStr, " ")[1])
+				return nil, dns.RCodeError(r)
+			}
+			return nil, err
+		}
+		if response == "" {
+			return nil, dns.ErrEmptyResponse
+		}
+		addrs := strings.Split(response, ",")
+		ips := make([]net.IP, len(addrs))
+		for i, addr := range addrs {
+			ip := net.ParseIP(addr)
+			if ip.To4() != nil {
+				ip = ip.To4()
+			}
+			ips[i] = ip
+		}
+		if len(ips) == 0 {
+			return nil, dns.ErrEmptyResponse
+		}
+		return ips, nil
+	})
+	if localResolver.SupportExchange() {
+		localdns.SetRawQueryFunc(func(b []byte) ([]byte, error) {
+			return localResolver.Exchange(b)
+		})
 	}
 }
 
-func (instance *V2RayInstance) WithProtectPath(path string) {
+func (instance *V2RayInstance) WithProtect(path string) {
 	systemDialerMutex.Lock()
 	defer systemDialerMutex.Unlock()
 	if len(path) == 0 {
@@ -90,28 +121,9 @@ func (instance *V2RayInstance) WithProtectPath(path string) {
 	if systemDialerWithProtect == nil {
 		systemDialerWithProtect = &internet.DefaultSystemDialer{}
 		controller := func(_, _ string, fd uintptr) error {
-			socketFd, err := syscall.Socket(syscall.AF_UNIX, syscall.SOCK_STREAM, 0)
-			if err != nil {
-				return err
-			}
-			defer syscall.Close(socketFd)
-			if err := syscall.Connect(socketFd, &syscall.SockaddrUnix{Name: path}); err != nil {
-				return err
-			}
-			msg := []byte{ProtectSuccess}
-			if err := syscall.Sendmsg(socketFd, msg, syscall.UnixRights(int(fd)), nil, 0); err != nil {
-				return err
-			}
-			n, err := syscall.Read(socketFd, msg)
-			if err != nil {
-				return err
-			}
-			if n != 1 {
-				return newError("failed to protect fd")
-			}
-			return nil
+			return protect(path, fd)
 		}
-		// TODO: export internet.DefaultSystemDialer.controllers to aviod using reflect
+		// TODO: export internet.DefaultSystemDialer.controllers to avoid reflect
 		ptr := (*[]func(string, string, uintptr) error)(unsafe.Pointer(reflect.ValueOf(systemDialerWithProtect).Elem().FieldByName("controllers").UnsafeAddr()))
 		*ptr = []func(string, string, uintptr) error{controller}
 	}
@@ -144,41 +156,6 @@ func (instance *V2RayInstance) Start() error {
 		return newError("not initialized")
 	}
 
-	if instance.LocalResolver != nil {
-		localdns.SetLookupFunc(func(network, host string) ([]net.IP, error) {
-			response, err := instance.LocalResolver.LookupIP(network, host)
-			if err != nil {
-				errStr := err.Error()
-				if strings.HasPrefix(errStr, "rcode") {
-					r, _ := strconv.Atoi(strings.Split(errStr, " ")[1])
-					return nil, dns.RCodeError(r)
-				}
-				return nil, err
-			}
-			if response == "" {
-				return nil, dns.ErrEmptyResponse
-			}
-			addrs := strings.Split(response, ",")
-			ips := make([]net.IP, len(addrs))
-			for i, addr := range addrs {
-				ip := net.ParseIP(addr)
-				if ip.To4() != nil {
-					ip = ip.To4()
-				}
-				ips[i] = ip
-			}
-			if len(ips) == 0 {
-				return nil, dns.ErrEmptyResponse
-			}
-			return ips, nil
-		})
-		if instance.LocalResolver.SupportExchange() {
-			localdns.SetRawQueryFunc(func(b []byte) ([]byte, error) {
-				return instance.LocalResolver.Exchange(b)
-			})
-		}
-	}
-
 	if err := instance.core.Start(); err != nil {
 		return err
 	}
@@ -200,11 +177,6 @@ func (instance *V2RayInstance) QueryStats(tag string, direct string) int64 {
 func (instance *V2RayInstance) Close() error {
 	if instance.started {
 		instance.core.Close()
-		if instance.LocalResolver != nil {
-			localdns.SetLookupFunc(nil)
-			localdns.SetRawQueryFunc(nil)
-		}
-		instance.LocalResolver = nil
 		instance.core = nil
 		instance.dispatcher = nil
 		instance.statsManager = nil

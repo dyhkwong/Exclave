@@ -21,7 +21,7 @@ import (
 	"net"
 	"time"
 
-	"libcore/comm"
+	"libcore/common"
 
 	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
 	"gvisor.dev/gvisor/pkg/tcpip"
@@ -35,14 +35,14 @@ type tcpForwarder struct {
 	port6     uint16
 	listener4 *net.TCPListener
 	listener6 *net.TCPListener
-	sessions  *comm.LruCache
+	sessions  *common.LruCache
 	closed    bool
 }
 
 func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
 	tcpForwarder := &tcpForwarder{
 		tun:      tun,
-		sessions: comm.NewLruCache(300, true),
+		sessions: common.NewLruCache(300, true),
 	}
 	address := &net.TCPAddr{
 		IP: tun.addr4.AsSlice(),

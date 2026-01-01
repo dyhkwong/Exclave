@@ -38,9 +38,9 @@ const (
 )
 
 const (
-	mozillaIncludedPem    = "mozilla_included.pem"
-	androidIncludedPem    = "android_included.pem"
-	customPem             = "root_store.certs"
+	mozillaIncludedPem = "mozilla_included.pem"
+	androidIncludedPem = "android_included.pem"
+	customPem          = "root_store.certs"
 )
 
 //go:linkname systemRoots crypto/x509.systemRoots
@@ -78,7 +78,7 @@ func extractOrReadMozillaCAPem() ([]byte, error) {
 		return nil, err
 	}
 	pemInternal.Close()
-	pemFile, err := os.OpenFile(internalAssetsPath + mozillaIncludedPem, os.O_RDWR|os.O_CREATE, 0644)
+	pemFile, err := os.OpenFile(internalAssetsPath+mozillaIncludedPem, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return nil, err
 	}

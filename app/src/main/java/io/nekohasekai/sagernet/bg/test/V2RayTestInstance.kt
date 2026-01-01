@@ -65,7 +65,7 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
 
     override fun init() {
         super.init()
-        v2rayPoint.withProtectPath(protectPath)
+        v2rayPoint.withProtect(protectPath)
     }
 
     override fun buildConfig() {

@@ -51,12 +51,13 @@ class ProxyService : Service(),
     }
 
     override suspend fun startProcesses() {
-        data.proxy!!.v2rayPoint.localResolver = this@ProxyService
+        data.proxy!!.v2rayPoint.withLocalResolver(this)
         super.startProcesses()
     }
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
+        data.proxy!!.v2rayPoint.withLocalResolver(null)
         super.killProcesses()
         GlobalScope.launch(Dispatchers.Default) { DefaultNetworkListener.stop(this) }
     }
