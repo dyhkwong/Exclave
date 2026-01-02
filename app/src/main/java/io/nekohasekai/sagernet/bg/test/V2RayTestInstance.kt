@@ -35,13 +35,8 @@ import libcore.Libcore
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
-class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int) : V2RayInstance(
+class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int, val protectPath: String = "") : V2RayInstance(
     profile,
-    protectPath = if (DataStore.tunImplementation == TunImplementation.SYSTEM
-        && DataStore.serviceMode == Key.MODE_VPN
-        && DataStore.currentProfile > 0) {
-        SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
-    } else "",
 ) {
     lateinit var continuation: Continuation<Int>
     suspend fun doTest(): Int {

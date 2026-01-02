@@ -49,7 +49,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class V2RayInstance(
     val profile: ProxyEntity,
-    val protectPath: String = "",
 ) : AbstractInstance {
 
     lateinit var config: V2rayBuildResult
