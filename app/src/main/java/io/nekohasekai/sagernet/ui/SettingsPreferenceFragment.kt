@@ -178,7 +178,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         tunImplementation.isEnabled = serviceMode.value == MODE_VPN
         tunImplementation.setOnPreferenceChangeListener { _, newValue ->
             enablePcap.isEnabled = serviceMode.value == MODE_VPN && newValue == "${TunImplementation.GVISOR}"
-            needReload()
+            if (SagerNet.started) {
+                SagerNet.stopService()
+                runOnMainDispatcher {
+                    delay(300)
+                    SagerNet.startService()
+                }
+            }
             true
         }
         mtu.isEnabled = serviceMode.value == MODE_VPN
