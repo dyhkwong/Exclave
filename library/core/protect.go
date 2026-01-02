@@ -108,7 +108,7 @@ func protect(path string, fd uintptr) error {
 	if err != nil {
 		return err
 	}
-	if n != 1 {
+	if n != 1 || msg[0] != ProtectSuccess {
 		return newError("failed to protect fd")
 	}
 	return nil
