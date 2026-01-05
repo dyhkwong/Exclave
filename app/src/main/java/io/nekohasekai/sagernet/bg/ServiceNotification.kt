@@ -143,9 +143,15 @@ class ServiceNotification(
         service as Context
         updateActions()
 
-        Theme.apply(app)
-        Theme.apply(service)
-        builder.color = service.getColorAttr(androidx.appcompat.R.attr.colorPrimary)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // https://developer.android.com/design/ui/mobile/guides/home-screen/notifications
+            // Starting in Android 12 (API level 31), the system derives the icon color from the
+            // notification color you set in the app. If the app doesn't set the color, it uses
+            // the system theme color. Previously, the color was gray.
+            Theme.apply(app)
+            Theme.apply(service)
+            builder.color =  service.getColorAttr(androidx.appcompat.R.attr.colorPrimary)
+        }
 
         updateCallback(service.getSystemService<PowerManager>()?.isInteractive != false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
