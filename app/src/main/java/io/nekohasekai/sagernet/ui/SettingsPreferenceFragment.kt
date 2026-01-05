@@ -45,7 +45,6 @@ import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
 import io.nekohasekai.sagernet.widget.LinkOrContentPreference
 import kotlinx.coroutines.delay
-import libcore.Libcore
 import java.io.File
 import java.util.Locale
 
@@ -91,9 +90,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         // app settings
         findPreference<ColorPickerPreference>(Key.APP_THEME)!!.setOnPreferenceChangeListener { _, newTheme ->
-            if (SagerNet.started) {
-                SagerNet.reloadService()
-            }
+            // change the notification icon color
+            // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && SagerNet.started) {
+                // SagerNet.reloadService()
+            // }
             val theme = Theme.getTheme(newTheme as Int)
             app.setTheme(theme)
             requireActivity().apply {
