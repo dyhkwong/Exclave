@@ -21,9 +21,11 @@
 
 package io.nekohasekai.sagernet.database
 
+import android.content.Intent
 import android.os.Binder
 import androidx.preference.PreferenceDataStore
 import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.SagerNet.Companion.application
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.preference.InMemoryDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
@@ -44,6 +46,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
         if (Build.VERSION.SDK_INT >= 24 && directBootAware && SagerNet.user.isUserUnlocked) {
             DirectBoot.flushTrafficStats()
         }*/
+
+        configurationStore.registerChangeListener(this)
 
         // migrate from 0.14.10
         val ipv6Mode0 = configurationStore.getString("ipv6Mode0")?.toIntOrNull()
@@ -446,6 +450,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
             Key.PROFILE_ID -> if (directBootAware) DirectBoot.update()
+            Key.APP_THEME -> {
+                application.sendBroadcast(Intent(Action.THEME_CHANGED).setPackage(application.packageName))
+            }
         }
     }
 }
