@@ -90,10 +90,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         // app settings
         findPreference<ColorPickerPreference>(Key.APP_THEME)!!.setOnPreferenceChangeListener { _, newTheme ->
-            // change the notification icon color
-            // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && SagerNet.started) {
-                // SagerNet.reloadService()
-            // }
             val theme = Theme.getTheme(newTheme as Int)
             app.setTheme(theme)
             requireActivity().apply {

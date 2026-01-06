@@ -21,10 +21,12 @@
 
 package io.nekohasekai.sagernet.database
 
+import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import androidx.preference.PreferenceDataStore
 import io.nekohasekai.sagernet.*
+import io.nekohasekai.sagernet.SagerNet.Companion.application
 import io.nekohasekai.sagernet.bg.VpnService
 import io.nekohasekai.sagernet.database.preference.InMemoryDatabase
 import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeListener
@@ -38,6 +40,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     val profileCacheStore = RoomPreferenceDataStore(InMemoryDatabase.kvPairDao)
 
     fun init() {
+        configurationStore.registerChangeListener(this)
 
         // migrate from 0.14.10
         val ipv6Mode0 = configurationStore.getString("ipv6Mode0")?.toIntOrNull()
@@ -422,6 +425,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
             Key.PROFILE_ID -> {}
+            Key.APP_THEME -> {
+                application.sendBroadcast(Intent(Action.THEME_CHANGED).setPackage(application.packageName))
+            }
         }
     }
 }
