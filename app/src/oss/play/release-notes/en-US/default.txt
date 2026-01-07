@@ -1,3 +1,0 @@
-See https://github.com/dyhkwong/Exclave/releases for details.
-
-This version is a major release and contains some breaking changes. It is recommended to read the release notes and backup your old config before upgrading.
