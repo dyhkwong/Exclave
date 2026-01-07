@@ -594,4 +594,5 @@
     <string name="export_routing_rules_warning">It is for compatibility purpose only and does not contain complete information.</string>
     <string name="custom_root_ca_hint">Please place root_store.certs file in Android/data/%s/files, or import root_store.certs as a route asset.</string>
     <string name="query_all_packages_alternative_method">Use alternative method to query installed apps</string>
+    <string name="third_party_notices">Third party notices</string>
 </resources>

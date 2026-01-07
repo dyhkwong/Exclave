@@ -29,15 +29,18 @@ import android.os.Build
 import android.os.Bundle
 import android.os.RemoteException
 import android.provider.Settings
+import android.text.util.Linkify
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.setPadding
 import androidx.core.view.updatePadding
 import androidx.preference.PreferenceDataStore
 import com.google.android.material.bottomappbar.BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
@@ -168,11 +171,20 @@ class MainActivity : ThemedActivity(),
             runOnMainDispatcher {
                 MaterialAlertDialogBuilder(this@MainActivity).apply {
                     setTitle(R.string.license)
-                    setMessage(if (Libcore.buildWithClash()) {
-                        R.string.license_gpl_v3_only
-                    } else {
-                        R.string.license_gpl_v3_or_later
-                    })
+                    setView(
+                        TextView(this@MainActivity).apply {
+                            setPadding(dp2px(16))
+                            text = getString(
+                                if (Libcore.buildWithClash()) {
+                                    R.string.license_gpl_v3_only
+                                } else {
+                                    R.string.license_gpl_v3_or_later
+                                }
+                            )
+                            setTextIsSelectable(true)
+                            Linkify.addLinks(this, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS)
+                        }
+                    )
                     setPositiveButton(android.R.string.ok) { _, _ ->
                         DataStore.configurationStore.putBoolean(
                             if (Libcore.buildWithClash()) "gplv3OnlyAccepted"

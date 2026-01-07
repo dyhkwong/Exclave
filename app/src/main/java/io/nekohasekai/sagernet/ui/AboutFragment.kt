@@ -21,31 +21,38 @@ package io.nekohasekai.sagernet.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.text.util.Linkify
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.HorizontalScrollView
+import android.widget.ListView
+import android.widget.TextView
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.setPadding
 import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.danielstone.materialaboutlibrary.MaterialAboutFragment
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
-import io.nekohasekai.sagernet.databinding.LayoutAboutBinding
 import io.nekohasekai.sagernet.ktx.dp2px
-import io.nekohasekai.sagernet.ktx.onMainDispatcher
-import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
+import io.nekohasekai.sagernet.ktx.dp2pxf
 import io.nekohasekai.sagernet.ktx.snackbar
 import libcore.Libcore
 
@@ -53,8 +60,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val binding = LayoutAboutBinding.bind(view)
 
         toolbar.setTitle(R.string.menu_about)
 
@@ -76,19 +81,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             .commitAllowingStateLoss()
 
         (requireActivity() as? MainActivity)?.onBackPressedCallback?.isEnabled = true
-
-        runOnDefaultDispatcher {
-            onMainDispatcher {
-                binding.license.text = getString(
-                    if (Libcore.buildWithClash()) {
-                        R.string.license_gpl_v3_only
-                    } else {
-                        R.string.license_gpl_v3_or_later
-                    }
-                )
-                Linkify.addLinks(binding.license, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS)
-            }
-        }
     }
 
     class AboutContent : MaterialAboutFragment() {
@@ -168,9 +160,94 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             ))
                         }
                         .build())
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.ic_action_copyleft)
+                        .text(R.string.license)
+                        .setOnClickAction {
+                            MaterialAlertDialogBuilder(activityContext).apply {
+                                setView(
+                                    TextView(activityContext).apply {
+                                        setPadding(dp2px(16))
+                                        text = getString(
+                                            if (Libcore.buildWithClash()) {
+                                                R.string.license_gpl_v3_only
+                                            } else {
+                                                R.string.license_gpl_v3_or_later
+                                            }
+                                        )
+                                        setTextIsSelectable(true)
+                                        Linkify.addLinks(this, Linkify.EMAIL_ADDRESSES or Linkify.WEB_URLS)
+                                    }
+                                )
+                                setOnCancelListener { _ ->
+                                    showLicenseAlertDialogFromAssets(activityContext, "license/GPL-3.0.txt")
+                                }
+                                setPositiveButton(android.R.string.ok) { _, _ ->
+                                    showLicenseAlertDialogFromAssets(activityContext, "license/GPL-3.0.txt")
+                                }
+                            }.show()
+                        }
+                        .build())
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.ic_action_description)
+                        .text(R.string.third_party_notices)
+                        .setOnClickAction {
+                            MaterialAlertDialogBuilder(activityContext).apply {
+                                setView(ListView(activityContext).apply {
+                                    adapter = ArrayAdapter(activityContext, android.R.layout.simple_list_item_1,
+                                        arrayOf(
+                                            getString(R.string.third_party_notices),
+                                            "Apache License Version 2.0",
+                                            "MIT License",
+                                            "BSD 3-Clause License",
+                                            "BSD 2-Clause License",
+                                            "GNU GENERAL PUBLIC LICENSE Version 3",
+                                            "Mozilla Public License Version 2.0",
+                                            "Creative Commons Attribution 4.0 International Public License",
+                                            "Community Data License Agreement - Permissive - Version 2.0"
+                                        )
+                                    )
+                                    setOnItemClickListener { _, _, position, _ ->
+                                        when (position) {
+                                            0 -> showLicenseAlertDialogFromAssets(activityContext, "license/notices.txt")
+                                            1 -> showLicenseAlertDialogFromAssets(activityContext, "license/Apache-2.0.txt")
+                                            2 -> showLicenseAlertDialogFromAssets(activityContext, "license/MIT.txt")
+                                            3 -> showLicenseAlertDialogFromAssets(activityContext, "license/BSD-3-Clause.txt")
+                                            4 -> showLicenseAlertDialogFromAssets(activityContext, "license/BSD-2-Clause.txt")
+                                            5 -> showLicenseAlertDialogFromAssets(activityContext, "license/GPL-3.0.txt")
+                                            6 -> showLicenseAlertDialogFromAssets(activityContext, "license/MPL-2.0.txt")
+                                            7 -> showLicenseAlertDialogFromAssets(activityContext, "license/CC-BY-4.0.txt")
+                                            8 -> showLicenseAlertDialogFromAssets(activityContext, "license/CDLA-Permissive-2.0.txt")
+                                        }
+                                    }
+                                })
+                                setPositiveButton(android.R.string.ok, null)
+                            }.show()
+                        }
+                        .build())
                     .build())
                 .build()
+        }
 
+        private fun showLicenseAlertDialogFromAssets(context: Context, asset: String) {
+            MaterialAlertDialogBuilder(context).apply {
+                setView(NestedScrollView(context).apply {
+                    setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
+                    addView( HorizontalScrollView(context).apply {
+                        isHorizontalScrollBarEnabled = false
+                        addView(TextView(context).apply {
+                            text = context.assets.open(asset).use { it.reader().readText() }
+                            textSize = dp2pxf(4)
+                            typeface = Typeface.MONOSPACE
+                            isSingleLine = false
+                            setTextIsSelectable(true)
+                            setHorizontallyScrolling(false)
+                            layoutParams = ViewGroup.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        })
+                    })
+                })
+                setPositiveButton(android.R.string.ok, null)
+            }.show()
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

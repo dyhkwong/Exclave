@@ -104,16 +104,6 @@ The following procedures are only applicable to for typical AMD64 Linux distros.
 - Build the app: `./gradlew :app:assembleOssRelease`
 - APK files are located in `app/build/outputs/apk/oss/release`
 
-## Dependencies, submodules and assets
-
-- See [app/build.gradle.kts](app/build.gradle.kts), [buildSrc/build.gradle.kts](buildSrc/build.gradle.kts) and [library/proto-stub/build.gradle.kts](library/proto-stub/build.gradle.kts) for Android libraries used in Exclave.
-- See [library/core/go.mod](library/core/go.mod) for Go libraries used in Exclave.
-- See [plugin/api/build.gradle.kts](plugin/api/build.gradle.kts) for Android libraries used in plugins.
-- `geosite.dat` is downloaded from https://github.com/v2fly/domain-list-community/releases. It is licensed under the MIT license.
-- `geoip.dat` is downloaded from https://github.com/v2fly/geoip/releases. It is licensed under CC-BY-4.0.
-- `mozilla_included.pem` is downloaded from https://www.ccadb.org/resources. It is licensed under CDLA-2.0 Permissive.
-- Submodules are for compiling native binaries of plugins. They are executables that run in separate processes and therefore not subjected to the restrictions of GPL. Please refer to submodule repositories for their respective licenses.
-
 ## Acknowledgment
 
 - [Shadowsocks](https://github.com/shadowsocks/shadowsocks-android)
