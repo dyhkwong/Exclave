@@ -247,8 +247,8 @@ github.com/rogpeppe/fastuuid v0.0.0-20150106093220-6724a57986af/go.mod h1:XWv6So
 github.com/rogpeppe/go-internal v1.3.0/go.mod h1:M8bDsm7K2OlrFYOpmOWEs/qY81heoFRclV5y23lUDJ4=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
-github.com/sagernet/gomobile v0.1.10 h1:ElqZ0OVDvyQlU91MU0C9cfU0FrILBbc65+NOKzZ1t0c=
-github.com/sagernet/gomobile v0.1.10/go.mod h1:A8l3FlHi2D/+mfcd4HHvk5DGFPW/ShFb9jHP5VmSiDY=
+github.com/sagernet/gomobile v0.1.11 h1:niMQAspvuThup5eRZQpsGcbM76zAvnsGr7RUIpnQMDQ=
+github.com/sagernet/gomobile v0.1.11/go.mod h1:A8l3FlHi2D/+mfcd4HHvk5DGFPW/ShFb9jHP5VmSiDY=
 github.com/sagernet/quic-go v0.55.0-sing-box-mod.2 h1:I79gW4Xl5ciVARHfnp122lDAMhC0AwUCU765Q8Kxdfo=
 github.com/sagernet/quic-go v0.55.0-sing-box-mod.2/go.mod h1:IE9naq7Kekj0rPAdWc0GLW1ENR7gAOQV9VRTDlKN8Bk=
 github.com/sagernet/sing v0.6.7/go.mod h1:ARkL0gM13/Iv5VCZmci/NuoOlePoIsW0m7BWfln/Hak=
