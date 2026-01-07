@@ -158,6 +158,10 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                     // https://github.com/SagerNet/sing-box/pull/1934
                                     v2rayBean.alpn = "h3"
                                 }
+                                if (v2rayBean.alpn == null && type == "http") {
+                                    // sing-box does not support HTTP/2 CONNECT
+                                    v2rayBean.alpn = "http/1.1"
+                                }
                                 if (!tls.contains("certificate_path")) {
                                     var cert: String? = null
                                     tls.getStringArray("certificate")?.also { certificate ->
