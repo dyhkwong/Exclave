@@ -34,8 +34,8 @@ jobs:
       - name: Setup Go Mobile
         # https://github.com/golang/mobile/blob/c31d5b91ecc32c0d598b8fe8457d244ca0b4e815/cmd/gomobile/init.go#L83
         run: |
-          go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.10
-          go install github.com/sagernet/gomobile/cmd/gobind@v0.1.10
+          go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.11
+          go install github.com/sagernet/gomobile/cmd/gobind@v0.1.11
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
