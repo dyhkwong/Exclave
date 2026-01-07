@@ -99,6 +99,8 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                 password = proxy.getString("password")
                 if (proxy.getBoolean("tls") == true) {
                     security = "tls"
+                    // mihomo does not support HTTP/2 CONNECT
+                    alpn = "http/1.1"
                     sni = proxy.getString("sni")
                     if (proxy.getBoolean("skip-cert-verify") == true) {
                         allowInsecure = true
