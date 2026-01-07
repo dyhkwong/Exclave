@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package nat
 
 import (
+	"context"
 	"net"
 	"time"
 
@@ -44,25 +45,27 @@ func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
 		tun:      tun,
 		sessions: comm.NewLruCache(300, true),
 	}
+	listenerConfig := &net.ListenConfig{}
+	listenerConfig.SetMultipathTCP(false)
 	address := &net.TCPAddr{
 		IP: tun.addr4.AsSlice(),
 	}
-	listener, err := net.ListenTCP("tcp4", address)
+	listener, err := listenerConfig.Listen(context.Background(), "tcp4", address.String())
 	if err != nil {
 		return nil, newError("failed to create tcp forwarder at ", address.IP).Base(err)
 	}
-	tcpForwarder.listener4 = listener
+	tcpForwarder.listener4 = listener.(*net.TCPListener)
 	tcpForwarder.port4 = uint16(listener.Addr().(*net.TCPAddr).Port)
 	newError("tcp forwarder started at ", listener.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
 	if tun.enableIPv6 {
 		address := &net.TCPAddr{
 			IP: tun.addr6.AsSlice(),
 		}
-		listener, err := net.ListenTCP("tcp6", address)
+		listener, err := listenerConfig.Listen(context.Background(), "tcp6", address.String())
 		if err != nil {
 			return nil, newError("failed to create tcp forwarder at ", address.IP).Base(err)
 		}
-		tcpForwarder.listener6 = listener
+		tcpForwarder.listener6 = listener.(*net.TCPListener)
 		tcpForwarder.port6 = uint16(listener.Addr().(*net.TCPAddr).Port)
 		newError("tcp forwarder started at ", listener.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
 	}
