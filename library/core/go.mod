@@ -7,7 +7,7 @@ require (
 	github.com/golang/protobuf v1.5.4
 	github.com/quic-go/quic-go v0.56.0
 	github.com/sagernet/gomobile v0.1.11
-	github.com/v2fly/v2ray-core/v5 v5.42.0
+	github.com/v2fly/v2ray-core/v5 v5.43.0
 	github.com/wzshiming/socks5 v0.6.0
 	golang.org/x/sys v0.39.0
 	gvisor.dev/gvisor v0.0.0-20250503011706-39ed1f5ac29c
@@ -26,7 +26,7 @@ require (
 	github.com/dyhkwong/hysteria/core/v2 v2.6.5-1 // indirect
 	github.com/dyhkwong/hysteria/extras/v2 v2.6.5-3 // indirect
 	github.com/dyhkwong/sing-juicity v0.1.0-beta.2 // indirect
-	github.com/enfein/mieru/v3 v3.26.0 // indirect
+	github.com/enfein/mieru/v3 v3.26.2 // indirect
 	github.com/gofrs/uuid/v5 v5.3.2 // indirect
 	github.com/golang-collections/go-datastructures v0.0.0-20150211160725-59788d5eb259 // indirect
 	github.com/google/btree v1.1.3 // indirect
@@ -90,4 +90,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.42.1-0.20251226153415-566f4bf6e5b1
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.43.1-0.20260107074016-27e1ec430539
