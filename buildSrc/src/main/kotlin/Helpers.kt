@@ -96,6 +96,7 @@ fun Project.setupCommon(projectName: String) {
                     listOf(
                         "**/*.kotlin_*",
                         "/META-INF/*.version",
+                        "/META-INF/androidx/**",
                         "/META-INF/native/**",
                         "/META-INF/native-image/**",
                         "/META-INF/INDEX.LIST",

@@ -4,6 +4,15 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.protobuf")
     id("com.google.devtools.ksp")
+    id("com.jaredsburrows.license")
+}
+
+
+licenseReport {
+  generateCsvReport = true
+  generateHtmlReport = false
+  generateJsonReport = false
+  generateTextReport = false
 }
 
 setupApp()
