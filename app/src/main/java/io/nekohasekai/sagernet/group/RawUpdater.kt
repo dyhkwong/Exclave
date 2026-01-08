@@ -232,14 +232,15 @@ object RawUpdater : GroupUpdater() {
 
     @Suppress("UNCHECKED_CAST")
     fun parseRaw(text: String): List<AbstractBean>? {
-        if (!text.take(4096).contains("proxies:") && !text.trimStart().startsWith("{")) {
+        val containsProxies = text.take(4096).contains("""(?i)proxies["']?\s*:""".toRegex())
+        if (!containsProxies && !text.trimStart().startsWith("{")) {
             try {
                 parseShareLinks(text.decodeBase64()).takeIf { it.isNotEmpty() }?.let {
                     return it
                 }
             } catch (_: Exception) {}
         }
-        val proxiesPattern = Pattern.compile("""^proxies:[\s\S]*?(?=\n\S|\z)""", Pattern.MULTILINE)
+        val flexiblePattern = Pattern.compile("""(?i)^["']?proxies["']?\s*:[\s\S]*?(?=\n\S|\z)""", Pattern.MULTILINE)
         val matcher = proxiesPattern.matcher(text)
         if (matcher.find()) {
             try {
