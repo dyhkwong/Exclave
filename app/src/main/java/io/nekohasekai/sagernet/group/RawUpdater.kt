@@ -77,8 +77,10 @@ object RawUpdater : GroupUpdater() {
                 }
             }.execute()
 
-            proxies = parseRaw(response.contentString)
-                ?: error(app.getString(R.string.no_proxies_found))
+            proxies = run {
+                val rawText = response.contentString
+                parseRaw(rawText)
+            } ?: error(app.getString(R.string.no_proxies_found))
 
             val subscriptionUserinfo = response.getHeader("Subscription-Userinfo")
             if (subscriptionUserinfo.isNotEmpty()) {
@@ -230,6 +232,33 @@ object RawUpdater : GroupUpdater() {
 
     @Suppress("UNCHECKED_CAST")
     fun parseRaw(text: String): List<AbstractBean>? {
+        if (!text.take(4096).contains("proxies:") && !text.trimStart().startsWith("{")) {
+            try {
+                parseShareLinks(text.decodeBase64()).takeIf { it.isNotEmpty() }?.let {
+                    return it
+                }
+            } catch (_: Exception) {}
+        }
+        val proxiesPattern = Pattern.compile("""^proxies:[\s\S]*?(?=\n\S|\z)""", Pattern.MULTILINE)
+        val matcher = proxiesPattern.matcher(text)
+        if (matcher.find()) {
+            try {
+                val proxiesBlock = matcher.group()
+                val options = DumperOptions()
+                val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
+                    override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
+                        when (tag) {
+                            Tag.FLOAT -> {}
+                            Tag.BOOL -> super.addImplicitResolver(tag, Pattern.compile("^(?:true|True|TRUE|false|False|FALSE)$"), "tTfF", limit)
+                            else -> super.addImplicitResolver(tag, regexp, first, limit)
+                        }
+                    }
+                }).loadAs(proxiesBlock, Map::class.java)
+                (yaml["proxies"] as? List<Map<String, Any?>>)?.let {
+                    return parseClashProxies(it)
+                }
+            } catch (_: Exception) {}
+        }
         try {
             val options = DumperOptions()
             val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
