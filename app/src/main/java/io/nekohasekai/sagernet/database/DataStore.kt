@@ -372,6 +372,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var balancerProbeUrl by profileCacheStore.string(Key.PROBE_URL)
     var balancerProbeInterval by profileCacheStore.stringToInt(Key.PROBE_INTERVAL) { 300 }
     var balancerNameFilter by profileCacheStore.string(Key.BALANCER_NAME_FILTER)
+    var balancerNameFilter1 by profileCacheStore.string(Key.BALANCER_NAME_FILTER1)
 
 
     var routeName by profileCacheStore.string(Key.ROUTE_NAME)
@@ -410,6 +411,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var subscriptionAutoUpdate by profileCacheStore.boolean(Key.SUBSCRIPTION_AUTO_UPDATE)
     var subscriptionAutoUpdateDelay by profileCacheStore.stringToInt(Key.SUBSCRIPTION_AUTO_UPDATE_DELAY) { 1440 }
     var subscriptionNameFilter by profileCacheStore.string(Key.SUBSCRIPTION_NAME_FILTER)
+    var subscriptionNameFilter1 by profileCacheStore.string(Key.SUBSCRIPTION_NAME_FILTER1)
 
     var editingAssetName by profileCacheStore.string(Key.EDITING_ASSET_NAME)
     var assetName by profileCacheStore.string(Key.ASSET_NAME)

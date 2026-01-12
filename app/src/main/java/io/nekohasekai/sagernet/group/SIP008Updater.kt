@@ -79,18 +79,24 @@ object SIP008Updater : GroupUpdater() {
 
         var profiles = mutableListOf<AbstractBean>()
 
-        val pattern = Regex(subscription.nameFilter)
         if (servers != null) {
             for (profile in servers) {
                 val bean = parseShadowsocksConfig(profile) ?: continue
                 appendExtraInfo(profile, bean)
-                if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
-                    profiles.add(bean)
-                }
+                profiles.add(bean)
             }
         }
 
         profiles.forEach { it.applyDefaultValues() }
+
+        if (subscription.nameFilter.isNotEmpty()) {
+            val pattern = Regex(subscription.nameFilter)
+            profiles = profiles.filter { !pattern.containsMatchIn(it.name) }.toMutableList()
+        }
+        if (subscription.nameFilter1.isNotEmpty()) {
+            val pattern = Regex(subscription.nameFilter1)
+            profiles = profiles.filter { pattern.containsMatchIn(it.name) }.toMutableList()
+        }
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()

@@ -43,13 +43,14 @@ public class SubscriptionBean extends Serializable {
     public Long expiryDate;
 
     public String nameFilter;
+    public String nameFilter1;
 
     public SubscriptionBean() {
     }
 
     @Override
     public void serializeToBuffer(ByteBufferOutput output) {
-        output.writeInt(7);
+        output.writeInt(8);
         output.writeInt(type);
         output.writeString(link);
         output.writeBoolean(deduplication);
@@ -62,10 +63,11 @@ public class SubscriptionBean extends Serializable {
         output.writeLong(bytesRemaining);
         output.writeLong(expiryDate);
         output.writeString(nameFilter);
+        output.writeString(nameFilter1);
     }
 
     public void serializeForShare(ByteBufferOutput output) {
-        output.writeInt(6);
+        output.writeInt(7);
         output.writeInt(type);
         output.writeString(link);
         output.writeBoolean(deduplication);
@@ -75,6 +77,7 @@ public class SubscriptionBean extends Serializable {
         output.writeLong(bytesRemaining);
         output.writeLong(expiryDate);
         output.writeString(nameFilter);
+        output.writeString(nameFilter1);
     }
 
     @Override
@@ -137,6 +140,10 @@ public class SubscriptionBean extends Serializable {
                 KryosKt.readStringSet(input);
             }
         }
+
+        if (version >= 8) {
+            nameFilter1 = input.readString();
+        }
     }
 
     public void deserializeFromShare(ByteBufferInput input) {
@@ -182,6 +189,10 @@ public class SubscriptionBean extends Serializable {
             }
             KryosKt.readStringList(input);
         }
+
+        if (version >= 7) {
+            nameFilter1 = input.readString();
+        }
     }
 
     @Override
@@ -198,6 +209,7 @@ public class SubscriptionBean extends Serializable {
         if (bytesUsed == null) bytesUsed = 0L;
         if (bytesRemaining == null) bytesRemaining = 0L;
         if (nameFilter == null) nameFilter = "";
+        if (nameFilter1 == null) nameFilter1 = "";
 
         if (expiryDate == null) expiryDate = 0L;
     }

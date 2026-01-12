@@ -63,6 +63,12 @@
             app:title="@string/regular_expression_filter"
             app:useSimpleSummaryProvider="true" />
 
+        <EditTextPreference
+            app:icon="@drawable/ic_baseline_manage_search_24"
+            app:key="subscriptionNameFilter1"
+            app:title="@string/regular_expression_filter1"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

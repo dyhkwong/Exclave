@@ -245,6 +245,7 @@ object Key {
     const val BALANCER_GROUP = "balancerGroup"
     const val BALANCER_STRATEGY = "balancerStrategy"
     const val BALANCER_NAME_FILTER = "balancerNameFilter"
+    const val BALANCER_NAME_FILTER1 = "balancerNameFilter1"
 
     const val ROUTE_NAME = "routeName"
     const val ROUTE_DOMAIN = "routeDomain"
@@ -282,6 +283,7 @@ object Key {
     const val SUBSCRIPTION_AUTO_UPDATE = "subscriptionAutoUpdate"
     const val SUBSCRIPTION_AUTO_UPDATE_DELAY = "subscriptionAutoUpdateDelay"
     const val SUBSCRIPTION_NAME_FILTER = "subscriptionNameFilter"
+    const val SUBSCRIPTION_NAME_FILTER1 = "subscriptionNameFilter1"
 
     const val EDITING_ASSET_NAME = "editingAssetName"
     const val ASSET_NAME = "assetName"

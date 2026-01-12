@@ -75,6 +75,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         DataStore.balancerProbeUrl = probeUrl
         DataStore.balancerProbeInterval = probeInterval
         DataStore.balancerNameFilter = nameFilter
+        DataStore.balancerNameFilter1 = nameFilter1
     }
 
     override fun BalancerBean.serialize() {
@@ -86,11 +87,13 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         probeUrl = DataStore.balancerProbeUrl
         probeInterval = DataStore.balancerProbeInterval
         nameFilter = DataStore.balancerNameFilter
+        nameFilter1 = DataStore.balancerNameFilter1
     }
 
     lateinit var balancerType: SimpleMenuPreference
     lateinit var balancerGroup: GroupPreference
     lateinit var balancerNameFilter: EditTextPreference
+    lateinit var balancerNameFilter1: EditTextPreference
     lateinit var probeInterval: EditTextPreference
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -102,6 +105,7 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
         balancerType = findPreference(Key.BALANCER_TYPE)!!
         balancerGroup = findPreference(Key.BALANCER_GROUP)!!
         balancerNameFilter = findPreference(Key.BALANCER_NAME_FILTER)!!
+        balancerNameFilter1 = findPreference(Key.BALANCER_NAME_FILTER1)!!
         probeInterval = findPreference(Key.PROBE_INTERVAL)!!
         probeInterval.onBindEditTextListener = EditTextPreferenceModifiers.Number
 
@@ -118,12 +122,14 @@ class BalancerSettingsActivity : ProfileSettingsActivity<BalancerBean>(R.layout.
             BalancerBean.TYPE_LIST -> {
                 balancerGroup.isVisible = false
                 balancerNameFilter.isVisible = false
+                balancerNameFilter1.isVisible = false
                 configurationList.isVisible = true
                 itemView.isVisible = true
             }
             BalancerBean.TYPE_GROUP -> {
                 balancerGroup.isVisible = true
                 balancerNameFilter.isVisible = true
+                balancerNameFilter1.isVisible = true
                 configurationList.isVisible = false
                 itemView.isVisible = false
             }

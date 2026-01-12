@@ -87,6 +87,7 @@ class GroupSettingsActivity(
         DataStore.subscriptionAutoUpdate = subscription.autoUpdate
         DataStore.subscriptionAutoUpdateDelay = subscription.autoUpdateDelay
         DataStore.subscriptionNameFilter = subscription.nameFilter
+        DataStore.subscriptionNameFilter1 = subscription.nameFilter1
         DataStore.frontProxyOutbound = frontProxy
         DataStore.landingProxyOutbound = landingProxy
         DataStore.frontProxy = if (frontProxy >= 0) 1 else 0
@@ -117,6 +118,7 @@ class GroupSettingsActivity(
                 autoUpdate = DataStore.subscriptionAutoUpdate
                 autoUpdateDelay = DataStore.subscriptionAutoUpdateDelay
                 nameFilter = DataStore.subscriptionNameFilter
+                nameFilter1 = DataStore.subscriptionNameFilter1
             }
         }
     }

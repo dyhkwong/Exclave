@@ -564,4 +564,5 @@
     <string name="custom_root_ca_hint">请将 root_store.certs 放置在 Android/data/%s/files，或将 root_store.certs 导入为路由资源。</string>
     <string name="query_all_packages_alternative_method">使用替代方法查询已安装软件包</string>
     <string name="third_party_notices">第三方声明</string>
+    <string name="regular_expression_filter1">名称包含（正则表达式）</string>
 </resources>

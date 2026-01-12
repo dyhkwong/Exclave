@@ -42,6 +42,7 @@ public class BalancerBean extends InternalBean {
     public String probeUrl;
     public Integer probeInterval;
     public String nameFilter;
+    public String nameFilter1;
 
     @Override
     public void initializeDefaultValues() {
@@ -54,7 +55,7 @@ public class BalancerBean extends InternalBean {
         if (probeUrl == null) probeUrl = "";
         if (probeInterval == null) probeInterval = 300;
         if (nameFilter == null) nameFilter = "";
-
+        if (nameFilter1 == null) nameFilter1 = "";
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BalancerBean extends InternalBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(2);
+        output.writeInt(3);
         output.writeInt(type);
         output.writeString(strategy);
         switch (type) {
@@ -89,6 +90,7 @@ public class BalancerBean extends InternalBean {
         output.writeInt(probeInterval);
         if (type == TYPE_GROUP) {
             output.writeString(nameFilter);
+            output.writeString(nameFilter1);
         }
     }
 
@@ -117,6 +119,9 @@ public class BalancerBean extends InternalBean {
         }
         if (version >= 2 && type == TYPE_GROUP) {
             nameFilter = input.readString();
+        }
+        if (version >= 3 && type == TYPE_GROUP) {
+            nameFilter1 = input.readString();
         }
     }
 
