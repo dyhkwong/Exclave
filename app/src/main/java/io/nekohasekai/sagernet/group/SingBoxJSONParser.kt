@@ -931,7 +931,7 @@ private fun JsonObject.getString(key: String, ignoreCase: Boolean = true): Strin
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isString) {
-            return value.asString
+            return v.asString
         }
     }
     return null
@@ -957,7 +957,7 @@ private fun JsonObject.getInt(key: String, ignoreCase: Boolean = true): Int? {
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isNumber) {
             try {
-                return value.asInt
+                return v.asInt
             } catch (_: Exception) {}
         }
     }
@@ -974,7 +974,7 @@ private fun JsonObject.getBoolean(key: String, ignoreCase: Boolean = true): Bool
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isBoolean) {
-            return value.asBoolean
+            return v.asBoolean
         }
     }
     return null
@@ -990,7 +990,7 @@ private fun JsonObject.getObject(key: String, ignoreCase: Boolean = true): JsonO
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonObject) {
-            return value.asJsonObject
+            return v.asJsonObject
         }
     }
     return null
@@ -1006,7 +1006,7 @@ private fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = true): Js
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonArray) {
-            return value.asJsonArray
+            return v.asJsonArray
         }
     }
     return null
@@ -1066,9 +1066,9 @@ private fun JsonObject.getByteArray(key: String): ByteArray? {
                          return Base64.decode(v.asString.toByteArray())
                     } catch (_: Exception) {}
                 }
-                value.isJsonArray -> {
+                v.isJsonArray -> {
                     try {
-                        return Gson().fromJson(value, ByteArray::class.java)
+                        return Gson().fromJson(v, ByteArray::class.java)
                     } catch (_: Exception) {}
                 }
             }
