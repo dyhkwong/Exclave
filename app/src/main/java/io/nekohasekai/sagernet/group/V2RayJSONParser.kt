@@ -139,6 +139,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
+                                tlsSettings.getString("pinnedPeerCertSha256")?.also {
+                                    // https://github.com/XTLS/Xray-core/commit/0ca13452b8e99824e08c2c860dd0f84a4ae2859d
+                                    v2rayBean.pinnedPeerCertificateSha256 = it.split("~").joinToString("\n") { it.trim() }
+                                }
                             }
                         }
                         "reality" -> {
