@@ -60,7 +60,7 @@ fun JsonObject.getString(key: String, ignoreCase: Boolean = false): String? {
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isString) {
-            return value.asString
+            return v.asString
         }
     }
     return null
@@ -86,7 +86,7 @@ fun JsonObject.getInt(key: String, ignoreCase: Boolean = false): Int? {
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isNumber) {
             try {
-                return value.asInt
+                return v.asInt
             } catch (_: Exception) {}
         }
     }
@@ -103,7 +103,7 @@ fun JsonObject.getBoolean(key: String, ignoreCase: Boolean = false): Boolean? {
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isBoolean) {
-            return value.asBoolean
+            return v.asBoolean
         }
     }
     return null
@@ -129,7 +129,7 @@ fun JsonObject.getLong(key: String, ignoreCase: Boolean = false): Long? {
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonPrimitive && v.asJsonPrimitive.isNumber) {
             try {
-                return value.asLong
+                return v.asLong
             } catch (_: Exception) {}
         }
     }
@@ -146,7 +146,7 @@ fun JsonObject.getObject(key: String, ignoreCase: Boolean = false): JsonObject? 
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v.isJsonObject) {
-            return value.asJsonObject
+            return v.asJsonObject
         }
     }
     return null
@@ -162,7 +162,7 @@ fun JsonObject.getJsonArray(key: String, ignoreCase: Boolean = false): JsonArray
     }
     for ((k, v) in entrySet()) {
         if (k.equals(key, ignoreCase = true) && v != null && v.isJsonArray) {
-            return value.asJsonArray
+            return v.asJsonArray
         }
     }
     return null
