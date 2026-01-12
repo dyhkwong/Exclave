@@ -124,7 +124,6 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
 
         var profiles = mutableListOf<AbstractBean>()
 
-        val pattern = Regex(subscription.nameFilter)
         for (protocol in subscription.protocols) {
             val profilesInProtocol = oocResponse.getArray(protocol)
                 ?: error("missing protocol $protocol settings")
@@ -150,14 +149,16 @@ object OpenOnlineConfigUpdater : GroupUpdater() {
                 }
 
                 appendExtraInfo(profile, bean)
-
-                if (subscription.nameFilter.isEmpty() || !pattern.containsMatchIn(bean.name)) {
-                    profiles.add(bean)
-                }
+                profiles.add(bean)
             }
         }
 
         profiles.forEach { it.applyDefaultValues() }
+
+        if (subscription.nameFilter.isNotEmpty()) {
+            val pattern = Regex(subscription.nameFilter)
+            profiles = profiles.filter { !pattern.containsMatchIn(it.name) }.toMutableList()
+        }
 
         val exists = SagerDatabase.proxyDao.getByGroup(proxyGroup.id)
         val duplicate = ArrayList<String>()
