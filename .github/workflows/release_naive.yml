@@ -34,7 +34,7 @@ jobs:
           popd
       - name: Native Cache
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/${{ matrix.arch }}
@@ -54,31 +54,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Native Cache (armeabi-v7a)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/armeabi-v7a
           key: naive-armeabi-v7a-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Native Cache (arm64-v8a)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/arm64-v8a
           key: naive-arm64-v8a-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Native Cache (x86)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/x86
           key: naive-x86-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Native Cache (x86_64)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/x86_64
           key: naive-x86_64-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Gradle cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.gradle
           key: native-${{ hashFiles('**/*.gradle.kts') }}
@@ -95,8 +95,7 @@ jobs:
           sed -i 's/NAIVE_VERSION_NAME=local/NAIVE_VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}/' version.properties
           sed -i 's/NAIVE_VERSION=1/NAIVE_VERSION=${{ github.event.inputs.VERSION_CODE }}/' version.properties
           ./gradlew :plugin:naive:assembleOssRelease
-          APK=$(find plugin/naive/build/outputs/apk -name '*arm64-v8a*.apk')
-          APK=$(dirname "$APK")
+          APK="plugin/naive/build/outputs/apk/oss/release"
           echo "APK=$APK" >> $GITHUB_ENV
       - name: Upload Artifacts
         uses: actions/upload-artifact@v6

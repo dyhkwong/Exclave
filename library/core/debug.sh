@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gomobile bind -v -androidapi 21 . || exit 1
+CGO_LDFLAGS="-Wl,-z,max-page-size=16384" gomobile bind -v -androidapi 21 -tags='with_clash' . || exit 1
 rm -r libcore-sources.jar
 
 proj=../../app/libs

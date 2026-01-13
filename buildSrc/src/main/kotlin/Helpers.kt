@@ -71,13 +71,6 @@ fun Project.setupCommon(projectName: String) {
         defaultConfig {
             minSdk = if (projectName.lowercase(Locale.ROOT) == "naive") 24 else 21
         }
-        buildTypes {
-            getByName("release") {
-                isMinifyEnabled = true
-                @Suppress("UnstableApiUsage")
-                vcsInfo.include = false
-            }
-        }
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_21
             targetCompatibility = JavaVersion.VERSION_21
@@ -115,7 +108,14 @@ fun Project.setupCommon(projectName: String) {
         (this as? AbstractAppExtension)?.apply {
             buildTypes {
                 getByName("release") {
+                    isMinifyEnabled = true
                     isShrinkResources = true
+                    vcsInfo.include = false
+                }
+                getByName("debug") {
+                    applicationIdSuffix = "debug"
+                    debuggable(true)
+                    jniDebuggable(true)
                 }
             }
             applicationVariants.forEach { variant ->
