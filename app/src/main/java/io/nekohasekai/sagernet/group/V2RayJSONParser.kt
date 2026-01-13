@@ -1387,6 +1387,107 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
             }
             return beanList
         }
+        "hysteria" -> {
+            // Xray Hysteria 2
+            val hysteria2Bean = Hysteria2Bean()
+            outbound.getString("tag")?.also {
+                hysteria2Bean.name = it
+            }
+            outbound.getObject("settings")?.also { settings ->
+                settings.getString("address")?.also {
+                    hysteria2Bean.serverAddress = it
+                }
+                settings.getPort("port")?.also {
+                    hysteria2Bean.serverPorts = it.toString()
+                } ?: return listOf()
+            }
+            outbound.getObject("streamSettings")?.also { streamSettings ->
+                streamSettings.getString("network")?.lowercase()?.also { network ->
+                    when (network) {
+                        "hysteria" -> {
+                            streamSettings.getObject("hysteriaSettings")?.also { hysteriaSettings ->
+                                if (hysteriaSettings.getInt("version") != 2) {
+                                    return listOf()
+                                }
+                                hysteriaSettings.getString("auth")?.also {
+                                    hysteria2Bean.auth = it
+                                }
+                                hysteriaSettings.getObject("udphop")?.also { udphop ->
+                                    udphop.getInt("port")?.also {
+                                        if (it > 0) hysteria2Bean.serverPorts = it.toString()
+                                    } ?: udphop.getString("port")?.takeIf { it.isNotEmpty() }?.also {
+                                        // invalid port is ignored
+                                        hysteria2Bean.serverPorts = (it.split(",").joinToString(",") { it.trim() })
+                                            .takeIf { it.isValidHysteriaPort(disallowFromGreaterThanTo = true) }
+                                    }
+                                    udphop.getLong("interval")?.also {
+                                        hysteria2Bean.hopInterval = it.takeIf { it > 0 }
+                                    }
+                                }
+                            }
+                        }
+                        else -> return listOf()
+                    }
+                }
+                streamSettings.getArray("udpmasks")?.also { udpmasks ->
+                    if (udpmasks.size != 1) return listOf() // WTF is this
+                    val udpmask = udpmasks[0]
+                    if (udpmask.getString("type") != "salamander") return listOf()
+                    udpmask.getObject("settings")?.also { settings ->
+                        settings.getString("password")?.also {
+                            hysteria2Bean.obfs = it
+                        }
+                    }
+                }
+                streamSettings.getString("security")?.lowercase()?.also { security ->
+                    when (security) {
+                        "tls" -> {
+                            streamSettings.getObject("tlsSettings")?.also { tlsSettings ->
+                                tlsSettings.getString("serverName")?.also {
+                                    hysteria2Bean.sni = it
+                                }
+                                tlsSettings.getBoolean("allowInsecure")?.also {
+                                    hysteria2Bean.allowInsecure = it
+                                }
+                                tlsSettings.getArray("certificates")?.asReversed()?.forEach { certificate ->
+                                    when (certificate.getString("usage")?.lowercase()) {
+                                        null, "", "encipherment" -> {
+                                            if (!certificate.contains("certificateFile") && !certificate.contains("keyFile")) {
+                                                val cert = certificate.getStringArray("certificate")?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                val key = certificate.getStringArray("key")?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" PRIVATE KEY-----")
+                                                }
+                                                if (cert != null && key != null) {
+                                                    hysteria2Bean.mtlsCertificate = cert
+                                                    hysteria2Bean.mtlsCertificatePrivateKey = key
+                                                }
+                                            }
+                                        }
+                                        "verify" -> {
+                                            if (!certificate.contains("certificateFile")) {
+                                                val cert = certificate.getStringArray("certificate")?.joinToString("\n")?.takeIf {
+                                                    it.contains("-----BEGIN ") && it.contains("-----END ") && it.contains(" CERTIFICATE-----")
+                                                }
+                                                if (cert != null) {
+                                                    hysteria2Bean.certificates = cert
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                tlsSettings.getString("pinnedPeerCertSha256")?.also {
+                                    hysteria2Bean.pinnedPeerCertificateSha256 = it.split("~").joinToString("\n") { it.trim() }
+                                }
+                            }
+                        }
+                        else -> return listOf()
+                    }
+                }
+            }
+            return listOf(hysteria2Bean)
+        }
         else -> return listOf()
     }
 }

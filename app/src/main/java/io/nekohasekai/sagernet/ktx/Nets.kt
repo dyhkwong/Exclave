@@ -98,14 +98,14 @@ fun String.listByLineOrComma(): List<String> {
     return this.split(",", "\n").map { it.trim() }.filter { it.isNotEmpty() }
 }
 
-fun String.isValidHysteriaPort(): Boolean {
+fun String.isValidHysteriaPort(disallowFromGreaterThanTo: Boolean = false): Boolean {
     if (this.toIntOrNull() != null) {
         return this.toInt() in 0..65535
     }
     val portRanges = this.split(",")
     for (portRange in portRanges) {
         if (portRange.toIntOrNull() != null) {
-            if (portRange.toInt() < 0 || portRange.toInt() > 65535) {
+            if (portRange.toInt() !in 0..65535) {
                 return false
             }
         } else {
@@ -118,16 +118,19 @@ fun String.isValidHysteriaPort(): Boolean {
             if (from == null || to == null || from < 0 || from > 65535 || to < 0 || to > 65535) {
                 return false
             }
+            if (disallowFromGreaterThanTo && from > to) {
+                return false
+            }
         }
     }
     return true
 }
 
-fun String.isValidHysteriaMultiPort(): Boolean {
-    return this.toIntOrNull() == null && this.isValidHysteriaPort()
+fun String.isValidHysteriaMultiPort(disallowFromGreaterThanTo: Boolean = false): Boolean {
+    return this.toIntOrNull() == null && this.isValidHysteriaPort(disallowFromGreaterThanTo)
 }
 
-fun String.toHysteriaPort(): Int {
+fun String.toHysteriaPort(disallowFromGreaterThanTo: Boolean = false): Int {
     if (this.toIntOrNull() != null) {
         if (this.toInt() in 0..65535) {
             return this.toInt()
@@ -140,7 +143,7 @@ fun String.toHysteriaPort(): Int {
     var len = 0
     for (portRange in portRanges) {
         if (portRange.toIntOrNull() != null) {
-            if (portRange.toInt() < 0 || portRange.toInt() > 65535) {
+            if (portRange.toInt() !in 0..65535) {
                 error("invalid port range")
             }
             fromList.add(portRange.toInt())
@@ -157,6 +160,9 @@ fun String.toHysteriaPort(): Int {
                 error("invalid port range")
             }
             if (from > to) {
+                if (disallowFromGreaterThanTo) {
+                    error("invalid port range")
+                }
                 from = to.also { to = from }
             }
             fromList.add(from)
