@@ -337,13 +337,14 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 outbound.getString("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                (outbound.getInt("server_port")?.also {
+                outbound.getInt("server_port")?.takeIf { it > 0 }?.also {
                     serverPorts = it.toString()
-                } ?: outbound.getStringArray("server_ports")?.also {
+                }
+                outbound.getStringArray("server_ports")?.takeIf { it.isNotEmpty() }?.also {
                     serverPorts = it.joinToString(",").replace(":", "-")
                 } ?: outbound.getString("server_ports")?.also {
                     serverPorts = it.replace(":", "-")
-                }) ?: return listOf()
+                }
                 if (!serverPorts.isValidHysteriaPort()) {
                     return listOf()
                 }
@@ -437,13 +438,14 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                 outbound.getString("server")?.also {
                     serverAddress = it
                 } ?: return listOf()
-                (outbound.getInt("server_port")?.also {
+                outbound.getInt("server_port")?.takeIf { it > 0 }?.also {
                     serverPorts = it.toString()
-                } ?: outbound.getStringArray("server_ports")?.also {
+                }
+                outbound.getStringArray("server_ports")?.takeIf { it.isNotEmpty() }?.also {
                     serverPorts = it.joinToString(",").replace(":", "-")
                 } ?: outbound.getString("server_ports")?.also {
                     serverPorts = it.replace(":", "-")
-                }) ?: return listOf()
+                }
                 if (!serverPorts.isValidHysteriaPort()) {
                     return listOf()
                 }
