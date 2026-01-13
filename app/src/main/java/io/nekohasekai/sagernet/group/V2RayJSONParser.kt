@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.group
 
 import com.github.shadowsocks.plugin.PluginOptions
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.AbstractBean
@@ -390,8 +391,18 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         extra.addProperty("noGRPCHeader", it)
                                     }
                                 }
+                                if (!extra.contains("xmux")) {
+                                    splithttpSettings.getObject("xmux")?.also {
+                                        extra.add("xmux", it)
+                                    }
+                                }
+                                if (!extra.contains("downloadSettings")) {
+                                    splithttpSettings.getObject("downloadSettings")?.also {
+                                        extra.add("downloadSettings", it)
+                                    }
+                                }
                                 if (!extra.isEmpty) {
-                                    v2rayBean.splithttpExtra = extra.toString()
+                                    v2rayBean.splithttpExtra = GsonBuilder().setPrettyPrinting().create().toJson(extra)
                                 }
                             }
                         }
@@ -410,6 +421,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 }
                             }
                         }
+
                         else -> return listOf()
                     }
                 }

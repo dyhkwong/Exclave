@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.ktx.*
@@ -281,7 +282,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     val json = parseJson(extra).asJsonObject
                     if (!json.isEmpty) {
                         // fuck RPRX `extra`
-                        bean.splithttpExtra = json.toString()
+                        bean.splithttpExtra = GsonBuilder().setPrettyPrinting().create().toJson(json)
                     }
                 } catch (_: Exception) {}
             }

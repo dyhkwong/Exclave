@@ -1090,6 +1090,35 @@ fun buildV2RayConfig(
                                                                     }
                                                                 }
                                                             }
+                                                            extra.getObject("xmux", ignoreCase = true)?.also { xmuxSettings ->
+                                                                xmux = SplitHTTPObject.XmuxObject().apply {
+                                                                    xmuxSettings.getInt("maxConcurrency", ignoreCase = true)?.also {
+                                                                        maxConcurrency = it.toString()
+                                                                    } ?: xmuxSettings.getString("maxConcurrency", ignoreCase = true)?.also {
+                                                                        maxConcurrency = it
+                                                                    }
+                                                                    xmuxSettings.getInt("maxConnections", ignoreCase = true)?.also {
+                                                                        maxConnections = it.toString()
+                                                                    } ?: xmuxSettings.getString("maxConnections", ignoreCase = true)?.also {
+                                                                        maxConnections = it
+                                                                    }
+                                                                    xmuxSettings.getInt("cMaxReuseTimes", ignoreCase = true)?.also {
+                                                                        cMaxReuseTimes = it.toString()
+                                                                    } ?: xmuxSettings.getString("cMaxReuseTimes", ignoreCase = true)?.also {
+                                                                        cMaxReuseTimes = it
+                                                                    }
+                                                                    xmuxSettings.getInt("hMaxRequestTimes", ignoreCase = true)?.also {
+                                                                        hMaxRequestTimes = it.toString()
+                                                                    } ?: xmuxSettings.getString("hMaxRequestTimes", ignoreCase = true)?.also {
+                                                                        hMaxRequestTimes = it
+                                                                    }
+                                                                    xmuxSettings.getInt("hMaxReusableSecs", ignoreCase = true)?.also {
+                                                                        hMaxReusableSecs = it.toString()
+                                                                    } ?: xmuxSettings.getString("hMaxReusableSecs", ignoreCase = true)?.also {
+                                                                        hMaxReusableSecs = it
+                                                                    }
+                                                                }
+                                                            }
                                                         }
                                                     } catch (e: Exception) {
                                                         error(e)

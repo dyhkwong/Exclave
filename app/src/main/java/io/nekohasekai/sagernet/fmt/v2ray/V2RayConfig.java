@@ -297,8 +297,6 @@ public class V2RayConfig {
                     return ShadowsocksInboundConfigurationObject.class;
                 case "trojan":
                     return TrojanInboundConfigurationObject.class;
-                case "vliteu":
-                    return VLiteUInboundConfigurationObject.class;
                 case "mixed":
                     return MixedInboundConfigurationObject.class;
                 case "wireguard":
@@ -577,17 +575,6 @@ public class V2RayConfig {
 
     }
 
-    public static class VLiteUInboundConfigurationObject implements InboundConfigurationObject {
-
-        public String password;
-        public Boolean scramblePacket;
-        public Boolean enableFEC;
-        public Boolean enableStabilization;
-        public Boolean enableRenegotiation;
-        public Integer handshakeMaskingPaddingSize;
-
-    }
-
     public static class Hysteria2InboundConfigurationObject implements InboundConfigurationObject {
         public String packetEncoding;
     }
@@ -691,8 +678,6 @@ public class V2RayConfig {
                     return TrojanOutboundConfigurationObject.class;
                 case "loopback":
                     return LoopbackOutboundConfigurationObject.class;
-                case "vliteu":
-                    return VLiteUOutboundConfigurationObject.class;
                 case "wireguard":
                     return WireGuardOutboundConfigurationObject.class;
                 case "ssh":
@@ -928,19 +913,6 @@ public class V2RayConfig {
     public static class LoopbackOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public String inboundTag;
-
-    }
-
-    public static class VLiteUOutboundConfigurationObject implements OutboundConfigurationObject {
-
-        public String address;
-        public Integer port;
-        public String password;
-        public Boolean scramblePacket;
-        public Boolean enableFEC;
-        public Boolean enableStabilization;
-        public Boolean enableRenegotiation;
-        public Integer handshakeMaskingPaddingSize;
 
     }
 
@@ -1353,7 +1325,29 @@ public class V2RayConfig {
         public String scMinPostsIntervalMs;
         public String xPaddingBytes;
         public Boolean noGRPCHeader;
+        public XmuxObject xmux;
+        public DownloadSettingsObject downloadSettings;
         public Boolean useBrowserForwarding;
+
+        public static class XmuxObject {
+            public String maxConcurrency;
+            public String maxConnections;
+            public String cMaxReuseTimes;
+            public String hMaxRequestTimes;
+            public String hMaxReusableSecs;
+        }
+
+        public static class DownloadSettingsObject {
+            public String address;
+            public Integer port;
+            public String network;
+            public String security;
+            public TLSObject tlsSettings;
+            public UTLSObject utlsSettings;
+            public RealityObject realitySettings;
+            public SplitHTTPObject splithttpSettings;
+            public SplitHTTPObject xhttpSettings;
+        }
 
     }
 
