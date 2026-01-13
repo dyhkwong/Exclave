@@ -11,7 +11,7 @@ setupCommon()
 dependencies {
     protobuf(project(":library:proto"))
 
-    api("com.google.protobuf:protobuf-java:4.33.2")
+    api("com.google.protobuf:protobuf-java:4.33.4")
 }
 android {
     namespace = "com.v2ray.core"
@@ -24,7 +24,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.33.2"
+        artifact = "com.google.protobuf:protoc:4.33.4"
     }
     generateProtoTasks {
         all().forEach {
