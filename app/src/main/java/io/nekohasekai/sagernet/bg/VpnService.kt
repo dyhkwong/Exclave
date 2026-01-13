@@ -122,7 +122,7 @@ class VpnService : BaseVpnService(),
 
     @Suppress("EXPERIMENTAL_API_USAGE")
     override fun killProcesses() {
-        data.proxy!!.v2rayPoint.withLocalResolver(null)
+        data.proxy?.v2rayPoint?.withLocalResolver(null)
         tun?.apply {
             close()
         }
