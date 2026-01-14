@@ -34,7 +34,7 @@ jobs:
           popd
       - name: Native Cache
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/${{ matrix.arch }}
@@ -54,31 +54,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Native Cache (armeabi-v7a)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/armeabi-v7a
           key: naive-armeabi-v7a-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Native Cache (arm64-v8a)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/arm64-v8a
           key: naive-arm64-v8a-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Native Cache (x86)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/x86
           key: naive-x86-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Native Cache (x86_64)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             plugin/naive/src/main/jniLibs/x86_64
           key: naive-x86_64-${{ github.event.inputs.COMMIT_HASH }}-${{ hashFiles('bin/plugin/naive/*') }}
       - name: Gradle cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.gradle
           key: native-${{ hashFiles('**/*.gradle.kts') }}
