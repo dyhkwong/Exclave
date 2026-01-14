@@ -70,7 +70,7 @@ public class HysteriaBean extends AbstractBean {
         if (!DataStore.INSTANCE.getHysteriaEnablePortHopping()) {
             return true;
         }
-        return !NetsKt.isValidHysteriaMultiPort(serverPorts);
+        return !NetsKt.isValidHysteriaMultiPort(serverPorts, false);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class HysteriaBean extends AbstractBean {
         if (!DataStore.INSTANCE.getHysteriaEnablePortHopping()) {
             return false;
         }
-        return NetsKt.isValidHysteriaMultiPort(serverPorts);
+        return NetsKt.isValidHysteriaMultiPort(serverPorts, false);
     }
 
     @Override

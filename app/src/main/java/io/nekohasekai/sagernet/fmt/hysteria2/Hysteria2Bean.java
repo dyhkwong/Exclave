@@ -61,7 +61,7 @@ public class Hysteria2Bean extends AbstractBean {
         if (!DataStore.INSTANCE.getHysteriaEnablePortHopping()) {
             return true;
         }
-        return !NetsKt.isValidHysteriaMultiPort(serverPorts);
+        return !NetsKt.isValidHysteriaMultiPort(serverPorts, false);
     }
 
     @Override
