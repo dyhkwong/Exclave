@@ -1344,6 +1344,9 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                 hysteria2Bean.name = it
             }
             outbound.getObject("settings")?.also { settings ->
+                if (settings.getInt("version") != 2) {
+                    return listOf()
+                }
                 settings.getString("address")?.also {
                     hysteria2Bean.serverAddress = it
                 }
