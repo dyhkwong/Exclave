@@ -23,11 +23,15 @@ package io.nekohasekai.sagernet.widget
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.TooltipCompat
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.doOnPreDraw
 import com.google.android.material.bottomappbar.BottomAppBar
 import io.nekohasekai.sagernet.R
@@ -36,6 +40,7 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
+import io.nekohasekai.sagernet.utils.Theme
 
 class StatsBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
@@ -50,7 +55,38 @@ class StatsBar @JvmOverloads constructor(
         return behavior
     }
 
+    override fun performShow() {
+        super.performShow()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isNavigationBarAtBottom(this)) {
+            val activity = context.findActivity<MainActivity>()!!
+            val insetController = WindowInsetsControllerCompat(activity.window, activity.window.decorView)
+            insetController.isAppearanceLightNavigationBars =
+                if (DataStore.appTheme == Theme.BLACK) !Theme.usingNightMode() else false
+        }
+    }
+
+    override fun performHide() {
+        super.performHide()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isNavigationBarAtBottom(this)) {
+            val activity = context.findActivity<MainActivity>()!!
+            val insetController = WindowInsetsControllerCompat(activity.window, activity.window.decorView)
+            insetController.isAppearanceLightNavigationBars = !Theme.usingNightMode()
+        }
+    }
+
+    private fun isNavigationBarAtBottom(view: View): Boolean {
+        val insets = ViewCompat.getRootWindowInsets(view)!!
+        val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+        return navigationBar.bottom > 0 && navigationBar.left == 0 && navigationBar.right == 0
+    }
+
     class YourBehavior : Behavior() {
+        private fun isNavigationBarAtBottom(child: View): Boolean {
+            val insets = ViewCompat.getRootWindowInsets(child)!!
+            val navigationBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            return navigationBar.bottom > 0 && navigationBar.left == 0 && navigationBar.right == 0
+        }
+
         override fun onNestedScroll(
             coordinatorLayout: CoordinatorLayout, child: BottomAppBar, target: View,
             dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
@@ -67,6 +103,19 @@ class StatsBar @JvmOverloads constructor(
                 type,
                 consumed
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isNavigationBarAtBottom(child)) {
+                val activity = child.context.findActivity<MainActivity>()!!
+                val insetController = WindowInsetsControllerCompat(activity.window, activity.window.decorView)
+                when {
+                    dyConsumed + dyUnconsumed > 0 -> {
+                        insetController.isAppearanceLightNavigationBars = !Theme.usingNightMode()
+                    }
+                    dyConsumed + dyUnconsumed < 0 -> {
+                        insetController.isAppearanceLightNavigationBars =
+                            if (DataStore.appTheme == Theme.BLACK) !Theme.usingNightMode() else false
+                    }
+                }
+            }
         }
     }
 
