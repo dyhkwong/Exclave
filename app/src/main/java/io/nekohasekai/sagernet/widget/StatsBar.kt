@@ -41,11 +41,13 @@ import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.ui.MainActivity
 import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
 import io.nekohasekai.sagernet.utils.Theme
+import kotlinx.coroutines.Job
 
 class StatsBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null,
     defStyleAttr: Int = com.google.android.material.R.attr.bottomAppBarStyle,
 ) : BottomAppBar(context, attrs, defStyleAttr) {
+    private var testJob: Job? = null
     private lateinit var statusText: TextView
     private lateinit var txText: TextView
     private lateinit var rxText: TextView
@@ -138,10 +140,12 @@ class StatsBar @JvmOverloads constructor(
                 performShow()
                 setStatus(context.getText(R.string.vpn_connected))
             }
+            isEnabled = true
         } else {
             doOnPreDraw {
                 performHide()
             }
+            testJob?.cancel()
             updateTraffic(0, 0)
             setStatus(
                 context.getText(
@@ -170,10 +174,11 @@ class StatsBar @JvmOverloads constructor(
     }
 
     fun testConnection() {
+        testJob?.cancel()
         val activity = context.findActivity<MainActivity>()!!
         isEnabled = false
         setStatus(context.getText(R.string.connection_test_testing))
-        runOnDefaultDispatcher {
+        testJob = runOnDefaultDispatcher {
             try {
                 val elapsed = activity.urlTest()
                 onMainDispatcher {
