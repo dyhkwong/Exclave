@@ -193,8 +193,6 @@ class StatsBar @JvmOverloads constructor(
                 Logs.w(e)
                 onMainDispatcher {
                     isEnabled = true
-                    setStatus(context.getText(R.string.connection_test_testing))
-
                     var msg = e.localizedMessage ?: e.readableMessage
                     when {
                         msg.contains("timeout") || msg.contains("deadline") -> {
@@ -204,9 +202,7 @@ class StatsBar @JvmOverloads constructor(
                             msg = context.getString(R.string.connection_test_refused)
                         }
                     }
-                    activity.snackbar(
-                        context.getString(R.string.connection_test_error, msg)
-                    ).show()
+                    setStatus(context.getString(R.string.connection_test_error, msg))
                 }
             }
         }
