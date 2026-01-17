@@ -143,6 +143,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 tlsSettings.getString("pinnedPeerCertSha256")?.also {
                                     // https://github.com/XTLS/Xray-core/commit/0ca13452b8e99824e08c2c860dd0f84a4ae2859d
                                     v2rayBean.pinnedPeerCertificateSha256 = it.split("~").joinToString("\n") { it.trim() }
+                                    v2rayBean.allowInsecure = true
                                 }
                             }
                         }
@@ -1496,6 +1497,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 }
                                 tlsSettings.getString("pinnedPeerCertSha256")?.also {
                                     hysteria2Bean.pinnedPeerCertificateSha256 = it.split("~").joinToString("\n") { it.trim() }
+                                    hysteria2Bean.allowInsecure = true
                                 }
                             }
                         }
