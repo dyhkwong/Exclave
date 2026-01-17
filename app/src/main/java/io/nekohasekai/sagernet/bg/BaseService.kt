@@ -271,27 +271,14 @@ class BaseService {
         }
 
         override fun urlTest(): Int {
-            if (data?.proxy?.v2rayPoint == null) {
-                error("core not started")
-            }
+            val v2rayPoint = data?.proxy?.v2rayPoint ?: error("core not started")
             try {
                 return Libcore.urlTest(
-                    data!!.proxy!!.v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 3000
+                    v2rayPoint, TAG_SOCKS, DataStore.connectionTestURL, 5000
                 )
             } catch (e: Exception) {
                 Logs.w(e)
-                var msg = e.readableMessage
-                val msgL = msg.lowercase()
-                val context = data!!.proxy!!.service as Context
-                when {
-                    msgL.contains("timeout") || msg.contains("deadline") -> {
-                        msg = context.getString(R.string.connection_test_timeout)
-                    }
-                    msg.contains("refused") || msgL.contains("closed pipe") -> {
-                        msg = context.getString(R.string.connection_test_refused)
-                    }
-                }
-                error(msg)
+                error(e)
             }
         }
 
