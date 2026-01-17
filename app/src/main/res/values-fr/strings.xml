@@ -316,4 +316,5 @@
     <string name="fileSize_gibibyte">Gio</string>
     <string name="fileSize_tebibyte">Tio</string>
     <string name="fileSize_pebibyte">Pio</string>
+    <string name="translation_platform">Plateforme de traduction</string>
 </resources>

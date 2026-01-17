@@ -565,4 +565,5 @@
     <string name="query_all_packages_alternative_method">使用替代方法查询已安装软件包</string>
     <string name="third_party_notices">第三方声明</string>
     <string name="regular_expression_filter1">名称包含（正则表达式）</string>
+    <string name="translation_platform">翻译平台</string>
 </resources>

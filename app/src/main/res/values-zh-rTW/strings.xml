@@ -434,4 +434,5 @@
     <string name="fileSize_tebibyte">TiB</string>
     <string name="fileSize_pebibyte">PiB</string>
     <string name="create_shortcut">建立快捷方式</string>
+    <string name="translation_platform">翻譯平台</string>
 </resources>

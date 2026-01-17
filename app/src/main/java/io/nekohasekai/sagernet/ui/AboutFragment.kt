@@ -45,6 +45,7 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.danielstone.materialaboutlibrary.MaterialAboutFragment
 import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
+import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -100,6 +101,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             return MaterialAboutList.Builder()
                 .addCard(MaterialAboutCard.Builder()
                     .outline(false)
+                    .addItem(MaterialAboutTitleItem.Builder()
+                        .icon(R.mipmap.ic_launcher)
+                        .text(R.string.app_name)
+                        .build())
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_update_24)
                         .text(R.string.app_version)
@@ -157,6 +162,16 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             startActivity(Intent(
                                 Intent.ACTION_VIEW,
                                 "https://github.com/dyhkwong/Exclave".toUri()
+                            ))
+                        }
+                        .build())
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.baseline_translate_24)
+                        .text(R.string.translation_platform)
+                        .setOnClickAction {
+                            startActivity(Intent(
+                                Intent.ACTION_VIEW,
+                                "https://hosted.weblate.org/projects/exclave/".toUri()
                             ))
                         }
                         .build())
@@ -254,7 +269,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
             super.onViewCreated(view, savedInstanceState)
 
             view.findViewById<RecyclerView>(com.danielstone.materialaboutlibrary.R.id.mal_recyclerview).apply {
-                overScrollMode = RecyclerView.OVER_SCROLL_NEVER
+                overScrollMode = RecyclerView.OVER_SCROLL_ALWAYS
             }
         }
 

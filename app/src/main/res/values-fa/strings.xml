@@ -553,4 +553,5 @@
     <string name="mtls_certificate_private_key">کلید خصوصی گواهی mTLS</string>
     <string name="delete_multi_confirm_prompt">آیا مطمئن هستید که می خواهید این نمایه را حذف کنید؟</string>
     <string name="create_shortcut">ایجاد میانبر</string>
+    <string name="translation_platform">پلتفرم ترجمه</string>
 </resources>

@@ -596,4 +596,5 @@
     <string name="query_all_packages_alternative_method">Use alternative method to query installed apps</string>
     <string name="third_party_notices">Third party notices</string>
     <string name="regular_expression_filter1">Name inclusion (regular expression)</string>
+    <string name="translation_platform">Translation platform</string>
 </resources>

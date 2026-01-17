@@ -572,4 +572,5 @@
     <string name="query_all_packages_alternative_method">Используйте альтернативный метод для запроса информации об установленных приложениях</string>
     <string name="third_party_notices">Уведомления третьих лиц</string>
     <string name="regular_expression_filter1">Включение имени (регулярное выражение)</string>
+    <string name="translation_platform">Платформа локализации</string>
 </resources>
