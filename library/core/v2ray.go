@@ -23,6 +23,8 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -52,6 +54,17 @@ var (
 	systemDialer            internet.SystemDialer
 	systemDialerWithProtect internet.SystemDialer
 )
+
+func GetGoVersion() string {
+	return strings.TrimPrefix(runtime.Version(), "go")
+}
+
+func GetDepInfo() string {
+	if info, ok := debug.ReadBuildInfo(); ok {
+		return strings.ReplaceAll(info.String(), "\t", " ")
+	}
+	return ""
+}
 
 func GetV2RayVersion() string {
 	return core.Version()

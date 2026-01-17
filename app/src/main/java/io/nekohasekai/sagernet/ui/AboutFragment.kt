@@ -123,12 +123,37 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_airplanemode_active_24)
                         .text(getString(R.string.version_x, "v2ray-core"))
-                        .subText("v" + Libcore.getV2RayVersion() + "-fork")
+                        .subText(Libcore.getV2RayVersion() + "-fork")
                         .setOnClickAction {
                             startActivity(Intent(
                                 Intent.ACTION_VIEW,
                                 "https://github.com/dyhkwong/v2ray-core/tree/dev-sagernet".toUri()
                             ))
+                        }
+                        .build())
+                    .addItem(MaterialAboutActionItem.Builder()
+                        .icon(R.drawable.ic_baseline_info_24)
+                        .text(getString(R.string.version_x, "Go"))
+                        .subText(Libcore.getGoVersion())
+                        .setOnLongClickAction {
+                            MaterialAlertDialogBuilder(activityContext).apply {
+                                setView(NestedScrollView(activityContext).apply {
+                                    setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
+                                    addView( HorizontalScrollView(activityContext).apply {
+                                        isHorizontalScrollBarEnabled = false
+                                        addView(TextView(activityContext).apply {
+                                            text = Libcore.getDepInfo()
+                                            textSize = dp2pxf(4)
+                                            typeface = Typeface.MONOSPACE
+                                            isSingleLine = false
+                                            setTextIsSelectable(true)
+                                            setHorizontallyScrolling(false)
+                                            layoutParams = ViewGroup.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                                        })
+                                    })
+                                })
+                                setPositiveButton(android.R.string.ok, null)
+                            }.show()
                         }
                         .build())
                     .apply {
