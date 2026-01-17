@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("kotlin-parcelize")
     id("com.google.protobuf")
     id("com.google.devtools.ksp")
@@ -18,24 +17,12 @@ licenseReport {
 setupApp()
 
 android {
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
-    ksp {
-        arg("room.incremental", "true")
-        arg("room.schemaLocation", "$projectDir/schemas")
-    }
-    bundle {
-        language {
-            enableSplit = false
-        }
-    }
-    buildFeatures {
-        aidl = true
-        buildConfig = true
-        viewBinding = true
-    }
     namespace = "io.nekohasekai.sagernet"
+}
+
+ksp {
+    arg("room.incremental", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {

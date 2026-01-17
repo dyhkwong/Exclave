@@ -17,22 +17,28 @@
  *                                                                            *
  ******************************************************************************/
 
-import com.android.build.api.dsl.*
-import com.android.build.gradle.AbstractAppExtension
-import com.android.build.gradle.internal.api.ApkVariantOutputImpl
-import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.FilterConfiguration
+import com.android.build.api.variant.impl.capitalizeFirstChar
 import org.apache.tools.ant.filters.StringInputStream
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
-import java.util.*
+import org.gradle.kotlin.dsl.getByType
+import java.io.File
+import java.util.Properties
 import kotlin.io.encoding.Base64
 
-private val Project.android
-    get() = extensions.getByName<CommonExtension<BuildFeatures, BuildType, DefaultConfig, ProductFlavor, AndroidResources, Installation>>(
-        "android"
-    )
-private val Project.androidApp get() = android as ApplicationExtension
+private val Project.android: CommonExtension
+    get() = extensions.getByName("android") as CommonExtension
+
+private val Project.androidApp: ApplicationExtension
+    get() = extensions.getByType<ApplicationExtension>()
+
+private val Project.androidComponents: ApplicationAndroidComponentsExtension
+    get() = extensions.getByType<ApplicationAndroidComponentsExtension>()
 
 private lateinit var metadata: Properties
 private lateinit var localProperties: Properties
@@ -60,86 +66,39 @@ fun Project.requireLocalProperties(): Properties {
     return localProperties
 }
 
-fun Project.setupCommon() {
-    setupCommon("")
-}
-
-fun Project.setupCommon(projectName: String) {
+fun Project.setupCommon(projectName: String = "") {
     android.apply {
         buildToolsVersion = "36.1.0"
         compileSdk = 36
-        defaultConfig {
-            minSdk = if (projectName.lowercase(Locale.ROOT) == "naive") 24 else 21
-        }
-        compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_21
-            targetCompatibility = JavaVersion.VERSION_21
-        }
-        lint {
-            showAll = true
-            checkAllWarnings = true
-            checkReleaseBuilds = false
-            warningsAsErrors = true
-            textOutput = project.file("build/lint.txt")
-            htmlOutput = project.file("build/lint.html")
-        }
-        packaging {
-            resources {
-                excludes.addAll(
-                    listOf(
-                        "**/*.kotlin_*",
-                        "/META-INF/*.version",
-                        "/META-INF/androidx/**",
-                        "/META-INF/native/**",
-                        "/META-INF/native-image/**",
-                        "/META-INF/INDEX.LIST",
-                        "DebugProbesKt.bin",
-                        "com/**",
-                        "org/**",
-                        "**/*.java",
-                        "**/*.proto",
-                    )
-                )
-            }
-        }
-        packaging {
-            jniLibs.useLegacyPackaging = true
-        }
-        (this as? AbstractAppExtension)?.apply {
-            buildTypes {
-                getByName("release") {
-                    isMinifyEnabled = true
-                    isShrinkResources = true
-                    vcsInfo.include = false
-                }
-                getByName("debug") {
-                    applicationIdSuffix = "debug"
-                    debuggable(true)
-                    jniDebuggable(true)
-                }
-            }
-            applicationVariants.forEach { variant ->
-                variant.outputs.forEach {
-                    it as BaseVariantOutputImpl
-                    it.outputFileName = it.outputFileName.replace(
-                        "app", "${project.name}-" + variant.versionName
-                    ).replace("-release", "").replace("-oss", "")
-                }
-            }
-        }
-    }
-    (android as? ApplicationExtension)?.apply {
-        defaultConfig {
-            targetSdk = 36
-        }
+        defaultConfig.minSdk = if (projectName.lowercase() == "naive") 24 else 21
+        compileOptions.sourceCompatibility = JavaVersion.VERSION_21
+        compileOptions.targetCompatibility = JavaVersion.VERSION_21
+        lint.showAll = true
+        lint.checkAllWarnings = true
+        lint.checkReleaseBuilds = false
+        lint.warningsAsErrors = true
+        lint.textOutput = project.file("build/lint.txt")
+        lint.htmlOutput = project.file("build/lint.html")
+        packaging.jniLibs.useLegacyPackaging = true
+        packaging.resources.excludes.addAll(
+            listOf(
+                "**/*.kotlin_*",
+                "/META-INF/*.version",
+                "/META-INF/androidx/**",
+                "/META-INF/native/**",
+                "/META-INF/native-image/**",
+                "/META-INF/INDEX.LIST",
+                "DebugProbesKt.bin",
+                "com/**",
+                "org/**",
+                "**/*.java",
+                "**/*.proto",
+            )
+        )
     }
 }
 
-fun Project.setupAppCommon() {
-    setupAppCommon("")
-}
-
-fun Project.setupAppCommon(projectName: String) {
+fun Project.setupAppCommon(projectName: String = "") {
     setupCommon(projectName)
 
     val lp = requireLocalProperties()
@@ -149,149 +108,138 @@ fun Project.setupAppCommon(projectName: String) {
 
     androidApp.apply {
         if (keystorePwd != null) {
-            signingConfigs {
-                create("release") {
-                    storeFile = rootProject.file("release.keystore")
-                    storePassword = keystorePwd
-                    keyAlias = alias
-                    keyPassword = pwd
-                    enableV3Signing = true
-                }
+            signingConfigs.create("release") {
+                storeFile = rootProject.file("release.keystore")
+                storePassword = keystorePwd
+                keyAlias = alias
+                keyPassword = pwd
+                enableV3Signing = true
             }
         }
-        dependenciesInfo {
-            includeInApk = false
-            includeInBundle = false
-        }
-        buildTypes {
-            val key = signingConfigs.findByName("release")
-            if (key != null) {
-                getByName("release").signingConfig = key
+
+        defaultConfig.targetSdk = 36
+        buildTypes.getByName("release") {
+            vcsInfo.include = false
+            signingConfigs.findByName("release")?.let {
+                signingConfig = it
             }
         }
-    }
-}
-
-fun Project.setupPlugin(projectName: String) {
-    val propPrefix = projectName.uppercase(Locale.ROOT)
-    val verName = requireMetadata().getProperty("${propPrefix}_VERSION_NAME").trim()
-    val verCode = requireMetadata().getProperty("${propPrefix}_VERSION").trim().toInt()
-    androidApp.defaultConfig {
-        versionName = verName
-        versionCode = verCode
-    }
-
-    apply(plugin = "kotlin-android")
-
-    setupAppCommon(projectName)
-
-    androidApp.apply {
-        dependenciesInfo {
-            includeInApk = false
-            includeInBundle = false
+        buildTypes.getByName("debug") {
+            applicationIdSuffix = "debug"
+            isDebuggable = true
+            isJniDebuggable = true
         }
-
-        this as AbstractAppExtension
-
+        dependenciesInfo.includeInApk = false
+        dependenciesInfo.includeInBundle = false
+        bundle.language.enableSplit = false
         if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames.any { it.lowercase().contains("assemble") }) {
-            splits.abi {
+            splits.abi.apply {
                 isEnable = true
                 isUniversalApk = false
-
                 reset()
                 include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
             }
         }
+    }
+    dependencies.add("implementation", project(":plugin:api"))
+}
 
+fun Project.setupPlugin(projectName: String) {
+    setupAppCommon(projectName)
+
+    val propPrefix = projectName.uppercase()
+    val verName = requireMetadata().getProperty("${propPrefix}_VERSION_NAME").trim()
+    val verCode = requireMetadata().getProperty("${propPrefix}_VERSION").trim().toInt()
+
+    androidApp.apply {
+        defaultConfig.versionName = verName
+        defaultConfig.versionCode = verCode
         flavorDimensions.add("vendor")
-        productFlavors {
-            create("oss")
-        }
+        productFlavors.create("oss")
+    }
+    androidComponents.apply {
+        onVariants { variant ->
+            variant.outputs.forEach { output ->
+                when (output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier) {
+                    "arm64-v8a" -> output.versionCode.set(verCode + 4)
+                    "x86_64" -> output.versionCode.set(verCode + 3)
+                    "armeabi-v7a" -> output.versionCode.set(verCode + 2)
+                    "x86" -> output.versionCode.set(verCode + 1)
+                }
+            }
 
-        applicationVariants.all {
-            outputs.all {
-                this as BaseVariantOutputImpl
-                outputFileName = outputFileName.replace(
-                    project.name, "${project.name}-plugin-$versionName"
-                ).replace("-release", "").replace("-oss", "")
-
+            tasks.matching { it.name == "assemble${variant.name.capitalizeFirstChar()}" }.configureEach {
+                doLast {
+                    variant.artifacts.getBuiltArtifactsLoader().load(variant.artifacts.get(SingleArtifact.APK).get())?.elements?.forEach {
+                        val source = File(it.outputFile)
+                        val versionName = it.versionName.orEmpty()
+                        val destination = File(source.parentFile, source.name
+                            .replace(project.name, "${project.name}-plugin-$versionName")
+                            .replace("-release", "")
+                            .replace("-oss", ""))
+                        source.renameTo(destination)
+                    }
+                }
             }
         }
     }
-
-    dependencies.add("implementation", project(":plugin:api"))
-
 }
 
 fun Project.setupApp() {
     val pkgName = requireMetadata().getProperty("PACKAGE_NAME").trim()
     val verName = requireMetadata().getProperty("VERSION_NAME").trim()
     val verCode = requireMetadata().getProperty("VERSION_CODE").trim().toInt() * 5
-    androidApp.apply {
-        defaultConfig {
-            applicationId = pkgName
-            versionCode = verCode
-            versionName = verName
-        }
-    }
     setupAppCommon()
-
     androidApp.apply {
-        this as AbstractAppExtension
-
-        buildTypes {
-            getByName("release") {
-                proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    file("proguard-rules.pro")
-                )
-            }
+        defaultConfig.applicationId = pkgName
+        defaultConfig.versionCode = verCode
+        defaultConfig.versionName = verName
+        buildTypes.getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                file("proguard-rules.pro")
+            )
         }
-
-        if (gradle.startParameter.taskNames.isNotEmpty() && gradle.startParameter.taskNames.any { it.lowercase().contains("assemble") }) {
-            splits.abi {
-                isEnable = true
-                isUniversalApk = false
-                reset()
-                include("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
-            }
-        }
-
+        buildFeatures.aidl = true
+        buildFeatures.buildConfig = true
+        buildFeatures.viewBinding = true
+        compileOptions.isCoreLibraryDesugaringEnabled = true
         flavorDimensions.add("vendor")
-        productFlavors {
-            create("oss")
-        }
-
-        applicationVariants.all {
-            outputs.forEach { output ->
-                output as ApkVariantOutputImpl
-                when (output.filters.find { it.filterType == "ABI" }?.identifier) {
-                    "arm64-v8a" -> output.versionCodeOverride = verCode + 4
-                    "x86_64" -> output.versionCodeOverride = verCode + 3
-                    "armeabi-v7a" -> output.versionCodeOverride = verCode + 2
-                    "x86" -> output.versionCodeOverride = verCode + 1
-                }
-            }
-            outputs.all {
-                this as BaseVariantOutputImpl
-                outputFileName = outputFileName.replace(project.name, "Exclave-$versionName")
-                    .replace("-release", "")
-                    .replace("-oss", "")
-
-            }
-        }
-
+        productFlavors.create("oss")
         tasks.register("downloadAssets") {
             downloadAssets(update = false)
         }
-
         tasks.register("updateAssets") {
             downloadRootCAList()
             downloadAssets(update = true)
         }
     }
+    androidComponents.apply {
+        onVariants { variant ->
+            variant.outputs.forEach { output ->
+                when (output.filters.find { it.filterType == FilterConfiguration.FilterType.ABI }?.identifier) {
+                    "arm64-v8a" -> output.versionCode.set(verCode + 4)
+                    "x86_64" -> output.versionCode.set(verCode + 3)
+                    "armeabi-v7a" -> output.versionCode.set(verCode + 2)
+                    "x86" -> output.versionCode.set(verCode + 1)
+                }
+            }
 
-    dependencies {
-        add("implementation", project(":plugin:api"))
+            tasks.matching { it.name == "assemble${variant.name.capitalizeFirstChar()}" }.configureEach {
+                doLast {
+                    variant.artifacts.getBuiltArtifactsLoader().load(variant.artifacts.get(SingleArtifact.APK).get())?.elements?.forEach {
+                        val source = File(it.outputFile)
+                        val versionName = it.versionName.orEmpty()
+                        val destination = File(source.parentFile, source.name
+                            .replace(project.name, "Exclave-$versionName")
+                            .replace("-release", "")
+                            .replace("-oss", ""))
+                        source.renameTo(destination)
+                    }
+                }
+            }
+        }
     }
 }
