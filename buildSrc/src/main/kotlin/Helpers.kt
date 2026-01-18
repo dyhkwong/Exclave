@@ -141,6 +141,15 @@ fun Project.setupAppCommon(projectName: String = "") {
             }
         }
     }
+    val cleanTask = tasks.register("cleanAboutLibrariesGenerated") {
+        delete(layout.buildDirectory.dir("generated/aboutLibraries"))
+    }
+
+    tasks.configureEach {
+        if (name.contains("preBuild")) {
+            dependsOn(cleanTask)
+        }
+    }
     dependencies.add("implementation", project(":plugin:api"))
 }
 
@@ -215,6 +224,7 @@ fun Project.setupApp() {
             downloadRootCAList()
             downloadAssets(update = true)
         }
+
     }
     androidComponents.apply {
         onVariants { variant ->

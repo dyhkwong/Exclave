@@ -104,6 +104,26 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                     .addItem(MaterialAboutTitleItem.Builder()
                         .icon(R.mipmap.ic_launcher)
                         .text(R.string.app_name)
+                        .setOnLongClickAction {
+                            MaterialAlertDialogBuilder(activityContext).apply {
+                                setView(NestedScrollView(activityContext).apply {
+                                    setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
+                                    addView( HorizontalScrollView(activityContext).apply {
+                                        isHorizontalScrollBarEnabled = false
+                                        addView(TextView(activityContext).apply {
+                                            text = resources.openRawResource(R.raw.aboutlibraries).bufferedReader().use { it.readText() }
+                                            textSize = dp2pxf(4)
+                                            typeface = Typeface.MONOSPACE
+                                            isSingleLine = false
+                                            setTextIsSelectable(true)
+                                            setHorizontallyScrolling(false)
+                                            layoutParams = ViewGroup.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                                        })
+                                    })
+                                })
+                                setPositiveButton(android.R.string.ok, null)
+                            }.show()
+                        }
                         .build())
                     .addItem(MaterialAboutActionItem.Builder()
                         .icon(R.drawable.ic_baseline_update_24)
