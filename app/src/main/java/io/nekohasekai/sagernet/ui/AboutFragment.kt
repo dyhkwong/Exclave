@@ -106,98 +106,101 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
         }
 
         override fun getMaterialAboutList(activityContext: Context?): MaterialAboutList {
-            if (activityContext == null) {
+            try {
+                if (activityContext == null) {
+                    return MaterialAboutList.Builder().build()
+                }
+                return MaterialAboutList.Builder()
+                    .addCard(MaterialAboutCard.Builder()
+                        .outline(false)
+                        .addItem(MaterialAboutActionItem.Builder()
+                            .icon(R.drawable.ic_baseline_update_24)
+                            .text(R.string.app_version)
+                            .subText(BuildConfig.VERSION_NAME)
+                            .setOnClickAction {
+                                startActivity(Intent(
+                                    Intent.ACTION_VIEW,
+                                    "https://github.com/dyhkwong/Exclave/releases".toUri()
+                                ))
+                            }
+                            .setOnLongClickAction {
+                                DataStore.enableDebug = !DataStore.enableDebug
+                                snackbar(if (DataStore.enableDebug) "developer mode enabled" else "developer mode disabled").show()
+                            }
+                            .build())
+                        .addItem(MaterialAboutActionItem.Builder()
+                            .icon(R.drawable.ic_baseline_airplanemode_active_24)
+                            .text(getString(R.string.version_x, "v2ray-core"))
+                            .subText("v" + Libcore.getV2RayVersion() + "-fork")
+                            .setOnClickAction {
+                                startActivity(Intent(
+                                    Intent.ACTION_VIEW,
+                                    "https://github.com/dyhkwong/v2ray-core/tree/dev-sagernet".toUri()
+                                ))
+                            }
+                            .build())
+                        .apply {
+                            val m = enumValues<PluginEntry>().associateBy { it.pluginId }
+                            for (plugin in PluginManager.fetchPlugins()) {
+                                if (!m.containsKey(plugin.id)) continue
+                                try {
+                                    addItem(MaterialAboutActionItem.Builder()
+                                        .icon(R.drawable.ic_baseline_nfc_24)
+                                        .text(getString(R.string.version_x, plugin.id))
+                                        .subText("v" + plugin.versionName)
+                                        .setOnClickAction {
+                                            startActivity(Intent().apply {
+                                                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                                data = Uri.fromParts(
+                                                    "package", plugin.packageName, null
+                                                )
+                                            })
+                                        }
+                                        .build())
+                                } catch (e: Exception) {
+                                    Logs.w(e)
+                                }
+                            }
+                        }
+                        .apply {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                val pm = activityContext.getSystemService(Context.POWER_SERVICE) as PowerManager
+                                if (!pm.isIgnoringBatteryOptimizations(activityContext.packageName)) {
+                                    addItem(MaterialAboutActionItem.Builder()
+                                        .icon(R.drawable.ic_baseline_running_with_errors_24)
+                                        .text(R.string.ignore_battery_optimizations)
+                                        .subText(R.string.ignore_battery_optimizations_sum)
+                                        .setOnClickAction {
+                                            requestIgnoreBatteryOptimizations.launch(
+                                                Intent(
+                                                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                                    "package:${activityContext.packageName}".toUri()
+                                                )
+                                            )
+                                        }
+                                        .build())
+                                }
+                            }
+                        }
+                        .build())
+                    .addCard(MaterialAboutCard.Builder()
+                        .outline(false)
+                        .title(R.string.project)
+                        .addItem(MaterialAboutActionItem.Builder()
+                            .icon(R.drawable.ic_baseline_sanitizer_24)
+                            .text(R.string.github)
+                            .setOnClickAction {
+                                startActivity(Intent(
+                                    Intent.ACTION_VIEW,
+                                    "https://github.com/dyhkwong/Exclave".toUri()
+                                ))
+                            }
+                            .build())
+                        .build())
+                    .build()
+            } catch (_: IllegalStateException) {
                 return MaterialAboutList.Builder().build()
             }
-            return MaterialAboutList.Builder()
-                .addCard(MaterialAboutCard.Builder()
-                    .outline(false)
-                    .addItem(MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_update_24)
-                        .text(R.string.app_version)
-                        .subText(BuildConfig.VERSION_NAME)
-                        .setOnClickAction {
-                            startActivity(Intent(
-                                Intent.ACTION_VIEW,
-                                "https://github.com/dyhkwong/Exclave/releases".toUri()
-                            ))
-                        }
-                        .setOnLongClickAction {
-                            DataStore.enableDebug = !DataStore.enableDebug
-                            snackbar(if (DataStore.enableDebug) "developer mode enabled" else "developer mode disabled").show()
-                        }
-                        .build())
-                    .addItem(MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_airplanemode_active_24)
-                        .text(getString(R.string.version_x, "v2ray-core"))
-                        .subText("v" + Libcore.getV2RayVersion() + "-fork")
-                        .setOnClickAction {
-                            startActivity(Intent(
-                                Intent.ACTION_VIEW,
-                                "https://github.com/dyhkwong/v2ray-core/tree/dev-sagernet".toUri()
-                            ))
-                        }
-                        .build())
-                    .apply {
-                        val m = enumValues<PluginEntry>().associateBy { it.pluginId }
-                        for (plugin in PluginManager.fetchPlugins()) {
-                            if (!m.containsKey(plugin.id)) continue
-                            try {
-                                addItem(MaterialAboutActionItem.Builder()
-                                    .icon(R.drawable.ic_baseline_nfc_24)
-                                    .text(getString(R.string.version_x, plugin.id))
-                                    .subText("v" + plugin.versionName)
-                                    .setOnClickAction {
-                                        startActivity(Intent().apply {
-                                            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                            data = Uri.fromParts(
-                                                "package", plugin.packageName, null
-                                            )
-                                        })
-                                    }
-                                    .build())
-                            } catch (e: Exception) {
-                                Logs.w(e)
-                            }
-                        }
-                    }
-                    .apply {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            val pm = activityContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-                            if (!pm.isIgnoringBatteryOptimizations(activityContext.packageName)) {
-                                addItem(MaterialAboutActionItem.Builder()
-                                    .icon(R.drawable.ic_baseline_running_with_errors_24)
-                                    .text(R.string.ignore_battery_optimizations)
-                                    .subText(R.string.ignore_battery_optimizations_sum)
-                                    .setOnClickAction {
-                                        requestIgnoreBatteryOptimizations.launch(
-                                            Intent(
-                                                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                                                "package:${activityContext.packageName}".toUri()
-                                            )
-                                        )
-                                    }
-                                    .build())
-                            }
-                        }
-                    }
-                    .build())
-                .addCard(MaterialAboutCard.Builder()
-                    .outline(false)
-                    .title(R.string.project)
-                    .addItem(MaterialAboutActionItem.Builder()
-                        .icon(R.drawable.ic_baseline_sanitizer_24)
-                        .text(R.string.github)
-                        .setOnClickAction {
-                            startActivity(Intent(
-                                Intent.ACTION_VIEW,
-                                "https://github.com/dyhkwong/Exclave".toUri()
-                            ))
-                        }
-                        .build())
-                    .build())
-                .build()
-
         }
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
