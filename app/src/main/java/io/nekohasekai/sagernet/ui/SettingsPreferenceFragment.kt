@@ -308,12 +308,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val rulesGeoipUrl = findPreference<LinkOrContentPreference>(Key.RULES_GEOIP_URL)!!
         rulesProvider.setOnPreferenceChangeListener { _, newValue ->
             val provider = (newValue as String).toInt()
-            rulesGeositeUrl.isVisible = provider > 2
-            rulesGeoipUrl.isVisible = provider > 2
+            rulesGeositeUrl.isVisible = provider == 3
+            rulesGeoipUrl.isVisible = provider == 3
             true
         }
-        rulesGeositeUrl.isVisible = DataStore.rulesProvider > 2
-        rulesGeoipUrl.isVisible = DataStore.rulesProvider > 2
+        rulesGeositeUrl.isVisible = DataStore.rulesProvider == 3
+        rulesGeoipUrl.isVisible = DataStore.rulesProvider == 3
 
         // protocol settings
         val enableFragment = findPreference<SwitchPreference>(Key.ENABLE_FRAGMENT)!!

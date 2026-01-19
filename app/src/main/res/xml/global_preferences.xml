@@ -173,8 +173,8 @@
             app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:defaultValue="0"
-            app:entries="@array/rules_dat_provider"
-            app:entryValues="@array/int_array_4"
+            app:entries="@array/rules_dat_provider_entry"
+            app:entryValues="@array/rules_dat_provider_value"
             app:icon="@drawable/ic_baseline_rule_folder_24"
             app:key="rulesProvider"
             app:title="@string/route_rules_provider"

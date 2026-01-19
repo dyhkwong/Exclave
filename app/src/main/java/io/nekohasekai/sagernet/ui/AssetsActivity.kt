@@ -312,6 +312,7 @@ class AssetsActivity : ThemedActivity() {
         val repo: String
         var fileName = file.name
         when (DataStore.rulesProvider) {
+            3 -> return updateGeoAsset(file, versionFile)
             0 -> {
                 if (file.name == internalFiles[0]) {
                     repo = "v2fly/geoip"
@@ -322,7 +323,8 @@ class AssetsActivity : ThemedActivity() {
             }
             1 -> repo = "Loyalsoldier/v2ray-rules-dat"
             2 -> repo = "Chocolate4U/Iran-v2ray-rules"
-            else -> return updateGeoAsset(file, versionFile)
+            4 -> repo = "runetfreedom/russia-v2ray-rules-dat"
+            else -> error("invalid asset provider")
         }
 
         val client = Libcore.newHttpClient().apply {
