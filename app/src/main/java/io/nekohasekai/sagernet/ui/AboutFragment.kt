@@ -117,7 +117,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                             isSingleLine = false
                                             setTextIsSelectable(true)
                                             setHorizontallyScrolling(false)
-                                            layoutParams = ViewGroup.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                                            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                                         })
                                     })
                                 })
@@ -302,7 +302,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             isSingleLine = false
                             setTextIsSelectable(true)
                             setHorizontallyScrolling(false)
-                            layoutParams = ViewGroup.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                         })
                     })
                 })

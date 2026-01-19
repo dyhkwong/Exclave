@@ -211,6 +211,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                 }
             }
             // url.queryParameter("fp")
+            url.queryParameter("pcs")?.takeIf { it.isNotEmpty() }?.let { pcs ->
+                bean.allowInsecure = true
+                bean.pinnedPeerCertificateSha256 = pcs.split("~")
+                    .mapNotNull { it.trim().ifEmpty { null } }
+                    .joinToString("\n")
+            }
         }
         "reality" -> {
             url.queryParameter("sni")?.let {
@@ -751,6 +757,9 @@ fun StandardV2RayBean.toUri(): String? {
                 pinnedPeerCertificatePublicKeySha256.isEmpty() && pinnedPeerCertificateChainSha256.isEmpty()) {
                 // bad format from where?
                 builder.addQueryParameter("allowInsecure", "1")
+            }
+            if (pinnedPeerCertificateSha256.isNotEmpty()) {
+                builder.addQueryParameter("pcs", pinnedPeerCertificateSha256.listByLineOrComma().joinToString("~"))
             }
             if (this is VLESSBean && flow.isNotEmpty()) {
                 builder.addQueryParameter("flow", flow.removeSuffix("-udp443"))
