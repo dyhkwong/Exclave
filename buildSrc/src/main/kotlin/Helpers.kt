@@ -17,17 +17,15 @@
  *                                                                            *
  ******************************************************************************/
 
-import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.FilterConfiguration
-import com.android.build.api.variant.impl.capitalizeFirstChar
+import com.android.build.api.variant.impl.VariantOutputImpl
 import org.apache.tools.ant.filters.StringInputStream
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
-import java.io.File
 import java.util.Properties
 import kotlin.io.encoding.Base64
 
@@ -175,19 +173,13 @@ fun Project.setupPlugin(projectName: String) {
                     "armeabi-v7a" -> output.versionCode.set(verCode + 2)
                     "x86" -> output.versionCode.set(verCode + 1)
                 }
-            }
-
-            tasks.matching { it.name == "assemble${variant.name.capitalizeFirstChar()}" }.configureEach {
-                doLast {
-                    variant.artifacts.getBuiltArtifactsLoader().load(variant.artifacts.get(SingleArtifact.APK).get())?.elements?.forEach {
-                        val source = File(it.outputFile)
-                        val versionName = it.versionName.orEmpty()
-                        val destination = File(source.parentFile, source.name
-                            .replace(project.name, "${projectName}-plugin-$versionName")
-                            .replace("-release", "")
-                            .replace("-oss", ""))
-                        source.renameTo(destination)
-                    }
+                (output as? VariantOutputImpl)?.let { variantOutputImpl ->
+                    val versionName = variantOutputImpl.versionName.orNull.orEmpty()
+                    variantOutputImpl.outputFileName.set(variantOutputImpl.outputFileName.get()
+                        .replace(project.name, "${projectName}-plugin-$versionName")
+                        .replace("-release", "")
+                        .replace("-oss", "")
+                    )
                 }
             }
         }
@@ -235,19 +227,13 @@ fun Project.setupApp() {
                     "armeabi-v7a" -> output.versionCode.set(verCode + 2)
                     "x86" -> output.versionCode.set(verCode + 1)
                 }
-            }
-
-            tasks.matching { it.name == "assemble${variant.name.capitalizeFirstChar()}" }.configureEach {
-                doLast {
-                    variant.artifacts.getBuiltArtifactsLoader().load(variant.artifacts.get(SingleArtifact.APK).get())?.elements?.forEach {
-                        val source = File(it.outputFile)
-                        val versionName = it.versionName.orEmpty()
-                        val destination = File(source.parentFile, source.name
-                            .replace(project.name, "Exclave-$versionName")
-                            .replace("-release", "")
-                            .replace("-oss", ""))
-                        source.renameTo(destination)
-                    }
+                (output as? VariantOutputImpl)?.let { variantOutputImpl ->
+                    val versionName = variantOutputImpl.versionName.orNull.orEmpty()
+                    variantOutputImpl.outputFileName.set(variantOutputImpl.outputFileName.get()
+                        .replace(project.name, "Exclave-$versionName")
+                        .replace("-release", "")
+                        .replace("-oss", "")
+                    )
                 }
             }
         }
