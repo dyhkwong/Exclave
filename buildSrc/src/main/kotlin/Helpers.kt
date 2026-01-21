@@ -78,6 +78,8 @@ fun Project.setupCommon(projectName: String = "") {
         lint.textOutput = project.file("build/lint.txt")
         lint.htmlOutput = project.file("build/lint.html")
         packaging.jniLibs.useLegacyPackaging = true
+        // Do not strip symbols by AGP to improve reproducibility. Symbols are manually stripped in advanced.
+        packaging.jniLibs.keepDebugSymbols.add("**/*.so")
         packaging.resources.excludes.addAll(
             listOf(
                 "**/*.kotlin_*",

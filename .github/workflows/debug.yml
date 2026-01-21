@@ -55,6 +55,7 @@ jobs:
       - name: Gradle Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_NDK_HOME}" > local.properties
           ./gradlew :app:downloadAssets
           ./gradlew :app:assembleOssDebug
           APK="app/build/outputs/apk/oss/debug"

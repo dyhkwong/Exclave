@@ -47,6 +47,7 @@ jobs:
       - name: Gradle Build
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_NDK_HOME}" > local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           ./gradlew :plugin:shadowquic:assembleOssRelease
           APK="plugin/shadowquic/build/outputs/apk/oss/release"
