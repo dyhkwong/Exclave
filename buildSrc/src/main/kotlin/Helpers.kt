@@ -183,7 +183,7 @@ fun Project.setupPlugin(projectName: String) {
                         val source = File(it.outputFile)
                         val versionName = it.versionName.orEmpty()
                         val destination = File(source.parentFile, source.name
-                            .replace(project.name, "${project.name}-plugin-$versionName")
+                            .replace(project.name, "${projectName}-plugin-$versionName")
                             .replace("-release", "")
                             .replace("-oss", ""))
                         source.renameTo(destination)
