@@ -30,10 +30,9 @@ jobs:
         with:
           ndk-version: r29
       - name: Setup Rust
-        # do not pin the toolchain version for now
         run: |
-          rustup toolchain install stable
-          rustup override set stable
+          rustup toolchain install 1.92.0
+          rustup override set 1.92.0
           rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
       - name: Native Build
         env:
