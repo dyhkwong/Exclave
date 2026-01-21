@@ -1,18 +1,6 @@
 [submodule "plugin/naive/src/main/jni/naiveproxy"]
 	path = plugin/naive/src/main/jni/naiveproxy
 	url = https://github.com/klzgrad/naiveproxy
-[submodule "plugin/hysteria2/src/main/go/hysteria2"]
-	path = plugin/hysteria2/src/main/go/hysteria2
-	url = https://github.com/apernet/hysteria
-[submodule "plugin/mieru/src/main/go/mieru"]
-	path = plugin/mieru/src/main/go/mieru
-	url = https://github.com/enfein/mieru
-[submodule "plugin/juicity/src/main/go/juicity"]
-	path = plugin/juicity/src/main/go/juicity
-	url = https://github.com/juicity/juicity
-[submodule "plugin/tuic5/src/main/rust/tuic5"]
-	path = plugin/tuic5/src/main/rust/tuic5
-	url = https://github.com/Itsusinn/tuic
 [submodule "plugin/shadowquic/src/main/rust/shadowquic"]
 	path = plugin/shadowquic/src/main/rust/shadowquic
 	url = https://github.com/spongebob888/shadowquic
