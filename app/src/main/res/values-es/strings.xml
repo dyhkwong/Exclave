@@ -431,8 +431,8 @@
     <string name="action_open">Abrir</string>
     <string name="bootstrap_dns">DNS de arranque</string>
     <string name="brook_fragment">Fragmento</string>
-    <string name="remote_dns_query_strategy">Estrategia de consulta DNS remota</string>
-    <string name="direct_dns_query_strategy">Estrategia de consulta DNS directa</string>
+    <string name="remote_dns_query_strategy">Estrategia de consulta de DNS remoto</string>
+    <string name="direct_dns_query_strategy">Estrategia de consulta de DNS directo</string>
     <string name="route_rules_custom">Personalizado</string>
     <string name="rules_geosite_url">URL de geosite.dat</string>
     <string name="rules_geoip_url">URL de geoip.dat</string>
