@@ -475,6 +475,9 @@ class ConfigurationFragment @JvmOverloads constructor(
             R.id.action_new_shadowquic -> {
                 startActivity(Intent(requireActivity(), ShadowQUICSettingsActivity::class.java))
             }
+            R.id.action_new_trusttunnel -> {
+                startActivity(Intent(requireActivity(), TrustTunnelSettingsActivity::class.java))
+            }
             R.id.action_new_config -> {
                 startActivity(Intent(requireActivity(), ConfigSettingsActivity::class.java))
             }
@@ -1050,6 +1053,10 @@ class ConfigurationFragment @JvmOverloads constructor(
                 // WIP, not ready yet
                 (parentFragment as? ToolbarFragment)
                     ?.toolbar?.menu?.findItem(R.id.action_new_shadowquic)?.isVisible  = false
+            }
+            if (!getEnabled(DataStore.experimentalFlags, "trusttunnel")) {
+                (parentFragment as? ToolbarFragment)
+                    ?.toolbar?.menu?.findItem(R.id.action_new_trusttunnel)?.isVisible  = false
             }
 
             configurationListView.requestFocus()

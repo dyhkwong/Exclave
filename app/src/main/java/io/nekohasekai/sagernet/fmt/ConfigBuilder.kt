@@ -55,6 +55,7 @@ import io.nekohasekai.sagernet.fmt.shadowtls.ShadowTLSBean
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
+import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.V2RayConfig
@@ -850,9 +851,6 @@ fun buildV2RayConfig(
                                                     })
                                                 }
                                             })
-                                            if (bean.trustTunnelUot && getEnabled(DataStore.experimentalFlags, "trusttunnel")) {
-                                                trustTunnelUDP = bean.trustTunnelUot
-                                            }
                                         }
                                     )
                                 }
@@ -1461,9 +1459,6 @@ fun buildV2RayConfig(
                                                 echConfig = bean.echConfig
                                             }
                                         }
-                                        if (bean.trustTunnelUot && getEnabled(DataStore.experimentalFlags, "trusttunnel")) {
-                                            trustTunnelUDP = bean.trustTunnelUot
-                                        }
                                     }
                                 )
                             } else if (bean is ShadowTLSBean) {
@@ -1690,6 +1685,94 @@ fun buildV2RayConfig(
                                         }
                                     }
                                 )
+                            } else if (bean is TrustTunnelBean) {
+                                when (bean.protocol) {
+                                    "https" -> {
+                                        protocol = "http"
+                                        settings = LazyOutboundConfigurationObject(this,
+                                            HTTPOutboundConfigurationObject().apply {
+                                                servers = listOf(HTTPOutboundConfigurationObject.ServerObject().apply {
+                                                    address = bean.serverAddress
+                                                    port = bean.serverPort
+                                                    if (bean.username.isNotEmpty() || bean.password.isNotEmpty()) {
+                                                        users = listOf(HTTPInboundConfigurationObject.AccountObject().apply {
+                                                            user = bean.username
+                                                            pass = bean.password
+                                                        })
+                                                    }
+                                                })
+                                                trustTunnelUDP = true
+                                            }
+                                        )
+                                        streamSettings = StreamSettingsObject().apply {
+                                            security = "tls"
+                                            tlsSettings = TLSObject().apply {
+                                                if (bean.sni.isNotEmpty()) {
+                                                    serverName = bean.sni
+                                                }
+                                                if (bean.certificate.isNotEmpty()) {
+                                                    certificates = mutableListOf()
+                                                    if (bean.certificate.isNotEmpty()) {
+                                                        disableSystemRoot = true
+                                                        certificates.add(TLSObject.CertificateObject().apply {
+                                                            usage = "verify"
+                                                            certificate = bean.certificate.lines()
+                                                        })
+                                                    }
+                                                }
+                                                if (bean.utlsFingerprint.isNotEmpty()) {
+                                                    fingerprint = bean.utlsFingerprint
+                                                }
+                                            }
+                                            if (DataStore.enableFragment) {
+                                                sockopt = StreamSettingsObject.SockoptObject().apply {
+                                                    tlsFragmentation = StreamSettingsObject.SockoptObject.TLSFragmentationObject().apply {
+                                                        when (DataStore.fragmentMethod) {
+                                                            TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION -> {
+                                                                tlsRecordFragmentation = true
+                                                            }
+                                                            TLS_FRAGMENTATION_METHOD.TCP_SEGMENTATION -> {
+                                                                tcpSegmentation = true
+                                                            }
+                                                            TLS_FRAGMENTATION_METHOD.TLS_RECORD_FRAGMENTATION_AND_TCP_SEGMENTATION -> {
+                                                                tlsRecordFragmentation = true
+                                                                tcpSegmentation = true
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    "quic"-> {
+                                        protocol = "http3"
+                                        settings = LazyOutboundConfigurationObject(this,
+                                            V2RayConfig.HTTP3OutboundConfigurationObject().apply {
+                                                address = bean.serverAddress
+                                                port = bean.serverPort
+                                                if (bean.username.isNotEmpty()) username = bean.username
+                                                if (bean.password.isNotEmpty()) password = bean.password
+                                                tlsSettings = TLSObject().apply {
+                                                    if (bean.sni.isNotEmpty()) {
+                                                        serverName = bean.sni
+                                                    }
+                                                    if (bean.certificate.isNotEmpty()) {
+                                                        certificates = mutableListOf()
+                                                        if (bean.certificate.isNotEmpty()) {
+                                                            disableSystemRoot = true
+                                                            certificates.add(TLSObject.CertificateObject().apply {
+                                                                usage = "verify"
+                                                                certificate = bean.certificate.lines()
+                                                            })
+                                                        }
+                                                    }
+                                                }
+                                                trustTunnelUDP = true
+                                            }
+                                        )
+                                    }
+                                    else -> error("unknown protocol")
+                                }
                             }
                             if (bean is StandardV2RayBean && bean.mux) {
                                 mux = OutboundObject.MuxObject().apply {

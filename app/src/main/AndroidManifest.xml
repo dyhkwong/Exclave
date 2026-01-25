@@ -203,6 +203,8 @@
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ShadowQUICSettingsActivity" />
         <activity
+            android:name="io.nekohasekai.sagernet.ui.profile.TrustTunnelSettingsActivity" />
+        <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigSettingsActivity" />
         <activity
             android:name="io.nekohasekai.sagernet.ui.profile.ConfigEditActivity" />

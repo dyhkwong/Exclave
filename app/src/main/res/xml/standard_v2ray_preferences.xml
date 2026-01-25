@@ -405,14 +405,4 @@
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
-    <PreferenceCategory
-        app:key="serverTrustTunnelUotCategory"
-        app:title="TrustTunnel UDP over TCP settings">
-        <SwitchPreference
-            app:icon="@drawable/ic_baseline_compare_arrows_24"
-            app:key="serverTrustTunnelUot"
-            app:summary="This will either be removed or be a separate protocol in the future. Do not rely on it."
-            app:title="Enable TrustTunnel UDP over TCP" />
-    </PreferenceCategory>
-
 </PreferenceScreen>

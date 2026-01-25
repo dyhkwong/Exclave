@@ -1,6 +1,6 @@
 /******************************************************************************
  *                                                                            *
- * Copyright (C) 2021 by nekohasekai <contact-sagernet@sekai.icu>             *
+ * Copyright (C) 2026  dyhkwong                                               *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -13,11 +13,11 @@
  * GNU General Public License for more details.                               *
  *                                                                            *
  * You should have received a copy of the GNU General Public License          *
- * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.      *
  *                                                                            *
  ******************************************************************************/
 
-package io.nekohasekai.sagernet.fmt.http;
+package io.nekohasekai.sagernet.fmt.trusttunnel;
 
 import androidx.annotation.NonNull;
 
@@ -26,77 +26,78 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 
 import org.jetbrains.annotations.NotNull;
 
+import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
-import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean;
 
-public class HttpBean extends StandardV2RayBean {
+public class TrustTunnelBean extends AbstractBean {
 
+    public String protocol;
     public String username;
     public String password;
+    public String sni;
+    public String certificate;
+    public String utlsFingerprint;
 
     @Override
     public void initializeDefaultValues() {
         super.initializeDefaultValues();
+        if (protocol == null) protocol = "https";
         if (username == null) username = "";
         if (password == null) password = "";
+        if (sni == null) sni = "";
+        if (certificate == null) certificate = "";
+        if (utlsFingerprint == null) utlsFingerprint = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(4);
+        output.writeInt(0);
         super.serialize(output);
+        output.writeString(protocol);
         output.writeString(username);
         output.writeString(password);
-        output.writeBoolean(false); // trustTunnelUot, removed
+        output.writeString(sni);
+        output.writeString(certificate);
+        output.writeString(utlsFingerprint);
     }
 
     @Override
     public void deserialize(ByteBufferInput input) {
         int version = input.readInt();
-        if (version >= 2) {
-            super.deserialize(input);
-        } else {
-            serverAddress = input.readString();
-            serverPort = input.readInt();
-        }
+        super.deserialize(input);
+        protocol = input.readString();
         username = input.readString();
         password = input.readString();
-        if (version <= 1) {
-            if (input.readBoolean()) {
-                security = "tls";
-            }
-            sni = input.readString();
-            utlsFingerprint = input.readString();
-        }
-        if (version >= 3) {
-            input.readBoolean(); // trustTunnelUot, removed
-        }
+        sni = input.readString();
+        certificate = input.readString();
+        utlsFingerprint = input.readString();
     }
 
-    public String protocolName() {
-        if (security.equals("tls")) {
-            return "HTTPS";
-        } else {
-            return "HTTP";
+    @Override
+    public void applyFeatureSettings(AbstractBean other) {
+        if (!(other instanceof TrustTunnelBean bean)) return;
+        if (bean.certificate == null || bean.certificate.isEmpty() && !certificate.isEmpty()) {
+            bean.certificate = certificate;
         }
+        bean.utlsFingerprint = utlsFingerprint;
     }
 
     @NotNull
     @Override
-    public HttpBean clone() {
-        return KryoConverters.deserialize(new HttpBean(), KryoConverters.serialize(this));
+    public TrustTunnelBean clone() {
+        return KryoConverters.deserialize(new TrustTunnelBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<HttpBean> CREATOR = new CREATOR<>() {
+    public static final Creator<TrustTunnelBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
-        public HttpBean newInstance() {
-            return new HttpBean();
+        public TrustTunnelBean newInstance() {
+            return new TrustTunnelBean();
         }
 
         @Override
-        public HttpBean[] newArray(int size) {
-            return new HttpBean[size];
+        public TrustTunnelBean[] newArray(int size) {
+            return new TrustTunnelBean[size];
         }
     };
 }

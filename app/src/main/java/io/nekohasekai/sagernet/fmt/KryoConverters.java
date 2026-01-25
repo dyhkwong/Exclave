@@ -45,6 +45,7 @@ import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
 import io.nekohasekai.sagernet.fmt.ssh.SSHBean;
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
+import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean;
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean;
 import io.nekohasekai.sagernet.fmt.shadowtls.ShadowTLSBean;
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean;
@@ -187,6 +188,12 @@ public class KryoConverters {
     public static ShadowQUICBean shadowquicDeserialize(byte[] bytes) {
         if (bytes == null || bytes.length == 0) return null;
         return deserialize(new ShadowQUICBean(), bytes);
+    }
+
+    @TypeConverter
+    public static TrustTunnelBean trusttunnelDeserialize(byte[] bytes) {
+        if (bytes == null || bytes.length == 0) return null;
+        return deserialize(new TrustTunnelBean(), bytes);
     }
 
     @TypeConverter

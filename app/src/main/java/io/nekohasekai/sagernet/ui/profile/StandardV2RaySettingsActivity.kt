@@ -163,7 +163,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         when (this) {
             is ShadowsocksBean -> DataStore.serverSingUot = singUoT
             is SOCKSBean -> DataStore.serverSingUot = singUoT
-            is HttpBean -> DataStore.serverTrustTunnelUot = trustTunnelUot
         }
         DataStore.serverSingMux = singMux
         DataStore.serverSingMuxProtocol = singMuxProtocol
@@ -270,7 +269,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         when (this) {
             is ShadowsocksBean -> singUoT = DataStore.serverSingUot
             is SOCKSBean -> singUoT = DataStore.serverSingUot
-            is HttpBean -> trustTunnelUot = DataStore.serverTrustTunnelUot
         }
         singMux = DataStore.serverSingMux
         singMuxProtocol = DataStore.serverSingMuxProtocol
@@ -559,8 +557,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         findPreference<PreferenceCategory>(Key.SERVER_SING_MUX_CATEGORY)!!.isVisible =
             (bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean) &&
                     getEnabled(DataStore.experimentalFlags, "singmux")
-        findPreference<PreferenceCategory>(Key.SERVER_TRUST_TUNNEL_UOT_CATEGORY)!!.isVisible =
-            (bean is HttpBean && getEnabled(DataStore.experimentalFlags, "trusttunnel"))
         singMux = findPreference(Key.SERVER_SING_MUX)!!
         singMuxProtocol = findPreference(Key.SERVER_SING_MUX_PROTOCOL)!!
         singMuxMaxConnections = findPreference(Key.SERVER_SING_MUX_MAX_CONNECTIONS)!!

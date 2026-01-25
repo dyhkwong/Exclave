@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
@@ -74,6 +75,10 @@
                             <item
                                 android:id="@+id/action_new_http3"
                                 android:title="@string/action_http3" />
+                            <item
+                                android:id="@+id/action_new_trusttunnel"
+                                android:title="TrustTunnel"
+                                tools:ignore="HardcodedText" />
                             <item
                                 android:id="@+id/action_new_ssh"
                                 android:title="@string/action_ssh" />

@@ -1,6 +1,6 @@
 /******************************************************************************
  *                                                                            *
- * Copyright (C) 2025  dyhkwong                                               *
+ * Copyright (C) 2026  dyhkwong                                               *
  *                                                                            *
  * This program is free software: you can redistribute it and/or modify       *
  * it under the terms of the GNU General Public License as published by       *
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.                               *
  *                                                                            *
  * You should have received a copy of the GNU General Public License          *
- * along with this program. If not, see <https://www.gnu.org/licenses/>.      *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.       *
  *                                                                            *
  ******************************************************************************/
 
@@ -22,61 +22,60 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
+import com.takisoft.preferencex.SimpleMenuPreference
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
-import io.nekohasekai.sagernet.fmt.http3.Http3Bean
+import io.nekohasekai.sagernet.fmt.trusttunnel.TrustTunnelBean
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 
-class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
+class TrustTunnelSettingsActivity : ProfileSettingsActivity<TrustTunnelBean>() {
 
-    override fun createEntity() = Http3Bean()
+    override fun createEntity() = TrustTunnelBean()
 
-    override fun Http3Bean.init() {
+    override fun TrustTunnelBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
         DataStore.serverPort = serverPort
+        DataStore.serverProtocol = protocol
         DataStore.serverUsername = username
         DataStore.serverPassword = password
         DataStore.serverSNI = sni
-        DataStore.serverCertificates = certificates
-        DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
-        DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
-        DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
-        DataStore.serverEchConfig = echConfig
-        DataStore.serverAllowInsecure = allowInsecure
-        DataStore.serverMtlsCertificate = mtlsCertificate
-        DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
+        DataStore.serverCertificates = certificate
+        DataStore.serverUTLSFingerprint = utlsFingerprint
     }
 
-    override fun Http3Bean.serialize() {
+    override fun TrustTunnelBean.serialize() {
         name = DataStore.profileName
         serverAddress = DataStore.serverAddress.unwrapIDN()
         serverPort = DataStore.serverPort
+        protocol = DataStore.serverProtocol
         username = DataStore.serverUsername
         password = DataStore.serverPassword
         sni = DataStore.serverSNI
-        certificates = DataStore.serverCertificates
-        pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
-        pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
-        pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
-        echConfig = DataStore.serverEchConfig
-        allowInsecure = DataStore.serverAllowInsecure
-        mtlsCertificate = DataStore.serverMtlsCertificate
-        mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
+        certificate = DataStore.serverCertificates
+        utlsFingerprint = DataStore.serverUTLSFingerprint
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
         savedInstanceState: Bundle?,
         rootKey: String?,
     ) {
-        addPreferencesFromResource(R.xml.http3_preferences)
+        addPreferencesFromResource(R.xml.trusttunnel_preferences)
         findPreference<EditTextPreference>(Key.SERVER_PORT)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Port)
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+        val utlsFingerprint = findPreference<SimpleMenuPreference>(Key.SERVER_UTLS_FINGERPRINT)!!
+        val protocol = findPreference<SimpleMenuPreference>(Key.SERVER_PROTOCOL)!!
+        utlsFingerprint.isVisible = protocol.value == "https"
+        protocol.setOnPreferenceChangeListener { _, newValue ->
+            newValue as String
+            utlsFingerprint.isVisible = newValue == "https"
+            true
         }
     }
 
