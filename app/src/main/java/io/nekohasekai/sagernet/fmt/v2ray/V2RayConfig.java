@@ -743,7 +743,8 @@ public class V2RayConfig {
     public static class HTTPOutboundConfigurationObject implements OutboundConfigurationObject {
 
         public List<ServerObject> servers;
-        public Boolean h1SkipWaitForReply;
+        public Boolean trustTunnelUDP;
+        public String domainStrategy;
 
         public static class ServerObject {
 
@@ -764,6 +765,8 @@ public class V2RayConfig {
         public String password;
         public Map<String, String> headers;
         public TLSObject tlsSettings;
+        public Boolean trustTunnelUDP;
+        public String domainStrategy;
 
     }
 

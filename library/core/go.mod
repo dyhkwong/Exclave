@@ -34,20 +34,20 @@ require (
 	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
 	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40 // indirect
 	github.com/metacubex/utls v1.8.4 // indirect
-	github.com/miekg/dns v1.1.70 // indirect
-	github.com/pion/transport/v3 v3.1.1 // indirect
-	github.com/pires/go-proxyproto v0.8.1 // indirect
+	github.com/miekg/dns v1.1.72 // indirect
+	github.com/pion/transport/v4 v4.0.1 // indirect
+	github.com/pires/go-proxyproto v0.9.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/refraction-networking/utls v1.8.2 // indirect
 	github.com/riobard/go-bloom v0.0.0-20200614022211-cdc8013cb5b3 // indirect
 	github.com/sagernet/quic-go v0.59.0-sing-box-mod.2 // indirect
-	github.com/sagernet/sing v0.8.0-beta.10 // indirect
-	github.com/sagernet/sing-mux v0.3.3 // indirect
+	github.com/sagernet/sing v0.8.0-beta.11 // indirect
+	github.com/sagernet/sing-mux v0.3.4 // indirect
 	github.com/sagernet/sing-quic v0.6.0-beta.11 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.9 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.2 // indirect
 	github.com/sagernet/sing-shadowtls v0.2.1-0.20250503051639-fcd445d33c11 // indirect
-	github.com/sagernet/smux v1.5.34-mod.1 // indirect
+	github.com/sagernet/smux v1.5.50-sing-box-mod.1 // indirect
 	github.com/seiflotfy/cuckoofilter v0.0.0-20240715131351-a2f2c23f1771 // indirect
 	github.com/v2fly/BrowserBridge v0.0.0-20210430233438-0570fc1d7d08 // indirect
 	github.com/v2fly/ss-bloomring v0.0.0-20210312155135-28617310f63e // indirect
@@ -75,4 +75,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.44.2-0.20260115200849-43cb82ef889f
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.44.2-0.20260125115046-69d05c7ef19d

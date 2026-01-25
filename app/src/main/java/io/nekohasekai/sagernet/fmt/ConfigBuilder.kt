@@ -850,6 +850,9 @@ fun buildV2RayConfig(
                                                     })
                                                 }
                                             })
+                                            if (bean.trustTunnelUot && getEnabled(DataStore.experimentalFlags, "trusttunnel")) {
+                                                trustTunnelUDP = bean.trustTunnelUot
+                                            }
                                         }
                                     )
                                 }
@@ -1457,6 +1460,9 @@ fun buildV2RayConfig(
                                             if (bean.echConfig.isNotEmpty()) {
                                                 echConfig = bean.echConfig
                                             }
+                                        }
+                                        if (bean.trustTunnelUot && getEnabled(DataStore.experimentalFlags, "trusttunnel")) {
+                                            trustTunnelUDP = bean.trustTunnelUot
                                         }
                                     }
                                 )

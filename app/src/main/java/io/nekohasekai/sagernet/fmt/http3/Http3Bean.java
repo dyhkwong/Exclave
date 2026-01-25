@@ -42,6 +42,7 @@ public class Http3Bean extends AbstractBean {
     public String echConfig;
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
+    public Boolean trustTunnelUot; // Deprecated. Do not use.
 
     @Override
     public void initializeDefaultValues() {
@@ -57,11 +58,12 @@ public class Http3Bean extends AbstractBean {
         if (echConfig == null) echConfig = "";
         if (mtlsCertificate == null) mtlsCertificate = "";
         if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
+        if (trustTunnelUot == null) trustTunnelUot = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(1);
+        output.writeInt(2);
         super.serialize(output);
         output.writeString(username);
         output.writeString(password);
@@ -74,6 +76,7 @@ public class Http3Bean extends AbstractBean {
         output.writeString(echConfig);
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
+        output.writeBoolean(trustTunnelUot);
     }
 
     @Override
@@ -97,6 +100,9 @@ public class Http3Bean extends AbstractBean {
         if (version >= 1) {
             mtlsCertificate = input.readString();
             mtlsCertificatePrivateKey = input.readString();
+        }
+        if (version >= 2) {
+            trustTunnelUot = input.readBoolean();
         }
     }
 
@@ -122,6 +128,7 @@ public class Http3Bean extends AbstractBean {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
         bean.echConfig = echConfig;
+        bean.trustTunnelUot = trustTunnelUot;
     }
 
     @NotNull

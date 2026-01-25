@@ -238,6 +238,8 @@ object Key {
     const val SERVER_SING_MUX_MIN_STREAMS = "serverSingMuxMinStreams"
     const val SERVER_SING_MUX_MAX_STREAMS = "serverSingMuxMaxStreams"
     const val SERVER_SING_MUX_PADDING = "serverSingMuxPadding"
+    const val SERVER_TRUST_TUNNEL_UOT_CATEGORY = "serverTrustTunnelUotCategory"
+    const val SERVER_TRUST_TUNNEL_UOT = "serverTrustTunnelUot"
 
     const val EXPERIMENTAL_FLAGS = "experimentalFlags"
 

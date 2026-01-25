@@ -363,6 +363,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverSingMuxMinStreams by profileCacheStore.stringToInt(Key.SERVER_SING_MUX_MIN_STREAMS)
     var serverSingMuxMaxStreams by profileCacheStore.stringToInt(Key.SERVER_SING_MUX_MAX_STREAMS)
     var serverSingMuxPadding by profileCacheStore.boolean(Key.SERVER_SING_MUX_PADDING)
+    var serverTrustTunnelUot by profileCacheStore.boolean(Key.SERVER_TRUST_TUNNEL_UOT)
 
     var experimentalFlags by configurationStore.string(Key.EXPERIMENTAL_FLAGS)
 

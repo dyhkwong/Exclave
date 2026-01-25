@@ -21,12 +21,14 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.PreferenceCategory
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.http3.Http3Bean
+import io.nekohasekai.sagernet.ktx.getEnabled
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 
 class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
@@ -48,6 +50,7 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverMtlsCertificate = mtlsCertificate
         DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
+        DataStore.serverTrustTunnelUot = trustTunnelUot
     }
 
     override fun Http3Bean.serialize() {
@@ -65,6 +68,7 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         allowInsecure = DataStore.serverAllowInsecure
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
+        trustTunnelUot = DataStore.serverTrustTunnelUot
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -78,6 +82,8 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
         }
+        findPreference<PreferenceCategory>(Key.SERVER_TRUST_TUNNEL_UOT_CATEGORY)!!.isVisible =
+            getEnabled(DataStore.experimentalFlags, "trusttunnel")
     }
 
 }
