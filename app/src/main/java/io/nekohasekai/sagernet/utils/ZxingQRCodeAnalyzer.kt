@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.utils
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
 import com.google.zxing.NotFoundException
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.GlobalHistogramBinarizer
@@ -48,10 +49,12 @@ class ZxingQRCodeAnalyzer(
             )
             val source = RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), intArray)
             val result = try {
-                qrCodeReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source)))
+                qrCodeReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source)),
+                    mapOf(DecodeHintType.TRY_HARDER to true))
             } catch (e: NotFoundException) {
                 try {
-                    qrCodeReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source.invert())))
+                    qrCodeReader.decode(BinaryBitmap(GlobalHistogramBinarizer(source.invert())),
+                        mapOf(DecodeHintType.TRY_HARDER to true))
                 } catch (ignore: NotFoundException) {
                     return
                 }
