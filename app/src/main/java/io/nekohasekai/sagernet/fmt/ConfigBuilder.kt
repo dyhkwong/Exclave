@@ -1254,8 +1254,8 @@ fun buildV2RayConfig(
                                 protocol = "ssh"
                                 settings = LazyOutboundConfigurationObject(this,
                                     SSHOutbountConfigurationObject().apply {
-                                        address = bean.finalAddress
-                                        port = bean.finalPort
+                                        address = bean.serverAddress
+                                        port = bean.serverPort
                                         user = bean.username
                                         when (bean.authType) {
                                             SSHBean.AUTH_TYPE_PUBLIC_KEY -> {
