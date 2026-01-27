@@ -410,7 +410,7 @@
         <EditTextPreference
             app:defaultValue="127.0.0.1:6060"
             app:key="pprofServer"
-            app:title="pprof server listen address"
+            app:title="pprof server listening address"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
             app:dialogMessage="For testing purpose only.\nBreaking changes are expected.\nNo guarantee of existence."
