@@ -20,11 +20,12 @@ ksp {
 aboutLibraries {
     offlineMode = true
     collect {
+        configPath = file("../config")
         includePlatform = true
     }
     export {
         outputFile = file("src/main/res/raw/aboutlibraries.json")
-        excludeFields.addAll("name", "description", "developers", "funding", "organization", "scm", "website")
+        excludeFields.addAll("name", "description", "developers", "funding", "licenses", "organization", "scm", "website", "License")
         prettyPrint = true
     }
 }
