@@ -904,7 +904,7 @@ fun buildV2RayConfig(
                                                     fingerprint = bean.utlsFingerprint
                                                 }
                                                 if (bean.echConfig.isNotEmpty()) {
-                                                    echConfig = bean.echConfig
+                                                    echConfigList = bean.echConfig
                                                 }
                                             }
                                         }
@@ -1344,7 +1344,7 @@ fun buildV2RayConfig(
                                             }
                                         }
                                         if (bean.echConfig.isNotEmpty()) {
-                                            echConfig = bean.echConfig
+                                            echConfigList = bean.echConfig
                                         }
                                     }
                                 }
@@ -1403,7 +1403,7 @@ fun buildV2RayConfig(
                                                 pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
                                             }
                                             if (bean.echConfig.isNotEmpty()) {
-                                                echConfig = bean.echConfig
+                                                echConfigList = bean.echConfig
                                             }
                                         }
                                     }
@@ -1449,14 +1449,11 @@ fun buildV2RayConfig(
                                             if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
                                                 pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
                                             }
-                                            if (bean.echConfig.isNotEmpty()) {
-                                                echConfig = bean.echConfig
-                                            }
                                             if (bean.allowInsecure) {
                                                 allowInsecure = true
                                             }
                                             if (bean.echConfig.isNotEmpty()) {
-                                                echConfig = bean.echConfig
+                                                echConfigList = bean.echConfig
                                             }
                                         }
                                     }
@@ -1550,7 +1547,7 @@ fun buildV2RayConfig(
                                                     fingerprint = bean.utlsFingerprint
                                                 }
                                                 if (bean.echConfig.isNotEmpty()) {
-                                                    echConfig = bean.echConfig
+                                                    echConfigList = bean.echConfig
                                                 }
                                             }
                                         }
@@ -1650,7 +1647,7 @@ fun buildV2RayConfig(
                                                 }
                                             }
                                             if (bean.echConfig.isNotEmpty()) {
-                                                echConfig = bean.echConfig
+                                                echConfigList = bean.echConfig
                                             }
                                         }
                                     }

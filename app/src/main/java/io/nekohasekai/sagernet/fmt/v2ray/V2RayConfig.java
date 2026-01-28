@@ -1116,6 +1116,7 @@ public class V2RayConfig {
         public String echConfig;
         public String echDohServer;
         public String echQueryDomain;
+        public String echConfigList; // Xray-style
 
         public static class CertificateObject {
 
