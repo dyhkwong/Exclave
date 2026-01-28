@@ -32,8 +32,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
+import com.google.zxing.qrcode.QRCodeWriter
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.ktx.Logs
 import io.nekohasekai.sagernet.ktx.app
@@ -75,7 +75,7 @@ packages/apps/Settings/+/8a9ccfd/src/com/android/settings/wifi/dpp/WifiDppQrCode
         val url = arguments?.getString(KEY_URL)!!
         val hints = mutableMapOf<EncodeHintType, Any>()
         if (!iso88591.canEncode(url)) hints[EncodeHintType.CHARACTER_SET] = StandardCharsets.UTF_8.name()
-        val qrBits = MultiFormatWriter().encode(url, BarcodeFormat.QR_CODE, size, size, hints)
+        val qrBits = QRCodeWriter().encode(url, BarcodeFormat.QR_CODE, size, size, hints)
         ImageView(context).apply {
             layoutParams = ViewGroup.LayoutParams(size, size)
             setImageBitmap(Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).apply {
