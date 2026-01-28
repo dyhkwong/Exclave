@@ -1053,10 +1053,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                 (parentFragment as? ToolbarFragment)
                     ?.toolbar?.menu?.findItem(R.id.action_new_shadowquic)?.isVisible  = false
             }
-            if (!getEnabled(DataStore.experimentalFlags, "trusttunnel")) {
-                (parentFragment as? ToolbarFragment)
-                    ?.toolbar?.menu?.findItem(R.id.action_new_trusttunnel)?.isVisible  = false
-            }
 
             configurationListView.requestFocus()
         }
