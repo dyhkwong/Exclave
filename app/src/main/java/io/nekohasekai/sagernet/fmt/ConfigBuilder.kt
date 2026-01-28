@@ -1394,9 +1394,6 @@ fun buildV2RayConfig(
                                             if (bean.pinnedPeerCertificateChainSha256.isNotEmpty()) {
                                                 pinnedPeerCertificateChainSha256 = bean.pinnedPeerCertificateChainSha256.listByLineOrComma()
                                             }
-                                            if (bean.echConfig.isNotEmpty()) {
-                                                echConfig = bean.echConfig
-                                            }
                                             if (bean.allowInsecure) {
                                                 allowInsecure = true
                                             }
