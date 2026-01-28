@@ -38,11 +38,14 @@ import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
+import org.yaml.snakeyaml.nodes.MappingNode
+import org.yaml.snakeyaml.nodes.Node
+import org.yaml.snakeyaml.nodes.ScalarNode
+import org.yaml.snakeyaml.nodes.SequenceNode
 import org.yaml.snakeyaml.nodes.Tag
 import org.yaml.snakeyaml.representer.Representer
 import org.yaml.snakeyaml.resolver.Resolver
 import java.util.regex.Pattern
-
 
 @Suppress("EXPERIMENTAL_API_USAGE")
 object RawUpdater : GroupUpdater() {
@@ -236,7 +239,7 @@ object RawUpdater : GroupUpdater() {
     fun parseRaw(text: String): List<AbstractBean>? {
         try {
             val options = DumperOptions()
-            val yaml = Yaml(Constructor(LoaderOptions()), Representer(options), options, object : Resolver() {
+            val yaml = Yaml(YAMLConstructor(LoaderOptions()), Representer(options), options, object : Resolver() {
                 override fun addImplicitResolver(tag: Tag, regexp: Pattern, first: String?, limit: Int) {
                     when (tag) {
                         Tag.FLOAT -> {}
@@ -244,7 +247,12 @@ object RawUpdater : GroupUpdater() {
                         else -> super.addImplicitResolver(tag, regexp, first, limit)
                     }
                 }
-            }).loadAs(text, Map::class.java)
+            }).apply {
+                // https://github.com/SagerNet/SagerNet/blob/70e684bae81d4bb4203e860ab88c4319e88f944d/app/src/main/java/io/nekohasekai/sagernet/group/RawUpdater.kt#L229
+                // IDK why but `!<str>` is obviously widely used in Clash ecology
+                // https://github.com/search?q=!%3Cstr%3E&type=code
+                // addTypeDescription(TypeDescription(String::class.java, "str"))
+            }.loadAs(text, Map::class.java)
             (yaml["proxies"] as? List<Map<String, Any?>>)?.let {
                 return parseClashProxies(it)
             }
@@ -358,6 +366,26 @@ object RawUpdater : GroupUpdater() {
                 }
                 return listOf()
             }
+        }
+    }
+}
+
+private class YAMLConstructor(
+    options: LoaderOptions,
+) : Constructor(options) {
+    override fun constructObject(node: Node): Any? {
+        when (node.tag) {
+            Tag.NULL, Tag.BOOL, Tag.INT, Tag.FLOAT, Tag.STR, Tag.SEQ, Tag.MAP, Tag.BINARY,
+            Tag.TIMESTAMP, Tag.SET, Tag.OMAP, Tag.PAIRS, Tag.YAML, Tag.MERGE -> {
+                return super.constructObject(node)
+            }
+        }
+        // ignore unknown tags
+        return when (node) {
+            is MappingNode -> constructMapping(node)
+            is SequenceNode -> constructSequence(node)
+            is ScalarNode -> constructScalar(node)
+            else -> null
         }
     }
 }
