@@ -568,7 +568,7 @@
     <string name="import_routing_rules_warning">Все существующие правила будут удалены.</string>
     <string name="export_routing_rules_warning">Исключительно для обеспечения совместимости и содержит неполные данные.</string>
     <string name="custom_root_ca_hint">Поместите файл root_store.certs в Android/data/%s/files или импортируйте root_store.certs в качестве ресурса маршрутов.</string>
-    <string name="query_all_packages_alternative_method">Используйте альтернативный метод для запроса информации об установленных приложениях</string>
+    <string name="query_all_packages_alternative_method">Альтернативный метод для запроса информации об установленных приложениях</string>
     <string name="third_party_notices">Уведомления третьих лиц</string>
     <string name="regular_expression_filter1">Включение имени (регулярное выражение)</string>
     <string name="translation_platform">Платформа локализации</string>
