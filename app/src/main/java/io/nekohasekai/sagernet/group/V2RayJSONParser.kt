@@ -145,7 +145,9 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         pcs.split(if (pcs.contains("~")) "~" else ",")
                                             .mapNotNull { it.trim().ifEmpty { null } }
                                             .joinToString("\n")
-                                    v2rayBean.allowInsecure = true
+                                    if (!v2rayBean.pinnedPeerCertificateSha256.isNullOrEmpty()) {
+                                        v2rayBean.allowInsecure = true
+                                    }
                                 }
                             }
                         }
@@ -1441,7 +1443,9 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         pcs.split(if (pcs.contains("~")) "~" else ",")
                                             .mapNotNull { it.trim().ifEmpty { null } }
                                             .joinToString("\n")
-                                    hysteria2Bean.allowInsecure = true
+                                    if (!hysteria2Bean.pinnedPeerCertificateSha256.isNullOrEmpty()) {
+                                        hysteria2Bean.allowInsecure = true
+                                    }
                                 }
                             }
                         }
