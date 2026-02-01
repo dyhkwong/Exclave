@@ -253,6 +253,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
 
     var mtu by configurationStore.stringToInt(Key.MTU) { VpnService.DEFAULT_MTU }
 
+    var discardICMP by configurationStore.boolean(Key.DISCARD_ICMP)
+
     var appTrafficStatistics by configurationStore.boolean(Key.APP_TRAFFIC_STATISTICS)
     var profileTrafficStatistics by configurationStore.boolean(Key.PROFILE_TRAFFIC_STATISTICS) { true }
 

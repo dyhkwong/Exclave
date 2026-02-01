@@ -596,4 +596,6 @@
     <string name="third_party_notices">Third party notices</string>
     <string name="regular_expression_filter1">Name inclusion (regular expression)</string>
     <string name="translation_platform">Translation platform</string>
+    <string name="discard_icmp">Discard ICMP</string>
+    <string name="discard_icmp_sum">Discard ICMP and ICMPv6</string>
 </resources>

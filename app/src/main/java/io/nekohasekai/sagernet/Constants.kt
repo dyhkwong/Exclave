@@ -104,6 +104,7 @@ object Key {
     const val TUN_IMPLEMENTATION = "tunImplementation"
     const val ENABLE_PCAP = "enablePcap"
     const val MTU = "mtu"
+    const val DISCARD_ICMP = "discardICMP"
     const val ALLOW_APPS_BYPASS_VPN = "allowAppsBypassVpn"
     const val ACQUIRE_WAKE_LOCK = "acquireWakeLock"
     const val STUN_SERVERS = "stunServers"

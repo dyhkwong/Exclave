@@ -58,7 +58,7 @@ func (t *GVisor) Close() error {
 
 const DefaultNIC tcpip.NICID = 0x01
 
-func New(dev int32, mtu int32, handler tun.Handler, pcapFile *os.File, enableIPv6 bool) (*GVisor, error) {
+func New(dev int32, mtu int32, handler tun.Handler, pcapFile *os.File, enableIPv6, discardICMP bool) (*GVisor, error) {
 	var endpoint stack.LinkEndpoint
 	var err error
 	endpoint, err = fdbased.New(&fdbased.Options{
@@ -158,6 +158,13 @@ func New(dev int32, mtu int32, handler tun.Handler, pcapFile *os.File, enableIPv
 		}
 		return true
 	})*/
+
+	if discardICMP {
+		endpoint = &icmpDiscardedLinkEndpoint{
+			LinkEndpoint: endpoint,
+		}
+	}
+
 	if tcpipErr := s.CreateNIC(DefaultNIC, endpoint); tcpipErr != nil {
 		return nil, newError(tcpipErr)
 	}

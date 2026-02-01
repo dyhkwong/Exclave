@@ -60,6 +60,7 @@ type Tun2ray struct {
 	fakedns             bool
 	sniffing            bool
 	overrideDestination bool
+	discardICMP         bool
 
 	dumpUID      bool
 	trafficStats bool
@@ -95,6 +96,7 @@ type TunConfig struct {
 	TrafficStats        bool
 	PCap                bool
 	ProtectPath         string
+	DiscardICMP         bool
 }
 
 func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
@@ -135,9 +137,9 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 			}
 		}
 
-		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6)
+		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6, config.DiscardICMP)
 	case common.TunImplementationSystem:
-		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6)
+		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6, config.DiscardICMP)
 	}
 
 	if err != nil {

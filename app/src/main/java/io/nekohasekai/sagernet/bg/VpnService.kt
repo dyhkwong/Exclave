@@ -286,6 +286,7 @@ class VpnService : BaseVpnService(),
             fileDescriptor = conn.fd
             protect = needIncludeSelf
             mtu = DataStore.mtu
+            discardICMP = DataStore.discardICMP
             v2Ray = data.proxy!!.v2rayPoint
             addr4 = PRIVATE_VLAN4_CLIENT
             addr6 = PRIVATE_VLAN6_CLIENT

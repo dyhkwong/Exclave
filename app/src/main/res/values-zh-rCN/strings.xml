@@ -565,4 +565,6 @@
     <string name="third_party_notices">第三方声明</string>
     <string name="regular_expression_filter1">名称包含（正则表达式）</string>
     <string name="translation_platform">翻译平台</string>
+    <string name="discard_icmp">丢弃 ICMP</string>
+    <string name="discard_icmp_sum">丢弃 ICMP 和 ICMPv6</string>
 </resources>

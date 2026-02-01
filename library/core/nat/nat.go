@@ -25,11 +25,9 @@ import (
 
 	"github.com/v2fly/v2ray-core/v5/common/buf"
 	"golang.org/x/sys/unix"
-	"gvisor.dev/gvisor/pkg/buffer"
 	"gvisor.dev/gvisor/pkg/rawfile"
 	"gvisor.dev/gvisor/pkg/tcpip"
 	"gvisor.dev/gvisor/pkg/tcpip/header"
-	"gvisor.dev/gvisor/pkg/tcpip/header/parse"
 	"gvisor.dev/gvisor/pkg/tcpip/stack"
 )
 
@@ -44,18 +42,20 @@ type SystemTun struct {
 	addr4        netip.Addr
 	addr6        netip.Addr
 	enableIPv6   bool
+	discardICMP  bool
 	tcpForwarder *tcpForwarder
 	closed       bool
 }
 
-func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, enableIPv6 bool) (*SystemTun, error) {
+func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, enableIPv6, discardICMP bool) (*SystemTun, error) {
 	t := &SystemTun{
-		dev:        int(dev),
-		mtu:        int(mtu),
-		handler:    handler,
-		addr4:      addr4,
-		addr6:      addr6,
-		enableIPv6: enableIPv6,
+		dev:         int(dev),
+		mtu:         int(mtu),
+		handler:     handler,
+		addr4:       addr4,
+		addr6:       addr6,
+		enableIPv6:  enableIPv6,
+		discardICMP: discardICMP,
 	}
 	tcpServer, err := newTcpForwarder(t)
 	if err != nil {
@@ -126,26 +126,22 @@ func (t *SystemTun) deliverPacket(cache *buf.Buffer, packet []byte) bool {
 			t.processIPv4UDP(cache, ipHdr, ipHdr.Payload())
 			return true
 		case header.ICMPv4ProtocolNumber:
-			t.processICMPv4(ipHdr, ipHdr.Payload())
+			if !t.discardICMP {
+				t.processICMPv4(ipHdr, ipHdr.Payload())
+			}
 		}
 	case header.IPv6Version:
-		pkt := stack.NewPacketBuffer(stack.PacketBufferOptions{
-			Payload: buffer.MakeWithData(packet),
-		})
-		proto, _, _, _, ok := parse.IPv6(pkt)
-		pkt.DecRef()
-		if !ok {
-			return false
-		}
 		ipHdr := header.IPv6(packet)
-		switch proto {
+		switch ipHdr.TransportProtocol() {
 		case header.TCPProtocolNumber:
 			t.tcpForwarder.processIPv6(ipHdr, ipHdr.Payload())
 		case header.UDPProtocolNumber:
 			t.processIPv6UDP(cache, ipHdr, ipHdr.Payload())
 			return true
 		case header.ICMPv6ProtocolNumber:
-			t.processICMPv6(ipHdr, ipHdr.Payload())
+			if !t.discardICMP {
+				t.processICMPv6(ipHdr, ipHdr.Payload())
+			}
 		}
 	}
 	return false
