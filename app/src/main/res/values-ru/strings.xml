@@ -596,4 +596,6 @@
     <string name="delete_multi_confirm_prompt">Удалить эти профили?</string>
     <string name="interrupt_reused_connections">Прерывать повторные подключения при изменении сети</string>
     <string name="create_shortcut">Создать ярлык</string>
+    <string name="discard_icmp">Блокировка ICMP</string>
+    <string name="discard_icmp_sum">Блокировать ICMP и ICMPv6</string>
 </resources>
