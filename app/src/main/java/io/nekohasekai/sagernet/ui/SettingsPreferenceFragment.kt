@@ -150,12 +150,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val allowAppsBypassVpn = findPreference<SwitchPreference>(Key.ALLOW_APPS_BYPASS_VPN)!!
         val meteredNetwork = findPreference<Preference>(Key.METERED_NETWORK)!!
         val enablePcap = findPreference<SwitchPreference>(Key.ENABLE_PCAP)!!
+        val discardICMP = findPreference<SwitchPreference>(Key.DISCARD_ICMP)!!
         val appTrafficStatistics = findPreference<SwitchPreference>(Key.APP_TRAFFIC_STATISTICS)!!
         serviceMode.setOnPreferenceChangeListener { _, newValue ->
             tunImplementation.isEnabled = newValue == MODE_VPN
             mtu.isEnabled = newValue == MODE_VPN
             enableVPNInterfaceIPv6Address.isEnabled = newValue == MODE_VPN
             allowAppsBypassVpn.isEnabled = newValue == MODE_VPN
+            discardICMP.isEnabled = newValue == MODE_VPN
             meteredNetwork.isEnabled = newValue == MODE_VPN
             enablePcap.isEnabled = newValue == MODE_VPN && tunImplementation.value == "${TunImplementation.GVISOR}"
             appTrafficStatistics.isEnabled = newValue == MODE_VPN
@@ -218,6 +220,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             needReload()
             true
         }
+        discardICMP.isEnabled = serviceMode.value == MODE_VPN
+        discardICMP.onPreferenceChangeListener = reloadListener
         appTrafficStatistics.isEnabled = serviceMode.value == MODE_VPN
         appTrafficStatistics.setOnPreferenceChangeListener { _, newValue ->
             newValue as Boolean

@@ -627,4 +627,6 @@
     <string name="delete_multi_confirm_prompt">Are you sure you want to remove these profiles?</string>
     <string name="interrupt_reused_connections">Interrupt reused connections when network changes</string>
     <string name="create_shortcut">Create shortcut</string>
+    <string name="discard_icmp">Discard ICMP</string>
+    <string name="discard_icmp_sum">Discard ICMP and ICMPv6</string>
 </resources>

@@ -589,4 +589,6 @@
     <string name="delete_multi_confirm_prompt">您确定要删除这些服务器配置吗？</string>
     <string name="interrupt_reused_connections">网络变化时打断被复用的连接</string>
     <string name="create_shortcut">创建快捷方式</string>
+    <string name="discard_icmp">丢弃 ICMP</string>
+    <string name="discard_icmp_sum">丢弃 ICMP 和 ICMPv6</string>
 </resources>

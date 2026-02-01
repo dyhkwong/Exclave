@@ -96,6 +96,7 @@ type TunConfig struct {
 	TrafficStats        bool
 	PCap                bool
 	ProtectPath         string
+	DiscardICMP         bool
 }
 
 func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
@@ -131,10 +132,9 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 				return nil, newError("unable to create pcap file").Base(err)
 			}
 		}
-
-		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6)
+		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6, config.DiscardICMP)
 	case comm.TunImplementationSystem:
-		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6)
+		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6, config.DiscardICMP)
 	}
 
 	if err != nil {

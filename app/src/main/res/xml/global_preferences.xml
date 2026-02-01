@@ -63,6 +63,11 @@
             app:summary="@string/pcap_summary"
             app:title="@string/enable_pcap" />
         <SwitchPreference
+            app:icon="@drawable/baseline_delete_sweep_24"
+            app:key="discardICMP"
+            app:summary="@string/discard_icmp_sum"
+            app:title="@string/discard_icmp" />
+        <SwitchPreference
             app:icon="@drawable/ic_baseline_manage_search_24"
             app:key="appTrafficStatistics"
             app:summary="@string/traffic_statistics_summary"
