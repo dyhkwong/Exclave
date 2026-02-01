@@ -20,7 +20,6 @@
 package io.nekohasekai.sagernet.ui
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -30,7 +29,6 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -146,26 +144,32 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
         }
     }
 
-    inner class ItemMenuListener(val stats: AppStats) : PopupMenu.OnMenuItemClickListener {
+    inner class ItemMenuListener(val stats: AppStats, val packageName: String?) : PopupMenu.OnMenuItemClickListener {
         override fun onMenuItemClick(item: MenuItem): Boolean {
             when (item.itemId) {
                 R.id.copy_label -> {
-                    PackageCache.awaitLoadSync()
-                    val success = SagerNet.trySetPrimaryClip(PackageCache.loadLabel(stats.packageName))
-                    snackbar(if (success) R.string.copy_success else R.string.copy_failed).show()
+                    packageName?.let {
+                        PackageCache.awaitLoadSync()
+                        val success = SagerNet.trySetPrimaryClip(PackageCache.loadLabel(it))
+                        snackbar(if (success) R.string.copy_success else R.string.copy_failed).show()
+                    }
                 }
                 R.id.copy_package_name -> {
-                    val success = SagerNet.trySetPrimaryClip(stats.packageName)
-                    snackbar(if (success) R.string.copy_success else R.string.copy_failed).show()
+                    packageName?.let {
+                        val success = SagerNet.trySetPrimaryClip(it)
+                        snackbar(if (success) R.string.copy_success else R.string.copy_failed).show()
+                    }
                 }
 
                 R.id.open_app -> {
                     try {
-                        val launch = app.packageManager.getLaunchIntentForPackage(stats.packageName)
-                        if (launch == null) {
-                            snackbar(R.string.app_no_launcher).show()
-                        } else {
-                            startActivity(launch)
+                        packageName?.let {
+                            val launch = app.packageManager.getLaunchIntentForPackage(it)
+                            if (launch == null) {
+                                snackbar(R.string.app_no_launcher).show()
+                            } else {
+                                startActivity(launch)
+                            }
                         }
                     } catch (e: Exception) {
                         snackbar(e.readableMessage).show()
@@ -173,39 +177,26 @@ class TrafficFragment : ToolbarFragment(R.layout.layout_traffic),
                 }
                 R.id.open_settings -> {
                     try {
-                        startActivity(Intent().apply {
-                            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            data = Uri.fromParts(
-                                "package", stats.packageName, null
-                            )
-                        })
+                        packageName?.let {
+                            startActivity(Intent().apply {
+                                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                                data = Uri.fromParts(
+                                    "package", it, null
+                                )
+                            })
+                        }
                     } catch (e: Exception) {
                         snackbar(e.readableMessage).show()
                     }
                 }
-                R.id.open_market -> {
-                    try {
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                "market://details?id=${stats.packageName}".toUri()
-                            )
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                "https://play.google.com/store/apps/details?id=${stats.packageName}".toUri()
-                            )
-                        )
-                    }
-                }
                 R.id.create_rule -> {
-                    createRule.launch(Intent(
-                        requireContext(), RouteSettingsActivity::class.java
-                    ).apply {
-                        putExtra(RouteSettingsActivity.EXTRA_PACKAGE_NAME, stats.packageName)
-                    })
+                    packageName?.let {
+                        createRule.launch(Intent(
+                            requireContext(), RouteSettingsActivity::class.java
+                        ).apply {
+                            putExtra(RouteSettingsActivity.EXTRA_PACKAGE_NAME, it)
+                        })
+                    }
                 }
             }
             return true

@@ -232,7 +232,6 @@
     <string name="copy_package_name">Copiar nombre del paquete</string>
     <string name="open_app">Abrir app</string>
     <string name="open_settings">Abrir en ajustes</string>
-    <string name="open_market">Abrir en la tienda de apps</string>
     <string name="create_rule">Crear una regla</string>
     <string name="copy_failed">No se pudo copiar.</string>
     <string name="app_no_launcher">La aplicación no tiene interfaz.</string>

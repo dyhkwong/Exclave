@@ -319,7 +319,6 @@
     <string name="copy_failed">复制失败。</string>
     <string name="copy_success">复制成功！</string>
     <string name="create_rule">创建路由</string>
-    <string name="open_market">打开应用市场</string>
     <string name="open_settings">打开设置</string>
     <string name="open_app">打开应用</string>
     <string name="copy_package_name">复制包名</string>

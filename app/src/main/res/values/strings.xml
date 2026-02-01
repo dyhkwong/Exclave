@@ -362,7 +362,6 @@
     <string name="copy_package_name">Copy package name</string>
     <string name="open_app">Open app</string>
     <string name="open_settings">Open in Settings</string>
-    <string name="open_market">Open in the app market</string>
     <string name="create_rule">Create a rule</string>
     <string name="copy_success">Successfully copy!</string>
     <string name="copy_failed">Failed to copy.</string>

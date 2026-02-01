@@ -149,7 +149,6 @@
     <string name="copy_failed">Kopyalama başarısız oldu.</string>
     <string name="copy_success">Kopyalama başarılı!</string>
     <string name="create_rule">Kural Oluştur</string>
-    <string name="open_market">Mağazayı Aç</string>
     <string name="open_settings">Ayarları Aç</string>
     <string name="open_app">Uygulamayı Aç</string>
     <string name="copy_package_name">Paket Adını Kopyala</string>

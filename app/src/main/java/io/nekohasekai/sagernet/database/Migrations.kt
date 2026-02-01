@@ -147,3 +147,10 @@ class SagerDatabase_Migration_22_23 : AutoMigrationSpec
     )
 )
 class SagerDatabase_Migration_31_32 : AutoMigrationSpec
+
+@DeleteTable.Entries(
+    DeleteTable(
+        tableName = "stats"
+    )
+)
+class SagerDatabase_Migration_33_34 : AutoMigrationSpec

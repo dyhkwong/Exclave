@@ -25,7 +25,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AppStats(
-    var packageName: String,
     var uid: Int,
     var tcpConnections: Int,
     var udpConnections: Int,

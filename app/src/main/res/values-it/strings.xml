@@ -331,7 +331,6 @@
         <item quantity="many"/>
         <item quantity="other">%d Connessioni TCP</item>
     </plurals>
-    <string name="open_market">Apri il Market</string>
     <string name="route_for">Regola per %s</string>
     <string name="experimental_authenticated_length">Rendi la lunghezza di ogni segmento di payload non più malleabile. Questa funzione richiede che il server e il client utilizzino la stessa versione di v2ray-core. Si attendono ulteriori aggiornamenti su questa funzione sperimentale.</string>
     <string name="traffic_active">Attivato</string>

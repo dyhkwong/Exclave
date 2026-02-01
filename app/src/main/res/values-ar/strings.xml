@@ -335,7 +335,6 @@
     <string name="copy_failed">فشل النسخ.</string>
     <string name="copy_success">تم النسخ بنجاح!</string>
     <string name="create_rule">إنشاء قاعدة</string>
-    <string name="open_market">السوق المفتوح</string>
     <string name="open_settings">أفتح الإعدادات</string>
     <string name="open_app">افتح التطبيق</string>
     <string name="copy_package_name">نسخ اسم الحزمة</string>

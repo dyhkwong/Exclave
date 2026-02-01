@@ -25,15 +25,11 @@ import io.nekohasekai.sagernet.aidl.AppStats
 import io.nekohasekai.sagernet.utils.PackageCache
 import kotlinx.parcelize.Parcelize
 
-@Entity(
-    tableName = "stats", indices = [Index(
-        "packageName", unique = true
-    )]
-)
+@Entity(tableName = "trafficStats")
 @Parcelize
 class StatsEntity(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
-    var packageName: String = "",
+    var uid: Int = 0,
     var tcpConnections: Int = 0,
     var udpConnections: Int = 0,
     var uplink: Long = 0L,
@@ -43,8 +39,7 @@ class StatsEntity(
     fun toStats(): AppStats {
         PackageCache.awaitLoadSync()
         return AppStats(
-            packageName,
-            PackageCache[packageName] ?: packageName.toIntOrNull() ?: 1000,
+            uid,
             0,
             0,
             tcpConnections,
@@ -60,14 +55,14 @@ class StatsEntity(
     @androidx.room.Dao
     interface Dao {
 
-        @Query("SELECT * FROM stats")
+        @Query("SELECT * FROM trafficStats")
         fun all(): List<StatsEntity>
 
-        @Query("SELECT * FROM stats WHERE packageName = :packageName")
-        operator fun get(packageName: String): StatsEntity?
+        @Query("SELECT * FROM trafficStats WHERE uid = :uid")
+        operator fun get(uid: String): StatsEntity?
 
-        @Query("DELETE FROM stats WHERE packageName = :packageName")
-        fun delete(packageName: String): Int
+        @Query("DELETE FROM trafficStats WHERE uid = :uid")
+        fun delete(uid: String): Int
 
         @Insert
         fun create(stats: StatsEntity)
@@ -75,7 +70,7 @@ class StatsEntity(
         @Update
         fun update(stats: List<StatsEntity>)
 
-        @Query("DELETE FROM stats")
+        @Query("DELETE FROM trafficStats")
         fun deleteAll()
 
     }

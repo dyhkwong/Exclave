@@ -113,7 +113,7 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
                         if (connA != connB) {
                             connB.compareTo(connA)
                         } else {
-                            b.packageName.compareTo(a.packageName)
+                            b.uid.compareTo(a.uid)
                         }
                     }
                 }
@@ -169,9 +169,7 @@ class ActiveFragment : Fragment(R.layout.layout_traffic_list) {
                 val popup = PopupMenu(requireContext(), it)
                 popup.menuInflater.inflate(R.menu.traffic_item_menu, popup.menu)
                 popup.setOnMenuItemClickListener(
-                    (requireParentFragment() as TrafficFragment).ItemMenuListener(
-                        stats
-                    )
+                    (requireParentFragment() as TrafficFragment).ItemMenuListener(stats, packageName)
                 )
                 popup.show()
             }

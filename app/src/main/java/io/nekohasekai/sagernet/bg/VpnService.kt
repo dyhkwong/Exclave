@@ -40,7 +40,6 @@ import io.nekohasekai.sagernet.ktx.getStringValue
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
 import io.nekohasekai.sagernet.utils.DefaultNetworkListener
-import io.nekohasekai.sagernet.utils.PackageCache
 import io.nekohasekai.sagernet.utils.Subnet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -322,17 +321,13 @@ class VpnService : BaseVpnService(),
         appStats.clear()
         tun.readAppTraffics(this)
         val toUpdate = mutableListOf<StatsEntity>()
-        val all = SagerDatabase.statsDao.all().associateBy { it.packageName }
-        PackageCache.awaitLoadSync()
+        val all = SagerDatabase.statsDao.all().associateBy { it.uid }
         for (stats in appStats) {
-            val packageName = when (val uid = stats.uid) {
-                1000 -> "android"
-                else -> PackageCache.uidMap[uid]?.iterator()?.next() ?: "$uid"
-            }
-            if (!all.containsKey(packageName)) {
+            val uid = stats.uid
+            if (!all.containsKey(uid)) {
                 SagerDatabase.statsDao.create(
                     StatsEntity(
-                        packageName = packageName,
+                        uid = uid,
                         tcpConnections = stats.tcpConnTotal,
                         udpConnections = stats.udpConnTotal,
                         uplink = stats.uplinkTotal,
@@ -340,7 +335,7 @@ class VpnService : BaseVpnService(),
                     )
                 )
             } else {
-                val entity = all[packageName]!!
+                val entity = all[uid]!!
                 entity.tcpConnections += stats.tcpConnTotal
                 entity.udpConnections += stats.udpConnTotal
                 entity.uplink += stats.uplinkTotal

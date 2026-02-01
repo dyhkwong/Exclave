@@ -198,12 +198,7 @@ class BaseService {
 
                 val statsList = AppStatsList(appStats.map {
                     val uid = it.uid
-                    val packageName = when (uid) {
-                        1000 -> "android"
-                        else -> PackageCache.uidMap[uid]?.iterator()?.next() ?: "$uid"
-                    }
                     AidlAppStats(
-                        packageName,
                         uid,
                         it.tcpConn,
                         it.udpConn,

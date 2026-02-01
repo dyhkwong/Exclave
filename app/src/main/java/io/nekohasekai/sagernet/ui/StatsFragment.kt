@@ -82,12 +82,12 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
     }
 
     fun emitStats(statsList: List<AppStats>) {
-        var data = statsList.associate { it.packageName to it.copy() }.toMutableMap()
+        var data = statsList.associate { it.uid to it.copy() }.toMutableMap()
         for (stats in SagerDatabase.statsDao.all()) {
-            if (data.containsKey(stats.packageName)) {
-                data[stats.packageName]!! += stats
+            if (data.containsKey(stats.uid)) {
+                data[stats.uid]!! += stats
             } else {
-                data[stats.packageName] = stats.toStats()
+                data[stats.uid] = stats.toStats()
             }
         }
         for (stats in data.values) {
@@ -131,7 +131,7 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
                     if (connA != connB) {
                         connB.compareTo(connA)
                     } else {
-                        b.packageName.compareTo(a.packageName)
+                        b.uid.compareTo(a.uid)
                     }
                 }
             }
@@ -189,9 +189,7 @@ class StatsFragment : Fragment(R.layout.layout_traffic_list) {
                 val popup = PopupMenu(requireContext(), it)
                 popup.menuInflater.inflate(R.menu.traffic_item_menu, popup.menu)
                 popup.setOnMenuItemClickListener(
-                    (requireParentFragment() as TrafficFragment).ItemMenuListener(
-                        stats
-                    )
+                    (requireParentFragment() as TrafficFragment).ItemMenuListener(stats, packageName)
                 )
                 popup.show()
             }
