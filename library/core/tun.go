@@ -60,7 +60,6 @@ type Tun2ray struct {
 	fakedns             bool
 	sniffing            bool
 	overrideDestination bool
-	discardICMP         bool
 
 	dumpUID      bool
 	trafficStats bool
@@ -97,6 +96,8 @@ type TunConfig struct {
 	PCap                bool
 	ProtectPath         string
 	DiscardICMP         bool
+
+	DiscardIPv6BasedOnNetwork bool
 }
 
 func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
@@ -120,6 +121,13 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 		t.dns6 = netip.MustParseAddr(config.Dns6)
 	}
 
+	discardIPv6Func := (func() bool)(nil)
+	if config.DiscardIPv6BasedOnNetwork {
+		discardIPv6Func = func() bool {
+			return discardIPv6.Load()
+		}
+	}
+
 	var err error
 	switch config.Implementation {
 	case common.TunImplementationGVisor:
@@ -137,9 +145,9 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 			}
 		}
 
-		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6, config.DiscardICMP)
+		t.dev, err = gvisor.New(config.FileDescriptor, config.MTU, t, pcapFile, config.EnableIPv6, config.DiscardICMP, discardIPv6Func)
 	case common.TunImplementationSystem:
-		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6, config.DiscardICMP)
+		t.dev, err = nat.New(config.FileDescriptor, config.MTU, t, t.addr4, t.addr6, config.EnableIPv6, config.DiscardICMP, discardIPv6Func)
 	}
 
 	if err != nil {

@@ -18,6 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package libcore
 
 import (
+	"sync/atomic"
+
 	"github.com/v2fly/v2ray-core/v5/app/proxyman/inbound"
 	"github.com/v2fly/v2ray-core/v5/app/proxyman/outbound"
 	"github.com/v2fly/v2ray-core/v5/common/net"
@@ -59,4 +61,10 @@ func SetSSID(ssid string) {
 
 func InterfaceUpdate() {
 	outbound.InterfaceUpdate()
+}
+
+var discardIPv6 atomic.Bool
+
+func SetDiscardIPv6(shouldDiscardIPv6 bool) {
+	discardIPv6.Store(shouldDiscardIPv6)
 }

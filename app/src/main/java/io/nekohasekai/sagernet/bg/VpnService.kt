@@ -36,6 +36,7 @@ import io.nekohasekai.sagernet.database.SagerDatabase
 import io.nekohasekai.sagernet.database.StatsEntity
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.getEnabled
 import io.nekohasekai.sagernet.ktx.getStringValue
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ui.VpnRequestActivity
@@ -301,6 +302,10 @@ class VpnService : BaseVpnService(),
             trafficStats = DataStore.appTrafficStatistics
             pCap = DataStore.enablePcap
             protector = this@VpnService
+        }
+
+        if (getEnabled(DataStore.experimentalFlags, "discardIPv6BasedOnNetwork")) {
+            config.discardIPv6BasedOnNetwork = true
         }
 
         if (tunImplementation == TunImplementation.SYSTEM) {

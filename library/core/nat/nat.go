@@ -42,12 +42,13 @@ type SystemTun struct {
 	addr4        netip.Addr
 	addr6        netip.Addr
 	enableIPv6   bool
+	discardIPv6  func() bool
 	discardICMP  bool
 	tcpForwarder *tcpForwarder
 	closed       bool
 }
 
-func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, enableIPv6, discardICMP bool) (*SystemTun, error) {
+func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, enableIPv6, discardICMP bool, discardIPv6 func() bool) (*SystemTun, error) {
 	t := &SystemTun{
 		dev:         int(dev),
 		mtu:         int(mtu),
@@ -55,6 +56,7 @@ func New(dev int32, mtu int32, handler tun.Handler, addr4, addr6 netip.Addr, ena
 		addr4:       addr4,
 		addr6:       addr6,
 		enableIPv6:  enableIPv6,
+		discardIPv6: discardIPv6,
 		discardICMP: discardICMP,
 	}
 	tcpServer, err := newTcpForwarder(t)
@@ -126,22 +128,38 @@ func (t *SystemTun) deliverPacket(cache *buf.Buffer, packet []byte) bool {
 			t.processIPv4UDP(cache, ipHdr, ipHdr.Payload())
 			return true
 		case header.ICMPv4ProtocolNumber:
-			if !t.discardICMP {
-				t.processICMPv4(ipHdr, ipHdr.Payload())
+			if t.discardICMP {
+				newError("discarded ICMP to ", ipHdr.DestinationAddress()).AtDebug().WriteToLog()
+				return false
 			}
+			t.processICMPv4(ipHdr, ipHdr.Payload())
 		}
 	case header.IPv6Version:
 		ipHdr := header.IPv6(packet)
+		discardIPv6 := false
+		if t.discardIPv6 != nil {
+			discardIPv6 = t.discardIPv6()
+		}
 		switch ipHdr.TransportProtocol() {
 		case header.TCPProtocolNumber:
+			if discardIPv6 {
+				newError("discarded IPv6 to ", ipHdr.DestinationAddress()).AtDebug().WriteToLog()
+				return false
+			}
 			t.tcpForwarder.processIPv6(ipHdr, ipHdr.Payload())
 		case header.UDPProtocolNumber:
+			if discardIPv6 {
+				newError("discarded IPv6 to ", ipHdr.DestinationAddress()).AtDebug().WriteToLog()
+				return true
+			}
 			t.processIPv6UDP(cache, ipHdr, ipHdr.Payload())
 			return true
 		case header.ICMPv6ProtocolNumber:
-			if !t.discardICMP {
-				t.processICMPv6(ipHdr, ipHdr.Payload())
+			if discardIPv6 || t.discardICMP {
+				newError("discarded ICMPv6 to ", ipHdr.DestinationAddress()).AtDebug().WriteToLog()
+				return false
 			}
+			t.processICMPv6(ipHdr, ipHdr.Payload())
 		}
 	}
 	return false

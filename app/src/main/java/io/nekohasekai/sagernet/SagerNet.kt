@@ -61,6 +61,7 @@ import kotlinx.coroutines.DEBUG_PROPERTY_NAME
 import kotlinx.coroutines.DEBUG_PROPERTY_VALUE_ON
 import libcore.Libcore
 import libcore.UidDumper
+import java.net.Inet6Address
 import java.net.InetSocketAddress
 import androidx.work.Configuration as WorkConfiguration
 
@@ -283,6 +284,12 @@ class SagerNet : Application(),
 
             if (DataStore.interruptReusedConnections && currentNetwork != null && currentNetwork != network) {
                 Libcore.interfaceUpdate()
+            }
+            connectivity.getLinkProperties(network)?.let { linkProperties ->
+                val linkAddresses = linkProperties.linkAddresses.toList().map { it.address }
+                Libcore.setDiscardIPv6(!linkAddresses.any {
+                    it is Inet6Address && !it.isLinkLocalAddress
+                })
             }
             currentNetwork = network
         }

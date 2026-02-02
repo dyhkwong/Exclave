@@ -169,7 +169,6 @@ func (t *tcpForwarder) processIPv6(ipHdr header.IPv6, tcpHdr header.TCP) {
 	var session *peerValue
 
 	if sourcePort != t.port6 {
-
 		key := peerKey{destinationAddress, sourcePort}
 		iSession, ok := t.sessions.Get(key)
 		if ok {
@@ -182,7 +181,6 @@ func (t *tcpForwarder) processIPv6(ipHdr header.IPv6, tcpHdr header.TCP) {
 		ipHdr.SetSourceAddress(destinationAddress)
 		ipHdr.SetDestinationAddress(tcpip.AddrFrom16(t.tun.addr6.As16()))
 		tcpHdr.SetDestinationPort(t.port6)
-
 	} else {
 
 		iSession, ok := t.sessions.Get(peerKey{destinationAddress, destinationPort})
