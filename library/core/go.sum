@@ -58,8 +58,8 @@ github.com/dyhkwong/hysteria/extras/v2 v2.7.0-1 h1:nAUZRGnprGSGjXhQg28vPYl2bpiXd
 github.com/dyhkwong/hysteria/extras/v2 v2.7.0-1/go.mod h1:CjBDwvzaF7LP0qcPLRqjedGKaNY3MR36TA5ANjoYR0k=
 github.com/dyhkwong/sing-juicity v0.1.0-beta.6 h1:viKT3TKSfI605k9hVrPwtPdf9lxB3issxn41v/h/59I=
 github.com/dyhkwong/sing-juicity v0.1.0-beta.6/go.mod h1:LNc++CLsfsfqKJLFOG0rJsM1VX9LmJhpw57Z1nll2CA=
-github.com/dyhkwong/v2ray-core/v5 v5.44.2-0.20260128141227-8cdbe9facb99 h1:CtfCFSrCCaUo1NYc6mAh5Xqhc5gE7bt0i/fOx7L89XA=
-github.com/dyhkwong/v2ray-core/v5 v5.44.2-0.20260128141227-8cdbe9facb99/go.mod h1:hrjlScpmmFIJcEfXb/GDtckkPmtl+Ao1YNYQuen+duY=
+github.com/dyhkwong/v2ray-core/v5 v5.44.2-0.20260203192749-43f4ba6981f2 h1:/suTPdh78fOicTmeuutQhYYKxnzCsBgfMPuUkaH23JM=
+github.com/dyhkwong/v2ray-core/v5 v5.44.2-0.20260203192749-43f4ba6981f2/go.mod h1:vatiQHkVgTEJeh00be9UeGCQCuZYgUBkeoc0A41TfeY=
 github.com/enfein/mieru/v3 v3.27.0 h1:+E/1TF7OfimS2h582atEXQxPtJMyvqUTFBJUgzn1rxg=
 github.com/enfein/mieru/v3 v3.27.0/go.mod h1:zJBUCsi5rxyvHM8fjFf+GLaEl4OEjjBXr1s5F6Qd3hM=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
@@ -217,8 +217,8 @@ github.com/sagernet/gomobile v0.1.11 h1:niMQAspvuThup5eRZQpsGcbM76zAvnsGr7RUIpnQ
 github.com/sagernet/gomobile v0.1.11/go.mod h1:A8l3FlHi2D/+mfcd4HHvk5DGFPW/ShFb9jHP5VmSiDY=
 github.com/sagernet/quic-go v0.59.0-sing-box-mod.2 h1:hJUL+HtxEOjxsa0CsucbBVqI/AMS4k52NwNU637zmdw=
 github.com/sagernet/quic-go v0.59.0-sing-box-mod.2/go.mod h1:OqILvS182CyOol5zNNo6bguvOGgXzV459+chpRaUC+4=
-github.com/sagernet/sing v0.8.0-beta.12 h1:Xt0MNk6i6vI9f2vV6QkwhgiLB0g53fZSVsCCBEtQ8qQ=
-github.com/sagernet/sing v0.8.0-beta.12/go.mod h1:ARkL0gM13/Iv5VCZmci/NuoOlePoIsW0m7BWfln/Hak=
+github.com/sagernet/sing v0.8.0-beta.15 h1:lP6XnzeQvVBfuTkByo5YnG4Oy/AVkDC2ZljghSfHzKQ=
+github.com/sagernet/sing v0.8.0-beta.15/go.mod h1:ARkL0gM13/Iv5VCZmci/NuoOlePoIsW0m7BWfln/Hak=
 github.com/sagernet/sing-mux v0.3.4 h1:ZQplKl8MNXutjzbMVtWvWG31fohhgOfCuUZR4dVQ8+s=
 github.com/sagernet/sing-mux v0.3.4/go.mod h1:QvlKMyNBNrQoyX4x+gq028uPbLM2XeRpWtDsWBJbFSk=
 github.com/sagernet/sing-quic v0.6.0-beta.11 h1:eUusxITKKRedhWC2ScUYFUvD96h/QfbKLaS3N6/7in4=

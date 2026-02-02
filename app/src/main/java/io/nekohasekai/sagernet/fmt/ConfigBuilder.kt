@@ -1129,6 +1129,45 @@ fun buildV2RayConfig(
                                                                     }
                                                                 }
                                                             }
+                                                            extra.getBoolean("xPaddingObfsMode", ignoreCase = true)?.also {
+                                                                xPaddingObfsMode = it
+                                                            }
+                                                            extra.getString("xPaddingKey", ignoreCase = true)?.also {
+                                                                xPaddingKey = it
+                                                            }
+                                                            extra.getString("xPaddingHeader", ignoreCase = true)?.also {
+                                                                xPaddingHeader = it
+                                                            }
+                                                            extra.getString("xPaddingPlacement", ignoreCase = true)?.also {
+                                                                xPaddingPlacement = it
+                                                            }
+                                                            extra.getString("xPaddingMethod", ignoreCase = true)?.also {
+                                                                xPaddingMethod = it
+                                                            }
+                                                            extra.getString("uplinkHTTPMethod", ignoreCase = true)?.also {
+                                                                uplinkHTTPMethod = it
+                                                            }
+                                                            extra.getString("sessionPlacement", ignoreCase = true)?.also {
+                                                                sessionPlacement = it
+                                                            }
+                                                            extra.getString("sessionKey", ignoreCase = true)?.also {
+                                                                sessionKey = it
+                                                            }
+                                                            extra.getString("seqPlacement", ignoreCase = true)?.also {
+                                                                seqPlacement = it
+                                                            }
+                                                            extra.getString("seqKey", ignoreCase = true)?.also {
+                                                                seqKey = it
+                                                            }
+                                                            extra.getString("uplinkDataPlacement", ignoreCase = true)?.also {
+                                                                uplinkDataPlacement = it
+                                                            }
+                                                            extra.getString("uplinkDataKey", ignoreCase = true)?.also {
+                                                                uplinkDataKey = it
+                                                            }
+                                                            extra.getInt("uplinkChunkSize", ignoreCase = true)?.also {
+                                                                uplinkChunkSize = it
+                                                            }
                                                         }
                                                     } catch (e: Exception) {
                                                         error(e)

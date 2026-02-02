@@ -213,6 +213,34 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                     }
                                 }
                             }
+                            streamSettings.getObject("finalmask")?.also { finalmask ->
+                                // fuck RPRX
+                                finalmask.getArray("udp")?.takeIf { it.isNotEmpty() }?.also { udpMasks ->
+                                    if (udpMasks.size !in 1..2) return listOf()
+                                    when (udpMasks.last().getString("type")) {
+                                        "mkcp-original" -> {}
+                                        "mkcp-aes128gcm" -> {
+                                            udpMasks.last().getObject("settings")?.also { settings ->
+                                                settings.getString("password")?.also {
+                                                    v2rayBean.mKcpSeed = it
+                                                }
+                                            }
+                                        }
+                                        else -> return listOf()
+                                    }
+                                    if (udpMasks.size == 2) {
+                                        when (udpMasks.first().getString("type")) {
+                                            null -> {}
+                                            "header-dtls" -> v2rayBean.headerType = "dtls"
+                                            "header-srtp" -> v2rayBean.headerType = "srtp"
+                                            "header-utp" -> v2rayBean.headerType = "utp"
+                                            "header-wechat" -> v2rayBean.headerType = "wechat"
+                                            "header-wireguard" -> v2rayBean.headerType = "wireguard"
+                                            else -> return listOf()
+                                        }
+                                    }
+                                }
+                            }
                         }
                         "ws", "websocket" -> {
                             v2rayBean.type = "ws"
@@ -407,6 +435,71 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         extra.add("downloadSettings", it)
                                     }
                                 }
+                                if (!extra.contains("xPaddingObfsMode")) {
+                                    splithttpSettings.getBoolean("xPaddingObfsMode")?.also {
+                                        extra.addProperty("xPaddingObfsMode", it)
+                                    }
+                                }
+                                if (!extra.contains("xPaddingKey")) {
+                                    splithttpSettings.getString("xPaddingKey")?.also {
+                                        extra.addProperty("xPaddingKey", it)
+                                    }
+                                }
+                                if (!extra.contains("xPaddingHeader")) {
+                                    splithttpSettings.getString("xPaddingHeader")?.also {
+                                        extra.addProperty("xPaddingHeader", it)
+                                    }
+                                }
+                                if (!extra.contains("xPaddingPlacement")) {
+                                    splithttpSettings.getString("xPaddingPlacement")?.also {
+                                        extra.addProperty("xPaddingPlacement", it)
+                                    }
+                                }
+                                if (!extra.contains("xPaddingMethod")) {
+                                    splithttpSettings.getString("xPaddingMethod")?.also {
+                                        extra.addProperty("xPaddingMethod", it)
+                                    }
+                                }
+                                if (!extra.contains("uplinkHTTPMethod")) {
+                                    splithttpSettings.getString("uplinkHTTPMethod")?.also {
+                                        extra.addProperty("uplinkHTTPMethod", it)
+                                    }
+                                }
+                                if (!extra.contains("sessionPlacement")) {
+                                    splithttpSettings.getString("sessionPlacement")?.also {
+                                        extra.addProperty("sessionPlacement", it)
+                                    }
+                                }
+                                if (!extra.contains("sessionKey")) {
+                                    splithttpSettings.getString("sessionKey")?.also {
+                                        extra.addProperty("sessionKey", it)
+                                    }
+                                }
+                                if (!extra.contains("seqPlacement")) {
+                                    splithttpSettings.getString("seqPlacement")?.also {
+                                        extra.addProperty("seqPlacement", it)
+                                    }
+                                }
+                                if (!extra.contains("seqKey")) {
+                                    splithttpSettings.getString("seqKey")?.also {
+                                        extra.addProperty("seqKey", it)
+                                    }
+                                }
+                                if (!extra.contains("uplinkDataPlacement")) {
+                                    splithttpSettings.getString("uplinkDataPlacement")?.also {
+                                        extra.addProperty("uplinkDataPlacement", it)
+                                    }
+                                }
+                                if (!extra.contains("uplinkDataKey")) {
+                                    splithttpSettings.getString("uplinkDataKey")?.also {
+                                        extra.addProperty("uplinkDataKey", it)
+                                    }
+                                }
+                                if (!extra.contains("uplinkChunkSize")) {
+                                    splithttpSettings.getInt("uplinkChunkSize")?.also {
+                                        extra.addProperty("uplinkChunkSize", it)
+                                    }
+                                }
                                 if (!extra.isEmpty) {
                                     v2rayBean.splithttpExtra = GsonBuilder().setPrettyPrinting().create().toJson(extra)
                                 }
@@ -429,6 +522,16 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                         }
 
                         else -> return listOf()
+                    }
+                    when (v2rayBean.type) {
+                        "tcp", "ws", "grpc", "httpupgrade", "splithttp" -> {
+                            streamSettings.getObject("finalmask")?.also { finalmask ->
+                                // ban Xray TCP finalmask in advance
+                                finalmask.getArray("tcp")?.takeIf { it.isNotEmpty() }?.also {
+                                    return listOf()
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1401,6 +1504,14 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             keepaliveInterval = it
                         }
                     })
+                }
+            }
+            outbound.getObject("streamSettings")?.also { streamSettings ->
+                streamSettings.getObject("finalmask")?.also { finalmask ->
+                    // ban Xray UDP finalmask
+                    finalmask.getArray("udp")?.takeIf { it.isNotEmpty() }?.also {
+                        return listOf()
+                    }
                 }
             }
             return beanList
