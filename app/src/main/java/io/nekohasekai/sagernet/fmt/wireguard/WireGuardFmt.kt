@@ -26,6 +26,7 @@ import io.nekohasekai.sagernet.ktx.queryParameter
 import libcore.Libcore
 import com.sshtools.jini.INI
 import com.sshtools.jini.INIWriter
+import io.nekohasekai.sagernet.ktx.queryParameterNotBlank
 import java.io.StringWriter
 import kotlin.jvm.optionals.getOrNull
 
@@ -53,7 +54,7 @@ fun parseWireGuard(server: String): WireGuardBean {
             peerPublicKey = it.replace('_', '/').replace('-', '+')
             if (peerPublicKey.length == 43) peerPublicKey += "="
         }
-        (link.queryParameter("presharedkey") ?: link.queryParameter("preSharedKey")) ?.let {
+        (link.queryParameterNotBlank("presharedkey") ?: link.queryParameterNotBlank("preSharedKey")) ?.let {
             peerPreSharedKey = it.replace('_', '/').replace('-', '+')
             if (peerPublicKey.length == 43) peerPublicKey += "="
         }
