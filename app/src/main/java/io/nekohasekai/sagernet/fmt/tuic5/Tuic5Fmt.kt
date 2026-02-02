@@ -33,6 +33,7 @@ import io.nekohasekai.sagernet.fmt.tuic.supportedTuicRelayMode
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.queryParameterNotBlank
 import java.io.File
 import libcore.Libcore
 
@@ -120,10 +121,10 @@ fun parseTuic(server: String): AbstractBean {
         }
         uuid = link.username
         password = link.password
-        link.queryParameter("sni")?.let {
+        link.queryParameterNotBlank("sni")?.let {
             sni = it
         }
-        link.queryParameter("alpn")?.let {
+        link.queryParameterNotBlank("alpn")?.let {
             alpn = it.split(",").joinToString("\n")
         }
         (link.queryParameter("congestion_controller") ?:

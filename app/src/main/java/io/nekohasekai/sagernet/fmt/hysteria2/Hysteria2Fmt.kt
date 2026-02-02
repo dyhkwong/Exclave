@@ -28,6 +28,7 @@ import io.nekohasekai.sagernet.ktx.isValidHysteriaPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import io.nekohasekai.sagernet.ktx.queryParameter
+import io.nekohasekai.sagernet.ktx.queryParameterNotBlank
 import libcore.Libcore
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
@@ -84,7 +85,7 @@ fun parseHysteria2(rawURL: String): Hysteria2Bean {
                 auth = link.username + ":" + link.password
             }
         }
-        link.queryParameter("sni")?.also {
+        link.queryParameterNotBlank("sni")?.also {
             sni = it
         }
         link.queryParameter("insecure")?.takeIf { it == "1" || it == "true" }?.also {

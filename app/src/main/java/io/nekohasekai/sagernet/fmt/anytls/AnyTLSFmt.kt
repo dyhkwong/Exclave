@@ -30,7 +30,7 @@ fun parseAnyTLS(url: String): AnyTLSBean {
         serverPort = link.port.takeIf { it > 0 } ?: 443
         password = link.username
         security = "tls"
-        link.queryParameter("sni")?.also {
+        link.queryParameterNotBlank("sni")?.also {
             sni = it
         }
         link.queryParameter("insecure")?.takeIf { it == "1" || it == "true" }?.also {
