@@ -1390,13 +1390,15 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                         else -> return listOf()
                     }
                 }
-                streamSettings.getArray("udpmasks")?.takeIf { it.isNotEmpty() }?.also { udpmasks ->
-                    if (udpmasks.size != 1) return listOf() // WTF is this
-                    val udpmask = udpmasks[0]
-                    if (udpmask.getString("type") != "salamander") return listOf()
-                    udpmask.getObject("settings")?.also { settings ->
-                        settings.getString("password")?.also {
-                            hysteria2Bean.obfs = it
+                streamSettings.getObject("finalmask")?.also { finalmask ->
+                    finalmask.getArray("udp")?.takeIf { it.isNotEmpty() }?.also { udpMasks ->
+                        if (udpMasks.size != 1) return listOf()
+                        val udpmask = udpMasks[0]
+                        if (udpmask.getString("type") != "salamander") return listOf()
+                        udpmask.getObject("settings")?.also { settings ->
+                            settings.getString("password")?.also {
+                                hysteria2Bean.obfs = it
+                            }
                         }
                     }
                 }
