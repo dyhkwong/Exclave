@@ -19,6 +19,7 @@
 
 package io.nekohasekai.sagernet.fmt.v2ray
 
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.ktx.*
@@ -419,7 +420,8 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                                 "mkcp-original" -> {}
                                 "mkcp-aes128gcm" -> {
                                     udpMasks.last().getObject("settings", ignoreCase = true)?.also { settings ->
-                                        settings.getString("password", ignoreCase = true)?.also {
+                                        settings.getString("password", ignoreCase = true).orEmpty().also {
+                                            if (it.isEmpty()) error("unsupported")
                                             bean.mKcpSeed = it
                                         }
                                     }
@@ -663,8 +665,28 @@ fun StandardV2RayBean.toUri(): String? {
             if (headerType != "none") {
                 builder.addQueryParameter("headerType", headerType)
             }
-            if (mKcpSeed.isNotEmpty()) {
+            if (mKcpSeed.isEmpty()) {
+                builder.addQueryParameter("fm", JsonObject().apply {
+                    // fuck rprx finalmask
+                    add("udp", JsonArray().apply {
+                        add(JsonObject().apply {
+                            addProperty("type", "mkcp-original")
+                        })
+                    })
+                }.toString())
+            } else {
                 builder.addQueryParameter("seed", mKcpSeed)
+                builder.addQueryParameter("fm", JsonObject().apply {
+                    // fuck rprx finalmask
+                    add("udp", JsonArray().apply {
+                        add(JsonObject().apply {
+                            addProperty("type", "mkcp-aes128gcm")
+                            add("settings", JsonObject().apply {
+                                addProperty("password", mKcpSeed)
+                            })
+                        })
+                    })
+                }.toString())
             }
         }
         "ws" -> {
