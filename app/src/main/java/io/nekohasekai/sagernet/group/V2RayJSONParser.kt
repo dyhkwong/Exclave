@@ -53,6 +53,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.supportedXhttpMode
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import java.util.Base64
 
 fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
     // v2ray JSONv4 config, Xray config and JSONv4 config of Exclave's v2ray fork only
@@ -1470,8 +1471,12 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
             outbound.getObject("settings")?.also { settings ->
                 settings.getString("secretKey")?.also {
                     // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L126-L148
-                    wireguardBean.privateKey = it.replace('_', '/').replace('-', '+')
-                    if (wireguardBean.privateKey.length == 43) wireguardBean.privateKey += "="
+                    if (it.length == 64) {
+                        wireguardBean.privateKey = Base64.getEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                    } else {
+                        wireguardBean.privateKey = it.replace('_', '/').replace('-', '+')
+                        if (wireguardBean.privateKey.length == 43) wireguardBean.privateKey += "="
+                    }
                 }
                 // https://github.com/XTLS/Xray-core/blob/d8934cf83946e88210b6bb95d793bc06e12b6db8/infra/conf/wireguard.go#L75
                 wireguardBean.localAddress = "10.0.0.1/32\nfd59:7153:2388:b5fd:0000:0000:0000:0001/128"
@@ -1494,12 +1499,20 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             serverPort = endpoint.substringAfterLast(":").toIntOrNull() ?: return listOf()
                         }
                         peer.getString("publicKey")?.also {
-                            peerPublicKey = it.replace('_', '/').replace('-', '+')
-                            if (peerPublicKey.length == 43) peerPublicKey += "="
+                            if (it.length == 64) {
+                                peerPublicKey = Base64.getEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                            } else {
+                                peerPublicKey = it.replace('_', '/').replace('-', '+')
+                                if (peerPublicKey.length == 43) peerPublicKey += "="
+                            }
                         }
                         peer.getString("preSharedKey")?.also {
-                            peerPreSharedKey = it.replace('_', '/').replace('-', '+')
-                            if (peerPreSharedKey.length == 43) peerPreSharedKey += "="
+                            if (it.length == 64) {
+                                peerPreSharedKey = Base64.getEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+                            } else {
+                                peerPreSharedKey = it.replace('_', '/').replace('-', '+')
+                                if (peerPreSharedKey.length == 43) peerPreSharedKey += "="
+                            }
                         }
                         peer.getInt("keepAlive")?.takeIf { it > 0 }?.also {
                             keepaliveInterval = it
