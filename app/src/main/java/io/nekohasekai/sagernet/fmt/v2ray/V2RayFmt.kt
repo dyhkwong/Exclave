@@ -289,6 +289,32 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     val json = parseJson(extra).asJsonObject
                     if (!json.isEmpty) {
                         // fuck RPRX `extra`
+                        if (json.getBoolean("xPaddingObfsMode", ignoreCase = true) == true) {
+                            json.getString("xPaddingPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                if (it != "queryInHeader") error("unsupported xhttp xPaddingPlacement")
+                            }
+                            json.getString("xPaddingKey", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                if (it != "x_padding") error("unsupported xhttp xPaddingKey")
+                            }
+                            json.getString("xPaddingHeader", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                if (it.lowercase() != "referer") error("unsupported xhttp xPaddingHeader")
+                            }
+                            json.getString("xPaddingMethod", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                if (it != "repeat-x") error("unsupported xhttp xPaddingMethod")
+                            }
+                        }
+                        json.getString("uplinkHTTPMethod", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                            if (it.lowercase() != "post") error("unsupported xhttp uplinkDataPlacement")
+                        }
+                        json.getString("uplinkDataPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                            if (it != "body") error("unsupported xhttp uplinkDataPlacement")
+                        }
+                        json.getString("sessionPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                            if (it != "path") error("unsupported xhttp sessionPlacement")
+                        }
+                        json.getString("seqPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                            if (it != "path") error("unsupported xhttp seqPlacement")
+                        }
                         bean.splithttpExtra = json.toString()
                     }
                 } catch (_: Exception) {}

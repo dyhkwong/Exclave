@@ -51,6 +51,8 @@ import io.nekohasekai.sagernet.fmt.v2ray.supportedVmessMethod
 import io.nekohasekai.sagernet.fmt.v2ray.supportedXhttpMode
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.getBoolean
+import io.nekohasekai.sagernet.ktx.getString
 import libcore.Libcore
 
 fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
@@ -391,10 +393,64 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         else -> return listOf()
                                     }
                                 }
+                                if (splithttpSettings.getBoolean("xPaddingObfsMode") == true) {
+                                    splithttpSettings.getString("xPaddingPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it != "queryInHeader") return listOf()
+                                    }
+                                    splithttpSettings.getString("xPaddingKey", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it != "x_padding") return listOf()
+                                    }
+                                    splithttpSettings.getString("xPaddingHeader", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it.lowercase() != "referer") return listOf()
+                                    }
+                                    splithttpSettings.getString("xPaddingMethod", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it != "repeat-x") return listOf()
+                                    }
+                                    return listOf()
+                                }
+                                splithttpSettings.getString("uplinkHTTPMethod", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it.lowercase() != "post") error("unsupported xhttp uplinkDataPlacement")
+                                }
+                                splithttpSettings.getString("uplinkDataPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it != "body") error("unsupported xhttp uplinkDataPlacement")
+                                }
+                                splithttpSettings.getString("sessionPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it != "path") error("unsupported xhttp sessionPlacement")
+                                }
+                                splithttpSettings.getString("seqPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it != "path") error("unsupported xhttp seqPlacement")
+                                }
                                 // fuck RPRX `extra`
                                 var extra = JsonObject()
                                 splithttpSettings.getObject("extra")?.also {
                                     extra = it
+                                }
+                                if (extra.getBoolean("xPaddingObfsMode") == true) {
+                                    extra.getString("xPaddingPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it != "queryInHeader") return listOf()
+                                    }
+                                    extra.getString("xPaddingKey", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it != "x_padding") return listOf()
+                                    }
+                                    extra.getString("xPaddingHeader", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it.lowercase() != "referer") return listOf()
+                                    }
+                                    extra.getString("xPaddingMethod", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                        if (it != "repeat-x") return listOf()
+                                    }
+                                    return listOf()
+                                }
+                                extra.getString("uplinkHTTPMethod", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it.lowercase() != "post") error("unsupported xhttp uplinkDataPlacement")
+                                }
+                                extra.getString("uplinkDataPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it != "body") error("unsupported xhttp uplinkDataPlacement")
+                                }
+                                extra.getString("sessionPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it != "path") error("unsupported xhttp sessionPlacement")
+                                }
+                                extra.getString("seqPlacement", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.let {
+                                    if (it != "path") error("unsupported xhttp seqPlacement")
                                 }
                                 if (!extra.contains("scMaxEachPostBytes")) {
                                     splithttpSettings.getInt("scMaxEachPostBytes")?.also {
