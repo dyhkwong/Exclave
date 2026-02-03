@@ -28,6 +28,7 @@ import com.sshtools.jini.INI
 import com.sshtools.jini.INIWriter
 import io.nekohasekai.sagernet.ktx.queryParameterNotBlank
 import java.io.StringWriter
+import java.util.Base64
 import kotlin.jvm.optionals.getOrNull
 
 fun parseWireGuard(server: String): WireGuardBean {
@@ -44,19 +45,32 @@ fun parseWireGuard(server: String): WireGuardBean {
             localAddress = "10.0.0.1/32\nfd59:7153:2388:b5fd:0000:0000:0000:0001/128"
         }
         (link.queryParameter("privatekey") ?: link.queryParameter("privateKey")) ?.let {
-            privateKey = it.replace('_', '/').replace('-', '+')
-            if (privateKey.length == 43) privateKey += "="
+            if (it.length == 64) {
+                privateKey = Base64.getEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+            } else {
+                privateKey = it.replace('_', '/').replace('-', '+')
+                if (privateKey.length == 43) privateKey += "="
+            }
         }
         (link.queryParameter("address") ?: link.queryParameter("ip")) ?.takeIf { it.isNotEmpty() }?.also {
             localAddress = it.split(",").joinToString("\n")
         }
         (link.queryParameter("publickey") ?: link.queryParameter("publicKey")) ?.let {
-            peerPublicKey = it.replace('_', '/').replace('-', '+')
-            if (peerPublicKey.length == 43) peerPublicKey += "="
+            if (it.length == 64) {
+                peerPublicKey = Base64.getEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+            } else {
+                peerPublicKey = it.replace('_', '/').replace('-', '+')
+                if (peerPublicKey.length == 43) peerPublicKey += "="
+            }
         }
         (link.queryParameterNotBlank("presharedkey") ?: link.queryParameterNotBlank("preSharedKey")) ?.let {
-            peerPreSharedKey = it.replace('_', '/').replace('-', '+')
-            if (peerPublicKey.length == 43) peerPublicKey += "="
+            if (peerPreSharedKey.length == 43) peerPreSharedKey += "="
+            if (it.length == 64) {
+                peerPreSharedKey = Base64.getEncoder().encodeToString(it.chunked(2).map { it.toInt(16).toByte() }.toByteArray())
+            } else {
+                peerPreSharedKey = it.replace('_', '/').replace('-', '+')
+                if (peerPreSharedKey.length == 43) peerPreSharedKey += "="
+            }
         }
         link.queryParameter("mtu")?.toIntOrNull()?.takeIf { it > 0 }?.let {
             mtu = it
