@@ -5,14 +5,16 @@ Exclave is a proxy client.
 <details>
 
 Features:
+
 - Various proxy protocols
 - Group and subscription
 - Routing
 - Proxy chain
 
 Some supported protocols:
-- Shadowsocks (optional SIP003 plugin)
-- Shadowsocks 2022 (optional SIP003 plugin)
+
+- Shadowsocks (with SIP003 plugin support)
+- Shadowsocks 2022 (with SIP003 plugin support)
 - Trojan
 - Hysteria 2
 - AnyTLS
@@ -22,9 +24,10 @@ Some supported protocols:
 - Juicity
 - VMess (with various optional sub-protocols)
 - VLESS (with various optional sub-protocols)
-- WireGuard (as a proxy rather than a VPN)
-- SSH proxy
-- HTTP CONNECT tunnel and HTTPS CONNECT tunnel (optional HTTP/2 and HTTP/3)
+- WireGuard (TCP and UDP only)
+- TrustTunnel (no ICMP echo support)
+- SSH proxy ("dynamic port forwarding")
+- HTTP CONNECT tunnel (HTTP/1.1, HTTP/1.1 with TLS, HTTP/2 and HTTP/3)
 - SOCKS4, SOCKS4A and SOCKS5
 
 </details>
@@ -35,26 +38,19 @@ It is a fork of the archived Android proxy client SagerNet and uses a custom ove
 
 - Exclave
 
+  [Download from GitHub releases](https://github.com/dyhkwong/Exclave/releases)
 
-  [<img src="images/get-it-on-github.png" alt="Get it on GitHub" height="80">](https://github.com/dyhkwong/Exclave/releases) [<img src="images/get-it-on-f-droid.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.github.dyhkwong.sagernet)
+  [Download from F-Droid](https://f-droid.org/packages/com.github.dyhkwong.sagernet)
 
-  SHA-256 hash of the APK signing certificate: `e9fe39e1ce254c50c2f9470a757b378c0b7cc536119867f7691405b592e6994b`
+  SHA-256 hash of the signing certificate: `e9fe39e1ce254c50c2f9470a757b378c0b7cc536119867f7691405b592e6994b`
 
 - NaïveProxy Plugin
 
-  [<img src="images/get-it-on-github.png" alt="Get it on GitHub" height="80">](https://github.com/klzgrad/naiveproxy/releases)
+  [Download from GitHub releases](https://github.com/klzgrad/naiveproxy/releases)
+
+  It is distributed and signed by the upstream author.
 
 Starting in September 2026, Google will [block apps from "sideloading"](https://developer.android.com/developer-verification) on [certified Android devices](https://www.android.com/certified/partners/). If you are a user who values digital freedom, we need your voice to express opposition. Your support will not only help save this app, but also help defend software freedom and open distribution.
-
-<details>
-
-- Since August 2025, Google has been advancing a move to block apps from being installed by users on certified Android devices if developers do not verify their identities and register their apps.
-- Only organization developers with a D-U-N-S number can [publish new apps sthat use `VpnService` on Play Store](https://support.google.com/googleplay/android-developer/answer/13634885).
-- The "limited distribution" outside Play Store for "hobbyist developers" is based on user invitation and comes with limits on the number of apps and installations.
-- The maintainer of this app is unable and unwilling to provide real identity information to register this app.
-- As a result, you will end up have no choice but to use Android Debug Bridge (ADB) to install this app on certified Android devices.
-
-</details>
 
 ## License
 
@@ -101,15 +97,14 @@ The following procedures are only applicable to for typical AMD64 Linux distros.
     ALIAS_NAME=your_alias_name
     ALIAS_PASS=your_alias_pass
 ```
-- Build `libcore`: `./run lib core` (or run `library/core/build.sh` manually)
-- Download assets if you have not downloaded them before: `./gradlew :app:downloadAssets` (or update assets to the latest version: `./gradlew :app:updateAssets`)
+- Build libcore: `./run lib core` or `./library/core/build.sh`
+- Download assets: `./gradlew :app:downloadAssets`, or update assets to the latest version: `./gradlew :app:updateAssets`
 - Build the app: `./gradlew :app:assembleOssRelease`
-- APK files are located in `app/build/outputs/apk/oss/release`
+- APK files are located in `./app/build/outputs/apk/oss/release`
 
 ## Acknowledgment
 
 - [Shadowsocks](https://github.com/shadowsocks/shadowsocks-android)
 - [SagerNet](https://github.com/SagerNet/SagerNet)
-- [Matsuri](https://github.com/MatsuriDayo/Matsuri)
-- [NekoBox](https://github.com/MatsuriDayo/NekoBoxForAndroid)
 - [husi](https://github.com/xchacha20-poly1305/husi)
+- Other forks of SagerNet
