@@ -28,8 +28,10 @@ import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
-import io.nekohasekai.sagernet.ktx.getEnabled
+import io.nekohasekai.sagernet.ktx.getBooleanProperty
 import io.nekohasekai.sagernet.ktx.unwrapIDN
+import java.io.StringReader
+import java.util.Properties
 
 class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
 
@@ -79,8 +81,12 @@ class NaiveSettingsActivity : ProfileSettingsActivity<NaiveBean>() {
         findPreference<EditTextPreference>(Key.SERVER_INSECURE_CONCURRENCY)!!.apply {
             setOnBindEditTextListener(EditTextPreferenceModifiers.Number)
         }
+
+        val experimentalFlags = Properties().apply {
+            load(StringReader(DataStore.experimentalFlags))
+        }
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
-            getEnabled(DataStore.experimentalFlags, "singuot")
+            experimentalFlags.getBooleanProperty("singuot")
     }
 
 }

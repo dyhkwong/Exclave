@@ -109,11 +109,10 @@ import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.app
 import io.nekohasekai.sagernet.ktx.getArray
 import io.nekohasekai.sagernet.ktx.getBoolean
-import io.nekohasekai.sagernet.ktx.getEnabled
+import io.nekohasekai.sagernet.ktx.getBooleanProperty
 import io.nekohasekai.sagernet.ktx.getInt
 import io.nekohasekai.sagernet.ktx.getObject
 import io.nekohasekai.sagernet.ktx.getString
-import io.nekohasekai.sagernet.ktx.getStringValue
 import io.nekohasekai.sagernet.ktx.isValidHysteriaMultiPort
 import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLine
@@ -126,6 +125,8 @@ import io.nekohasekai.sagernet.ktx.uuidOrGenerate
 import io.nekohasekai.sagernet.utils.PackageCache
 import kotlin.io.encoding.Base64
 import libcore.Libcore
+import java.io.StringReader
+import java.util.Properties
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -293,6 +294,10 @@ fun buildV2RayConfig(
 
     val shouldDumpUID = extraRules.any { it.packages.isNotEmpty() }
     val alerts = mutableListOf<Pair<Int, String>>()
+
+    val experimentalFlags = Properties().apply {
+        load(StringReader(DataStore.experimentalFlags))
+    }
 
     lateinit var result: V2rayBuildResult
     V2RayConfig().apply {
@@ -626,7 +631,7 @@ fun buildV2RayConfig(
                                             address = LOCALHOST
                                             port = localPort
                                         })
-                                    if (getEnabled(DataStore.experimentalFlags, "singuot")) {
+                                    if (experimentalFlags.getBooleanProperty( "singuot")) {
                                         proxyEntity.naiveBean?.singUoT?.takeIf { it }?.let {
                                             uot = true
                                         }
@@ -759,7 +764,7 @@ fun buildV2RayConfig(
                                                         }
                                                     }
                                                 }
-                                                if (bean.singUoT && getEnabled(DataStore.experimentalFlags, "singuot")) {
+                                                if (bean.singUoT && experimentalFlags.getBooleanProperty( "singuot")) {
                                                     uot = bean.singUoT
                                                 }
                                             }
@@ -805,7 +810,7 @@ fun buildV2RayConfig(
                                                             }
                                                         }
                                                     }
-                                                    if (bean.singUoT && getEnabled(DataStore.experimentalFlags, "singuot")) {
+                                                    if (bean.singUoT && experimentalFlags.getBooleanProperty( "singuot")) {
                                                         uot = bean.singUoT
                                                     }
                                                 })
@@ -832,7 +837,7 @@ fun buildV2RayConfig(
                                                 }
                                             })
                                             version = bean.protocolVersionName()
-                                            if (bean.singUoT && getEnabled(DataStore.experimentalFlags, "singuot")) {
+                                            if (bean.singUoT && experimentalFlags.getBooleanProperty("singuot")) {
                                                 uot = bean.singUoT
                                             }
                                         }
@@ -1360,7 +1365,7 @@ fun buildV2RayConfig(
                                         udpRelayMode = bean.udpRelayMode
                                         if (bean.zeroRTTHandshake) zeroRTTHandshake = bean.zeroRTTHandshake
                                         if (bean.disableSNI) disableSNI = bean.disableSNI
-                                        if (bean.singUDPOverStream && getEnabled(DataStore.experimentalFlags, "singuot")) {
+                                        if (bean.singUDPOverStream && experimentalFlags.getBooleanProperty("singuot")) {
                                             udpOverStream = bean.singUDPOverStream
                                         }
                                         tlsSettings = TLSObject().apply {
@@ -1786,7 +1791,7 @@ fun buildV2RayConfig(
                                 }
                             }
                             if ((bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean)
-                                && bean.singMux && getEnabled(DataStore.experimentalFlags, "singmux")) {
+                                && bean.singMux && experimentalFlags.getBooleanProperty("singmux")) {
                                 smux = OutboundObject.SmuxObject().apply {
                                     enabled = bean.singMux
                                     protocol = bean.singMuxProtocol
@@ -2196,7 +2201,7 @@ fun buildV2RayConfig(
             settings = LazyOutboundConfigurationObject(this,
                 DNSOutboundConfigurationObject().apply {
                     userLevel = 1
-                    if (getEnabled(DataStore.experimentalFlags, "lookupAsExchange")) {
+                    if (experimentalFlags.getBooleanProperty("lookupAsExchange")) {
                         lookupAsExchange = true
                     }
                 })
@@ -2230,7 +2235,7 @@ fun buildV2RayConfig(
         }
 
         if (DataStore.enableDnsRouting) {
-            val directDNSDomainList = getStringValue(DataStore.experimentalFlags, "directDNSDomainList")
+            val directDNSDomainList = experimentalFlags.getProperty("directDNSDomainList")
             if (directDNSDomainList != null) {
                 bypassDomain.addAll(directDNSDomainList.split(","))
             } else {
@@ -2240,7 +2245,7 @@ fun buildV2RayConfig(
                     }
                 }
             }
-            val remoteDNSDomainList = getStringValue(DataStore.experimentalFlags, "remoteDNSDomainList")
+            val remoteDNSDomainList = experimentalFlags.getProperty("remoteDNSDomainList")
             if (remoteDNSDomainList != null) {
                 proxyDomain.addAll(remoteDNSDomainList.split(","))
             } else {

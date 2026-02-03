@@ -52,7 +52,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean
 import io.nekohasekai.sagernet.fmt.v2ray.VLESSBean
 import io.nekohasekai.sagernet.fmt.v2ray.VMessBean
 import io.nekohasekai.sagernet.ktx.app
-import io.nekohasekai.sagernet.ktx.getEnabled
+import io.nekohasekai.sagernet.ktx.getBooleanProperty
 import io.nekohasekai.sagernet.ktx.listenForPackageChanges
 import io.nekohasekai.sagernet.ktx.readableMessage
 import io.nekohasekai.sagernet.ktx.runOnMainDispatcher
@@ -60,6 +60,8 @@ import io.nekohasekai.sagernet.ktx.showAllowingStateLoss
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 import io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
 import kotlinx.coroutines.launch
+import java.io.StringReader
+import java.util.Properties
 
 abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV2RayBean>(),
     Preference.OnPreferenceChangeListener {
@@ -552,11 +554,14 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         pluginConfiguration = PluginConfiguration(DataStore.serverPlugin)
         initPlugins()
 
+        val experimentalFlags = Properties().apply {
+            load(StringReader(DataStore.experimentalFlags))
+        }
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
-            (bean is ShadowsocksBean || bean is SOCKSBean) && getEnabled(DataStore.experimentalFlags, "singuot")
+            (bean is ShadowsocksBean || bean is SOCKSBean) && experimentalFlags.getBooleanProperty("singuot")
         findPreference<PreferenceCategory>(Key.SERVER_SING_MUX_CATEGORY)!!.isVisible =
             (bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean) &&
-                    getEnabled(DataStore.experimentalFlags, "singmux")
+                    experimentalFlags.getBooleanProperty("singmux")
         singMux = findPreference(Key.SERVER_SING_MUX)!!
         singMuxProtocol = findPreference(Key.SERVER_SING_MUX_PROTOCOL)!!
         singMuxMaxConnections = findPreference(Key.SERVER_SING_MUX_MAX_CONNECTIONS)!!
