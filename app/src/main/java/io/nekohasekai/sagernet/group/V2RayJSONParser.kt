@@ -221,7 +221,8 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         "mkcp-original" -> {}
                                         "mkcp-aes128gcm" -> {
                                             udpMasks.last().getObject("settings")?.also { settings ->
-                                                settings.getString("password")?.also {
+                                                settings.getString("password").orEmpty().also {
+                                                    if (it.isEmpty()) return listOf()
                                                     v2rayBean.mKcpSeed = it
                                                 }
                                             }
