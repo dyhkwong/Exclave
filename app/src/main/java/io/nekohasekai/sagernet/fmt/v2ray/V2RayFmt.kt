@@ -399,6 +399,51 @@ fun parseV2Ray(link: String): StandardV2RayBean {
         "hysteria2" -> error("unsupported")
         else -> bean.type = "tcp"
     }
+
+    url.queryParameter("fm")?.let { finalmask ->
+        // fuck RPRX
+        try {
+            val json = parseJson(finalmask).asJsonObject
+            if (!json.isEmpty) {
+                when (bean.type) {
+                    "tcp", "ws", "grpc", "httpupgrade", "splithttp" -> {
+                        // ban Xray TCP finalmask in advance
+                        json.getArray("tcp", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.also {
+                            error("unsupported")
+                        }
+                    }
+                    "kcp" -> {
+                        json.getArray("udp", ignoreCase = true)?.takeIf { it.isNotEmpty() }?.also { udpMasks ->
+                            if (udpMasks.size !in 1..2) error("unsupported")
+                            when (udpMasks.last().getString("type", ignoreCase = true)) {
+                                "mkcp-original" -> {}
+                                "mkcp-aes128gcm" -> {
+                                    udpMasks.last().getObject("settings", ignoreCase = true)?.also { settings ->
+                                        settings.getString("password", ignoreCase = true)?.also {
+                                            bean.mKcpSeed = it
+                                        }
+                                    }
+                                }
+                                else -> error("unsupported")
+                            }
+                            if (udpMasks.size == 2) {
+                                when (udpMasks.first().getString("type", ignoreCase = true)) {
+                                    null -> {}
+                                    "header-dtls" -> bean.headerType = "dtls"
+                                    "header-srtp" -> bean.headerType = "srtp"
+                                    "header-utp" -> bean.headerType = "utp"
+                                    "header-wechat" -> bean.headerType = "wechat"
+                                    "header-wireguard" -> bean.headerType = "wireguard"
+                                    else -> error("unsupported")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (_: Exception) {}
+    }
+
     return bean
 }
 

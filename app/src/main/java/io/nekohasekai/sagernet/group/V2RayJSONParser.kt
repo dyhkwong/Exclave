@@ -212,6 +212,34 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                     }
                                 }
                             }
+                            streamSettings.getObject("finalmask")?.also { finalmask ->
+                                // fuck RPRX
+                                finalmask.getArray("udp")?.takeIf { it.isNotEmpty() }?.also { udpMasks ->
+                                    if (udpMasks.size !in 1..2) return listOf()
+                                    when (udpMasks.last().getString("type")) {
+                                        "mkcp-original" -> {}
+                                        "mkcp-aes128gcm" -> {
+                                            udpMasks.last().getObject("settings")?.also { settings ->
+                                                settings.getString("password")?.also {
+                                                    v2rayBean.mKcpSeed = it
+                                                }
+                                            }
+                                        }
+                                        else -> return listOf()
+                                    }
+                                    if (udpMasks.size == 2) {
+                                        when (udpMasks.first().getString("type")) {
+                                            null -> {}
+                                            "header-dtls" -> v2rayBean.headerType = "dtls"
+                                            "header-srtp" -> v2rayBean.headerType = "srtp"
+                                            "header-utp" -> v2rayBean.headerType = "utp"
+                                            "header-wechat" -> v2rayBean.headerType = "wechat"
+                                            "header-wireguard" -> v2rayBean.headerType = "wireguard"
+                                            else -> return listOf()
+                                        }
+                                    }
+                                }
+                            }
                         }
                         "ws", "websocket" -> {
                             v2rayBean.type = "ws"
@@ -414,6 +442,16 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             }
                         }
                         else -> return listOf()
+                    }
+                    when (v2rayBean.type) {
+                        "tcp", "ws", "grpc", "httpupgrade", "splithttp" -> {
+                            streamSettings.getObject("finalmask")?.also { finalmask ->
+                                // ban Xray TCP finalmask in advance
+                                finalmask.getArray("tcp")?.takeIf { it.isNotEmpty() }?.also {
+                                    return listOf()
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1339,6 +1377,14 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             keepaliveInterval = it
                         }
                     })
+                }
+            }
+            outbound.getObject("streamSettings")?.also { streamSettings ->
+                streamSettings.getObject("finalmask")?.also { finalmask ->
+                    // ban Xray UDP finalmask
+                    finalmask.getArray("udp")?.takeIf { it.isNotEmpty() }?.also {
+                        return listOf()
+                    }
                 }
             }
             return beanList

@@ -625,7 +625,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             splithttpMode.value = resources.getStringArray(R.array.splithttp_mode_value)[0]
         }
         // Do not translate this as it is not a stable string.
-        splithttpExtra.dialogMessage = "`xmux` and `downloadSettings` are not supported."
+        splithttpExtra.dialogMessage = "`xmux`, `downloadSettings` and `xPaddingObfsMode` are unsupported."
 
         when (network) {
             "tcp" -> {
