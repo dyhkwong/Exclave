@@ -80,6 +80,7 @@ import java.util.zip.ZipInputStream
 import kotlin.concurrent.timerTask
 import androidx.core.net.toUri
 import io.nekohasekai.sagernet.utils.FormatFileSizeCompat
+import java.io.StringReader
 
 class ConfigurationFragment @JvmOverloads constructor(
     val select: Boolean = false, val selectedItem: ProxyEntity? = null, val titleRes: Int = 0
@@ -1200,13 +1201,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                 onViewCreated(requireView(), null)
             }
             checkOrderMenu()
-
-            if (!DataStore.enableDebug && getEnabled(DataStore.experimentalFlags, "shadowquic")) {
-                // WIP, not ready yet
-                (parentFragment as? ToolbarFragment)
-                    ?.toolbar?.menu?.findItem(R.id.action_new_shadowquic)?.isVisible  = false
-            }
-
             configurationListView.requestFocus()
         }
 
