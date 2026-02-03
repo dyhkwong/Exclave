@@ -177,27 +177,27 @@ class RouteFragment : ToolbarFragment(R.layout.layout_route), Toolbar.OnMenuItem
                                     rawRule.get("locked")?.takeIf { !it.isJsonNull }?.asString
                                     name = rawRule.get("remarks")?.takeIf { !it.isJsonNull }?.asString ?: ""
                                     enabled = rawRule.get("enabled")?.takeIf { !it.isJsonNull }?.asBoolean ?: false
-                                    outbound = when (rawRule.get("outboundTag")?.takeIf { !it.isJsonNull }?.asString) {
+                                    outbound = when (rawRule.get("outboundTag")?.takeIf { !it.isJsonNull }?.asString?.trim()) {
                                         "proxy" -> 0L
                                         "direct" -> -1L
                                         "block" -> -2L
                                         else -> 0L
                                     }
                                     rawRule.get("domain")?.takeIf { !it.isJsonNull }?.let {
-                                        domains = Gson().fromJson(it, Array<String>::class.java).joinToString("\n")
+                                        domains = Gson().fromJson(it, Array<String>::class.java).mapNotNull { it.trim().ifBlank { null } }.joinToString("\n")
                                     }
                                     rawRule.get("ip")?.takeIf { !it.isJsonNull }?.let {
-                                        ip = Gson().fromJson(it, Array<String>::class.java).joinToString("\n")
+                                        ip = Gson().fromJson(it, Array<String>::class.java).mapNotNull { it.trim().ifBlank { null } }.joinToString("\n")
                                     }
-                                    port = rawRule.get("port")?.takeIf { !it.isJsonNull }?.asString ?: ""
-                                    network = when (rawRule.get("network")?.takeIf { !it.isJsonNull }?.asString?.lowercase()) {
+                                    port = rawRule.get("port")?.takeIf { !it.isJsonNull }?.asString?.trim() ?: ""
+                                    network = when (rawRule.get("network")?.takeIf { !it.isJsonNull }?.asString?.lowercase()?.trim()) {
                                         "tcp" -> "tcp"
                                         "udp" -> "udp"
                                         "tcp,udp", "udp,tcp", "" -> ""
                                         else -> ""
                                     }
                                     rawRule.get("protocol")?.takeIf { !it.isJsonNull }?.let {
-                                        protocol = Gson().fromJson(it, Array<String>::class.java).joinToString("\n")
+                                        protocol = Gson().fromJson(it, Array<String>::class.java).mapNotNull { it.trim().ifBlank { null } }.joinToString("\n")
                                     }
                                 })
                             }
