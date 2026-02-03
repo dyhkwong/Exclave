@@ -568,4 +568,6 @@
     <string name="third_party_notices">Avisos de terceros</string>
     <string name="regular_expression_filter1">Inclusión de nombre (expresión regular)</string>
     <string name="translation_platform">Plataforma de traducción</string>
+    <string name="discard_icmp">Descartar ICMP</string>
+    <string name="discard_icmp_sum">Descarta ICMP e ICMPv6</string>
 </resources>
