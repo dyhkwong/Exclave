@@ -20,7 +20,7 @@ ksp {
 aboutLibraries {
     offlineMode = true
     collect {
-        configPath = file("../config")
+        configPath = file("src/main/aboutlibraries")
         includePlatform = true
     }
     export {
