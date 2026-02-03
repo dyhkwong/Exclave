@@ -66,6 +66,10 @@ import java.util.Properties
 abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV2RayBean>(),
     Preference.OnPreferenceChangeListener {
 
+    val experimentalFlags = Properties().apply {
+        load(StringReader(DataStore.experimentalFlags))
+    }
+
     override fun StandardV2RayBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
@@ -554,9 +558,6 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         pluginConfiguration = PluginConfiguration(DataStore.serverPlugin)
         initPlugins()
 
-        val experimentalFlags = Properties().apply {
-            load(StringReader(DataStore.experimentalFlags))
-        }
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
             (bean is ShadowsocksBean || bean is SOCKSBean) && experimentalFlags.getBooleanProperty("singuot")
         findPreference<PreferenceCategory>(Key.SERVER_SING_MUX_CATEGORY)!!.isVisible =
@@ -841,7 +842,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
 
     private val configurePlugin = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { (resultCode, data) ->
         when (resultCode) {
-            Activity.RESULT_OK -> {
+            RESULT_OK -> {
                 val options = data?.getStringExtra(PluginContract.EXTRA_OPTIONS)
                 pluginConfigure.text = options
                 onPreferenceChange(pluginConfigure, options)
@@ -860,13 +861,27 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 val intent = PluginManager.buildIntent(
                     plugin.selectedEntry!!.id, PluginContract.ACTION_CONFIGURE
                 )
-                if (intent.resolveActivity(packageManager) == null) showPluginEditor() else {
-                    configurePlugin.launch(
-                        intent.putExtra(
-                            PluginContract.EXTRA_OPTIONS,
-                            pluginConfiguration.getOptions().toString()
+                when {
+                    experimentalFlags.getBooleanProperty("disableShadowsocksPluginConfigActivity") -> {
+                        showPluginEditor()
+                    }
+                    plugin.selectedEntry!!.id == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin") -> {
+                        showPluginEditor()
+                    }
+                    plugin.selectedEntry!!.id == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal") -> {
+                        showPluginEditor()
+                    }
+                    intent.resolveActivity(packageManager) == null -> {
+                        showPluginEditor()
+                    }
+                    else -> {
+                        configurePlugin.launch(
+                            intent.putExtra(
+                                PluginContract.EXTRA_OPTIONS,
+                                pluginConfiguration.getOptions().toString()
+                            )
                         )
-                    )
+                    }
                 }
             }
             else -> return false
@@ -877,7 +892,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     val pluginHelp = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { (resultCode, data) ->
-        if (resultCode == Activity.RESULT_OK) MaterialAlertDialogBuilder(this).setTitle("?")
+        if (resultCode == RESULT_OK) MaterialAlertDialogBuilder(this).setTitle("?")
             .setMessage(data?.getCharSequenceExtra(PluginContract.EXTRA_HELP_MESSAGE))
             .show()
     }

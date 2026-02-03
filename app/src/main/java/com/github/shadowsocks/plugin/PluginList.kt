@@ -23,8 +23,11 @@ package com.github.shadowsocks.plugin
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.widget.Toast
 import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.database.DataStore
+import io.nekohasekai.sagernet.ktx.getBooleanProperty
+import java.io.StringReader
+import java.util.Properties
 
 class PluginList(skipInternal: Boolean) : ArrayList<Plugin>() {
     init {
@@ -36,6 +39,22 @@ class PluginList(skipInternal: Boolean) : ArrayList<Plugin>() {
         addAll(SagerNet.application.packageManager.queryIntentContentProviders(
                 Intent(PluginContract.ACTION_NATIVE_PLUGIN), PackageManager.GET_META_DATA)
                 .filter { it.providerInfo.exported }.map { NativePlugin(it) })
+
+        val experimentalFlags = Properties().apply {
+            load(StringReader(DataStore.experimentalFlags))
+        }
+        if (experimentalFlags.getBooleanProperty("useInternalV2RayPlugin")) {
+            removeAll(this@PluginList.filter { it.id == "v2ray-plugin" })
+            if (!skipInternal) {
+                add(InternalPlugin.V2RAY_PLUGIN)
+            }
+        }
+        if (experimentalFlags.getBooleanProperty("useInternalObfsLocal")) {
+            removeAll(this@PluginList.filter { it.id == "obfs-local" })
+            if (!skipInternal) {
+                add(InternalPlugin.SIMPLE_OBFS)
+            }
+        }
     }
 
     val lookup = mutableMapOf<String, Plugin>().apply {

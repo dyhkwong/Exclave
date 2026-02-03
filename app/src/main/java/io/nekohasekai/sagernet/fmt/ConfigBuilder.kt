@@ -737,10 +737,12 @@ fun buildV2RayConfig(
                                                 }
                                                 if (bean.plugin.isNotEmpty()) {
                                                     val pluginConfiguration = PluginConfiguration(bean.plugin)
-                                                    if (forExport) {
-                                                        plugin = pluginConfiguration.selected
-                                                        pluginOpts = pluginConfiguration.getOptions().toString()
-                                                    } else {
+                                                    plugin = pluginConfiguration.selected
+                                                    pluginOpts = pluginConfiguration.getOptions().toString()
+                                                    if (!forExport
+                                                        && !(plugin == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin"))
+                                                        && !(plugin == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal"))
+                                                    ) {
                                                         try {
                                                             PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                                                                 plugin = path
@@ -783,10 +785,12 @@ fun buildV2RayConfig(
                                                     }
                                                     if (bean.plugin.isNotEmpty()) {
                                                         val pluginConfiguration = PluginConfiguration(bean.plugin)
-                                                        if (forExport) {
-                                                            plugin = pluginConfiguration.selected
-                                                            pluginOpts = pluginConfiguration.getOptions().toString()
-                                                        } else {
+                                                        plugin = pluginConfiguration.selected
+                                                        pluginOpts = pluginConfiguration.getOptions().toString()
+                                                        if (!forExport
+                                                            && !(plugin == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin"))
+                                                            && !(plugin == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal"))
+                                                        ) {
                                                             try {
                                                                 PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                                                                     plugin = path
