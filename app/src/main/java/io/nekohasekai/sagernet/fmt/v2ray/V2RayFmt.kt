@@ -213,7 +213,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
             url.queryParameterNotBlank("pcs")?.takeIf { it.isNotEmpty() }?.let { pcs ->
                 bean.pinnedPeerCertificateSha256 =
                     pcs.split(if (pcs.contains("~")) "~" else ",")
-                        .mapNotNull { it.trim().ifEmpty { null } }
+                        .mapNotNull { it.trim().ifEmpty { null }?.replace(":", "") }
                         .joinToString("\n")
                 if (!bean.pinnedPeerCertificateSha256.isNullOrEmpty()) {
                     bean.allowInsecure = true
