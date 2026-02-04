@@ -19,6 +19,7 @@
 package io.nekohasekai.sagernet.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.ListPopupWindow
@@ -73,7 +74,7 @@ class StunActivity : ThemedActivity() {
         supportActionBar?.apply {
             setTitle(R.string.stun_test)
             setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
+            setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
 
 
@@ -168,6 +169,16 @@ class StunActivity : ThemedActivity() {
                 binding.natTypeCard.isVisible = true
                 binding.natExternalAddressCard.isVisible = true
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finishAndRemoveTask()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

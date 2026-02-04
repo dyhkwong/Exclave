@@ -23,6 +23,7 @@ package io.nekohasekai.sagernet.ui
 import android.content.ClipData
 import android.graphics.Typeface
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.HorizontalScrollView
@@ -78,7 +79,7 @@ class ProbeCertActivity : ThemedActivity() {
         supportActionBar?.apply {
             setTitle(R.string.probe_cert)
             setDisplayHomeAsUpEnabled(true)
-            setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
+            setHomeAsUpIndicator(R.drawable.ic_navigation_close)
         }
 
         binding.probeCertServer.setText("example.com")
@@ -227,6 +228,16 @@ class ProbeCertActivity : ThemedActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finishAndRemoveTask()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
