@@ -163,6 +163,9 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 realitySettings.getString("publicKey")?.also {
                                     v2rayBean.realityPublicKey = it
                                 }
+                                realitySettings.getString("password")?.takeIf { it.isNotEmpty() }?.also {
+                                    v2rayBean.realityPublicKey = it
+                                }
                                 realitySettings.getString("shortId")?.also {
                                     v2rayBean.realityShortId = it
                                 }
