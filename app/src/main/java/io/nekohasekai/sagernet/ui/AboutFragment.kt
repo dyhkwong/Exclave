@@ -28,7 +28,6 @@ import android.os.PowerManager
 import android.provider.Settings
 import android.text.util.Linkify
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.HorizontalScrollView
 import android.widget.ListView
@@ -36,6 +35,7 @@ import android.widget.TextView
 import androidx.activity.result.component1
 import androidx.activity.result.component2
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -48,7 +48,6 @@ import com.danielstone.materialaboutlibrary.items.MaterialAboutActionItem
 import com.danielstone.materialaboutlibrary.items.MaterialAboutTitleItem
 import com.danielstone.materialaboutlibrary.model.MaterialAboutCard
 import com.danielstone.materialaboutlibrary.model.MaterialAboutList
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.sagernet.BuildConfig
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.database.DataStore
@@ -106,11 +105,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             .icon(R.mipmap.ic_launcher)
                             .text(R.string.app_name)
                             .setOnLongClickAction {
-                                MaterialAlertDialogBuilder(activityContext).apply {
+                                AlertDialog.Builder(activityContext).apply {
                                     setView(NestedScrollView(activityContext).apply {
                                         setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
                                         addView( HorizontalScrollView(activityContext).apply {
-                                            isHorizontalScrollBarEnabled = false
                                             addView(TextView(activityContext).apply {
                                                 text = resources.openRawResource(R.raw.aboutlibraries).bufferedReader().use { it.readText() }
                                                 textSize = dp2pxf(4)
@@ -118,7 +116,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                                 isSingleLine = false
                                                 setTextIsSelectable(true)
                                                 setHorizontallyScrolling(false)
-                                                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                                             })
                                         })
                                     })
@@ -157,11 +154,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             .text(getString(R.string.version_x, "Go"))
                             .subText(Libcore.getGoVersion())
                             .setOnLongClickAction {
-                                MaterialAlertDialogBuilder(activityContext).apply {
+                                AlertDialog.Builder(activityContext).apply {
                                     setView(NestedScrollView(activityContext).apply {
                                         setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
                                         addView( HorizontalScrollView(activityContext).apply {
-                                            isHorizontalScrollBarEnabled = false
                                             addView(TextView(activityContext).apply {
                                                 text = Libcore.getDepInfo()
                                                 textSize = dp2pxf(4)
@@ -169,7 +165,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                                 isSingleLine = false
                                                 setTextIsSelectable(true)
                                                 setHorizontallyScrolling(false)
-                                                layoutParams = ViewGroup.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                                             })
                                         })
                                     })
@@ -224,7 +219,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             .icon(R.drawable.ic_action_copyleft)
                             .text(R.string.license)
                             .setOnClickAction {
-                                MaterialAlertDialogBuilder(activityContext).apply {
+                                AlertDialog.Builder(activityContext).apply {
                                     setView(
                                         TextView(activityContext).apply {
                                             setPadding(dp2px(16))
@@ -252,7 +247,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             .icon(R.drawable.ic_action_description)
                             .text(R.string.third_party_notices)
                             .setOnClickAction {
-                                MaterialAlertDialogBuilder(activityContext).apply {
+                                AlertDialog.Builder(activityContext).apply {
                                     setView(ListView(activityContext).apply {
                                         adapter = ArrayAdapter(activityContext, android.R.layout.simple_list_item_1,
                                             arrayOf(
@@ -278,7 +273,7 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                                                 6 -> "license/MPL-2.0.txt"
                                                 7 -> "license/CC-BY-4.0.txt"
                                                 8 -> "license/CDLA-Permissive-2.0.txt"
-                                                else -> error("index ut of bound")
+                                                else -> error("index out of bound")
                                             })
                                         }
                                     })
@@ -294,11 +289,10 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
         }
 
         private fun showLicenseAlertDialogFromAssets(context: Context, asset: String) {
-            MaterialAlertDialogBuilder(context).apply {
+            AlertDialog.Builder(context).apply {
                 setView(NestedScrollView(context).apply {
                     setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
                     addView( HorizontalScrollView(context).apply {
-                        isHorizontalScrollBarEnabled = false
                         addView(TextView(context).apply {
                             text = context.assets.open(asset).use { it.reader().readText() }
                             textSize = dp2pxf(4)
@@ -306,7 +300,6 @@ class AboutFragment : ToolbarFragment(R.layout.layout_about) {
                             isSingleLine = false
                             setTextIsSelectable(true)
                             setHorizontallyScrolling(false)
-                            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                         })
                     })
                 })

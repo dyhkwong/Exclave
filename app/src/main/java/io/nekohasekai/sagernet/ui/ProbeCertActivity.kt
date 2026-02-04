@@ -21,20 +21,25 @@
 package io.nekohasekai.sagernet.ui
 
 import android.content.ClipData
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import android.widget.HorizontalScrollView
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.core.widget.NestedScrollView
 import androidx.core.widget.doAfterTextChanged
 import io.nekohasekai.sagernet.R
 import io.nekohasekai.sagernet.SagerNet
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.databinding.LayoutProbeCertBinding
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.dp2px
 import io.nekohasekai.sagernet.ktx.onMainDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import libcore.Libcore
@@ -109,8 +114,10 @@ class ProbeCertActivity : ThemedActivity() {
                     2 -> Libcore.calculatePEMCertChainSHA256Hash(text.toString())
                     else -> error("impossible")
                 }
+                binding.showCertInfo.isVisible = true
             } catch (_: Exception) {
                 binding.certHash.text = ""
+                binding.showCertInfo.isVisible = false
             }
         }
         binding.certHashType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -139,6 +146,34 @@ class ProbeCertActivity : ThemedActivity() {
                 SagerNet.clipboard.setPrimaryClip(clipData)
             } catch (e: Exception) {
                 Logs.w(e)
+            }
+        }
+        binding.showCertInfo.text = "?"
+        binding.showCertInfo.isVisible = false
+        binding.showCertInfo.setOnClickListener {
+            try {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.certificates)
+                    .setView(NestedScrollView(this).apply {
+                        setPadding(dp2px(16), dp2px(16), dp2px(16), 0)
+                        addView( HorizontalScrollView(this@ProbeCertActivity).apply {
+                            addView(TextView(this@ProbeCertActivity).apply {
+                                text = Libcore.certificateToPrettyInfo(binding.certificate.text.toString())
+                                isSingleLine = false
+                                typeface = Typeface.MONOSPACE
+                                setTextIsSelectable(true)
+                                setHorizontallyScrolling(false)
+                            })
+                        })
+                    })
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .runCatching { show() }
+            } catch (e: Exception) {
+                AlertDialog.Builder(this@ProbeCertActivity)
+                    .setTitle(R.string.error_title)
+                    .setMessage(e.toString())
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .runCatching { show() }
             }
         }
     }

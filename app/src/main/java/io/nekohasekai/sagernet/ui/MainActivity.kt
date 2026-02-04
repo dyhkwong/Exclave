@@ -37,6 +37,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -169,7 +170,7 @@ class MainActivity : ThemedActivity(),
                 if (Libcore.buildWithClash()) "gplv3OnlyAccepted"
                 else "gplv3OrLaterAccepted") != true) {
             runOnMainDispatcher {
-                MaterialAlertDialogBuilder(this@MainActivity).apply {
+                AlertDialog.Builder(this@MainActivity).apply {
                     setTitle(R.string.license)
                     setView(
                         TextView(this@MainActivity).apply {

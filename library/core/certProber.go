@@ -28,8 +28,13 @@ package libcore
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/ed25519"
+	"crypto/elliptic"
+	"crypto/rsa"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"net"
 	"strconv"
@@ -194,4 +199,64 @@ func CalculatePEMCertPublicKeySHA256Hash(input string) (string, error) {
 
 func CalculatePEMCertChainSHA256Hash(input string) (string, error) {
 	return v2tls.CalculatePEMCertChainSHA256Hash([]byte(input)), nil
+}
+
+func CertificateToPrettyInfo(input string) (string, error) {
+	data := []byte(input)
+	var certs []*x509.Certificate
+	for {
+		var block *pem.Block
+		block, data = pem.Decode(data)
+		if block == nil {
+			break
+		}
+		if block.Type != "CERTIFICATE" {
+			continue
+		}
+		cert, err := x509.ParseCertificate(block.Bytes)
+		if err != nil {
+			return "", err
+		}
+		certs = append(certs, cert)
+	}
+	if len(certs) == 0 {
+		return "", newError("no certificate found")
+	}
+	certInfo := new(strings.Builder)
+	for i, cert := range certs {
+		certInfo.WriteString(cert.Subject.CommonName + "\n\n")
+		certInfo.WriteString("  Version: " + strconv.Itoa(cert.Version) + "\n\n")
+		certInfo.WriteString("  Serial Number: " + hex.EncodeToString(cert.SerialNumber.Bytes()) + "\n\n")
+		certInfo.WriteString("  Signature Algorithm: " + cert.SignatureAlgorithm.String() + "\n\n")
+		certInfo.WriteString("  Signature: " + hex.EncodeToString(cert.Signature) + "\n\n")
+		certInfo.WriteString("  Public Key Algorithm: " + cert.PublicKeyAlgorithm.String() + "\n\n")
+		switch publicKey := cert.PublicKey.(type) {
+		case *rsa.PublicKey:
+			certInfo.WriteString("  Public Key: " + hex.EncodeToString(publicKey.N.Bytes()) + "\n\n")
+		case *ecdsa.PublicKey:
+			certInfo.WriteString("  Public Key: " + hex.EncodeToString(elliptic.Marshal(publicKey.Curve, publicKey.X, publicKey.Y)) + "\n\n")
+		case ed25519.PublicKey:
+			certInfo.WriteString("  Public Key: " + hex.EncodeToString(publicKey) + "\n\n")
+		}
+		certInfo.WriteString("  Subject: " + cert.Subject.String() + "\n\n")
+		certInfo.WriteString("  Issuer: " + cert.Issuer.String() + "\n\n")
+		certInfo.WriteString("  Subject Key ID: " + hex.EncodeToString(cert.SubjectKeyId) + "\n\n")
+		certInfo.WriteString("  Authority Key ID: " + hex.EncodeToString(cert.AuthorityKeyId) + "\n\n")
+		if len(cert.DNSNames) > 0 {
+			certInfo.WriteString("  DNS Names: " + strings.Join(cert.DNSNames, ",") + "\n\n")
+		}
+		if len(cert.IPAddresses) > 0 {
+			ipAddresses := make([]string, len(cert.IPAddresses))
+			for i, ip := range cert.IPAddresses {
+				ipAddresses[i] = ip.String()
+			}
+			certInfo.WriteString("  IP Addresses: " + strings.Join(ipAddresses, ",") + "\n\n")
+		}
+		certInfo.WriteString("  Not Before: " + cert.NotBefore.Local().Format(time.RFC3339) + "\n\n")
+		certInfo.WriteString("  Not After: " + cert.NotAfter.Local().Format(time.RFC3339))
+		if i < len(certs)-1 {
+			certInfo.WriteString("\n\n")
+		}
+	}
+	return certInfo.String(), nil
 }
