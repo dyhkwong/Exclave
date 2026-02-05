@@ -253,7 +253,8 @@ func CertificateToPrettyInfo(input string) (string, error) {
 			certInfo.WriteString("  IP Addresses: " + strings.Join(ipAddresses, ",") + "\n\n")
 		}
 		certInfo.WriteString("  Not Before: " + cert.NotBefore.Local().Format(time.RFC3339) + "\n\n")
-		certInfo.WriteString("  Not After: " + cert.NotAfter.Local().Format(time.RFC3339))
+		certInfo.WriteString("  Not After: " + cert.NotAfter.Local().Format(time.RFC3339) + "\n\n")
+		certInfo.WriteString("  Is CA: " + strconv.FormatBool(cert.IsCA))
 		if i < len(certs)-1 {
 			certInfo.WriteString("\n\n")
 		}
