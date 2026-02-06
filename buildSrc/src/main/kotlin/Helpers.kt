@@ -123,6 +123,7 @@ fun Project.setupAppCommon(projectName: String = "") {
             signingConfigs.findByName("release")?.let {
                 signingConfig = it
             }
+            ndk.debugSymbolLevel = "NONE"
         }
         buildTypes.getByName("debug") {
             applicationIdSuffix = "debug"

@@ -92,8 +92,6 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
-          sed -i 's/NAIVE_VERSION_NAME=local/NAIVE_VERSION_NAME=${{ github.event.inputs.VERSION_NAME }}/' version.properties
-          sed -i 's/NAIVE_VERSION=1/NAIVE_VERSION=${{ github.event.inputs.VERSION_CODE }}/' version.properties
           ./gradlew :plugin:naive:assembleOssRelease
           APK="plugin/naive/build/outputs/apk/oss/release"
           echo "APK=$APK" >> $GITHUB_ENV
