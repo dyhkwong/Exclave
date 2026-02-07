@@ -36,12 +36,16 @@ fun ShadowQUICBean.buildshadowQUICConfig(port: Int): String {
     confObject["inbound"] = inboundObject
 
     val outboundObject: MutableMap<String, Any> = HashMap()
-    outboundObject["type"] = "shadowquic"
+    outboundObject["type"] = if (useSunnyQUIC) "sunnyquic" else "shadowquic"
     outboundObject["addr"] = joinHostPort(finalAddress, finalPort)
     if (password.isNotEmpty()) outboundObject["password"] = password
     if (username.isNotEmpty()) outboundObject["username"] = username
     if (sni.isNotEmpty()) outboundObject["server-name"] = sni
-    if (alpn.isNotEmpty()) outboundObject["alpn"] = alpn.listByLineOrComma()
+    if (disableALPN) {
+        outboundObject["alpn"] = listOf<String>()
+    } else if (alpn.isNotEmpty()) {
+        outboundObject["alpn"] = alpn.listByLineOrComma()
+    }
     if (congestionControl.isNotEmpty()) outboundObject["congestion-control"] = congestionControl
     if (zeroRTT) outboundObject["zero-rtt"] = zeroRTT
     if (udpOverStream) outboundObject["over-stream"] = udpOverStream

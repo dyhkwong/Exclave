@@ -229,6 +229,8 @@ object Key {
     const val SERVER_HOP_INTERVAL = "serverHopInterval"
 
     const val SERVER_NAIVE_NO_POST_QUANTUM = "serverNaiveNoPostQuantum"
+    const val SERVER_SHADOWQUIC_DISABLE_ALPN = "serverShadowQUICDisableALPN"
+    const val SERVER_SHADOWQUIC_USE_SUNNYQUIC = "serverShadowQUICUseSunnyQUIC"
 
     const val SERVER_SING_UOT_CATEGORY = "serverSingUotCategory"
     const val SERVER_SING_MUX_CATEGORY = "serverSingMuxCategory"

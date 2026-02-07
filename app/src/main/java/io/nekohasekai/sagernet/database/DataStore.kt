@@ -358,6 +358,8 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverAnyTLSMinIdleSession by profileCacheStore.stringToInt(Key.SERVER_ANYTLS_MIN_IDLE_SESSION)
 
     var serverNaiveNoPostQuantum by profileCacheStore.boolean(Key.SERVER_NAIVE_NO_POST_QUANTUM)
+    var serverShadowQUICDisableALPN by profileCacheStore.boolean(Key.SERVER_SHADOWQUIC_DISABLE_ALPN)
+    var serverShadowQUICUseSunnyQUIC by profileCacheStore.boolean(Key.SERVER_SHADOWQUIC_USE_SUNNYQUIC)
     var serverSingUot by profileCacheStore.boolean(Key.SERVER_SING_UOT)
     var serverSingMux by profileCacheStore.boolean(Key.SERVER_SING_MUX)
     var serverSingMuxProtocol by profileCacheStore.string(Key.SERVER_SING_MUX_PROTOCOL)

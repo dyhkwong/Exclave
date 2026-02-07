@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -43,7 +44,8 @@ class ShadowQUICSettingsActivity : ProfileSettingsActivity<ShadowQUICBean>() {
         DataStore.serverCongestionController = congestionControl
         DataStore.serverReduceRTT = zeroRTT
         DataStore.serverBrookUdpOverStream = udpOverStream
-
+        DataStore.serverShadowQUICDisableALPN = disableALPN
+        DataStore.serverShadowQUICUseSunnyQUIC = useSunnyQUIC
     }
 
     override fun ShadowQUICBean.serialize() {
@@ -57,6 +59,8 @@ class ShadowQUICSettingsActivity : ProfileSettingsActivity<ShadowQUICBean>() {
         congestionControl = DataStore.serverCongestionController
         zeroRTT = DataStore.serverReduceRTT
         udpOverStream = DataStore.serverBrookUdpOverStream
+        disableALPN = DataStore.serverShadowQUICDisableALPN
+        useSunnyQUIC = DataStore.serverShadowQUICUseSunnyQUIC
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -67,6 +71,14 @@ class ShadowQUICSettingsActivity : ProfileSettingsActivity<ShadowQUICBean>() {
 
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+
+        val disableALPN = findPreference<SwitchPreference>(Key.SERVER_SHADOWQUIC_DISABLE_ALPN)!!
+        val alpn = findPreference<EditTextPreference>(Key.SERVER_ALPN)!!
+        alpn.isEnabled = !disableALPN.isChecked
+        disableALPN.setOnPreferenceChangeListener { _, newValue ->
+            alpn.isEnabled = !(newValue as Boolean)
+            true
         }
     }
 

@@ -36,6 +36,8 @@ public class ShadowQUICBean extends AbstractBean {
     public String congestionControl;
     public Boolean zeroRTT;
     public Boolean udpOverStream;
+    public Boolean disableALPN;
+    public Boolean useSunnyQUIC;
 
     @Override
     public void initializeDefaultValues() {
@@ -47,12 +49,14 @@ public class ShadowQUICBean extends AbstractBean {
         if (congestionControl == null) congestionControl = "bbr";
         if (zeroRTT == null) zeroRTT = false;
         if (udpOverStream == null) udpOverStream = false;
+        if (disableALPN == null) disableALPN = false;
+        if (useSunnyQUIC == null) useSunnyQUIC = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
         super.serialize(output);
-        output.writeInt(0);
+        output.writeInt(1);
         output.writeString(username);
         output.writeString(password);
         output.writeString(sni);
@@ -60,6 +64,8 @@ public class ShadowQUICBean extends AbstractBean {
         output.writeString(congestionControl);
         output.writeBoolean(zeroRTT);
         output.writeBoolean(udpOverStream);
+        output.writeBoolean(disableALPN);
+        output.writeBoolean(useSunnyQUIC);
     }
 
     @Override
@@ -73,6 +79,10 @@ public class ShadowQUICBean extends AbstractBean {
         congestionControl = input.readString();
         zeroRTT = input.readBoolean();
         udpOverStream = input.readBoolean();
+        if (version >= 1) {
+            disableALPN = input.readBoolean();
+            useSunnyQUIC = input.readBoolean();
+        }
     }
 
     @Override

@@ -40,6 +40,11 @@
             app:key="serverALPN"
             app:title="@string/alpn"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_fingerprint_24"
+            app:key="serverShadowQUICDisableALPN"
+            app:title="Disable ALPN"
+            app:useSimpleSummaryProvider="true" />
         <com.takisoft.preferencex.SimpleMenuPreference
             app:entries="@array/tuic_congestion_controller_value"
             app:entryValues="@array/tuic_congestion_controller_value"
@@ -55,6 +60,11 @@
             app:icon="@drawable/baseline_wrap_text_24"
             app:key="serverBrookUdpOverStream"
             app:title="@string/brook_udp_over_stream"
+            app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/ic_baseline_layers_24"
+            app:key="serverShadowQUICUseSunnyQUIC"
+            app:title="SunnyQUIC"
             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
