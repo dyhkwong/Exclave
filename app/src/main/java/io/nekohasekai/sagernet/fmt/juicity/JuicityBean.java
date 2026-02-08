@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import libcore.Libcore;
 
 public class JuicityBean extends AbstractBean {
 
@@ -152,4 +153,25 @@ public class JuicityBean extends AbstractBean {
             return new JuicityBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (!allowInsecure) {
+            return false;
+        }
+        if (!pinnedPeerCertificateChainSha256.isEmpty()) {
+            return false;
+        }
+        if (!pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            return false;
+        }
+        if (!pinnedPeerCertificateSha256.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
 }

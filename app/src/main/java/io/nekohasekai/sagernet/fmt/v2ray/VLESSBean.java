@@ -55,7 +55,7 @@ public class VLESSBean extends StandardV2RayBean {
         return KryoConverters.deserialize(new VLESSBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<VLESSBean> CREATOR = new CREATOR<VLESSBean>() {
+    public static final Creator<VLESSBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public VLESSBean newInstance() {
@@ -67,4 +67,16 @@ public class VLESSBean extends StandardV2RayBean {
             return new VLESSBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        switch (encryption) {
+            case "none":
+                break;
+            default:
+                return false;
+        }
+        return super.isInsecure();
+    }
+
 }

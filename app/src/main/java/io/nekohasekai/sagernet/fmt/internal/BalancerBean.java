@@ -27,6 +27,8 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.nekohasekai.sagernet.database.ProxyEntity;
+import io.nekohasekai.sagernet.database.SagerDatabase;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class BalancerBean extends InternalBean {
@@ -143,4 +145,20 @@ public class BalancerBean extends InternalBean {
             return new BalancerBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        List<ProxyEntity> proxyEntities = SagerDatabase.Companion.getProxyDao().getEntities(proxies);
+        try {
+            for (ProxyEntity proxyEntity: proxyEntities) {
+                if (proxyEntity.requireBean().isInsecure()) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
 }

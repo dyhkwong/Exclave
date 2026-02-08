@@ -135,7 +135,7 @@ public class SOCKSBean extends StandardV2RayBean {
         return KryoConverters.deserialize(new SOCKSBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<SOCKSBean> CREATOR = new CREATOR<SOCKSBean>() {
+    public static final Creator<SOCKSBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public SOCKSBean newInstance() {

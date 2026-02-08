@@ -570,4 +570,5 @@
     <string name="translation_platform">Plataforma de traducción</string>
     <string name="discard_icmp">Descartar ICMP</string>
     <string name="discard_icmp_sum">Descarta ICMP e ICMPv6</string>
+    <string name="insecure_warn">Asesoramiento de seguridad</string>
 </resources>

@@ -407,4 +407,5 @@
     <string name="fileSize_tebibyte">TiB</string>
     <string name="fileSize_pebibyte">PiB</string>
     <string name="translation_platform">Platform Penerjemahan</string>
+    <string name="insecure_warn">Saran Keamanan</string>
 </resources>

@@ -252,6 +252,12 @@
             app:icon="@drawable/ic_baseline_cached"
             app:key="interruptReusedConnections"
             app:title="@string/interrupt_reused_connections" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:icon="@drawable/ic_baseline_security_24"
+            app:key="profileSecurityAdvisory"
+            app:summary="@string/insecure_warn_sum"
+            app:title="@string/insecure_warn" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">

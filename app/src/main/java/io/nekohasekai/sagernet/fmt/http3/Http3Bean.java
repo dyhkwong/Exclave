@@ -146,4 +146,21 @@ public class Http3Bean extends AbstractBean {
             return new Http3Bean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (!allowInsecure) {
+            return false;
+        }
+        if (!pinnedPeerCertificateChainSha256.isEmpty()) {
+            return false;
+        }
+        if (!pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            return false;
+        }
+        if (!pinnedPeerCertificateSha256.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

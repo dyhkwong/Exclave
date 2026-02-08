@@ -27,6 +27,10 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import org.jetbrains.annotations.NotNull;
 
 import com.github.shadowsocks.plugin.PluginConfiguration;
+import com.github.shadowsocks.plugin.PluginOptions;
+
+import java.util.Objects;
+
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 import io.nekohasekai.sagernet.fmt.v2ray.StandardV2RayBean;
@@ -132,4 +136,35 @@ public class ShadowsocksBean extends StandardV2RayBean {
             return new ShadowsocksBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (!plugin.isEmpty()) {
+            PluginConfiguration pluginConfiguration = new PluginConfiguration(plugin);
+            String selectedPlugin = pluginConfiguration.getSelected();
+            switch (selectedPlugin) {
+                case "", "obfs-local":
+                    break;
+                case "v2ray-plugin":
+                    PluginOptions pluginOptions = pluginConfiguration.getOptions(selectedPlugin, () -> null);
+                    if (pluginOptions.containsKey("tls")) {
+                        return false;
+                    }
+                    if (Objects.equals(pluginOptions.get("mode"), "quic")) {
+                        return false;
+                    }
+                    break;
+                default:
+                    // Can not check if plugin is insecure or not
+                    return false;
+            }
+        }
+        switch (method) {
+            case "aes-128-gcm", "aes-192-gcm", "aes-256-gcm", "chacha20-poly1305", "xchacha20-poly1305",
+                 "2022-blake3-aes-128-gcm", "2022-blake3-aes-256-gcm", "2022-blake3-chacha20-poly1305":
+                return false;
+        }
+        return super.isInsecure();
+    }
+
 }

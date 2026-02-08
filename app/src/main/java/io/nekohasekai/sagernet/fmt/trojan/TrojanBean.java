@@ -77,7 +77,7 @@ public class TrojanBean extends StandardV2RayBean {
         return KryoConverters.deserialize(new TrojanBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<TrojanBean> CREATOR = new CREATOR<TrojanBean>() {
+    public static final Creator<TrojanBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public TrojanBean newInstance() {

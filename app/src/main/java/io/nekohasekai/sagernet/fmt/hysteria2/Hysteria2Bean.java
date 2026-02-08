@@ -197,4 +197,24 @@ public class Hysteria2Bean extends AbstractBean {
             return new Hysteria2Bean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (!allowInsecure) {
+            return false;
+        }
+        if (!pinnedPeerCertificateChainSha256.isEmpty()) {
+            return false;
+        }
+        if (!pinnedPeerCertificatePublicKeySha256.isEmpty()) {
+            return false;
+        }
+        if (!pinnedPeerCertificateSha256.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -159,4 +159,8 @@ public abstract class AbstractBean extends Serializable {
     public void applyFeatureSettings(AbstractBean other) {
     }
 
+    public boolean isInsecure() {
+        return false;
+    }
+
 }

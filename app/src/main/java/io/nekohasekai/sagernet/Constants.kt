@@ -117,6 +117,7 @@ object Key {
     const val FRAGMENT_METHOD = "fragmentMethod"
     const val REALITY_DISABLE_X25519MLKEM768 = "realityDisableX25519Mlkem768"
     const val GRPC_SERVICE_NAME_COMPAT = "grpcServiceNameCompat"
+    const val PROFILE_SECURITY_ADVISORY = "profileSecurityAdvisory"
 
     const val APP_TRAFFIC_STATISTICS = "appTrafficStatistics"
     const val PROFILE_TRAFFIC_STATISTICS = "profileTrafficStatistics"

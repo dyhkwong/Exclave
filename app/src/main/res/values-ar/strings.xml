@@ -397,4 +397,5 @@
     <string name="fileSize_tebibyte">تيبيبايت</string>
     <string name="fileSize_pebibyte">بيبيبايت</string>
     <string name="translation_platform">منصة الترجمة</string>
+    <string name="insecure_warn">استشارات أمنية</string>
 </resources>

@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.nekohasekai.sagernet.database.ProxyEntity;
+import io.nekohasekai.sagernet.database.SagerDatabase;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
 
 public class ChainBean extends InternalBean {
@@ -83,7 +85,7 @@ public class ChainBean extends InternalBean {
         return KryoConverters.deserialize(new ChainBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<ChainBean> CREATOR = new CREATOR<ChainBean>() {
+    public static final Creator<ChainBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public ChainBean newInstance() {
@@ -95,4 +97,20 @@ public class ChainBean extends InternalBean {
             return new ChainBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        List<ProxyEntity> proxyEntities = SagerDatabase.Companion.getProxyDao().getEntities(proxies);
+        try {
+            for (ProxyEntity proxyEntity: proxyEntities) {
+                if (!proxyEntity.requireBean().isInsecure()) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
 }

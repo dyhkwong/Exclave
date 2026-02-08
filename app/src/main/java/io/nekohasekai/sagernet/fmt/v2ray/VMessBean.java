@@ -57,7 +57,7 @@ public class VMessBean extends StandardV2RayBean {
         return KryoConverters.deserialize(new VMessBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<VMessBean> CREATOR = new CREATOR<VMessBean>() {
+    public static final Creator<VMessBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public VMessBean newInstance() {
@@ -69,4 +69,14 @@ public class VMessBean extends StandardV2RayBean {
             return new VMessBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        switch (encryption) {
+            case "auto", "aes-128-gcm", "chacha20-poly1305":
+                return false;
+        }
+        return super.isInsecure();
+    }
+
 }

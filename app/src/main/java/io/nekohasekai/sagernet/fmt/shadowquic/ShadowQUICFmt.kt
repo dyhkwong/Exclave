@@ -19,7 +19,10 @@
 
 package io.nekohasekai.sagernet.fmt.shadowquic
 
+import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.LogLevel
+import io.nekohasekai.sagernet.SagerNet
+import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.LOCALHOST
 import io.nekohasekai.sagernet.ktx.joinHostPort
@@ -28,7 +31,7 @@ import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 
-fun ShadowQUICBean.buildShadowQUICConfig(port: Int, cacheFile: (() -> File)? = null): String {
+fun ShadowQUICBean.buildShadowQUICConfig(port: Int, cacheFile: (() -> File)? = null, forExport: Boolean = false): String {
     val confObject: MutableMap<String, Any> = HashMap()
 
     val inboundObject: MutableMap<String, Any> = HashMap()
@@ -54,6 +57,9 @@ fun ShadowQUICBean.buildShadowQUICConfig(port: Int, cacheFile: (() -> File)? = n
         val certificateFile = cacheFile()
         certificateFile.writeText(certificate)
         outboundObject["cert-path"] = certificateFile.absolutePath
+    }
+    if (!forExport && DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM && SagerNet.started && DataStore.startedProfile > 0) {
+        outboundObject["protect-path"] = SagerNet.deviceStorage.noBackupFilesDir.toString() + "/protect_path"
     }
     confObject["outbound"] = outboundObject
 

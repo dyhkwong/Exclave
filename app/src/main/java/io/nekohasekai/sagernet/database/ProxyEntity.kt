@@ -347,7 +347,7 @@ data class ProxyEntity(
                             }
                             is ShadowQUICBean -> {
                                 append("\n\n")
-                                append(bean.buildShadowQUICConfig(port))
+                                append(bean.buildShadowQUICConfig(port, forExport = true))
                             }
                         }
                     }

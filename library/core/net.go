@@ -41,3 +41,11 @@ func IsIPv6(input string) bool {
 	}
 	return ip.Is6()
 }
+
+func IsLoopbackIP(input string) bool {
+	ip, err := netip.ParseAddr(input)
+	if err != nil {
+		return false
+	}
+	return ip.IsLoopback()
+}

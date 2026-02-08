@@ -90,12 +90,15 @@ abstract class V2RayInstance(
                     }
                     is ShadowQUICBean -> {
                         initPlugin("shadowquic-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildShadowQUICConfig(port) {
-                            File(app.noBackupFilesDir, "shadowquic_" + SystemClock.elapsedRealtime() + ".pem").apply {
-                                parentFile?.mkdirs()
-                                cacheFiles.add(this)
+                        pluginConfigs[port] = profile.type to bean.buildShadowQUICConfig(
+                            port,
+                            {
+                                File(app.noBackupFilesDir, "shadowquic_" + SystemClock.elapsedRealtime() + ".pem").apply {
+                                    parentFile?.mkdirs()
+                                    cacheFiles.add(this)
+                                }
                             }
-                        }
+                        )
                     }
                     is ConfigBean -> {
                         when (bean.type) {

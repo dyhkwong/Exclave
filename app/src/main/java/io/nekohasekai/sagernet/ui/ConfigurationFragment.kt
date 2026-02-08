@@ -1590,12 +1590,19 @@ class ConfigurationFragment @JvmOverloads constructor(
                     }
 
                     if (!parent.select) {
+                        val isInsecure = DataStore.profileSecurityAdvisory && proxyEntity.requireBean().isInsecure
                         onMainDispatcher {
-                            shareLayer.setBackgroundColor(Color.TRANSPARENT)
-                            shareButton.setImageResource(R.drawable.ic_social_share)
-                            shareButton.setColorFilter(Color.GRAY)
-                            shareButton.isVisible = true
+                            if (isInsecure) {
+                                shareLayer.setBackgroundColor(Color.RED)
+                                shareButton.setImageResource(R.drawable.ic_baseline_warning_24)
+                                shareButton.setColorFilter(Color.WHITE)
+                            } else {
+                                shareLayer.setBackgroundColor(Color.TRANSPARENT)
+                                shareButton.setImageResource(R.drawable.ic_social_share)
+                                shareButton.setColorFilter(Color.GRAY)
 
+                            }
+                            shareButton.isVisible = true
                             shareLayout.setOnClickListener {
                                 showShare(it)
                             }

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import libcore.Libcore;
 
 public class SSHBean extends AbstractBean {
 
@@ -123,4 +124,16 @@ public class SSHBean extends AbstractBean {
             return new SSHBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (!publicKey.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
 }

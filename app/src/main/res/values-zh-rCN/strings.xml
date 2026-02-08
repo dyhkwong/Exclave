@@ -567,4 +567,6 @@
     <string name="translation_platform">翻译平台</string>
     <string name="discard_icmp">丢弃 ICMP</string>
     <string name="discard_icmp_sum">丢弃 ICMP 和 ICMPv6</string>
+    <string name="insecure_warn">安全建议</string>
+    <string name="insecure_warn_sum">对安全性相当于明文的配置显示警告。</string>
 </resources>

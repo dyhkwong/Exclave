@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import libcore.Libcore;
 
 public class ShadowsocksRBean extends AbstractBean {
 
@@ -99,4 +100,18 @@ public class ShadowsocksRBean extends AbstractBean {
             return new ShadowsocksRBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        switch (protocol) {
+            case "origin":
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
 }

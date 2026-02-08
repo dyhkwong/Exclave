@@ -106,7 +106,7 @@ public class WireGuardBean extends AbstractBean {
         return KryoConverters.deserialize(new WireGuardBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<WireGuardBean> CREATOR = new CREATOR<WireGuardBean>() {
+    public static final Creator<WireGuardBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public WireGuardBean newInstance() {
