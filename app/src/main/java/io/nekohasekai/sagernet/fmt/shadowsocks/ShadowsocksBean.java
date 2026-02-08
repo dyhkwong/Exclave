@@ -63,15 +63,6 @@ public class ShadowsocksBean extends StandardV2RayBean {
     }
 
     @Override
-    public boolean needProtect() {
-        if (plugin.isEmpty()) {
-            return false;
-        }
-        PluginConfiguration pluginConfiguration = new PluginConfiguration(plugin);
-        return !pluginConfiguration.getSelected().isEmpty();
-    }
-
-    @Override
     public void serialize(ByteBufferOutput output) {
         output.writeInt(6);
         super.serialize(output);
@@ -129,7 +120,7 @@ public class ShadowsocksBean extends StandardV2RayBean {
         return KryoConverters.deserialize(new ShadowsocksBean(), KryoConverters.serialize(this));
     }
 
-    public static final Creator<ShadowsocksBean> CREATOR = new CREATOR<ShadowsocksBean>() {
+    public static final Creator<ShadowsocksBean> CREATOR = new CREATOR<>() {
         @NonNull
         @Override
         public ShadowsocksBean newInstance() {

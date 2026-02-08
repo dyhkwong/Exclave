@@ -67,10 +67,6 @@ public abstract class AbstractBean extends Serializable {
         return true;
     }
 
-    public boolean needProtect() {
-        return false;
-    }
-
     @Override
     public void initializeDefaultValues() {
         if (serverAddress == null) serverAddress = "127.0.0.1";
