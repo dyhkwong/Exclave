@@ -44,6 +44,7 @@ class TrustTunnelSettingsActivity : ProfileSettingsActivity<TrustTunnelBean>() {
         DataStore.serverSNI = sni
         DataStore.serverCertificates = certificate
         DataStore.serverUTLSFingerprint = utlsFingerprint
+        DataStore.serverAllowInsecure = allowInsecure
     }
 
     override fun TrustTunnelBean.serialize() {
@@ -56,6 +57,7 @@ class TrustTunnelSettingsActivity : ProfileSettingsActivity<TrustTunnelBean>() {
         sni = DataStore.serverSNI
         certificate = DataStore.serverCertificates
         utlsFingerprint = DataStore.serverUTLSFingerprint
+        allowInsecure = DataStore.serverAllowInsecure
     }
 
     override fun PreferenceFragmentCompat.createPreferences(

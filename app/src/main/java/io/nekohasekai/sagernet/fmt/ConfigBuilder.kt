@@ -1772,6 +1772,9 @@ fun buildV2RayConfig(
                                                 if (bean.utlsFingerprint.isNotEmpty()) {
                                                     fingerprint = bean.utlsFingerprint
                                                 }
+                                                if (bean.allowInsecure) {
+                                                    allowInsecure = true
+                                                }
                                             }
                                             if (DataStore.enableFragment) {
                                                 sockopt = StreamSettingsObject.SockoptObject().apply {
@@ -1814,6 +1817,9 @@ fun buildV2RayConfig(
                                                                 certificate = bean.certificate.lines()
                                                             })
                                                         }
+                                                    }
+                                                    if (bean.allowInsecure) {
+                                                        allowInsecure = true
                                                     }
                                                 }
                                                 trustTunnelUDP = true

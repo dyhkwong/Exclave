@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import libcore.Libcore;
 
 public class TrustTunnelBean extends AbstractBean {
 
@@ -37,6 +38,7 @@ public class TrustTunnelBean extends AbstractBean {
     public String sni;
     public String certificate;
     public String utlsFingerprint;
+    public Boolean allowInsecure;
 
     @Override
     public void initializeDefaultValues() {
@@ -47,11 +49,12 @@ public class TrustTunnelBean extends AbstractBean {
         if (sni == null) sni = "";
         if (certificate == null) certificate = "";
         if (utlsFingerprint == null) utlsFingerprint = "";
+        if (allowInsecure == null) allowInsecure = false;
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(0);
+        output.writeInt(1);
         super.serialize(output);
         output.writeString(protocol);
         output.writeString(username);
@@ -59,6 +62,7 @@ public class TrustTunnelBean extends AbstractBean {
         output.writeString(sni);
         output.writeString(certificate);
         output.writeString(utlsFingerprint);
+        output.writeBoolean(allowInsecure);
     }
 
     @Override
@@ -71,11 +75,17 @@ public class TrustTunnelBean extends AbstractBean {
         sni = input.readString();
         certificate = input.readString();
         utlsFingerprint = input.readString();
+        if (version >= 1) {
+            allowInsecure = input.readBoolean();
+        }
     }
 
     @Override
     public void applyFeatureSettings(AbstractBean other) {
         if (!(other instanceof TrustTunnelBean bean)) return;
+        if (allowInsecure) {
+            bean.allowInsecure = true;
+        }
         if (bean.certificate == null || bean.certificate.isEmpty() && !certificate.isEmpty()) {
             bean.certificate = certificate;
         }
@@ -100,4 +110,15 @@ public class TrustTunnelBean extends AbstractBean {
             return new TrustTunnelBean[size];
         }
     };
+
+    @Override
+    public boolean isInsecure() {
+        if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (!allowInsecure) {
+            return false;
+        }
+        return true;
+    }
 }
