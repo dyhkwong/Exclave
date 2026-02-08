@@ -717,54 +717,7 @@ fun buildV2RayConfig(
                                                 }
                                                 if (bean.plugin.isNotEmpty()) {
                                                     val pluginConfiguration = PluginConfiguration(bean.plugin)
-                                                    plugin = pluginConfiguration.selected
-                                                    pluginOpts = pluginConfiguration.getOptions().toString()
-                                                    if (!forExport
-                                                        && !(plugin == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin"))
-                                                        && !(plugin == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal"))
-                                                    ) {
-                                                        try {
-                                                            PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
-                                                                plugin = path
-                                                                if (!forTest && DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM) {
-                                                                    pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
-                                                                    if (isV2) {
-                                                                        opts["__android_vpn"] = ""
-                                                                    } else {
-                                                                        pluginArgs = listOf("-V")
-                                                                    }
-                                                                }
-                                                                pluginOpts = opts.toString()
-                                                            }
-                                                        } catch (e: PluginManager.PluginNotFoundException) {
-                                                            if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
-                                                                plugin = e.plugin
-                                                                pluginOpts = pluginConfiguration.getOptions().toString()
-                                                            } else {
-                                                                throw e
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                if (bean.singUoT && experimentalFlags.getBooleanProperty( "singuot")) {
-                                                    uot = bean.singUoT
-                                                }
-                                            }
-                                        )
-                                    } else {
-                                        protocol = "shadowsocks"
-                                        settings = LazyOutboundConfigurationObject(this,
-                                            ShadowsocksOutboundConfigurationObject().apply {
-                                                servers = listOf(ShadowsocksOutboundConfigurationObject.ServerObject().apply {
-                                                    address = bean.serverAddress
-                                                    port = bean.serverPort
-                                                    password = bean.password
-                                                        method = bean.method
-                                                    if (!bean.method.startsWith("2022-blake3-") && bean.experimentReducedIvHeadEntropy) {
-                                                        experimentReducedIvHeadEntropy = bean.experimentReducedIvHeadEntropy
-                                                    }
-                                                    if (bean.plugin.isNotEmpty()) {
-                                                        val pluginConfiguration = PluginConfiguration(bean.plugin)
+                                                    if (pluginConfiguration.selected.isNotEmpty()) {
                                                         plugin = pluginConfiguration.selected
                                                         pluginOpts = pluginConfiguration.getOptions().toString()
                                                         if (!forExport
@@ -790,6 +743,57 @@ fun buildV2RayConfig(
                                                                     pluginOpts = pluginConfiguration.getOptions().toString()
                                                                 } else {
                                                                     throw e
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                if (bean.singUoT && experimentalFlags.getBooleanProperty( "singuot")) {
+                                                    uot = bean.singUoT
+                                                }
+                                            }
+                                        )
+                                    } else {
+                                        protocol = "shadowsocks"
+                                        settings = LazyOutboundConfigurationObject(this,
+                                            ShadowsocksOutboundConfigurationObject().apply {
+                                                servers = listOf(ShadowsocksOutboundConfigurationObject.ServerObject().apply {
+                                                    address = bean.serverAddress
+                                                    port = bean.serverPort
+                                                    password = bean.password
+                                                        method = bean.method
+                                                    if (!bean.method.startsWith("2022-blake3-") && bean.experimentReducedIvHeadEntropy) {
+                                                        experimentReducedIvHeadEntropy = bean.experimentReducedIvHeadEntropy
+                                                    }
+                                                    if (bean.plugin.isNotEmpty()) {
+                                                        val pluginConfiguration = PluginConfiguration(bean.plugin)
+                                                        if (pluginConfiguration.selected.isNotEmpty()) {
+                                                            plugin = pluginConfiguration.selected
+                                                            pluginOpts = pluginConfiguration.getOptions().toString()
+                                                            if (!forExport
+                                                                && !(plugin == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin"))
+                                                                && !(plugin == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal"))
+                                                            ) {
+                                                                try {
+                                                                    PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
+                                                                        plugin = path
+                                                                        if (!forTest && DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM) {
+                                                                            pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
+                                                                            if (isV2) {
+                                                                                opts["__android_vpn"] = ""
+                                                                            } else {
+                                                                                pluginArgs = listOf("-V")
+                                                                            }
+                                                                        }
+                                                                        pluginOpts = opts.toString()
+                                                                    }
+                                                                } catch (e: PluginManager.PluginNotFoundException) {
+                                                                    if (e.plugin in arrayOf("v2ray-plugin", "obfs-local")) {
+                                                                        plugin = e.plugin
+                                                                        pluginOpts = pluginConfiguration.getOptions().toString()
+                                                                    } else {
+                                                                        throw e
+                                                                    }
                                                                 }
                                                             }
                                                         }
