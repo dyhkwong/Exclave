@@ -46,6 +46,7 @@ class ShadowQUICSettingsActivity : ProfileSettingsActivity<ShadowQUICBean>() {
         DataStore.serverBrookUdpOverStream = udpOverStream
         DataStore.serverShadowQUICDisableALPN = disableALPN
         DataStore.serverShadowQUICUseSunnyQUIC = useSunnyQUIC
+        DataStore.serverCertificates = certificate
     }
 
     override fun ShadowQUICBean.serialize() {
@@ -61,6 +62,7 @@ class ShadowQUICSettingsActivity : ProfileSettingsActivity<ShadowQUICBean>() {
         udpOverStream = DataStore.serverBrookUdpOverStream
         disableALPN = DataStore.serverShadowQUICDisableALPN
         useSunnyQUIC = DataStore.serverShadowQUICUseSunnyQUIC
+        certificate = DataStore.serverCertificates
     }
 
     override fun PreferenceFragmentCompat.createPreferences(
@@ -78,6 +80,14 @@ class ShadowQUICSettingsActivity : ProfileSettingsActivity<ShadowQUICBean>() {
         alpn.isEnabled = !disableALPN.isChecked
         disableALPN.setOnPreferenceChangeListener { _, newValue ->
             alpn.isEnabled = !(newValue as Boolean)
+            true
+        }
+
+        val useSunnyQUIC = findPreference<SwitchPreference>(Key.SERVER_SHADOWQUIC_USE_SUNNYQUIC)!!
+        val certificate = findPreference<EditTextPreference>(Key.SERVER_CERTIFICATES)!!
+        certificate.isEnabled = useSunnyQUIC.isChecked
+        useSunnyQUIC.setOnPreferenceChangeListener { _, newValue ->
+            certificate.isEnabled = newValue as Boolean
             true
         }
     }

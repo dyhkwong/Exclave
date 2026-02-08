@@ -49,7 +49,7 @@ import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.naive.toUri
 import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
-import io.nekohasekai.sagernet.fmt.shadowquic.buildshadowQUICConfig
+import io.nekohasekai.sagernet.fmt.shadowquic.buildShadowQUICConfig
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean
 import io.nekohasekai.sagernet.fmt.shadowsocks.toUri
 import io.nekohasekai.sagernet.fmt.shadowsocksr.ShadowsocksRBean
@@ -347,7 +347,7 @@ data class ProxyEntity(
                             }
                             is ShadowQUICBean -> {
                                 append("\n\n")
-                                append(bean.buildshadowQUICConfig(port))
+                                append(bean.buildShadowQUICConfig(port))
                             }
                         }
                     }

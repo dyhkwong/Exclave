@@ -26,8 +26,9 @@ import io.nekohasekai.sagernet.ktx.joinHostPort
 import io.nekohasekai.sagernet.ktx.listByLineOrComma
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
+import java.io.File
 
-fun ShadowQUICBean.buildshadowQUICConfig(port: Int): String {
+fun ShadowQUICBean.buildShadowQUICConfig(port: Int, cacheFile: (() -> File)? = null): String {
     val confObject: MutableMap<String, Any> = HashMap()
 
     val inboundObject: MutableMap<String, Any> = HashMap()
@@ -49,6 +50,11 @@ fun ShadowQUICBean.buildshadowQUICConfig(port: Int): String {
     if (congestionControl.isNotEmpty()) outboundObject["congestion-control"] = congestionControl
     if (zeroRTT) outboundObject["zero-rtt"] = zeroRTT
     if (udpOverStream) outboundObject["over-stream"] = udpOverStream
+    if (useSunnyQUIC && certificate.isNotEmpty() && cacheFile != null) {
+        val certificateFile = cacheFile()
+        certificateFile.writeText(certificate)
+        outboundObject["cert-path"] = certificateFile.absolutePath
+    }
     confObject["outbound"] = outboundObject
 
     confObject["log-level"] = when (DataStore.logLevel) {

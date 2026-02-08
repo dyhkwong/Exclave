@@ -39,7 +39,7 @@ import io.nekohasekai.sagernet.fmt.internal.ConfigBean
 import io.nekohasekai.sagernet.fmt.naive.NaiveBean
 import io.nekohasekai.sagernet.fmt.naive.buildNaiveConfig
 import io.nekohasekai.sagernet.fmt.shadowquic.ShadowQUICBean
-import io.nekohasekai.sagernet.fmt.shadowquic.buildshadowQUICConfig
+import io.nekohasekai.sagernet.fmt.shadowquic.buildShadowQUICConfig
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.plugin.PluginManager
 import kotlinx.coroutines.*
@@ -90,7 +90,12 @@ abstract class V2RayInstance(
                     }
                     is ShadowQUICBean -> {
                         initPlugin("shadowquic-plugin")
-                        pluginConfigs[port] = profile.type to bean.buildshadowQUICConfig(port)
+                        pluginConfigs[port] = profile.type to bean.buildShadowQUICConfig(port) {
+                            File(app.noBackupFilesDir, "shadowquic_" + SystemClock.elapsedRealtime() + ".pem").apply {
+                                parentFile?.mkdirs()
+                                cacheFiles.add(this)
+                            }
+                        }
                     }
                     is ConfigBean -> {
                         when (bean.type) {
@@ -134,7 +139,7 @@ abstract class V2RayInstance(
                         else -> error("impossible")
                     }
                     // disable system directories
-                    env["SSL_CERT_DIR"] = "/not_exists"
+                    // env["SSL_CERT_DIR"] = "/not_exists"
                 }
 
                 when {
@@ -161,7 +166,7 @@ abstract class V2RayInstance(
                             cacheFiles.add(caFile)
                             env["SSL_CERT_FILE"] = caFile.absolutePath
                             // disable system directories
-                            env["SSL_CERT_DIR"] = "/not_exists"
+                            // env["SSL_CERT_DIR"] = "/not_exists"
                         }
 
                         val commands = mutableListOf(

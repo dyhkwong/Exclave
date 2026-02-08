@@ -38,6 +38,7 @@ public class ShadowQUICBean extends AbstractBean {
     public Boolean udpOverStream;
     public Boolean disableALPN;
     public Boolean useSunnyQUIC;
+    public String certificate;
 
     @Override
     public void initializeDefaultValues() {
@@ -51,12 +52,13 @@ public class ShadowQUICBean extends AbstractBean {
         if (udpOverStream == null) udpOverStream = false;
         if (disableALPN == null) disableALPN = false;
         if (useSunnyQUIC == null) useSunnyQUIC = false;
+        if (certificate == null) certificate = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
         super.serialize(output);
-        output.writeInt(1);
+        output.writeInt(2);
         output.writeString(username);
         output.writeString(password);
         output.writeString(sni);
@@ -66,6 +68,7 @@ public class ShadowQUICBean extends AbstractBean {
         output.writeBoolean(udpOverStream);
         output.writeBoolean(disableALPN);
         output.writeBoolean(useSunnyQUIC);
+        output.writeString(certificate);
     }
 
     @Override
@@ -82,6 +85,9 @@ public class ShadowQUICBean extends AbstractBean {
         if (version >= 1) {
             disableALPN = input.readBoolean();
             useSunnyQUIC = input.readBoolean();
+        }
+        if (version >= 2) {
+            certificate = input.readString();
         }
     }
 
