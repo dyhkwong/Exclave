@@ -575,4 +575,5 @@
     <string name="discard_icmp">Блокировка ICMP</string>
     <string name="discard_icmp_sum">Блокировать ICMP и ICMPv6</string>
     <string name="insecure_warn">Советы по безопасности</string>
+    <string name="insecure_warn_sum">Отображать предупреждения для профилей с защитой, эквивалентной открытому тексту.</string>
 </resources>
