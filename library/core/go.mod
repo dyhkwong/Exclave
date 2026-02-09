@@ -9,7 +9,7 @@ require (
 	github.com/sagernet/gomobile v0.1.11
 	github.com/v2fly/v2ray-core/v5 v5.41.0
 	github.com/wzshiming/socks5 v0.7.0
-	golang.org/x/sys v0.40.0
+	golang.org/x/sys v0.41.0
 	gvisor.dev/gvisor v0.0.0-20250503011706-39ed1f5ac29c
 )
 
@@ -49,15 +49,15 @@ require (
 	github.com/pion/sctp v1.7.6 // indirect
 	github.com/pion/transport/v2 v2.2.4 // indirect
 	github.com/pion/transport/v3 v3.1.1 // indirect
-	github.com/pires/go-proxyproto v0.9.2 // indirect
+	github.com/pires/go-proxyproto v0.10.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/refraction-networking/utls v1.8.2 // indirect
 	github.com/riobard/go-bloom v0.0.0-20200614022211-cdc8013cb5b3 // indirect
 	github.com/sagernet/quic-go v0.59.0-sing-box-mod.2 // indirect
-	github.com/sagernet/sing v0.8.0-beta.11 // indirect
+	github.com/sagernet/sing v0.8.0-beta.16 // indirect
 	github.com/sagernet/sing-mux v0.3.4 // indirect
-	github.com/sagernet/sing-quic v0.6.0-beta.11 // indirect
+	github.com/sagernet/sing-quic v0.6.0-beta.12 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.9 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.2 // indirect
 	github.com/sagernet/sing-shadowtls v0.2.1-0.20250503051639-fcd445d33c11 // indirect
@@ -91,4 +91,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20260205170951-e0a880d7b7a9
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.41.1-0.20260209113420-446b86ae41c3
