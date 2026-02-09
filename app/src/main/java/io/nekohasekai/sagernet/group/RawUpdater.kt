@@ -253,13 +253,16 @@ object RawUpdater : GroupUpdater() {
                 // https://github.com/search?q=!%3Cstr%3E&type=code
                 // addTypeDescription(TypeDescription(String::class.java, "str"))
             }.loadAs(text, Map::class.java)
-            (yaml["proxies"] as? List<Map<String, Any?>>)?.let {
-                return parseClashProxies(it)
+            (yaml["proxies"] as? List<Map<String, Any?>>)?.let { proxies ->
+                parseClashProxies(proxies).takeIf { it.isNotEmpty() }?.let {
+                    return it
+                }
             }
         } catch (_: Exception) {}
         try {
-            return parseJSONConfig(text)
-                .takeIf { it.isNotEmpty() }
+            parseJSONConfig(text).takeIf { it.isNotEmpty() }?.let {
+                return it
+            }
         } catch (_: Exception) {}
         try {
             parseShareLinks(text.decodeBase64()).takeIf { it.isNotEmpty() }?.let {
