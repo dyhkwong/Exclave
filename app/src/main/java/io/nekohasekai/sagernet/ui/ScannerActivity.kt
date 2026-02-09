@@ -159,7 +159,7 @@ class ScannerActivity : ThemedActivity() {
             try {
                 val results = RawUpdater.parseRaw(value)
                 if (results.isNullOrEmpty()) {
-                    if (value.listByLine().size == 1 && isHTTPorHTTPSURL(value)) {
+                    if (!value.contains("\n") && !value.contains("\r") && isHTTPorHTTPSURL(value)) {
                         val builder = Libcore.newURL("exclave").apply {
                             host = "subscription"
                         }
@@ -255,7 +255,7 @@ class ScannerActivity : ThemedActivity() {
                                     }
                                 }
                             } else {
-                                if (result.text.listByLine().size == 1 && isHTTPorHTTPSURL(result.text)) {
+                                if (!result.text.contains("\n") && !result.text.contains("\r") && isHTTPorHTTPSURL(result.text)) {
                                     val builder = Libcore.newURL("exclave").apply {
                                         host = "subscription"
                                     }
