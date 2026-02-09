@@ -111,7 +111,8 @@ class AssetEditActivity(
         if (filename != DataStore.editingAssetName && SagerDatabase.assetDao.get(filename) != null) {
             error(getString(R.string.route_asset_duplicate_filename,  filename))
         }
-        if (DataStore.assetUrl.listByLine().size > 1 || !isHTTPorHTTPSURL(DataStore.assetUrl)) {
+        val assetUrl = DataStore.assetUrl
+        if (assetUrl.contains("\n") || assetUrl.contains("\r") || !isHTTPorHTTPSURL(DataStore.assetUrl)) {
             error(getString(R.string.route_asset_invalid_url,  DataStore.assetUrl))
         }
     }
