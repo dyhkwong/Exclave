@@ -218,7 +218,7 @@ abstract class V2RayInstance(
                         else -> error("impossible")
                     }
                     // disable system directories
-                    env["SSL_CERT_DIR"] = "/not_exists"
+                    // env["SSL_CERT_DIR"] = "/not_exists"
                 }
 
                 when {
@@ -260,7 +260,7 @@ abstract class V2RayInstance(
                             cacheFiles.add(caFile)
                             env["SSL_CERT_FILE"] = caFile.absolutePath
                             // disable system directories
-                            env["SSL_CERT_DIR"] = "/not_exists"
+                            // env["SSL_CERT_DIR"] = "/not_exists"
                         }
 
                         val commands = mutableListOf(
@@ -424,7 +424,7 @@ abstract class V2RayInstance(
                             cacheFiles.add(caFile)
                             env["SSL_CERT_FILE"] = caFile.absolutePath
                             // disable system directories
-                            env["SSL_CERT_DIR"] = "/not_exists"
+                            // env["SSL_CERT_DIR"] = "/not_exists"
                         }
                         processes.start(commands, env)
                     }
