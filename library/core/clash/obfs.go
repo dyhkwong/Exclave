@@ -61,6 +61,8 @@ func (p *obfsLocalPlugin) InitStreamPlugin(remotePort string, pluginOpts string)
 
 	if s, ok := options.Get("obfs-host"); ok {
 		p.host = s
+	} else {
+		p.host = "cloudfront.net"
 	}
 
 	switch mode {
