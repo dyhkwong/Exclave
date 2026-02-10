@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.takisoft.preferencex.SimpleMenuPreference
+        app:key="mode"
+        app:persistent="false"
+        app:entries="@array/v2ray_plugin_mode"
+        app:entryValues="@array/v2ray_plugin_mode"
+        app:title="Transport mode"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:key="host"
+        app:persistent="false"
+        app:title="Hostname"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:key="path"
+        app:persistent="false"
+        app:title="Path"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:key="serviceName"
+        app:persistent="false"
+        app:title="Service name"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:key="mux"
+        app:persistent="false"
+        app:title="Concurrent connections"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:key="certRaw"
+        app:persistent="false"
+        app:title="Certificate for TLS verification"
+        app:useSimpleSummaryProvider="true" />
+    <PreferenceCategory
+        app:title="Debug">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:key="loglevel"
+            app:persistent="false"
+            app:entries="@array/v2ray_plugin_log_level"
+            app:entryValues="@array/v2ray_plugin_log_level"
+            app:icon="@drawable/ic_baseline_bug_report_24"
+            app:title="Logcat level"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

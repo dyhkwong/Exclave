@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        app:title="Server Settings"
+        app:iconSpaceReserved="false">
+        <com.takisoft.preferencex.SimpleMenuPreference
+            app:key="obfs"
+            app:persistent="false"
+            app:entries="@array/simple_obfs_wrapper"
+            app:entryValues="@array/simple_obfs_wrapper"
+            app:iconSpaceReserved="false"
+            app:title="Obfuscation wrapper"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:title="Feature Settings"
+        app:iconSpaceReserved="false">
+        <EditTextPreference
+            app:key="obfs-host"
+            app:persistent="false"
+            app:iconSpaceReserved="false"
+            app:title="Obfuscation hostname"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -849,4 +849,23 @@
         <item>@string/pinned_peer_certificate_public_key_sha256</item>
         <item>@string/pinned_peer_certificate_chain_sha256</item>
     </string-array>
+
+    <string-array name="simple_obfs_wrapper">
+        <item>http</item>
+        <item>tls</item>
+    </string-array>
+    <string-array name="v2ray_plugin_mode">
+        <item>websocket-http</item>
+        <item>websocket-tls</item>
+        <item>quic-tls</item>
+        <item>grpc</item>
+        <item>grpc-tls</item>
+    </string-array>
+    <string-array name="v2ray_plugin_log_level">
+        <item>debug</item>
+        <item>info</item>
+        <item>warning</item>
+        <item>error</item>
+        <item>none</item>
+    </string-array>
 </resources>

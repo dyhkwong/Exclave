@@ -19,8 +19,8 @@
 
 package io.nekohasekai.sagernet.ui.profile
 
-import android.app.Activity
 import android.content.BroadcastReceiver
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.component1
@@ -861,17 +861,34 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 val intent = PluginManager.buildIntent(
                     plugin.selectedEntry!!.id, PluginContract.ACTION_CONFIGURE
                 )
+                val component = intent.resolveActivity(packageManager)
                 when {
                     experimentalFlags.getBooleanProperty("disableShadowsocksPluginConfigActivity") -> {
                         showPluginEditor()
                     }
-                    plugin.selectedEntry!!.id == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin") -> {
-                        showPluginEditor()
+                    plugin.selectedEntry!!.id == "v2ray-plugin" && (component == null || experimentalFlags.getBooleanProperty("useInternalV2RayPlugin")) -> {
+                        configurePlugin.launch(
+                            Intent().apply {
+                                setClassName(app.packageName, "com.github.shadowsocks.plugin.v2ray.ConfigActivity")
+                                putExtra(
+                                    PluginContract.EXTRA_OPTIONS,
+                                    pluginConfiguration.getOptions().toString()
+                                )
+                            }
+                        )
                     }
-                    plugin.selectedEntry!!.id == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal") -> {
-                        showPluginEditor()
+                    plugin.selectedEntry!!.id == "obfs-local" && (component == null || experimentalFlags.getBooleanProperty("useInternalObfsLocal")) -> {
+                        configurePlugin.launch(
+                            Intent().apply {
+                                setClassName(app.packageName, "com.github.shadowsocks.plugin.obfs_local.ConfigActivity")
+                                putExtra(
+                                    PluginContract.EXTRA_OPTIONS,
+                                    pluginConfiguration.getOptions().toString()
+                                )
+                            }
+                        )
                     }
-                    intent.resolveActivity(packageManager) == null -> {
+                    component == null -> {
                         showPluginEditor()
                     }
                     else -> {
