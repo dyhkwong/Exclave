@@ -85,14 +85,13 @@ class ConfigActivity : ConfigurationActivity(), Toolbar.OnMenuItemClickListener 
         if (child.options != oldOptions) {
             AlertDialog.Builder(this).run {
                 setTitle(R.string.unsaved_changes_prompt)
-                setPositiveButton(android.R.string.yes) { _, _ ->
+                setPositiveButton(android.R.string.ok) { _, _ ->
                     saveChanges(child.options)
                     finish()
                 }
-                setNegativeButton(android.R.string.no) { _, _ ->
+                setNegativeButton(android.R.string.cancel) { _, _ ->
                     finish()
                 }
-                setNeutralButton(android.R.string.cancel, null)
                 create()
             }.show()
         } else {
