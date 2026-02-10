@@ -112,6 +112,12 @@ public class ShadowsocksRBean extends AbstractBean {
             default:
                 return false;
         }
+        switch (method) {
+            case "none", "rc4-md5", "table":
+                break;
+            default:
+                return false;
+        }
         return true;
     }
 }

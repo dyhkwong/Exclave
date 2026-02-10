@@ -203,6 +203,9 @@ public class Hysteria2Bean extends AbstractBean {
         if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
             return false;
         }
+        if (!obfs.isEmpty()) {
+            return false;
+        }
         if (!allowInsecure) {
             return false;
         }
