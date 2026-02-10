@@ -747,7 +747,12 @@ fun buildV2RayConfig(
                                                             try {
                                                                 PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                                                                     plugin = path
-                                                                    if (DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM && SagerNet.started && DataStore.startedProfile > 0) {
+                                                                    val shouldProtect = if (forTest) {
+                                                                        DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.startedProfile > 0 && SagerNet.started
+                                                                    } else {
+                                                                        DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM
+                                                                    }
+                                                                    if (shouldProtect) {
                                                                         pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
                                                                         if (isV2) {
                                                                             opts["__android_vpn"] = ""
@@ -797,7 +802,12 @@ fun buildV2RayConfig(
                                                                 try {
                                                                     PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
                                                                         plugin = path
-                                                                        if (DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM && SagerNet.started && DataStore.startedProfile > 0) {
+                                                                        val shouldProtect = if (forTest) {
+                                                                            DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM && DataStore.startedProfile > 0 && SagerNet.started
+                                                                        } else {
+                                                                            DataStore.serviceMode == Key.MODE_VPN && DataStore.tunImplementation == TunImplementation.SYSTEM
+                                                                        }
+                                                                        if (shouldProtect) {
                                                                             pluginWorkingDir = SagerNet.deviceStorage.noBackupFilesDir.toString()
                                                                             if (isV2) {
                                                                                 opts["__android_vpn"] = ""
