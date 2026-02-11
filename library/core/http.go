@@ -54,8 +54,8 @@ type HTTPRequest interface {
 }
 
 type HTTPResponse interface {
-	GetContent() []byte
-	GetContentString() string
+	GetContent() ([]byte, error)
+	GetContentString() (string, error)
 	GetHeader(key string) string
 	WriteTo(path string) error
 }
@@ -171,30 +171,30 @@ type httpResponse struct {
 }
 
 func (h *httpResponse) errorString() string {
-	content := h.GetContentString()
-	if h.contentError != nil {
+	content, err := h.GetContentString()
+	if err != nil {
 		return fmt.Sprint("HTTP ", h.Status)
 	}
 	return fmt.Sprint("HTTP ", h.Status, ": ", content)
 }
 
-func (h *httpResponse) GetContent() []byte {
+func (h *httpResponse) GetContent() ([]byte, error) {
 	h.getContentOnce.Do(func() {
 		defer h.Body.Close()
 		h.content, h.contentError = io.ReadAll(h.Body)
 	})
 	if h.contentError != nil {
-		return nil
+		return nil, h.contentError
 	}
-	return h.content
+	return h.content, nil
 }
 
-func (h *httpResponse) GetContentString() string {
-	content := h.GetContent()
-	if h.contentError != nil {
-		return ""
+func (h *httpResponse) GetContentString() (string, error) {
+	content, err := h.GetContent()
+	if err != nil {
+		return "", err
 	}
-	return string(content)
+	return string(content), nil
 }
 
 func (r *httpResponse) GetHeader(key string) string {
