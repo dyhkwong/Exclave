@@ -1,6 +1,6 @@
 module libcore
 
-go 1.24.0
+go 1.26.0
 
 require (
 	github.com/ccding/go-stun v0.1.5
