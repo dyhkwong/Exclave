@@ -6,8 +6,3 @@ allprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
-
-plugins {
-    id("com.google.devtools.ksp") version "2.3.4" apply false
-    id("com.mikepenz.aboutlibraries.plugin") version "14.0.0-b02" apply false
-}

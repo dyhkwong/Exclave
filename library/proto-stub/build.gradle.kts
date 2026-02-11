@@ -2,7 +2,7 @@ import com.google.protobuf.gradle.*
 
 plugins {
     id("com.android.library")
-    id("com.google.protobuf")
+    alias(libs.plugins.protobuf)
 }
 
 setupCommon()
@@ -10,7 +10,7 @@ setupCommon()
 dependencies {
     protobuf(project(":library:proto"))
 
-    api("com.google.protobuf:protobuf-java:4.33.5")
+    api(libs.protobuf.java)
 }
 android {
     namespace = "com.v2ray.core"

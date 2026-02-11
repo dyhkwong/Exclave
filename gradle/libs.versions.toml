@@ -1,0 +1,73 @@
+[versions]
+ksp = "2.3.5"
+aboutlibraries = "14.0.0-b02"
+protobuf = "0.9.6"
+android-gradle-plugin = "9.0.0"
+kotlin-gradle-plugin = "2.3.10"
+github-api = "1.330"
+okhttp = "5.3.2"
+kotlinx-coroutines-android = "1.10.2"
+core-ktx = "1.17.0"
+activity-ktx = "1.11.0"
+fragment-ktx = "1.8.9"
+camera = "1.4.2"
+swiperefreshlayout = "1.2.0"
+appcompat = "1.7.1"
+work = "2.10.5"
+room = "2.7.2"
+material = "1.13.0"
+gson = "2.13.2"
+zxing-core = "3.5.4"
+protobuf-java = "4.33.5"
+preferencex = "1.1.0"
+snakeyaml = "2.5"
+material-about-library = "3.2.0-rc01"
+process-phoenix = "3.0.0"
+kryo = "5.6.2"
+jini-lib = "0.6.6"
+markwon-core = "4.6.2"
+recyclerview-fastscroll = "2.0.1"
+editorkit = "2.0.0"
+desugar-jdk-libs = "2.1.5"
+
+[libraries]
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-gradle-plugin" }
+github-api = { module = "org.kohsuke:github-api", version.ref = "github-api" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity-ktx" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment-ktx" }
+camera-view = { module = "androidx.camera:camera-view", version.ref = "camera" }
+camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camera" }
+camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camera" }
+swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
+work-multiprocess = { module = "androidx.work:work-multiprocess", version.ref = "work" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-core" }
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf-java" }
+preferencex = { module = "com.takisoft.preferencex:preferencex", version.ref = "preferencex" }
+preferencex-simplemenu = { module = "com.takisoft.preferencex:preferencex-simplemenu", version.ref = "preferencex" }
+preferencex-colorpicker = { module = "com.takisoft.preferencex:preferencex-colorpicker", version.ref = "preferencex" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
+material-about-library = { module = "com.github.daniel-stoneuk:material-about-library", version.ref = "material-about-library" }
+process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "process-phoenix" }
+kryo = { module = "com.esotericsoftware:kryo", version.ref = "kryo" }
+jini-lib = { module = "com.sshtools:jini-lib", version.ref = "jini-lib" }
+markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon-core" }
+recyclerview-fastscroll = { module = "com.simplecityapps:recyclerview-fastscroll", version.ref = "recyclerview-fastscroll" }
+editorkit = { module = "com.blacksquircle.ui:editorkit", version.ref = "editorkit" }
+editorkit-language-json = { module = "com.blacksquircle.ui:language-json", version.ref = "editorkit" }
+desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
+
+[plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
