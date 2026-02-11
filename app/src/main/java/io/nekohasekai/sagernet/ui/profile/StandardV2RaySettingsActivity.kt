@@ -60,16 +60,9 @@ import io.nekohasekai.sagernet.ktx.showAllowingStateLoss
 import io.nekohasekai.sagernet.ktx.unwrapIDN
 import io.nekohasekai.sagernet.widget.NonBlackEditTextPreference
 import kotlinx.coroutines.launch
-import java.io.StringReader
-import java.util.Properties
 
 abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV2RayBean>(),
     Preference.OnPreferenceChangeListener {
-
-    val experimentalFlags = Properties().apply {
-        load(StringReader(DataStore.experimentalFlags))
-    }
-
     override fun StandardV2RayBean.init() {
         DataStore.profileName = name
         DataStore.serverAddress = serverAddress
@@ -559,10 +552,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         initPlugins()
 
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
-            (bean is ShadowsocksBean || bean is SOCKSBean) && experimentalFlags.getBooleanProperty("singuot")
+            (bean is ShadowsocksBean || bean is SOCKSBean) && DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")
         findPreference<PreferenceCategory>(Key.SERVER_SING_MUX_CATEGORY)!!.isVisible =
             (bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean) &&
-                    experimentalFlags.getBooleanProperty("singmux")
+                    DataStore.experimentalFlagsProperties.getBooleanProperty("singmux")
         singMux = findPreference(Key.SERVER_SING_MUX)!!
         singMuxProtocol = findPreference(Key.SERVER_SING_MUX_PROTOCOL)!!
         singMuxMaxConnections = findPreference(Key.SERVER_SING_MUX_MAX_CONNECTIONS)!!
@@ -863,10 +856,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 )
                 val component = intent.resolveActivity(packageManager)
                 when {
-                    experimentalFlags.getBooleanProperty("disableShadowsocksPluginConfigActivity") -> {
+                    DataStore.experimentalFlagsProperties.getBooleanProperty("disableShadowsocksPluginConfigActivity") -> {
                         showPluginEditor()
                     }
-                    plugin.selectedEntry!!.id == "v2ray-plugin" && (component == null || experimentalFlags.getBooleanProperty("useInternalV2RayPlugin")) -> {
+                    plugin.selectedEntry!!.id == "v2ray-plugin" && (component == null || DataStore.experimentalFlagsProperties.getBooleanProperty("useInternalV2RayPlugin")) -> {
                         configurePlugin.launch(
                             Intent().apply {
                                 setClassName(app.packageName, "com.github.shadowsocks.plugin.v2ray.ConfigActivity")
@@ -877,7 +870,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                             }
                         )
                     }
-                    plugin.selectedEntry!!.id == "obfs-local" && (component == null || experimentalFlags.getBooleanProperty("useInternalObfsLocal")) -> {
+                    plugin.selectedEntry!!.id == "obfs-local" && (component == null || DataStore.experimentalFlagsProperties.getBooleanProperty("useInternalObfsLocal")) -> {
                         configurePlugin.launch(
                             Intent().apply {
                                 setClassName(app.packageName, "com.github.shadowsocks.plugin.obfs_local.ConfigActivity")

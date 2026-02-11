@@ -125,8 +125,6 @@ import io.nekohasekai.sagernet.ktx.uuidOrGenerate
 import io.nekohasekai.sagernet.utils.PackageCache
 import kotlin.io.encoding.Base64
 import libcore.Libcore
-import java.io.StringReader
-import java.util.Properties
 
 const val TAG_SOCKS = "socks"
 const val TAG_HTTP = "http"
@@ -294,10 +292,6 @@ fun buildV2RayConfig(
 
     val shouldDumpUID = extraRules.any { it.packages.isNotEmpty() }
     val alerts = mutableListOf<Pair<Int, String>>()
-
-    val experimentalFlags = Properties().apply {
-        load(StringReader(DataStore.experimentalFlags))
-    }
 
     lateinit var result: V2rayBuildResult
     V2RayConfig().apply {
@@ -631,7 +625,7 @@ fun buildV2RayConfig(
                                             address = LOCALHOST
                                             port = localPort
                                         })
-                                    if (experimentalFlags.getBooleanProperty( "singuot")) {
+                                    if (DataStore.experimentalFlagsProperties.getBooleanProperty( "singuot")) {
                                         proxyEntity.naiveBean?.singUoT?.takeIf { it }?.let {
                                             uot = true
                                         }
@@ -741,8 +735,8 @@ fun buildV2RayConfig(
                                                         plugin = pluginConfiguration.selected
                                                         pluginOpts = pluginConfiguration.getOptions().toString()
                                                         if (!forExport
-                                                            && !(plugin == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin"))
-                                                            && !(plugin == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal"))
+                                                            && !(plugin == "v2ray-plugin" && DataStore.experimentalFlagsProperties.getBooleanProperty("useInternalV2RayPlugin"))
+                                                            && !(plugin == "obfs-local" && DataStore.experimentalFlagsProperties.getBooleanProperty("useInternalObfsLocal"))
                                                         ) {
                                                             try {
                                                                 PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
@@ -773,7 +767,7 @@ fun buildV2RayConfig(
                                                         }
                                                     }
                                                 }
-                                                if (bean.singUoT && experimentalFlags.getBooleanProperty( "singuot")) {
+                                                if (bean.singUoT && DataStore.experimentalFlagsProperties.getBooleanProperty( "singuot")) {
                                                     uot = bean.singUoT
                                                 }
                                             }
@@ -796,8 +790,8 @@ fun buildV2RayConfig(
                                                             plugin = pluginConfiguration.selected
                                                             pluginOpts = pluginConfiguration.getOptions().toString()
                                                             if (!forExport
-                                                                && !(plugin == "v2ray-plugin" && experimentalFlags.getBooleanProperty("useInternalV2RayPlugin"))
-                                                                && !(plugin == "obfs-local" && experimentalFlags.getBooleanProperty("useInternalObfsLocal"))
+                                                                && !(plugin == "v2ray-plugin" && DataStore.experimentalFlagsProperties.getBooleanProperty("useInternalV2RayPlugin"))
+                                                                && !(plugin == "obfs-local" && DataStore.experimentalFlagsProperties.getBooleanProperty("useInternalObfsLocal"))
                                                             ) {
                                                                 try {
                                                                     PluginManager.init(pluginConfiguration)?.let { (path, opts, isV2) ->
@@ -828,7 +822,7 @@ fun buildV2RayConfig(
                                                             }
                                                         }
                                                     }
-                                                    if (bean.singUoT && experimentalFlags.getBooleanProperty( "singuot")) {
+                                                    if (bean.singUoT && DataStore.experimentalFlagsProperties.getBooleanProperty( "singuot")) {
                                                         uot = bean.singUoT
                                                     }
                                                 })
@@ -855,7 +849,7 @@ fun buildV2RayConfig(
                                                 }
                                             })
                                             version = bean.protocolVersionName()
-                                            if (bean.singUoT && experimentalFlags.getBooleanProperty("singuot")) {
+                                            if (bean.singUoT && DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")) {
                                                 uot = bean.singUoT
                                             }
                                         }
@@ -1422,7 +1416,7 @@ fun buildV2RayConfig(
                                         udpRelayMode = bean.udpRelayMode
                                         if (bean.zeroRTTHandshake) zeroRTTHandshake = bean.zeroRTTHandshake
                                         if (bean.disableSNI) disableSNI = bean.disableSNI
-                                        if (bean.singUDPOverStream && experimentalFlags.getBooleanProperty("singuot")) {
+                                        if (bean.singUDPOverStream && DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")) {
                                             udpOverStream = bean.singUDPOverStream
                                         }
                                         tlsSettings = TLSObject().apply {
@@ -1854,7 +1848,7 @@ fun buildV2RayConfig(
                                 }
                             }
                             if ((bean is ShadowsocksBean || bean is TrojanBean || bean is VMessBean || bean is VLESSBean)
-                                && bean.singMux && experimentalFlags.getBooleanProperty("singmux")) {
+                                && bean.singMux && DataStore.experimentalFlagsProperties.getBooleanProperty("singmux")) {
                                 smux = OutboundObject.SmuxObject().apply {
                                     enabled = bean.singMux
                                     protocol = bean.singMuxProtocol
@@ -2264,7 +2258,7 @@ fun buildV2RayConfig(
             settings = LazyOutboundConfigurationObject(this,
                 DNSOutboundConfigurationObject().apply {
                     userLevel = 1
-                    if (experimentalFlags.getBooleanProperty("lookupAsExchange")) {
+                    if (DataStore.experimentalFlagsProperties.getBooleanProperty("lookupAsExchange")) {
                         lookupAsExchange = true
                     }
                 })
@@ -2298,7 +2292,7 @@ fun buildV2RayConfig(
         }
 
         if (DataStore.enableDnsRouting) {
-            val directDNSDomainList = experimentalFlags.getProperty("directDNSDomainList")
+            val directDNSDomainList = DataStore.experimentalFlagsProperties.getProperty("directDNSDomainList")
             if (directDNSDomainList != null) {
                 bypassDomain.addAll(directDNSDomainList.split(","))
             } else {
@@ -2308,7 +2302,7 @@ fun buildV2RayConfig(
                     }
                 }
             }
-            val remoteDNSDomainList = experimentalFlags.getProperty("remoteDNSDomainList")
+            val remoteDNSDomainList = DataStore.experimentalFlagsProperties.getProperty("remoteDNSDomainList")
             if (remoteDNSDomainList != null) {
                 proxyDomain.addAll(remoteDNSDomainList.split(","))
             } else {

@@ -29,8 +29,6 @@ import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.fmt.tuic5.Tuic5Bean
 import io.nekohasekai.sagernet.ktx.getBooleanProperty
 import io.nekohasekai.sagernet.ktx.unwrapIDN
-import java.io.StringReader
-import java.util.Properties
 
 class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
 
@@ -92,11 +90,8 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
             summaryProvider = PasswordSummaryProvider
         }
 
-        val experimentalFlags = Properties().apply {
-            load(StringReader(DataStore.experimentalFlags))
-        }
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
-            experimentalFlags.getBooleanProperty("singuot")
+            DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")
     }
 
 }

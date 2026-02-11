@@ -33,6 +33,9 @@ import io.nekohasekai.sagernet.database.preference.OnPreferenceDataStoreChangeLi
 import io.nekohasekai.sagernet.database.preference.PublicDatabase
 import io.nekohasekai.sagernet.database.preference.RoomPreferenceDataStore
 import io.nekohasekai.sagernet.ktx.*
+import java.io.BufferedReader
+import java.io.StringReader
+import java.util.Properties
 
 object DataStore : OnPreferenceDataStoreChangeListener {
 
@@ -429,11 +432,20 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var rulesFirstCreate by configurationStore.boolean(Key.RULES_FIRST_CREATE)
     var doNotShowRuleExportWarning by configurationStore.boolean(Key.DO_NOT_SHOW_RULE_EXPORT_WARNING)
 
+    var experimentalFlagsProperties = Properties().apply {
+        load(BufferedReader(StringReader(experimentalFlags)))
+    }
+
     override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
         when (key) {
             Key.PROFILE_ID -> {}
             Key.APP_THEME -> {
                 application.sendBroadcast(Intent(Action.THEME_CHANGED).setPackage(application.packageName))
+            }
+            Key.EXPERIMENTAL_FLAGS -> {
+                experimentalFlagsProperties = Properties().apply {
+                    load(BufferedReader(StringReader(experimentalFlags)))
+                }
             }
         }
     }

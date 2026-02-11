@@ -45,8 +45,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import libcore.*
-import java.io.StringReader
-import java.util.Properties
 import android.net.VpnService as BaseVpnService
 
 @SuppressLint("VpnServicePolicy")
@@ -59,37 +57,33 @@ class VpnService : BaseVpnService(),
     companion object {
         var instance: VpnService? = null
 
-        val experimentalFlags = Properties().apply {
-            load(StringReader(DataStore.experimentalFlags))
-        }
-
         const val DEFAULT_MTU = 1500
         val PRIVATE_VLAN4_CLIENT =
-            experimentalFlags.getProperty("tunIPv4Address")?.substringBefore("/") ?: "172.19.0.1"
+            DataStore.experimentalFlagsProperties.getProperty("tunIPv4Address")?.substringBefore("/") ?: "172.19.0.1"
         val PRIVATE_VLAN4_CLIENT_PREFIX =
-            experimentalFlags.getProperty("tunIPv4Address")?.substringAfter("/")?.toInt() ?: 30
+            DataStore.experimentalFlagsProperties.getProperty("tunIPv4Address")?.substringAfter("/")?.toInt() ?: 30
 
         val PRIVATE_VLAN4_DNS =
-            experimentalFlags.getProperty("tunIPv4DNSAddress") ?: "172.19.0.2"
+            DataStore.experimentalFlagsProperties.getProperty("tunIPv4DNSAddress") ?: "172.19.0.2"
         val PRIVATE_VLAN6_CLIENT =
-            experimentalFlags.getProperty("tunIPv6Address")?.substringBefore("/") ?: "fdfe:dcba:9876::1"
+            DataStore.experimentalFlagsProperties.getProperty("tunIPv6Address")?.substringBefore("/") ?: "fdfe:dcba:9876::1"
         val PRIVATE_VLAN6_CLIENT_PREFIX =
-            experimentalFlags.getProperty("tunIPv6Address")?.substringAfter("/")?.toInt() ?: 126
+            DataStore.experimentalFlagsProperties.getProperty("tunIPv6Address")?.substringAfter("/")?.toInt() ?: 126
 
         val PRIVATE_VLAN6_DNS =
-            experimentalFlags.getProperty("tunIPv6DNSAddress")
+            DataStore.experimentalFlagsProperties.getProperty("tunIPv6DNSAddress")
         val FAKEDNS_VLAN4_CLIENT =
-            experimentalFlags.getProperty("fakeDNSIPv4Pool")?.substringBefore("/") ?: "198.18.0.0"
+            DataStore.experimentalFlagsProperties.getProperty("fakeDNSIPv4Pool")?.substringBefore("/") ?: "198.18.0.0"
         val FAKEDNS_VLAN4_CLIENT_PREFIX =
-            experimentalFlags.getProperty("fakeDNSIPv4Pool")?.substringAfter("/")?.toInt() ?: 15
+            DataStore.experimentalFlagsProperties.getProperty("fakeDNSIPv4Pool")?.substringAfter("/")?.toInt() ?: 15
         val FAKEDNS_VLAN4_CLIENT_POOL_SIZE =
-            experimentalFlags.getProperty("fakeDNSIPv4PoolSize")?.toInt() ?: 65535
+            DataStore.experimentalFlagsProperties.getProperty("fakeDNSIPv4PoolSize")?.toInt() ?: 65535
         val FAKEDNS_VLAN6_CLIENT =
-            experimentalFlags.getProperty("fakeDNSIPv6Pool")?.substringBefore("/") ?: "fc00::"
+            DataStore.experimentalFlagsProperties.getProperty("fakeDNSIPv6Pool")?.substringBefore("/") ?: "fc00::"
         val FAKEDNS_VLAN6_CLIENT_PREFIX =
-            experimentalFlags.getProperty("fakeDNSIPv6Pool")?.substringAfter("/")?.toInt() ?: 18
+            DataStore.experimentalFlagsProperties.getProperty("fakeDNSIPv6Pool")?.substringAfter("/")?.toInt() ?: 18
         val FAKEDNS_VLAN6_CLIENT_POOL_SIZE =
-            experimentalFlags.getProperty("fakeDNSIPv6PoolSize")?.toInt() ?: 65535
+            DataStore.experimentalFlagsProperties.getProperty("fakeDNSIPv6PoolSize")?.toInt() ?: 65535
     }
 
     lateinit var conn: ParcelFileDescriptor
@@ -190,7 +184,7 @@ class VpnService : BaseVpnService(),
         }
 
         if (DataStore.bypassLan) {
-            val customIPv4Route = experimentalFlags.getProperty( "tunIPv4RouteAddress")
+            val customIPv4Route = DataStore.experimentalFlagsProperties.getProperty( "tunIPv4RouteAddress")
             if (customIPv4Route != null) {
                 customIPv4Route.split(",").forEach {
                     val subnet = Subnet.fromString(it)!!
@@ -209,7 +203,7 @@ class VpnService : BaseVpnService(),
                 }
             }
             if (DataStore.enableVPNInterfaceIPv6Address) {
-                val customIPv6Route = experimentalFlags.getProperty("tunIPv6RouteAddress")
+                val customIPv6Route = DataStore.experimentalFlagsProperties.getProperty("tunIPv6RouteAddress")
                 if (customIPv6Route != null) {
                     customIPv6Route.split(",").forEach {
                         val subnet = Subnet.fromString(it)!!
@@ -309,7 +303,7 @@ class VpnService : BaseVpnService(),
             protector = this@VpnService
         }
 
-        if (experimentalFlags.getBooleanProperty("discardIPv6BasedOnNetwork")) {
+        if (DataStore.experimentalFlagsProperties.getBooleanProperty("discardIPv6BasedOnNetwork")) {
             config.discardIPv6BasedOnNetwork = true
         }
 
