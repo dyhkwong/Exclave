@@ -19,10 +19,12 @@ package nat
 
 import (
 	"context"
+	"errors"
 	"net"
 	"time"
 
 	"libcore/common"
+	"golang.org/x/sys/unix"
 
 	v2rayNet "github.com/v2fly/v2ray-core/v5/common/net"
 	"gvisor.dev/gvisor/pkg/tcpip"
@@ -49,24 +51,41 @@ func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
 	address := &net.TCPAddr{
 		IP: tun.addr4.AsSlice(),
 	}
-	listener, err := listenerConfig.Listen(context.Background(), "tcp4", address.String())
+	var err error
+	var listener4 net.Listener
+	for i := 0; i < 3; i++ {
+		listener4, err = listenerConfig.Listen(context.Background(), "tcp4", address.String())
+		if err == nil || !errors.Is(err, unix.EADDRNOTAVAIL) {
+			break
+		}
+		time.Sleep(time.Millisecond * 100)
+	}
 	if err != nil {
 		return nil, newError("failed to create tcp forwarder at ", address.IP).Base(err)
 	}
-	tcpForwarder.listener4 = listener.(*net.TCPListener)
-	tcpForwarder.port4 = uint16(listener.Addr().(*net.TCPAddr).Port)
-	newError("tcp forwarder started at ", listener.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
+	tcpForwarder.listener4 = listener4.(*net.TCPListener)
+	tcpForwarder.port4 = uint16(listener4.Addr().(*net.TCPAddr).Port)
+	newError("tcp forwarder started at ", listener4.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
 	if tun.enableIPv6 {
 		address := &net.TCPAddr{
 			IP: tun.addr6.AsSlice(),
 		}
-		listener, err := listenerConfig.Listen(context.Background(), "tcp6", address.String())
+		// IDK why IPv6 sometimes reports "bind: cannot assign requested address". IPv4 is not affected.
+		// See https://github.com/SagerNet/sing-tun/commit/07278fb4705b933b0471d77dc80d8d62f5704ccd.
+		var listener6 net.Listener
+		for i := 0; i < 3; i++ {
+			listener6, err = listenerConfig.Listen(context.Background(), "tcp6", address.String())
+			if err == nil || !errors.Is(err, unix.EADDRNOTAVAIL) {
+				break
+			}
+			time.Sleep(time.Millisecond * 100)
+		}
 		if err != nil {
 			return nil, newError("failed to create tcp forwarder at ", address.IP).Base(err)
 		}
-		tcpForwarder.listener6 = listener.(*net.TCPListener)
-		tcpForwarder.port6 = uint16(listener.Addr().(*net.TCPAddr).Port)
-		newError("tcp forwarder started at ", listener.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
+		tcpForwarder.listener6 = listener6.(*net.TCPListener)
+		tcpForwarder.port6 = uint16(listener6.Addr().(*net.TCPAddr).Port)
+		newError("tcp forwarder started at ", listener6.Addr().(*net.TCPAddr)).AtDebug().WriteToLog()
 	}
 	return tcpForwarder, nil
 }
