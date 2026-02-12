@@ -525,7 +525,29 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                 }
                             }
                         }
-
+                        "hysteria" -> {
+                            // Xray hysteria2 transport
+                            streamSettings.getObject("hysteriaSettings")?.also { hysteriaSettings ->
+                                if (hysteriaSettings.getInt("version") != 2) {
+                                    return listOf()
+                                }
+                                hysteriaSettings.getString("auth")?.also {
+                                    v2rayBean.hy2Password = it
+                                }
+                                hysteriaSettings.getObject("udphop")?.also { udphop ->
+                                    udphop.getInt("port")?.also {
+                                        if (it > 0) return listOf()
+                                    } ?: udphop.getString("port")?.takeIf { it.isNotEmpty() }?.also {
+                                        // invalid port is ignored
+                                        (it.split(",").joinToString(",") { it.trim() })
+                                            .takeIf { it.isValidHysteriaPort(disallowFromGreaterThanTo = true) }
+                                            ?.let {
+                                                return listOf()
+                                            }
+                                    }
+                                }
+                            }
+                        }
                         else -> return listOf()
                     }
                     when (v2rayBean.type) {
