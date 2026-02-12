@@ -439,7 +439,7 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                                     "header-dtls" -> bean.headerType = "dtls"
                                     "header-srtp" -> bean.headerType = "srtp"
                                     "header-utp" -> bean.headerType = "utp"
-                                    "header-wechat" -> bean.headerType = "wechat"
+                                    "header-wechat" -> bean.headerType = "wechat-video"
                                     "header-wireguard" -> bean.headerType = "wireguard"
                                     else -> error("unsupported")
                                 }

@@ -239,7 +239,7 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                             "header-dtls" -> v2rayBean.headerType = "dtls"
                                             "header-srtp" -> v2rayBean.headerType = "srtp"
                                             "header-utp" -> v2rayBean.headerType = "utp"
-                                            "header-wechat" -> v2rayBean.headerType = "wechat"
+                                            "header-wechat" -> v2rayBean.headerType = "wechat-video"
                                             "header-wireguard" -> v2rayBean.headerType = "wireguard"
                                             else -> return listOf()
                                         }
