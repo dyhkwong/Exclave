@@ -37,7 +37,6 @@ type tcpForwarder struct {
 	listener4 *net.TCPListener
 	listener6 *net.TCPListener
 	sessions  *common.LruCache
-	closed    bool
 }
 
 func newTcpForwarder(tun *SystemTun) (*tcpForwarder, error) {
@@ -109,9 +108,10 @@ func (t *tcpForwarder) dispatch(listener *net.TCPListener) error {
 }
 
 func (t *tcpForwarder) dispatchLoop(listener *net.TCPListener) {
-	for !t.closed {
+	for {
 		if err := t.dispatch(listener); err != nil {
 			newError("dispatch tcp conn failed").Base(err).WriteToLog()
+			break
 		}
 	}
 }
@@ -206,7 +206,6 @@ func (t *tcpForwarder) processIPv6(ipHdr header.IPv6, tcpHdr header.TCP) {
 }
 
 func (t *tcpForwarder) Close() error {
-	t.closed = true
 	_ = t.listener4.Close()
 	if t.listener6 != nil {
 		_ = t.listener6.Close()

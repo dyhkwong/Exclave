@@ -168,7 +168,6 @@ func (instance *V2RayInstance) Start() error {
 	if instance.core == nil {
 		return newError("not initialized")
 	}
-
 	if err := instance.core.Start(); err != nil {
 		return err
 	}
