@@ -84,7 +84,7 @@ Please report issues [here](https://github.com/dyhkwong/Exclave/issues). Do not 
 ## Build from source
 
 The following procedures are only applicable to for typical AMD64 Linux distros. It is possible to build on other platforms but the arguments may need some modifications.
-- Install Git, Go 1.26 and JDK 21.
+- Install Git, Go 1.25 and JDK 21.
 - Install [this Go Mobile fork](https://github.com/sagernet/gomobile) (`go install github.com/sagernet/gomobile/cmd/gomobile@latest` and `go install github.com/sagernet/gomobile/cmd/gobind@latest`).
   - This fork version of Go Mobile is for reproducible build only. To use the official Go Mobile, remove `-buildvcs=false` in `library/core/build.sh` and replace all usage of module `github.com/sagernet/gomobile` with `golang.org/x/mobile` in `library/core`).
 - Use Android Studio or Android SDK Command-line tools to install Android SDK Platform 36, Android SDK Build-Tools 36.1 and Android SDK Platform-Tools.
