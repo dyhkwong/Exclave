@@ -2294,7 +2294,9 @@ fun buildV2RayConfig(
         if (DataStore.enableDnsRouting) {
             val directDNSDomainList = DataStore.experimentalFlagsProperties.getProperty("directDNSDomainList")
             if (directDNSDomainList != null) {
-                bypassDomain.addAll(directDNSDomainList.split(","))
+                if (!forTest && DataStore.routeMode == RouteMode.RULE) {
+                    bypassDomain.addAll(directDNSDomainList.split(","))
+                }
             } else {
                 for (bypassRule in extraRules.filter { it.isBypassRule() }) {
                     if (bypassRule.domains.isNotEmpty()) {
@@ -2304,7 +2306,9 @@ fun buildV2RayConfig(
             }
             val remoteDNSDomainList = DataStore.experimentalFlagsProperties.getProperty("remoteDNSDomainList")
             if (remoteDNSDomainList != null) {
-                proxyDomain.addAll(remoteDNSDomainList.split(","))
+                if (!forTest && DataStore.routeMode == RouteMode.RULE) {
+                    proxyDomain.addAll(remoteDNSDomainList.split(","))
+                }
             } else {
                 for (proxyRule in extraRules.filter { it.isProxyRule() }) {
                     if (proxyRule.domains.isNotEmpty()) {
