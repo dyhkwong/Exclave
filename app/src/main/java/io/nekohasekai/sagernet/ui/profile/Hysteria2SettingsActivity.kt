@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -49,6 +50,7 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         DataStore.serverDownloadSpeed = downloadMbps
         DataStore.serverPorts = serverPorts
         DataStore.serverHopInterval = hopInterval
+        DataStore.serverEchEnabled = echEnabled
         DataStore.serverEchConfig = echConfig
         DataStore.serverMtlsCertificate = mtlsCertificate
         DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
@@ -70,6 +72,7 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         downloadMbps = DataStore.serverDownloadSpeed
         serverPorts = DataStore.serverPorts
         hopInterval = DataStore.serverHopInterval
+        echEnabled = DataStore.serverEchEnabled
         echConfig = DataStore.serverEchConfig
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
@@ -97,6 +100,14 @@ class Hysteria2SettingsActivity : ProfileSettingsActivity<Hysteria2Bean>() {
         }
         findPreference<EditTextPreference>(Key.SERVER_OBFS)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+
+        val echEnabled = findPreference<SwitchPreference>(Key.SERVER_ECH_ENABLED)!!
+        val echConfig = findPreference<EditTextPreference>(Key.SERVER_ECH_CONFIG)!!
+        echConfig.isEnabled = echEnabled.isChecked
+        echEnabled.setOnPreferenceChangeListener { _, newValue ->
+            echConfig.isEnabled = newValue as Boolean
+            true
         }
     }
 

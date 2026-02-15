@@ -19,25 +19,26 @@
 
 package io.nekohasekai.sagernet.bg.test
 
-import io.nekohasekai.sagernet.Key
+import android.net.Network
 import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.TunImplementation
 import io.nekohasekai.sagernet.bg.GuardedProcessPool
+import io.nekohasekai.sagernet.bg.LocalResolver
 import io.nekohasekai.sagernet.bg.proto.V2RayInstance
-import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.ProxyEntity
 import io.nekohasekai.sagernet.fmt.buildV2RayConfig
 import io.nekohasekai.sagernet.ktx.Logs
+import io.nekohasekai.sagernet.ktx.onDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.runOnDefaultDispatcher
 import io.nekohasekai.sagernet.ktx.tryResume
 import io.nekohasekai.sagernet.ktx.tryResumeWithException
+import io.nekohasekai.sagernet.utils.DefaultNetworkListener
 import libcore.Libcore
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.suspendCoroutine
 
 class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int, val protectPath: String = "") : V2RayInstance(
     profile,
-) {
+), LocalResolver {
     lateinit var continuation: Continuation<Int>
     suspend fun doTest(): Int {
         return suspendCoroutine { c ->
@@ -58,9 +59,24 @@ class V2RayTestInstance(profile: ProxyEntity, val link: String, val timeout: Int
         }
     }
 
-    override fun init() {
+    @Volatile
+    override var underlyingNetwork: Network? = null
+
+    override suspend fun init() {
         super.init()
         v2rayPoint.withProtect(protectPath)
+        v2rayPoint.withLocalResolver(this)
+        DefaultNetworkListener.start(this) {
+            underlyingNetwork = it
+        }
+    }
+
+    override fun close() {
+        v2rayPoint.withLocalResolver(null)
+        runOnDefaultDispatcher {
+            DefaultNetworkListener.stop(this)
+        }
+        super.close()
     }
 
     override fun buildConfig() {

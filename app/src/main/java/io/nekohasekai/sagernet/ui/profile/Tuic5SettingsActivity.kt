@@ -22,6 +22,7 @@ package io.nekohasekai.sagernet.ui.profile
 import android.os.Bundle
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceCategory
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -53,6 +54,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
         DataStore.serverMtlsCertificate = mtlsCertificate
         DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
+        DataStore.serverEchEnabled = echEnabled
         DataStore.serverEchConfig = echConfig
         DataStore.serverSingUot = singUDPOverStream
     }
@@ -76,6 +78,7 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
         pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
+        echEnabled = DataStore.serverEchEnabled
         echConfig = DataStore.serverEchConfig
         singUDPOverStream = DataStore.serverSingUot
     }
@@ -92,6 +95,14 @@ class Tuic5SettingsActivity : ProfileSettingsActivity<Tuic5Bean>() {
 
         findPreference<PreferenceCategory>(Key.SERVER_SING_UOT_CATEGORY)!!.isVisible =
             DataStore.experimentalFlagsProperties.getBooleanProperty("singuot")
+
+        val echEnabled = findPreference<SwitchPreference>(Key.SERVER_ECH_ENABLED)!!
+        val echConfig = findPreference<EditTextPreference>(Key.SERVER_ECH_CONFIG)!!
+        echConfig.isEnabled = echEnabled.isChecked
+        echEnabled.setOnPreferenceChangeListener { _, newValue ->
+            echConfig.isEnabled = newValue as Boolean
+            true
+        }
     }
 
 }

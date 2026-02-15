@@ -30,7 +30,7 @@ class ExternalInstance(
     profile: ProxyEntity, val port: Int
 ) : V2RayInstance(profile) {
 
-    override fun init() {
+    override suspend fun init() {
         super.init()
 
         if (DataStore.logLevel == LogLevel.DEBUG) {

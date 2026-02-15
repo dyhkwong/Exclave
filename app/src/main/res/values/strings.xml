@@ -600,4 +600,5 @@
     <string name="discard_icmp_sum">Discard ICMP and ICMPv6</string>
     <string name="insecure_warn">Security tips</string>
     <string name="insecure_warn_sum">Display warnings for profiles with equivalent security to cleartext.</string>
+    <string name="ech">ECH</string>
 </resources>

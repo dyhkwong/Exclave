@@ -131,6 +131,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         DataStore.serverSplithttpMode = splithttpMode
         DataStore.serverSplithttpExtra = splithttpExtra
         DataStore.serverUTLSFingerprint = utlsFingerprint
+        DataStore.serverEchEnabled = echEnabled
         DataStore.serverEchConfig = echConfig
         DataStore.serverMtlsCertificate = mtlsCertificate
         DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
@@ -238,6 +239,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         utlsFingerprint = DataStore.serverUTLSFingerprint
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
+        echEnabled = DataStore.serverEchEnabled
         echConfig = DataStore.serverEchConfig
 
         realityPublicKey = DataStore.serverRealityPublicKey
@@ -299,6 +301,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     lateinit var utlsFingerprint: SimpleMenuPreference
     lateinit var mtlsCertificate: EditTextPreference
     lateinit var mtlsCertificatePrivateKey: EditTextPreference
+    lateinit var echEnabled: SwitchPreference
     lateinit var echConfig: EditTextPreference
 
     lateinit var realityPublicKey: EditTextPreference
@@ -374,7 +377,13 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
         mtlsCertificate = findPreference(Key.SERVER_MTLS_CERTIFICATE)!!
         mtlsCertificatePrivateKey = findPreference(Key.SERVER_MTLS_CERTIFICATE_PRIVATE_KEY)!!
+        echEnabled = findPreference(Key.SERVER_ECH_ENABLED)!!
         echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
+        echConfig.isEnabled = echEnabled.isChecked
+        echEnabled.setOnPreferenceChangeListener { _, newValue ->
+            echConfig.isEnabled = newValue as Boolean
+            true
+        }
 
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
         realityShortId = findPreference(Key.SERVER_REALITY_SHORT_ID)!!
@@ -770,6 +779,7 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
                 || network.value == "grpc" || network.value == "splithttp" || network.value == "mekya")
         mtlsCertificate.isVisible = security == "tls"
         mtlsCertificatePrivateKey.isVisible = security == "tls"
+        echEnabled.isVisible = security == "tls"
         echConfig.isVisible = security == "tls"
         realityFingerprint.isVisible = security == "reality"
         realityDisableX25519Mlkem768.isVisible = security == "reality"

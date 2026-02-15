@@ -45,6 +45,7 @@ public class AnyTLSBean extends AbstractBean {
     public String pinnedPeerCertificateSha256;
     public Boolean allowInsecure;
     public String utlsFingerprint;
+    public Boolean echEnabled;
     public String echConfig;
     public String realityPublicKey;
     public String realityShortId;
@@ -69,6 +70,7 @@ public class AnyTLSBean extends AbstractBean {
         if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
         if (allowInsecure == null) allowInsecure = false;
         if (utlsFingerprint == null) utlsFingerprint = "";
+        if (echEnabled == null) echEnabled = false;
         if (echConfig == null) echConfig = "";
         if (realityPublicKey == null) realityPublicKey = "";
         if (realityShortId == null) realityShortId = "";
@@ -80,7 +82,7 @@ public class AnyTLSBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(4);
+        output.writeInt(5);
         super.serialize(output);
         output.writeString(password);
         output.writeInt(idleSessionCheckInterval);
@@ -102,6 +104,8 @@ public class AnyTLSBean extends AbstractBean {
         output.writeBoolean(realityDisableX25519Mlkem768);
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
+
+        output.writeBoolean(echEnabled);
     }
 
     @Override
@@ -126,6 +130,9 @@ public class AnyTLSBean extends AbstractBean {
         allowInsecure = input.readBoolean();
         utlsFingerprint = input.readString();
         echConfig = input.readString();
+        if (version <= 4 && !echConfig.isEmpty()) {
+            echEnabled = true;
+        }
         if (version <= 2) {
             input.readString(); // echDohServer, removed
         }
@@ -141,6 +148,9 @@ public class AnyTLSBean extends AbstractBean {
         if (version >= 4) {
             mtlsCertificate = input.readString();
             mtlsCertificatePrivateKey = input.readString();
+        }
+        if (version >= 5) {
+            echEnabled = input.readBoolean();
         }
     }
 
@@ -166,6 +176,7 @@ public class AnyTLSBean extends AbstractBean {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
         bean.utlsFingerprint = utlsFingerprint;
+        bean.echEnabled = echEnabled;
         bean.echConfig = echConfig;
         bean.realityFingerprint = realityFingerprint;
         bean.realityDisableX25519Mlkem768 = realityDisableX25519Mlkem768;
@@ -199,6 +210,10 @@ public class AnyTLSBean extends AbstractBean {
             case "reality":
                 return false;
             case "tls":
+                if (echEnabled) {
+                    // do not care if DNS server is reliable or not
+                    return false;
+                }
                 if (!allowInsecure) {
                     return false;
                 }

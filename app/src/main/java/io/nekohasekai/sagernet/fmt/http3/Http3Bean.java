@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.KryoConverters;
+import libcore.Libcore;
 
 public class Http3Bean extends AbstractBean {
 
@@ -39,6 +40,7 @@ public class Http3Bean extends AbstractBean {
     public String pinnedPeerCertificatePublicKeySha256;
     public String pinnedPeerCertificateSha256;
     public Boolean allowInsecure;
+    public Boolean echEnabled;
     public String echConfig;
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
@@ -54,6 +56,7 @@ public class Http3Bean extends AbstractBean {
         if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
         if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
         if (allowInsecure == null) allowInsecure = false;
+        if (echEnabled == null) echEnabled = false;
         if (echConfig == null) echConfig = "";
         if (mtlsCertificate == null) mtlsCertificate = "";
         if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
@@ -61,7 +64,7 @@ public class Http3Bean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(3);
+        output.writeInt(4);
         super.serialize(output);
         output.writeString(username);
         output.writeString(password);
@@ -75,6 +78,8 @@ public class Http3Bean extends AbstractBean {
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
         output.writeBoolean(false); // trustTunnelUot, removed
+
+        output.writeBoolean(echEnabled);
     }
 
     @Override
@@ -92,6 +97,9 @@ public class Http3Bean extends AbstractBean {
         }
         allowInsecure = input.readBoolean();
         echConfig = input.readString();
+        if (version <= 3 && !echConfig.isEmpty()) {
+            echEnabled = true;
+        }
         if (version == 0) {
             input.readString(); // echDohServer, removed
         }
@@ -101,6 +109,9 @@ public class Http3Bean extends AbstractBean {
         }
         if (version >= 2) {
             input.readBoolean(); // trustTunnelUot, removed
+        }
+        if (version >= 4) {
+            echEnabled = input.readBoolean();
         }
     }
 
@@ -125,6 +136,7 @@ public class Http3Bean extends AbstractBean {
                 !pinnedPeerCertificateSha256.isEmpty()) {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
+        bean.echEnabled = echEnabled;
         bean.echConfig = echConfig;
     }
 
@@ -149,6 +161,13 @@ public class Http3Bean extends AbstractBean {
 
     @Override
     public boolean isInsecure() {
+        if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (echEnabled) {
+            // do not care if DNS server is reliable or not
+            return false;
+        }
         if (!allowInsecure) {
             return false;
         }

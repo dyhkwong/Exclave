@@ -25,6 +25,8 @@ import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import io.nekohasekai.sagernet.fmt.AbstractBean;
 import io.nekohasekai.sagernet.fmt.shadowsocks.ShadowsocksBean;
 import io.nekohasekai.sagernet.fmt.socks.SOCKSBean;
+import io.nekohasekai.sagernet.fmt.trojan.TrojanBean;
+import kotlin.io.encoding.Base64;
 import libcore.Libcore;
 
 public abstract class StandardV2RayBean extends AbstractBean {
@@ -58,6 +60,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
     public String utlsFingerprint;
+    public Boolean echEnabled;
     public String echConfig;
 
     public Boolean wsUseBrowserForwarder;
@@ -138,6 +141,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
         if (allowInsecure == null) allowInsecure = false;
         if (packetEncoding == null) packetEncoding = "none";
         if (utlsFingerprint == null) utlsFingerprint = "";
+        if (echEnabled == null) echEnabled = false;
         if (echConfig == null) echConfig = "";
 
         if (realityPublicKey == null) realityPublicKey = "";
@@ -167,7 +171,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(34);
+        output.writeInt(35);
         super.serialize(output);
 
         output.writeString(uuid);
@@ -299,6 +303,7 @@ public abstract class StandardV2RayBean extends AbstractBean {
         output.writeInt(singMuxMaxStreams);
         output.writeBoolean(singMuxPadding);
 
+        output.writeBoolean(echEnabled);
     }
 
     @Override
@@ -449,6 +454,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 }
                 if (version >= 21) {
                     echConfig = input.readString();
+                    if (version <= 34 && !echConfig.isEmpty()) {
+                        echEnabled = true;
+                    }
                     if (version <= 28) {
                         input.readString(); // echDohServer, removed
                     }
@@ -543,6 +551,9 @@ public abstract class StandardV2RayBean extends AbstractBean {
             singMuxMaxStreams = input.readInt();
             singMuxPadding = input.readBoolean();
         }
+        if (version >= 35) {
+            echEnabled = input.readBoolean();
+        }
     }
 
     @Override
@@ -574,11 +585,21 @@ public abstract class StandardV2RayBean extends AbstractBean {
                 !pinnedPeerCertificateSha256.isEmpty()) {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
+        if (bean instanceof VLESSBean || bean instanceof VMessBean || bean instanceof TrojanBean) {
+            if (bean.echEnabled == null || !bean.echEnabled && !echEnabled) {
+                bean.echEnabled = echEnabled;
+            }
+            if (bean.echConfig == null || bean.echConfig.isEmpty() && !echConfig.isEmpty()) {
+                bean.echConfig = echConfig;
+            }
+        } else {
+            bean.echEnabled = echEnabled;
+            bean.echConfig = echConfig;
+        }
         if (bean.packetEncoding == null) {
             bean.packetEncoding = packetEncoding;
         }
         bean.utlsFingerprint = utlsFingerprint;
-        bean.echConfig = echConfig;
         bean.realityFingerprint = realityFingerprint;
         bean.realityDisableX25519Mlkem768 = realityDisableX25519Mlkem768;
         bean.hy2DownMbps = hy2DownMbps;
@@ -602,6 +623,10 @@ public abstract class StandardV2RayBean extends AbstractBean {
         }
         switch (security) {
             case "tls":
+                if (echEnabled) {
+                    // do not care if DNS server is reliable or not
+                    return false;
+                }
                 if (!allowInsecure) {
                     return false;
                 }

@@ -170,6 +170,7 @@ object Key {
     const val SERVER_CONFIG = "serverConfig"
     const val SERVER_PACKET_ENCODING = "serverPacketEncoding"
     const val SERVER_UTLS_FINGERPRINT = "serverUTLSFingerprint"
+    const val SERVER_ECH_ENABLED = "serverEchEnabled"
     const val SERVER_ECH_CONFIG = "serverEchConfig"
     const val SERVER_MTLS_CERTIFICATE = "serverMtlsCertificate"
     const val SERVER_MTLS_CERTIFICATE_PRIVATE_KEY = "serverMtlsCertificatePrivateKey"

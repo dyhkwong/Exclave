@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.ui.profile
 
 import android.os.Bundle
 import androidx.preference.EditTextPreference
+import androidx.preference.SwitchPreference
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import io.nekohasekai.sagernet.Key
 import io.nekohasekai.sagernet.R
@@ -44,6 +45,7 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
         DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
+        DataStore.serverEchEnabled = echEnabled
         DataStore.serverEchConfig = echConfig
         DataStore.serverAllowInsecure = allowInsecure
         DataStore.serverMtlsCertificate = mtlsCertificate
@@ -61,6 +63,7 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
         pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
+        echEnabled = DataStore.serverEchEnabled
         echConfig = DataStore.serverEchConfig
         allowInsecure = DataStore.serverAllowInsecure
         mtlsCertificate = DataStore.serverMtlsCertificate
@@ -77,6 +80,13 @@ class Http3SettingsActivity : ProfileSettingsActivity<Http3Bean>() {
         }
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+        val echEnabled = findPreference<SwitchPreference>(Key.SERVER_ECH_ENABLED)!!
+        val echConfig = findPreference<EditTextPreference>(Key.SERVER_ECH_CONFIG)!!
+        echConfig.isEnabled = echEnabled.isChecked
+        echEnabled.setOnPreferenceChangeListener { _, newValue ->
+            echConfig.isEnabled = newValue as Boolean
+            true
         }
     }
 

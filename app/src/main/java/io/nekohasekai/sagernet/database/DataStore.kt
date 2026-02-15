@@ -315,6 +315,7 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var serverAllowInsecure by profileCacheStore.boolean(Key.SERVER_ALLOW_INSECURE)
     var serverPacketEncoding by profileCacheStore.string(Key.SERVER_PACKET_ENCODING)
     var serverUTLSFingerprint by profileCacheStore.string(Key.SERVER_UTLS_FINGERPRINT)
+    var serverEchEnabled by profileCacheStore.boolean(Key.SERVER_ECH_ENABLED)
     var serverEchConfig by profileCacheStore.string(Key.SERVER_ECH_CONFIG)
     var serverRealityPublicKey by profileCacheStore.string(Key.SERVER_REALITY_PUBLIC_KEY)
     var serverRealityShortId by profileCacheStore.string(Key.SERVER_REALITY_SHORT_ID)

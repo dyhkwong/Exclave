@@ -43,6 +43,7 @@ public class JuicityBean extends AbstractBean {
     public String pinnedPeerCertificateSha256;
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
+    public Boolean echEnabled;
     public String echConfig;
 
     @Override
@@ -58,12 +59,13 @@ public class JuicityBean extends AbstractBean {
         if (pinnedPeerCertificateSha256 == null) pinnedPeerCertificateSha256 = "";
         if (mtlsCertificate == null) mtlsCertificate = "";
         if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
+        if (echEnabled == null) echEnabled = false;
         if (echConfig == null) echConfig = "";
     }
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(4);
+        output.writeInt(5);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(password);
@@ -76,6 +78,8 @@ public class JuicityBean extends AbstractBean {
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
         output.writeString(echConfig);
+
+        output.writeBoolean(echEnabled);
     }
 
     @Override
@@ -104,6 +108,12 @@ public class JuicityBean extends AbstractBean {
             mtlsCertificate = input.readString();
             mtlsCertificatePrivateKey = input.readString();
             echConfig = input.readString();
+            if (version <= 4 && !echConfig.isEmpty()) {
+                echEnabled = true;
+            }
+        }
+        if (version >= 5) {
+            echEnabled = input.readBoolean();
         }
     }
 
@@ -133,6 +143,8 @@ public class JuicityBean extends AbstractBean {
                 !pinnedPeerCertificateSha256.isEmpty()) {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
+        bean.echEnabled = echEnabled;
+        bean.echConfig = echConfig;
     }
 
     @NotNull
@@ -157,6 +169,10 @@ public class JuicityBean extends AbstractBean {
     @Override
     public boolean isInsecure() {
         if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (echEnabled) {
+            // do not care if DNS server is reliable or not
             return false;
         }
         if (!allowInsecure) {

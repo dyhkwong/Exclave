@@ -45,6 +45,7 @@ public class Hysteria2Bean extends AbstractBean {
     public Long downloadMbps;
     public String serverPorts;
     public Long hopInterval;
+    public Boolean echEnabled;
     public String echConfig;
     public String mtlsCertificate;
     public String mtlsCertificatePrivateKey;
@@ -64,6 +65,7 @@ public class Hysteria2Bean extends AbstractBean {
         if (downloadMbps == null) downloadMbps = 0L;
         if (serverPorts == null) serverPorts = "1080";
         if (hopInterval == null) hopInterval = 0L;
+        if (echEnabled == null) echEnabled = false;
         if (echConfig == null) echConfig = "";
         if (mtlsCertificate == null) mtlsCertificate = "";
         if (mtlsCertificatePrivateKey == null) mtlsCertificatePrivateKey = "";
@@ -71,7 +73,7 @@ public class Hysteria2Bean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(5);
+        output.writeInt(6);
         super.serialize(output);
         output.writeString(auth);
         output.writeString(obfs);
@@ -88,6 +90,8 @@ public class Hysteria2Bean extends AbstractBean {
         output.writeString(echConfig);
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
+
+        output.writeBoolean(echEnabled);
     }
 
     @Override
@@ -134,8 +138,14 @@ public class Hysteria2Bean extends AbstractBean {
         }
         if (version >= 4) {
             echConfig = input.readString();
+            if (version <= 5 && !echConfig.isEmpty()) {
+                echEnabled = true;
+            }
             mtlsCertificate = input.readString();
             mtlsCertificatePrivateKey = input.readString();
+        }
+        if (version >= 6) {
+            echEnabled = input.readBoolean();
         }
     }
 
@@ -161,6 +171,7 @@ public class Hysteria2Bean extends AbstractBean {
         if (bean.certificates == null || bean.certificates.isEmpty() && !certificates.isEmpty()) {
             bean.certificates = certificates;
         }
+        bean.echEnabled = echEnabled;
         bean.echConfig = echConfig;
         bean.hopInterval = hopInterval;
     }
@@ -201,6 +212,10 @@ public class Hysteria2Bean extends AbstractBean {
     @Override
     public boolean isInsecure() {
         if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (echEnabled) {
+            // do not care if DNS server is reliable or not
             return false;
         }
         if (!obfs.isEmpty()) {

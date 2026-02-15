@@ -78,7 +78,7 @@ abstract class V2RayInstance(
         v2rayPoint.loadConfig(config.config)
     }
 
-    open fun init() {
+    open suspend fun init() {
         v2rayPoint = V2RayInstance()
         buildConfig()
         for ((_, chain) in config.index) {

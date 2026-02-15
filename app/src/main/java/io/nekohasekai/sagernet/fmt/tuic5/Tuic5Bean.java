@@ -42,6 +42,7 @@ public class Tuic5Bean extends AbstractBean {
     public Boolean zeroRTTHandshake;
     public String sni;
     public Boolean allowInsecure;
+    public Boolean echEnabled;
     public String echConfig;
     public String pinnedPeerCertificateChainSha256;
     public String pinnedPeerCertificatePublicKeySha256;
@@ -63,6 +64,7 @@ public class Tuic5Bean extends AbstractBean {
         if (zeroRTTHandshake == null) zeroRTTHandshake = false;
         if (sni == null) sni = "";
         if (allowInsecure == null) allowInsecure = false;
+        if (echEnabled == null) echEnabled = false;
         if (echConfig == null) echConfig = "";
         if (pinnedPeerCertificateChainSha256 == null) pinnedPeerCertificateChainSha256 = "";
         if (pinnedPeerCertificatePublicKeySha256 == null) pinnedPeerCertificatePublicKeySha256 = "";
@@ -74,7 +76,7 @@ public class Tuic5Bean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(4);
+        output.writeInt(5);
         super.serialize(output);
         output.writeString(password);
         output.writeString(certificates);
@@ -93,6 +95,8 @@ public class Tuic5Bean extends AbstractBean {
         output.writeString(mtlsCertificate);
         output.writeString(mtlsCertificatePrivateKey);
         output.writeBoolean(singUDPOverStream);
+
+        output.writeBoolean(echEnabled);
     }
 
     @Override
@@ -116,6 +120,9 @@ public class Tuic5Bean extends AbstractBean {
         }
         if (version >= 2) {
             echConfig = input.readString();
+            if (version <= 4 && !echConfig.isEmpty()) {
+                echEnabled = true;
+            }
             pinnedPeerCertificateChainSha256 = input.readString();
             pinnedPeerCertificatePublicKeySha256 = input.readString();
             pinnedPeerCertificateSha256 = input.readString();
@@ -124,6 +131,9 @@ public class Tuic5Bean extends AbstractBean {
         }
         if (version >= 3) {
             singUDPOverStream = input.readBoolean();
+        }
+        if (version >= 5) {
+            echEnabled = input.readBoolean();
         }
     }
 
@@ -154,6 +164,7 @@ public class Tuic5Bean extends AbstractBean {
                 !pinnedPeerCertificateSha256.isEmpty()) {
             bean.pinnedPeerCertificateSha256 = pinnedPeerCertificateSha256;
         }
+        bean.echEnabled = echEnabled;
         bean.echConfig = echConfig;
         bean.singUDPOverStream = singUDPOverStream;
     }
@@ -180,6 +191,10 @@ public class Tuic5Bean extends AbstractBean {
     @Override
     public boolean isInsecure() {
         if (Libcore.isLoopbackIP(serverAddress) || serverAddress.equals("localhost")) {
+            return false;
+        }
+        if (echEnabled) {
+            // do not care if DNS server is reliable or not
             return false;
         }
         if (!allowInsecure) {

@@ -77,6 +77,10 @@
             app:key="serverMtlsCertificatePrivateKey"
             app:title="@string/mtls_certificate_private_key"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            app:icon="@drawable/baseline_construction_24"
+            app:key="serverEchEnabled"
+            app:title="@string/ech" />
         <EditTextPreference
             app:icon="@drawable/ic_baseline_security_24"
             app:key="serverEchConfig"

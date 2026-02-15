@@ -45,6 +45,7 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         DataStore.serverPinnedCertificateChain = pinnedPeerCertificateChainSha256
         DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
         DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
+        DataStore.serverEchEnabled = echEnabled
         DataStore.serverEchConfig = echConfig
         DataStore.serverMtlsCertificate = mtlsCertificate
         DataStore.serverMtlsCertificatePrivateKey = mtlsCertificatePrivateKey
@@ -62,6 +63,7 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
         pinnedPeerCertificateChainSha256 = DataStore.serverPinnedCertificateChain
         pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
         pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
+        echEnabled = DataStore.serverEchEnabled
         echConfig = DataStore.serverEchConfig
         mtlsCertificate = DataStore.serverMtlsCertificate
         mtlsCertificatePrivateKey = DataStore.serverMtlsCertificatePrivateKey
@@ -75,6 +77,14 @@ class JuicitySettingsActivity : ProfileSettingsActivity<JuicityBean>() {
 
         findPreference<EditTextPreference>(Key.SERVER_PASSWORD)!!.apply {
             summaryProvider = PasswordSummaryProvider
+        }
+
+        val echEnabled = findPreference<SwitchPreference>(Key.SERVER_ECH_ENABLED)!!
+        val echConfig = findPreference<EditTextPreference>(Key.SERVER_ECH_CONFIG)!!
+        echConfig.isEnabled = echEnabled.isChecked
+        echEnabled.setOnPreferenceChangeListener { _, newValue ->
+            echConfig.isEnabled = newValue as Boolean
+            true
         }
     }
 }

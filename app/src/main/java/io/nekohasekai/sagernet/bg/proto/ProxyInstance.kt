@@ -43,7 +43,7 @@ class ProxyInstance(profile: ProxyEntity, val service: BaseService.Interface) : 
 
     lateinit var observatoryJob: Job
 
-    override fun init() {
+    override suspend fun init() {
         super.init()
 
         if (DataStore.logLevel == LogLevel.DEBUG) {

@@ -53,6 +53,7 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         DataStore.serverPinnedCertificatePublicKey = pinnedPeerCertificatePublicKeySha256
         DataStore.serverPinnedCertificate = pinnedPeerCertificateSha256
         DataStore.serverUTLSFingerprint = utlsFingerprint
+        DataStore.serverEchEnabled = echEnabled
         DataStore.serverEchConfig = echConfig
         DataStore.serverRealityPublicKey = realityPublicKey
         DataStore.serverRealityShortId = realityShortId
@@ -79,6 +80,7 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         pinnedPeerCertificatePublicKeySha256 = DataStore.serverPinnedCertificatePublicKey
         pinnedPeerCertificateSha256 = DataStore.serverPinnedCertificate
         utlsFingerprint = DataStore.serverUTLSFingerprint
+        echEnabled = DataStore.serverEchEnabled
         echConfig = DataStore.serverEchConfig
         realityPublicKey = DataStore.serverRealityPublicKey
         realityShortId = DataStore.serverRealityShortId
@@ -102,6 +104,7 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
     lateinit var utlsFingerprint: SimpleMenuPreference
     lateinit var mtlsCertificate: EditTextPreference
     lateinit var mtlsCertificatePrivateKey: EditTextPreference
+    lateinit var echEnabled: SwitchPreference
     lateinit var echConfig: EditTextPreference
     lateinit var realityPublicKey: EditTextPreference
     lateinit var realityShortId: EditTextPreference
@@ -138,7 +141,13 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         pinnedPeerCertificate = findPreference(Key.SERVER_PINNED_CERTIFICATE)!!
         allowInsecure = findPreference(Key.SERVER_ALLOW_INSECURE)!!
         utlsFingerprint = findPreference(Key.SERVER_UTLS_FINGERPRINT)!!
+        echEnabled = findPreference(Key.SERVER_ECH_ENABLED)!!
         echConfig = findPreference(Key.SERVER_ECH_CONFIG)!!
+        echConfig.isEnabled = echEnabled.isChecked
+        echEnabled.setOnPreferenceChangeListener { _, newValue ->
+            echConfig.isEnabled = newValue as Boolean
+            true
+        }
         mtlsCertificate = findPreference(Key.SERVER_MTLS_CERTIFICATE)!!
         mtlsCertificatePrivateKey = findPreference(Key.SERVER_MTLS_CERTIFICATE_PRIVATE_KEY)!!
         realityPublicKey = findPreference(Key.SERVER_REALITY_PUBLIC_KEY)!!
@@ -174,6 +183,7 @@ class AnyTLSSettingsActivity: ProfileSettingsActivity<AnyTLSBean>() {
         alpn.isVisible = security == "tls"
         mtlsCertificate.isVisible = security == "tls"
         mtlsCertificatePrivateKey.isVisible = security == "tls"
+        echEnabled.isVisible = security == "tls"
         echConfig.isVisible = security == "tls"
         realityPublicKey.isVisible = security == "reality"
         realityShortId.isVisible = security == "reality"
