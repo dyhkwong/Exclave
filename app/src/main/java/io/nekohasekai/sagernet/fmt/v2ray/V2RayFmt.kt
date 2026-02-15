@@ -25,6 +25,7 @@ import com.google.gson.JsonObject
 import io.nekohasekai.sagernet.fmt.trojan.TrojanBean
 import io.nekohasekai.sagernet.ktx.*
 import libcore.Libcore
+import java.util.Base64
 
 val supportedVmessMethod = arrayOf(
     "auto", "aes-128-gcm", "chacha20-poly1305", "none", "zero"
@@ -220,6 +221,13 @@ fun parseV2Ray(link: String): StandardV2RayBean {
                     bean.allowInsecure = true
                 }
             }
+            /*url.queryParameter("ech")?.let {
+                bean.echEnabled = true
+                try {
+                    Base64.getDecoder().decode(it)
+                    bean.echConfig = it
+                } catch (_: Exception) {}
+            }*/
         }
         "reality" -> {
             url.queryParameterNotBlank("sni")?.let {

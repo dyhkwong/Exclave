@@ -223,6 +223,18 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                         }
                                     }
                                 }
+                                /*tls.getObject("ech")?.also { ech ->
+                                    ech.getBoolean("enabled")?.also { enabled ->
+                                        if (enabled) {
+                                            v2rayBean.echEnabled = true
+                                            ech.getStringArray("config")?.also {
+                                                v2rayBean.echConfig = parseECHConfigPem(it.joinToString("\n"))
+                                            } ?: ech.getString("config")?.also {
+                                                v2rayBean.echConfig = parseECHConfigPem(it)
+                                            }
+                                        }
+                                    }
+                                }*/
                             }
                         }
                     }
@@ -417,6 +429,18 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                         pinnedPeerCertificatePublicKeySha256 = Base64.encode(it)
                         allowInsecure = true
                     }
+                    /*tls.getObject("ech")?.also { ech ->
+                        ech.getBoolean("enabled")?.also { enabled ->
+                            if (enabled) {
+                                echEnabled = true
+                                ech.getStringArray("config")?.also {
+                                    echConfig = parseECHConfigPem(it.joinToString("\n"))
+                                } ?: ech.getString("config")?.also {
+                                    echConfig = parseECHConfigPem(it)
+                                }
+                            }
+                        }
+                    }*/
                 } ?: return listOf()
                 outbound.getObject("obfs")?.also { obfuscation ->
                     obfuscation.getString("type")?.takeIf { it.isNotEmpty() }?.also { type ->
@@ -524,6 +548,18 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                         pinnedPeerCertificatePublicKeySha256 = Base64.encode(it)
                         allowInsecure = true
                     }
+                    /*tls.getObject("ech")?.also { ech ->
+                        ech.getBoolean("enabled")?.also { enabled ->
+                            if (enabled) {
+                                echEnabled = true
+                                ech.getStringArray("config")?.also {
+                                    echConfig = parseECHConfigPem(it.joinToString("\n"))
+                                } ?: ech.getString("config")?.also {
+                                    echConfig = parseECHConfigPem(it)
+                                }
+                            }
+                        }
+                    }*/
                 } ?: return listOf()
             }
             return listOf(tuic5Bean)
@@ -702,6 +738,18 @@ fun parseSingBoxOutbound(outbound: JsonObject): List<AbstractBean> {
                                     }
                                 }
                             }
+                            /*tls.getObject("ech")?.also { ech ->
+                                ech.getBoolean("enabled")?.also { enabled ->
+                                    if (enabled) {
+                                        echEnabled = true
+                                        ech.getStringArray("config")?.also {
+                                            echConfig = parseECHConfigPem(it.joinToString("\n"))
+                                        } ?: ech.getString("config")?.also {
+                                            echConfig = parseECHConfigPem(it)
+                                        }
+                                    }
+                                }
+                            }*/
                         } else {
                             security = "none"
                         }
@@ -1103,3 +1151,23 @@ private fun JsonObject.getByteArrayArray(key: String): Array<ByteArray>? {
     }
     return ret.toTypedArray()
 }
+
+// this is not strict, but enough
+/*private fun parseECHConfigPem(pem: String): String? {
+    if (pem.split("-----BEGIN ECH CONFIGS-----").size - 1 != 1) {
+        return null
+    }
+    if (pem.split("-----END ECH CONFIGS-----").size - 1 != 1) {
+        return null
+    }
+    return try {
+         Base64.encode(Base64.decode(pem
+            .substringAfter("-----BEGIN ECH CONFIGS-----")
+            .substringBefore("-----END ECH CONFIGS-----")
+            .replace("\r", "")
+            .replace("\n", "")
+        ))
+    } catch (_: Exception) {
+        null
+    }
+}*/

@@ -231,6 +231,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     bean.mtlsCertificate = cert
                     bean.mtlsCertificatePrivateKey = key
                 }
+                /*proxy.getObject("ech-opts")?.also {
+                    bean.echEnabled = it.getBoolean("enable")
+                    bean.echConfig = it.getString("config")
+                }*/
             }
 
             if (bean is VMessBean) {
@@ -453,6 +457,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     mtlsCertificate = cert
                     mtlsCertificatePrivateKey = key
                 }
+                /*proxy.getObject("ech-opts")?.also {
+                    echEnabled = it.getBoolean("enable")
+                    echConfig = it.getString("config")
+                }*/
                 (proxy.getString("obfs"))?.also {
                     when (it) {
                         "" -> {}
@@ -511,6 +519,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                         mtlsCertificate = cert
                         mtlsCertificatePrivateKey = key
                     }
+                    /*proxy.getObject("ech-opts")?.also {
+                        echEnabled = it.getBoolean("enable")
+                        echConfig = it.getString("config")
+                    }*/
                     name = proxy.getString("name")
                 })
             }
@@ -575,6 +587,10 @@ fun parseClashProxy(proxy: Map<String, Any?>): List<AbstractBean> {
                     mtlsCertificate = cert
                     mtlsCertificatePrivateKey = key
                 }
+                /*proxy.getObject("ech-opts")?.also {
+                    echEnabled = it.getBoolean("enable")
+                    echConfig = it.getString("config")
+                }*/
                 name = proxy.getString("name")
             })
         }

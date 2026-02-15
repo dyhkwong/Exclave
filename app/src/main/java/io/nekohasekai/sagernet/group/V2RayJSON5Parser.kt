@@ -126,6 +126,13 @@ fun parseV2Ray5Outbound(outbound: JsonObject): List<AbstractBean> {
                                         v2rayBean.allowInsecure = allowInsecure
                                     }
                                 }
+                                tlsConfig.getString("echDohServer")?.also {
+                                    v2rayBean.echEnabled = true
+                                }
+                                tlsConfig.getString("echConfig")?.also {
+                                    v2rayBean.echEnabled = true
+                                    v2rayBean.echConfig = it
+                                }
                             }
                         }
                         else -> return listOf()

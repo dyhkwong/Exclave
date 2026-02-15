@@ -52,6 +52,7 @@ import io.nekohasekai.sagernet.fmt.v2ray.supportedVmessMethod
 import io.nekohasekai.sagernet.fmt.v2ray.supportedXhttpMode
 import io.nekohasekai.sagernet.fmt.wireguard.WireGuardBean
 import io.nekohasekai.sagernet.ktx.*
+import io.nekohasekai.sagernet.ktx.getString
 import libcore.Libcore
 import java.util.Base64
 
@@ -151,6 +152,24 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         v2rayBean.allowInsecure = true
                                     }
                                 }
+                                /*tlsSettings.getString("echDohServer")?.also {
+                                    v2rayBean.echEnabled = true
+                                }
+                                tlsSettings.getString("echConfig")?.also {
+                                    v2rayBean.echEnabled = true
+                                    v2rayBean.echConfig = it
+                                }
+                                tlsSettings.getString("echConfigList")?.also {
+                                    v2rayBean.echEnabled = true
+                                    try {
+                                        Base64.getDecoder().decode(it)
+                                        v2rayBean.echConfig = it
+                                    } catch (_: Exception) {}
+                                }
+                                tlsSettings.getObject("ech")?.also {
+                                    v2rayBean.echEnabled = it.getBoolean("enabled")
+                                    v2rayBean.echConfig = it.getString("config")
+                                }*/
                             }
                         }
                         "reality" -> {
@@ -1037,6 +1056,24 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         hysteria2Bean.allowInsecure = allowInsecure
                                     }
                                 }
+                                /*tlsSettings.getString("echDohServer")?.also {
+                                    hysteria2Bean.echEnabled = true
+                                }
+                                tlsSettings.getString("echConfig")?.also {
+                                    hysteria2Bean.echEnabled = true
+                                    hysteria2Bean.echConfig = it
+                                }
+                                tlsSettings.getString("echConfigList")?.also {
+                                    hysteria2Bean.echEnabled = true
+                                    try {
+                                        Base64.getDecoder().decode(it)
+                                        hysteria2Bean.echConfig = it
+                                    } catch (_: Exception) {}
+                                }
+                                tlsSettings.getObject("ech")?.also {
+                                    hysteria2Bean.echEnabled = it.getBoolean("enabled")
+                                    hysteria2Bean.echConfig = it.getString("config")
+                                }*/
                             }
                         }
                         else -> return listOf()
@@ -1170,6 +1207,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             tuic5Bean.allowInsecure = allowInsecure
                         }
                     }
+                    /*tlsSettings.getObject("ech")?.also {
+                        tuic5Bean.echEnabled = it.getBoolean("enabled")
+                        tuic5Bean.echConfig = it.getString("config")
+                    }*/
                 }
                 settings.getBoolean("disableSNI")?.also {
                     tuic5Bean.disableSNI = it
@@ -1248,6 +1289,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             http3Bean.allowInsecure = allowInsecure
                         }
                     }
+                    /*tlsSettings.getObject("ech")?.also {
+                        http3Bean.echEnabled = it.getBoolean("enabled")
+                        http3Bean.echConfig = it.getString("config")
+                    }*/
                 }
             }
             return listOf(http3Bean)
@@ -1341,6 +1386,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                     anytlsBean.allowInsecure = allowInsecure
                                 }
                             }
+                            /*tlsSettings.getObject("ech")?.also {
+                                anytlsBean.echEnabled = it.getBoolean("enabled")
+                                anytlsBean.echConfig = it.getString("config")
+                            }*/
                         }
                     }
                     "reality" -> {
@@ -1433,6 +1482,10 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                             juicityBean.allowInsecure = allowInsecure
                         }
                     }
+                    /*tlsSettings.getObject("ech")?.also {
+                        juicityBean.echEnabled = it.getBoolean("enabled")
+                        juicityBean.echConfig = it.getString("config")
+                    }*/
                 }
             }
             return listOf(juicityBean)
@@ -1661,6 +1714,13 @@ fun parseV2RayOutbound(outbound: JsonObject): List<AbstractBean> {
                                         hysteria2Bean.allowInsecure = true
                                     }
                                 }
+                                /*tlsSettings.getString("echConfigList")?.also {
+                                    hysteria2Bean.echEnabled = true
+                                    try {
+                                        Base64.getDecoder().decode(it)
+                                        hysteria2Bean.echConfig = it
+                                    } catch (_: Exception) {}
+                                }*/
                             }
                         }
                         else -> return listOf()
