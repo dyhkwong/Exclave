@@ -172,6 +172,7 @@ public class V2RayConfig {
 
                     public String observerTag; // random, leastPing, leastLoad, fallback
                     public Boolean aliveOnly; // random
+                    public Boolean stickyChoice; // leastPing
                     public Float tolerance; // leastLoad
                     public String maxRTT; // leastLoad
                     public Integer expected; // leastLoad
