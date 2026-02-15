@@ -370,4 +370,6 @@
     <string name="fileSize_pebibyte">PiB</string>
     <string name="translation_platform">Çeviri Platformu</string>
     <string name="insecure_warn">Güvenlik Danışmanlığı</string>
+    <string name="ws_max_early_data">Maximum Erken Veri</string>
+    <string name="hijack_dns_message">DNS sniffer kullanarak TUN DNS adresine gönderilmeyen DNS sorgularını ele geçir</string>
 </resources>
