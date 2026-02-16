@@ -134,7 +134,7 @@ func NewTun2ray(config *TunConfig) (*Tun2ray, error) {
 		var pcapFile *os.File
 		if config.PCap {
 			timestamp := time.Now().Unix()
-			path := externalAssetsPath + "/pcap/" + strconv.FormatInt(timestamp, 10) + ".pcap"
+			path := externalAssetsPath + "pcap/" + strconv.FormatInt(timestamp, 10) + ".pcap"
 			err = os.MkdirAll(filepath.Dir(path), 0o755)
 			if err != nil {
 				return nil, newError("unable to create pcap dir").Base(err)
