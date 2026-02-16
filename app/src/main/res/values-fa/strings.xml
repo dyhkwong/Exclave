@@ -550,8 +550,24 @@
     <string name="pinned_peer_certificate_sha256_hex_dialog_message">اگر خود گواهی نامعتبر باشد، لازم است همراه با «پرش از اعتبارسنجی گواهی» استفاده شود. هر خط یک مورد، با کدگذاری hex.</string>
     <string name="mtls_certificate">گواهی mTLS</string>
     <string name="mtls_certificate_private_key">کلید خصوصی گواهی mTLS</string>
-    <string name="delete_multi_confirm_prompt">آیا مطمئن هستید که می خواهید این نمایه را حذف کنید؟</string>
+    <string name="delete_multi_confirm_prompt">آیا مطمئن هستید که می خواهید این پروفایل‌ را حذف کنید؟</string>
     <string name="create_shortcut">ایجاد میانبر</string>
     <string name="translation_platform">پلتفرم ترجمه</string>
-    <string name="insecure_warn">مشاوره امنیتی</string>
+    <string name="insecure_warn">نکات امنیتی</string>
+    <string name="mieru_port_range">محدوده پورت سرور</string>
+    <string name="interrupt_reused_connections">قطع اتصالات مجدداستفاده‌شده هنگام تغییر شبکه</string>
+    <string name="cag_grpc">تنظیمات gRPC</string>
+    <string name="grpc_service_name_compat">سازگاری نام سرویس gRPC</string>
+    <string name="grpc_service_name_compat_sum">سازگار با تغییر ناسازگار Xray، اما ناسازگاری با سرورهای غیر Xray.</string>
+    <string name="grpc_multi_mode">حالت چندگانه</string>
+    <string name="import_routing_rules_warning">تمام قوانین موجود حذف خواهند شد.</string>
+    <string name="export_routing_rules_warning">این فقط برای اهداف سازگاری است و اطلاعات کامل را شامل نمی‌شود.</string>
+    <string name="custom_root_ca_hint">لطفاً فایل root_store.certs را در مسیر Android/data/%s/files قرار دهید، یا به صورت route asset ایمپورت نمایید.</string>
+    <string name="query_all_packages_alternative_method">استفاده از روش جایگزین برای استعلام برنامه‌های نصب‌شده</string>
+    <string name="third_party_notices">اعلان‌های شخص ثالث</string>
+    <string name="regular_expression_filter1">گنجاندن نام (عبارت منظم)</string>
+    <string name="discard_icmp">دور انداختن ICMP</string>
+    <string name="discard_icmp_sum">دور انداختن ICMP و ICMPv6</string>
+    <string name="insecure_warn_sum">نمایش هشدار برای پروفایل‌هایی با امنیت مشابه متن ساده.</string>
+    <string name="ech">ECH (سلام اولیه رمزنگاری‌شده)</string>
 </resources>
