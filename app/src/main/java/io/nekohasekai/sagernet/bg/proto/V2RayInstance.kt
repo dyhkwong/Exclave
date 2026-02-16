@@ -21,6 +21,7 @@ package io.nekohasekai.sagernet.bg.proto
 
 import android.annotation.SuppressLint
 import android.os.SystemClock
+import android.os.SystemClock.sleep
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -196,9 +197,6 @@ abstract class V2RayInstance(
                 }
             }
         }
-
-        v2rayPoint.start()
-
         if (config.requireWs) {
             val url = "http://" + joinHostPort(LOCALHOST, config.wsPort) + "/"
 
@@ -265,6 +263,12 @@ abstract class V2RayInstance(
             }
         }
 
+
+        if (!externalInstances.isNotEmpty() || config.requireWs || config.requireSh) {
+            sleep(100)
+        }
+
+        v2rayPoint.start()
     }
 
     private var isClosed = false
