@@ -41,6 +41,10 @@ func (e *linkEndpointWithDiscard) Attach(dispatcher stack.NetworkDispatcher) {
 }
 
 func (e *linkEndpointWithDiscard) DeliverNetworkPacket(protocol tcpip.NetworkProtocolNumber, pkt *stack.PacketBuffer) {
+	dispatcher := e.dispatcher
+	if dispatcher == nil {
+		return
+	}
 	packet := pkt.Data().AsRange().ToSlice()
 	switch protocol {
 	case header.IPv4ProtocolNumber:
@@ -68,7 +72,7 @@ func (e *linkEndpointWithDiscard) DeliverNetworkPacket(protocol tcpip.NetworkPro
 			}
 		}
 	}
-	e.dispatcher.DeliverNetworkPacket(protocol, pkt)
+	dispatcher.DeliverNetworkPacket(protocol, pkt)
 }
 
 func (e *linkEndpointWithDiscard) DeliverLinkPacket(protocol tcpip.NetworkProtocolNumber, pkt *stack.PacketBuffer) {

@@ -21,6 +21,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"time"
 
 	"libcore/tun"
 
@@ -48,10 +49,16 @@ type GVisor struct {
 }
 
 func (t *GVisor) Close() error {
-	t.endpoint.Close()
+	t.endpoint.Attach(nil)
 	t.stack.Close()
+	for _, endpoint := range t.stack.CleanupEndpoints() {
+		endpoint.Abort()
+	}
 	if t.pcapFile != nil {
-		_ = t.pcapFile.Close()
+		go func() {
+			time.Sleep(time.Second)
+			_ = t.pcapFile.Close()
+		}()
 	}
 	return nil
 }
@@ -188,9 +195,5 @@ type pcapFileWrapper struct {
 }
 
 func (w *pcapFileWrapper) Write(p []byte) (n int, err error) {
-	n, err = w.Writer.Write(p)
-	if err != nil {
-		newError("write pcap file failed").Base(err).AtDebug().WriteToLog()
-	}
-	return n, err
+	return w.Writer.Write(p)
 }
