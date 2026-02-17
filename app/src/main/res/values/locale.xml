@@ -7,6 +7,7 @@
     <string name="language_fr_display_name" translatable="false">Français</string>
     <string name="language_id_display_name" translatable="false">Indonesia</string>
     <string name="language_it_display_name" translatable="false">Italiano</string>
+    <string name="language_ja_display_name" translatable="false">日本語</string>
     <string name="language_nb_NO_display_name" translatable="false">Norsk bokmål</string>
     <string name="language_ru_display_name" translatable="false">Русский</string>
     <string name="language_tr_display_name" translatable="false">Türkçe</string>

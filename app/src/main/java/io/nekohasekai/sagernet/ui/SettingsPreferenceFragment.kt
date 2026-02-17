@@ -117,6 +117,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
                 "fr" -> getString(R.string.language_fr_display_name)
                 "id" -> getString(R.string.language_id_display_name)
                 "it" -> getString(R.string.language_it_display_name)
+                "ja" -> getString(R.string.language_ja_display_name)
                 "nb-NO" -> getString(R.string.language_nb_NO_display_name)
                 "ru" -> getString(R.string.language_ru_display_name)
                 "tr" -> getString(R.string.language_tr_display_name)
