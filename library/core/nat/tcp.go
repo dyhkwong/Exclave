@@ -103,7 +103,8 @@ func (t *tcpForwarder) dispatch(listener *net.TCPListener) error {
 		session = iSession.(*peerValue)
 	} else {
 		conn.Close()
-		return newError("dropped unknown tcp session with source port ", key.sourcePort, " to destination address ", key.destinationAddress)
+		newError("dropped unknown tcp session with source port ", key.sourcePort, " to destination address ", key.destinationAddress).AtWarning().WriteToLog()
+		return nil
 	}
 
 	source := v2rayNet.Destination{
