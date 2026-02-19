@@ -155,7 +155,7 @@
                 <data android:scheme="mierus" />
                 <data android:scheme="quic" />
                 <data android:scheme="anytls" />
-
+                <data android:scheme="tt" />
             </intent-filter>
 
             <meta-data

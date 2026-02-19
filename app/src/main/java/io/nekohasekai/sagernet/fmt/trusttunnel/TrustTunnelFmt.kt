@@ -19,30 +19,285 @@
 
 package io.nekohasekai.sagernet.fmt.trusttunnel
 
+import io.nekohasekai.sagernet.ktx.applyDefaultValues
+import io.nekohasekai.sagernet.ktx.joinHostPort
 import libcore.Libcore
+import kotlin.io.encoding.Base64
+
+// https://github.com/TrustTunnel/TrustTunnel/blob/8856e7ba83ae0c9faace78aaf9a95b1b291cd3ed/DEEP_LINK.md
+
+private enum class Tag(val code: Long) {
+    Version(0x00),
+    Hostname(0x01),
+    Addresses(0x02),
+    CustomSNI(0x03),
+    HasIPv6(0x04),
+    Username(0x05),
+    Password(0x06),
+    SkipVerification(0x07),
+    Certificate(0x08),
+    UpstreamProtocol(0x09),
+    AntiDPI(0x0A),
+    ClientRandomPrefix(0x0B);
+}
+
+private enum class Version(val code: Byte) {
+    Version0(0x00)
+}
+
+private enum class HasIPv6(val code: Byte) {
+    False(0x00),
+    True(0x01),
+}
+
+private enum class SkipVerification(val code: Byte) {
+    False(0x00),
+    True(0x01),
+}
+
+private enum class UpstreamProtocol(val code: Byte) {
+    HTTP2(0x01),
+    HTTP3(0x02),
+}
+
+private enum class AntiDPI(val code: Byte) {
+    False(0x00),
+    True(0x01),
+}
+
+@Suppress("ArrayInDataClass")
+private data class TLV(
+    val tag: Long,
+    val value: ByteArray,
+)
 
 fun TrustTunnelBean.toUri(): String {
-    val scheme = when (protocol) {
-        "https", "quic" -> protocol
-        else -> error("invalid")
-    }
-    val builder = Libcore.newURL(scheme).apply {
-        host = serverAddress.ifEmpty { error("empty server address") }
-        port = serverPort
-        if (name.isNotEmpty()) {
-            fragment = name
+    require(serverAddress.isNotEmpty())
+    require(username.isNotEmpty())
+    require(password.isNotEmpty())
+    require(serverPort in 0..65535)
+    require(protocol == "https" || protocol == "quic")
+    val byteArrayBuilder = ArrayList<Byte>().apply {
+        writeTLV(Tag.Addresses.code, joinHostPort(serverAddress, serverPort).toByteArray())
+        writeTLV(Tag.Hostname.code, sni.ifEmpty { serverAddress }.toByteArray())
+        writeTLV(Tag.Username.code, username.toByteArray())
+        writeTLV(Tag.Password.code, password.toByteArray())
+        if (allowInsecure) {
+            writeTLV(Tag.SkipVerification.code, byteArrayOf(SkipVerification.True.code))
+        }
+        when (protocol) {
+            "https" -> writeTLV(Tag.UpstreamProtocol.code, byteArrayOf(UpstreamProtocol.HTTP2.code))
+            "quic" -> writeTLV(Tag.UpstreamProtocol.code, byteArrayOf(UpstreamProtocol.HTTP3.code))
+        }
+
+        if (certificate.isNotEmpty()) {
+            val der = Libcore.pemToDer(certificate)
+            require(der.isNotEmpty())
+            writeTLV(Tag.Certificate.code, der)
         }
     }
-    if (username.isNotEmpty()) {
-        builder.username = username
+    val builder = Libcore.newURL("tt").apply {
+        host = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(byteArrayBuilder.toByteArray())
     }
-    if (password.isNotEmpty()) {
-        builder.password = password
-    }
-    if (sni.isNotEmpty()) {
-        // non-standard
-        builder.addQueryParameter("sni", sni)
-    }
-
     return builder.string
+}
+
+fun parseTrustTunnel(url: String): List<TrustTunnelBean> {
+    try {
+        val data = Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).decode(url.substring("tt://".length))
+        val bean = TrustTunnelBean()
+        val addresses = mutableListOf<String>()
+        var hasHostName = false
+        var hasAddresses = false
+        var hasUsername = false
+        var hasPassword = false
+        var offset = 0
+        while (offset < data.size) {
+            val tlv = data.readTLV(offset)
+            val tag = tlv.tag
+            val length = tlv.value.size
+            val value = tlv.value
+            offset += when {
+                tag < 64 -> 1
+                tag < 16384 -> 2
+                tag < 1073741824 -> 4
+                else -> 8
+            } + when {
+                length < 64 -> 1
+                length < 16384 -> 2
+                length < 1073741824 -> 4
+                else -> 8
+            } + length
+            when (tlv.tag) {
+                Tag.Version.code -> {
+                    require(length == 1 && value[0] == Version.Version0.code)
+                }
+                Tag.Hostname.code -> {
+                    require(value.isNotEmpty())
+                    bean.sni = String(value)
+                    hasHostName = true
+                }
+                Tag.Addresses.code -> {
+                    addresses.add(String(value))
+                    hasAddresses = true
+                }
+                Tag.CustomSNI.code -> {
+                    require(length > 0)
+                }
+                Tag.HasIPv6.code -> {
+                    require(length == 1)
+                    require(value[0] == HasIPv6.False.code || value[0] == HasIPv6.True.code)
+                }
+                Tag.Username.code -> {
+                    require(value.isNotEmpty())
+                    bean.username = String(value)
+                    hasUsername = true
+                }
+                Tag.Password.code -> {
+                    require(value.isNotEmpty())
+                    bean.password = String(value)
+                    hasPassword = true
+                }
+                Tag.SkipVerification.code -> {
+                    require(length == 1)
+                    require(value[0] == SkipVerification.False.code || value[0] == SkipVerification.True.code)
+                }
+                Tag.Certificate.code -> {
+                    val pem = Libcore.derToPem(value)
+                    require(pem.isNotEmpty())
+                    bean.certificate = pem
+                }
+                Tag.UpstreamProtocol.code -> {
+                    require(length == 1)
+                    require(value[0] == UpstreamProtocol.HTTP2.code || value[0] == UpstreamProtocol.HTTP3.code)
+                }
+                Tag.AntiDPI.code -> {
+                    require(length == 1)
+                    require(value[0] == AntiDPI.False.code || value[0] == AntiDPI.True.code)
+                }
+                Tag.ClientRandomPrefix.code -> {
+                    // ignored
+                }
+                else -> {
+                    // "A parser MUST ignore unknown tags to allow forward-compatible extensions."
+                }
+            }
+        }
+        require(hasHostName)
+        require(hasAddresses)
+        require(hasUsername)
+        require(hasPassword)
+        val beans = mutableListOf<TrustTunnelBean>()
+        addresses.forEach {
+            val u = Libcore.parseURL("placeholder://$it")
+            beans.add(bean.applyDefaultValues().clone().apply {
+                serverAddress = u.host
+                serverPort = u.port
+            })
+        }
+        return beans
+    } catch (e: Exception) {
+        throw e
+    }
+}
+
+private fun ArrayList<Byte>.writeTLV(tag: Long, value: ByteArray) {
+    writeUVarInt(tag)
+    writeUVarInt(value.size.toLong())
+    addAll(value.toList())
+}
+
+private fun ArrayList<Byte>.writeUVarInt(i: Long) {
+    require(i < 4611686018427387904)
+    when {
+        i < 64 -> {
+            add((i and 0x3F).toByte())
+        }
+        i < 16384 -> {
+            val encoded = i or (0x1L shl 14)
+            add(((encoded shr 8) and 0xFF).toByte())
+            add((encoded and 0xFF).toByte())
+        }
+        i < 1073741824 -> {
+            val encoded = i or (0x2L shl 30)
+            add(((encoded shr 24) and 0xFF).toByte())
+            add(((encoded shr 16) and 0xFF).toByte())
+            add(((encoded shr 8) and 0xFF).toByte())
+            add((encoded and 0xFF).toByte())
+        }
+        else -> {
+            val encoded = i or (0x3L shl 62)
+            add(((encoded shr 56) and 0xFF).toByte())
+            add(((encoded shr 48) and 0xFF).toByte())
+            add(((encoded shr 40) and 0xFF).toByte())
+            add(((encoded shr 32) and 0xFF).toByte())
+            add(((encoded shr 24) and 0xFF).toByte())
+            add(((encoded shr 16) and 0xFF).toByte())
+            add(((encoded shr 8) and 0xFF).toByte())
+            add((encoded and 0xFF).toByte())
+        }
+    }
+}
+
+private fun ByteArray.readTLV(offset: Int = 0): TLV {
+    try {
+        var newOffset = offset
+        val tag = readUVarInt(offset)
+        newOffset += when {
+            tag < 64 -> 1
+            tag < 16384 -> 2
+            tag < 1073741824 -> 4
+            else -> 8
+        }
+        val length = readUVarInt(newOffset)
+        require(length < Int.MAX_VALUE)
+        newOffset += when {
+            length < 64 -> 1
+            length < 16384 -> 2
+            length < 1073741824 -> 4
+            else -> 8
+        }
+        val value = copyOfRange(newOffset, newOffset+length.toInt())
+        return TLV(
+            tag = tag,
+            value = value,
+        )
+    } catch (e: Exception) {
+        throw e
+    }
+}
+
+private fun ByteArray.readUVarInt(offset: Int = 0): Long {
+    try {
+        val first = this[offset].toInt() and 0xFF
+        val prefix = first shr 6
+        require(prefix in 0x00..0x03)
+        when (prefix) {
+            0x00 -> {
+                return (first and 0x3F).toLong()
+            }
+            0x01 -> {
+                val b1 = this[offset + 1].toInt() and 0xFF
+                return ((first and 0x3F) shl 8 or b1).toLong()
+            }
+            0x02 -> {
+                val b1 = this[offset + 1].toInt() and 0xFF
+                val b2 = this[offset + 2].toInt() and 0xFF
+                val b3 = this[offset + 3].toInt() and 0xFF
+                return ((first and 0x3F).toLong() shl 24) or
+                        (b1.toLong() shl 16) or
+                        (b2.toLong() shl 8) or
+                        b3.toLong()
+            }
+            else -> {
+                var value = (first and 0x3F).toLong() shl 56
+                for (i in 1..7) {
+                    value = value or ((this[offset + i].toInt() and 0xFF).toLong() shl (56 - 8 * i))
+                }
+                return value
+            }
+        }
+    } catch (e: Exception) {
+        throw e
+    }
 }
