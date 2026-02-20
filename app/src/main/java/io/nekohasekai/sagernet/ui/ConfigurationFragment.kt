@@ -309,7 +309,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                 }
 
                 if (proxies.isEmpty()) {
-                    if (!fileText.contains("\n") && !fileText.contains("\r") && isHTTPorHTTPSURL(fileText)) {
+                    if (!fileText.contains("\n") && !fileText.contains("\r")
+                        && fileText.startsWith("exclave://", ignoreCase = true)
+                        && fileText.substring("exclave://".length).startsWith("subscription?")) {
+                        (requireActivity() as? MainActivity)?.importSubscription(fileText.toUri())
+                    } else if (!fileText.contains("\n") && !fileText.contains("\r") && isHTTPorHTTPSURL(fileText)) {
                         val builder = Libcore.newURL("exclave").apply {
                             host = "subscription"
                         }
@@ -321,8 +325,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                         }
                     }
                 } else import(proxies)
-            } catch (e: SubscriptionFoundException) {
-                (requireActivity() as? MainActivity)?.importSubscription(e.link.toUri())
             } catch (e: Exception) {
                 Logs.w(e)
                 onMainDispatcher {
@@ -395,7 +397,11 @@ class ConfigurationFragment @JvmOverloads constructor(
                         try {
                             val proxies = RawUpdater.parseRaw(text)
                             if (proxies.isNullOrEmpty()) {
-                                if (!text.contains("\n") && !text.contains("\r") && isHTTPorHTTPSURL(text)) {
+                                if (!text.contains("\n") && !text.contains("\r")
+                                    && text.startsWith("exclave://", ignoreCase = true)
+                                    && text.substring("exclave://".length).startsWith("subscription?")) {
+                                    (requireActivity() as? MainActivity)?.importSubscription(text.toUri())
+                                } else if (!text.contains("\n") && !text.contains("\r") && isHTTPorHTTPSURL(text)) {
                                     val builder = Libcore.newURL("exclave").apply {
                                         host = "subscription"
                                     }
@@ -407,8 +413,6 @@ class ConfigurationFragment @JvmOverloads constructor(
                             } else {
                                 import(proxies)
                             }
-                        } catch (e: SubscriptionFoundException) {
-                            (requireActivity() as? MainActivity)?.importSubscription(e.link.toUri())
                         } catch (e: Exception) {
                             Logs.w(e)
                             onMainDispatcher {

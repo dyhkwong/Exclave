@@ -53,20 +53,7 @@ fun String.decodeBase64(): String {
     return String(Base64.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(this))
 }
 
-class SubscriptionFoundException(val link: String) : RuntimeException()
-
 fun parseShareLinks(text: String): List<AbstractBean> {
-    if (!text.contains("\n") && !text.contains("\r")) {
-        if (text.startsWith("exclave://", ignoreCase = true) &&
-            text.substring("exclave://".length).startsWith("subscription")) {
-            throw SubscriptionFoundException(text)
-        }
-        if (text.startsWith("sn://", ignoreCase = true) &&
-            text.substring("sn://".length).startsWith("subscription")) {
-            throw SubscriptionFoundException(text)
-        }
-    }
-
     val links = text.split('\n').flatMap { it.trim().split(' ') }
     val linksByLine = text.split('\n').map { it.trim() }
 

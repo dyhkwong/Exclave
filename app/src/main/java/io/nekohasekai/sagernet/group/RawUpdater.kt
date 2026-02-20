@@ -268,15 +268,11 @@ object RawUpdater : GroupUpdater() {
             parseShareLinks(text.decodeBase64()).takeIf { it.isNotEmpty() }?.let {
                 return it
             }
-        } catch (e: SubscriptionFoundException) {
-            throw(e)
         } catch (_: Exception) {}
         try {
             parseShareLinks(text).takeIf { it.isNotEmpty() }?.let {
                 return it
             }
-        } catch (e: SubscriptionFoundException) {
-            throw(e)
         } catch (_: Exception) {}
         try {
             parseWireGuardConfig(text).takeIf { it.isNotEmpty() }?.let {

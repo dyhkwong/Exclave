@@ -159,7 +159,14 @@ class ScannerActivity : ThemedActivity() {
             try {
                 val results = RawUpdater.parseRaw(value)
                 if (results.isNullOrEmpty()) {
-                    if (!value.contains("\n") && !value.contains("\r") && isHTTPorHTTPSURL(value)) {
+                    if (!value.contains("\n") && !value.contains("\r")
+                        && value.startsWith("exclave://", ignoreCase = true)
+                        && value.substring("exclave://".length).startsWith("subscription?")) {
+                        startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                            action = Intent.ACTION_VIEW
+                            data = value.toUri()
+                        })
+                    } else if (!value.contains("\n") && !value.contains("\r") && isHTTPorHTTPSURL(value)) {
                         val builder = Libcore.newURL("exclave").apply {
                             host = "subscription"
                         }
@@ -181,11 +188,6 @@ class ScannerActivity : ThemedActivity() {
                         ProfileManager.createProfile(currentGroupId, profile)
                     }
                 }
-            } catch (e: SubscriptionFoundException) {
-                startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
-                    action = Intent.ACTION_VIEW
-                    data = e.link.toUri()
-                })
             } catch (e: Exception) {
                 fatalError(e)
             }
@@ -255,7 +257,15 @@ class ScannerActivity : ThemedActivity() {
                                     }
                                 }
                             } else {
-                                if (!result.text.contains("\n") && !result.text.contains("\r") && isHTTPorHTTPSURL(result.text)) {
+                                if (!result.text.contains("\n") && !result.text.contains("\r")
+                                    && result.text.startsWith("exclave://", ignoreCase = true)
+                                    && result.text.substring("exclave://".length).startsWith("subscription?")) {
+                                    startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
+                                        action = Intent.ACTION_VIEW
+                                        data = result.text.toUri()
+                                    })
+                                    finish()
+                                } else if (!result.text.contains("\n") && !result.text.contains("\r") && isHTTPorHTTPSURL(result.text)) {
                                     val builder = Libcore.newURL("exclave").apply {
                                         host = "subscription"
                                     }
@@ -269,12 +279,6 @@ class ScannerActivity : ThemedActivity() {
                                     Toast.makeText(app, R.string.action_import_err, Toast.LENGTH_SHORT).show()
                                 }
                             }
-                        } catch (e: SubscriptionFoundException) {
-                            startActivity(Intent(this@ScannerActivity, MainActivity::class.java).apply {
-                                action = Intent.ACTION_VIEW
-                                data = e.link.toUri()
-                            })
-                            finish()
                         } catch (e: Throwable) {
                             Logs.w(e)
                             onMainDispatcher {
