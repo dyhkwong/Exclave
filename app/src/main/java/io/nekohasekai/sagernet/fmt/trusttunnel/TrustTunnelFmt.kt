@@ -189,10 +189,17 @@ fun parseTrustTunnel(url: String): List<TrustTunnelBean> {
         require(hasPassword)
         val beans = mutableListOf<TrustTunnelBean>()
         addresses.forEach {
-            val u = Libcore.parseURL("placeholder://$it")
+            require(it.contains(":"))
+            val port = it.substringAfterLast(":").toIntOrNull()
+            require(port != null && port in 0..65535)
+            var host = it.substringBeforeLast(":")
+            if (host.startsWith("[") && host.endsWith("]")) {
+                host = host.substringAfter("[").substringBeforeLast("]")
+                require(Libcore.isIPv6(host))
+            }
             beans.add(bean.applyDefaultValues().clone().apply {
-                serverAddress = u.host
-                serverPort = u.port
+                serverAddress = host
+                serverPort = port
             })
         }
         return beans
