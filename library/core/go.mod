@@ -18,11 +18,11 @@ require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/andybalholm/brotli v1.0.6 // indirect
 	github.com/anytls/sing-anytls v0.0.11 // indirect
-	github.com/apernet/quic-go v0.57.2-0.20260111184307-eec823306178 // indirect
+	github.com/apernet/quic-go v0.59.1-0.20260217092621-db4786c77a22 // indirect
 	github.com/dgryski/go-camellia v0.0.0-20191119043421-69a8a13fb23d // indirect
 	github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 // indirect
-	github.com/dyhkwong/hysteria/core/v2 v2.7.0-1 // indirect
-	github.com/dyhkwong/hysteria/extras/v2 v2.7.0-1 // indirect
+	github.com/dyhkwong/hysteria/core/v2 v2.7.0-2 // indirect
+	github.com/dyhkwong/hysteria/extras/v2 v2.7.0-2 // indirect
 	github.com/dyhkwong/sing-juicity v0.1.0-beta.6 // indirect
 	github.com/enfein/mieru/v3 v3.27.0 // indirect
 	github.com/gofrs/uuid/v5 v5.4.0 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/sagernet/quic-go v0.59.0-sing-box-mod.2 // indirect
 	github.com/sagernet/sing v0.8.0-beta.16 // indirect
 	github.com/sagernet/sing-mux v0.3.4 // indirect
-	github.com/sagernet/sing-quic v0.6.0-beta.12 // indirect
+	github.com/sagernet/sing-quic v0.6.0-beta.13 // indirect
 	github.com/sagernet/sing-shadowsocks v0.2.9 // indirect
 	github.com/sagernet/sing-shadowsocks2 v0.2.2 // indirect
 	github.com/sagernet/sing-shadowtls v0.2.1-0.20250503051639-fcd445d33c11 // indirect
@@ -75,4 +75,4 @@ replace gvisor.dev/gvisor => gvisor.dev/gvisor v0.0.0-20250429202743-3a608a52255
 
 //replace github.com/v2fly/v2ray-core/v5 => ../../../v2ray-core
 
-replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.45.2-0.20260216070848-42fca4b33458
+replace github.com/v2fly/v2ray-core/v5 => github.com/dyhkwong/v2ray-core/v5 v5.45.2-0.20260221183330-f2c56be14e90
