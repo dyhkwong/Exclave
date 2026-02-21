@@ -21,7 +21,6 @@ package io.nekohasekai.sagernet.bg.proto
 
 import android.annotation.SuppressLint
 import android.os.SystemClock
-import android.os.SystemClock.sleep
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -261,11 +260,6 @@ abstract class V2RayInstance(
                 }
                 shForwarder.loadUrl(url)
             }
-        }
-
-
-        if (!externalInstances.isNotEmpty() || config.requireWs || config.requireSh) {
-            sleep(100)
         }
 
         v2rayPoint.start()
