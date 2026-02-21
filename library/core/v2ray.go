@@ -21,7 +21,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"os"
 	"reflect"
 	"runtime"
 	"runtime/debug"
@@ -72,6 +71,7 @@ func GetV2RayVersion() string {
 
 type V2RayInstance struct {
 	started       bool
+	closed        bool
 	core          *core.Instance
 	dispatcher    routing.Dispatcher
 	statsManager  stats.Manager
@@ -144,6 +144,12 @@ func (instance *V2RayInstance) WithProtect(path string) {
 }
 
 func (instance *V2RayInstance) LoadConfig(content string) error {
+	if instance.closed {
+		return newError("instance closed")
+	}
+	if instance.started {
+		return newError("instance already started")
+	}
 	config, err := serial.LoadJSONConfig(strings.NewReader(content))
 	if err != nil {
 		return err
@@ -154,19 +160,21 @@ func (instance *V2RayInstance) LoadConfig(content string) error {
 	}
 	instance.dispatcher = instance.core.GetFeature(routing.DispatcherType()).(routing.Dispatcher)
 	instance.statsManager = instance.core.GetFeature(stats.ManagerType()).(stats.Manager)
-	o := instance.core.GetFeature(extension.ObservatoryType())
-	if o != nil {
-		instance.observatory = o.(features.TaggedFeatures)
+	if observatory := instance.core.GetFeature(extension.ObservatoryType()); observatory != nil {
+		instance.observatory = observatory.(features.TaggedFeatures)
 	}
 	return nil
 }
 
 func (instance *V2RayInstance) Start() error {
+	if instance.closed {
+		return newError("instance closed")
+	}
 	if instance.started {
-		return newError("already started")
+		return newError("instance already started")
 	}
 	if instance.core == nil {
-		return newError("not initialized")
+		return newError("instance not initialized")
 	}
 	if err := instance.core.Start(); err != nil {
 		return err
@@ -187,6 +195,9 @@ func (instance *V2RayInstance) QueryStats(tag string, direct string) int64 {
 }
 
 func (instance *V2RayInstance) Close() error {
+	if instance.closed {
+		return newError("instance closed")
+	}
 	if instance.started {
 		instance.core.Close()
 		instance.core = nil
@@ -202,22 +213,31 @@ func (instance *V2RayInstance) Close() error {
 func toContext(ctx context.Context, v *core.Instance) context.Context
 
 func (instance *V2RayInstance) dial(ctx context.Context, destination net.Destination) (net.Conn, error) {
+	if instance.closed {
+		return nil, newError("instance closed")
+	}
 	if !instance.started {
-		return nil, os.ErrInvalid
+		return nil, newError("instance not started")
 	}
 	return core.Dial(ctx, instance.core, destination)
 }
 
 /*func (instance *V2RayInstance) dialUDP(ctx context.Context) (net.PacketConn, error) {
+	if instance.closed {
+		return nil, newError("instance closed")
+	}
 	if !instance.started {
-		return nil, os.ErrInvalid
+		return nil, newError("instance not started")
 	}
 	return core.DialUDP(ctx, instance.core)
 }*/
 
 func (instance *V2RayInstance) dialUDP(ctx context.Context, destination net.Destination, timeout time.Duration) (net.PacketConn, error) {
+	if instance.closed {
+		return nil, newError("instance closed")
+	}
 	if !instance.started {
-		return nil, os.ErrInvalid
+		return nil, newError("instance not started")
 	}
 	ctx, cancel := context.WithCancel(ctx)
 	link, err := instance.dispatcher.Dispatch(ctx, destination)

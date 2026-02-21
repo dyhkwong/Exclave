@@ -129,7 +129,7 @@ func (t *tcpForwarder) dispatch(listener *net.TCPListener) error {
 
 func (t *tcpForwarder) dispatchLoop(listener *net.TCPListener) {
 	for {
-		if err := t.dispatch(listener); err != nil {
+		if err := t.dispatch(listener); err != nil && !errors.Is(err, net.ErrClosed) {
 			newError("dispatch tcp conn failed").Base(err).WriteToLog()
 			break
 		}
